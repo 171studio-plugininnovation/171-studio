@@ -930,10 +930,10 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     if (isMasterEmail) {
       const cleanPass = (password || '').trim();
-      const validMasterPasswords = ['171studio', '171Studio2026!', 'master171', '171master', 'vkrealhakiesake'];
+      const validMasterPasswords = ['Loredana.656511', '171studio', '171Studio2026!', 'master171', '171master', 'vkrealhakiesake'];
       if (!cleanPass || !validMasterPasswords.includes(cleanPass)) {
         throw new Error(
-          `L'accesso come Amministratore Master (${cleanEmail}) richiede la password Master (es. 171studio) o l'accesso con Google su domini autorizzati.`
+          `L'accesso come Amministratore Master (${cleanEmail}) richiede la password Master corretta.`
         );
       }
 
@@ -1007,10 +1007,10 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     if (isMasterEmail) {
       const cleanPass = (password || '').trim();
-      const validMasterPasswords = ['171studio', '171Studio2026!', 'master171', '171master', 'vkrealhakiesake'];
+      const validMasterPasswords = ['Loredana.656511', '171studio', '171Studio2026!', 'master171', '171master', 'vkrealhakiesake'];
       if (!cleanPass || !validMasterPasswords.includes(cleanPass)) {
         throw new Error(
-          `L'indirizzo email ${cleanEmail} appartiene all'Amministratore Master di 171 Studio. Inserisci la password Master (es. 171studio) per entrare.`
+          `L'indirizzo email ${cleanEmail} appartiene all'Amministratore Master di 171 Studio. Inserisci la password Master corretta per entrare.`
         );
       }
       const masterUser: UserAccount = {
