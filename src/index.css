@@ -1,0 +1,44 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-sans: 'Plus Jakarta Sans', sans-serif;
+  --color-gold-300: #fde68a;
+  --color-gold-400: #fbbf24;
+  --color-gold-500: #d97706;
+  --color-gold-600: #b45309;
+}
+
+@layer base {
+  body {
+    font-family: var(--font-sans);
+  }
+  
+  h1, h2, h3, h4, .font-heading {
+    font-family: var(--font-display);
+  }
+}
+
+/* Custom radial and metallic sheen utilities */
+.metallic-gold-text {
+  background: linear-gradient(135deg, #fff7ed 0%, #fbbf24 35%, #d97706 70%, #fef3c7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.metallic-gold-border {
+  border-image: linear-gradient(to right, rgba(251, 191, 36, 0.4), rgba(217, 119, 6, 0.1), rgba(251, 191, 36, 0.5)) 1;
+}
+
+.gold-glow {
+  box-shadow: 0 0 25px -5px rgba(245, 158, 11, 0.25);
+}
+
+.gold-glow-lg {
+  box-shadow: 0 0 45px -8px rgba(245, 158, 11, 0.35);
+}
+
+/* Subtle vinyl background overlay */
+.bg-vignette {
+  background: radial-gradient(circle at center, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.65) 60%, rgba(5, 5, 5, 0.95) 100%);
+}

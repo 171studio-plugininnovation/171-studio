@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="it" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>171 Studio | Studio di Registrazione</title>
+    <meta name="description" content="171 Studio - Studio di registrazione. Chi Siamo, Prenota Sessione, 171 Plugin Innovation." />
+    <meta property="og:title" content="171 Studio | Studio di Registrazione" />
+    <meta property="og:description" content="171 Studio - Studio di registrazione professionale e audio engineering." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;0,800;0,900;1,600;1,700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Spotify IFrame API SDK initialization catcher & loader -->
+    <script>
+      window.__spotifyCallbacks = window.__spotifyCallbacks || [];
+      window.onSpotifyIframeApiReady = function(IFrameAPI) {
+        window.SpotifyIframeApi = IFrameAPI;
+        if (window.__spotifyCallbacks && window.__spotifyCallbacks.length) {
+          window.__spotifyCallbacks.forEach(function(cb) {
+            try { cb(IFrameAPI); } catch(e) { console.error('Spotify ready callback error:', e); }
+          });
+        }
+      };
+    </script>
+    <script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
+  </head>
+  <body class="bg-neutral-950 text-white selection:bg-amber-400 selection:text-black overflow-x-hidden font-sans">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

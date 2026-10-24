@@ -1,0 +1,90 @@
+{
+  "entities": {
+    "SiteContent": {
+      "title": "SiteContent",
+      "description": "Configurazione e testi live del sito 171 Studio",
+      "type": "object",
+      "properties": {
+        "studioName": { "type": "string" },
+        "studioBadge": { "type": "string" },
+        "heroTagline": { "type": "string" },
+        "aboutTitle": { "type": "string" },
+        "aboutIntro": { "type": "string" },
+        "aboutPhilosophyTitle": { "type": "string" },
+        "aboutPhilosophy": { "type": "string" },
+        "contactEmail": { "type": "string" },
+        "contactPhone": { "type": "string" },
+        "contactAddress": { "type": "string" },
+        "spotifyPlaylistId": { "type": "string" },
+        "youtubePlaylistId": { "type": "string" },
+        "plugins": { "type": "array" }
+      },
+      "required": ["studioName", "contactEmail"]
+    },
+    "Booking": {
+      "title": "Booking",
+      "description": "Prenotazione di una sessione in studio effettuata da un utente",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "userEmail": { "type": "string" },
+        "userName": { "type": "string" },
+        "userPhone": { "type": "string" },
+        "serviceId": { "type": "string" },
+        "serviceTitle": { "type": "string" },
+        "hours": { "type": "number" },
+        "date": { "type": "string" },
+        "time": { "type": "string" },
+        "estimatedPrice": { "type": "number" },
+        "notes": { "type": "string" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["userId", "userEmail", "userName", "serviceId", "date", "time"]
+    },
+    "UserActivity": {
+      "title": "UserActivity",
+      "description": "Log delle attività sul sito per l'account master",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "userEmail": { "type": "string" },
+        "userName": { "type": "string" },
+        "action": { "type": "string" },
+        "details": { "type": "string" },
+        "timestamp": { "type": "string" }
+      },
+      "required": ["userId", "userEmail", "action", "details"]
+    },
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Profilo utente registrato",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string" },
+        "name": { "type": "string" },
+        "role": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["email", "name"]
+    }
+  },
+  "firestore": {
+    "/settings/cms": {
+      "schema": "SiteContent",
+      "description": "Contenuto globale CMS gestibile dal Master"
+    },
+    "/bookings/{bookingId}": {
+      "schema": "Booking",
+      "description": "Prenotazioni sessioni registrate"
+    },
+    "/activities/{activityId}": {
+      "schema": "UserActivity",
+      "description": "Audit log di tutte le attività per il Master"
+    },
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "Profili degli utenti registrati"
+    }
+  }
+}

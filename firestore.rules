@@ -1,0 +1,101 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    function isMaster() {
+      return request.auth != null && 
+        request.auth.token.email_verified == true &&
+        request.auth.token.firebase.sign_in_provider == 'google.com' && (
+          request.auth.token.email.lower() == '171studiomessina@gmail.com' ||
+          request.auth.token.email.lower() == '171studio@gmail.com'
+        );
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // Default deny all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Public CMS settings (site texts, playlists, and plugin catalog)
+    match /settings/cms {
+      allow read: if true;
+      allow write: if isMaster();
+    }
+
+    // Bookings collection: clients cannot tamper with paymentStatus, status, or pricing
+    match /bookings/{bookingId} {
+      allow read: if isMaster() || (isSignedIn() && resource.data.userId == request.auth.uid);
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update: if isMaster() || (
+        isSignedIn() && resource.data.userId == request.auth.uid &&
+        !request.resource.data.diff(resource.data).affectedKeys().hasAny([
+          'paymentStatus', 'status', 'estimatedPrice', 'driveDeliveryUrl', 'orderCode', 'calendarSynced'
+        ])
+      );
+      allow delete: if isMaster();
+    }
+
+    // Album orders: "The God Cypher" physical & digital purchases
+    match /album_orders/{orderId} {
+      allow read: if isMaster() || (isSignedIn() && (resource.data.userId == request.auth.uid || resource.data.userEmail == request.auth.token.email));
+      allow create: if true;
+      allow update: if isMaster() || (
+        isSignedIn() && resource.data.userId == request.auth.uid &&
+        !request.resource.data.diff(resource.data).affectedKeys().hasAny([
+          'paymentStatus', 'status', 'pickupStatus', 'paypalTransactionId', 'paypalPaidAt'
+        ])
+      );
+      allow delete: if isMaster();
+    }
+
+    // Client deliveries & stems
+    match /client_deliveries/{deliveryId} {
+      allow read: if isMaster() || (isSignedIn() && (resource.data.userId == request.auth.uid || resource.data.userEmail == request.auth.token.email));
+      allow create: if isMaster() || isSignedIn();
+      allow update: if isMaster() || (isSignedIn() && resource.data.userId == request.auth.uid);
+      allow delete: if isMaster();
+    }
+
+    // Dedicated voucher redemptions audit
+    match /voucher_redemptions/{redemptionId} {
+      allow read: if isMaster() || (isSignedIn() && resource.data.userEmail == request.auth.token.email);
+      allow create: if true;
+      allow update, delete: if isMaster();
+    }
+
+    // Plugin bug reports
+    match /plugin_bug_reports/{reportId} {
+      allow read: if isMaster() || (isSignedIn() && (resource.data.userId == request.auth.uid || resource.data.userEmail == request.auth.token.email));
+      allow create: if true;
+      allow update: if isMaster();
+      allow delete: if isMaster();
+    }
+
+    // Activity Audit Log (activities tracked on site)
+    match /activities/{activityId} {
+      allow read: if isMaster();
+      allow create: if isSignedIn();
+      allow update, delete: if false;
+    }
+
+    // User accounts collection: users cannot elevate their role to master
+    match /users/{userId} {
+      allow read: if isMaster() || (isSignedIn() && request.auth.uid == userId);
+      allow write: if isMaster() || (
+        isSignedIn() && request.auth.uid == userId &&
+        (!('role' in request.resource.data) || request.resource.data.role == 'client')
+      );
+    }
+
+    // Automated emails outbox & logs
+    match /emails/{emailId} {
+      allow read: if isMaster() || (isSignedIn() && resource.data.recipientEmail == request.auth.token.email);
+      allow create: if isSignedIn();
+      allow update, delete: if isMaster();
+    }
+  }
+}
