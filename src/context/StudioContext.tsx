@@ -423,6 +423,29 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       };
       localStorage.setItem('171_registered_users_map', JSON.stringify(map));
     } catch {}
+
+    // Multi-device persistence: save individual user profile to Firestore
+    try {
+      const cleanEmail = user.email.trim().toLowerCase();
+      const safeDocId = user.id || `usr-${cleanEmail.replace(/[^a-z0-9]/gi, '_')}`;
+      setDoc(doc(db, 'users', safeDocId), {
+        id: safeDocId,
+        email: cleanEmail,
+        name: user.name,
+        role: user.role,
+        createdAt: user.createdAt,
+        welcomeDiscountCode: user.welcomeDiscountCode,
+        welcomeDiscountUsed: user.welcomeDiscountUsed,
+        updatedAt: new Date().toISOString(),
+      }, { merge: true }).catch(() => {});
+    } catch {}
+  };
+
+  const generateUniqueWelcomeVoucherCode = (cleanEmail: string): string => {
+    const cleanUserSlug = cleanEmail.replace(/[^a-z0-9]/g, '').slice(0, 5).toUpperCase() || 'ARTIST';
+    const randNum = Math.floor(1000 + Math.random() * 9000);
+    const randHex = Math.random().toString(36).substring(2, 6).toUpperCase();
+    return `171-WELCOME-${cleanUserSlug}-${randNum}-${randHex}`;
   };
 
   const normalizeVouchers = (rawVouchers?: VoucherItem[]): VoucherItem[] => {
@@ -822,7 +845,7 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         const existing = map[cleanEmail];
         const regPercent = siteContent.registrationDiscountPercent ?? 5;
         const cleanUserSlug = cleanEmail.replace(/[^a-z0-9]/g, '').slice(0, 5).toUpperCase() || 'ARTIST';
-        const personalWelcomeCode = existing?.welcomeDiscountCode || `171-WELCOME-${cleanUserSlug}-${Math.floor(100 + Math.random() * 900)}`;
+        const personalWelcomeCode = existing?.welcomeDiscountCode || generateUniqueWelcomeVoucherCode(cleanEmail);
 
         user = {
           id: result.user.uid,
@@ -955,7 +978,7 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const existing = map[cleanEmail];
     const regPercent = siteContent.registrationDiscountPercent ?? 5;
     const cleanUserSlug = cleanEmail.replace(/[^a-z0-9]/g, '').slice(0, 5).toUpperCase() || 'ARTIST';
-    const personalWelcomeCode = existing?.welcomeDiscountCode || `171-WELCOME-${cleanUserSlug}-${Math.floor(100 + Math.random() * 900)}`;
+    const personalWelcomeCode = existing?.welcomeDiscountCode || generateUniqueWelcomeVoucherCode(cleanEmail);
 
     const user: UserAccount = {
       id: existing?.id || `usr-${Date.now()}`,
@@ -1031,7 +1054,7 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const existing = map[cleanEmail];
     const regPercent = siteContent.registrationDiscountPercent ?? 5;
     const cleanUserSlug = cleanEmail.replace(/[^a-z0-9]/g, '').slice(0, 5).toUpperCase() || 'ARTIST';
-    const personalWelcomeCode = existing?.welcomeDiscountCode || `171-WELCOME-${cleanUserSlug}-${Math.floor(100 + Math.random() * 900)}`;
+    const personalWelcomeCode = existing?.welcomeDiscountCode || generateUniqueWelcomeVoucherCode(cleanEmail);
 
     const user: UserAccount = {
       id: existing?.id || `usr-${Date.now()}`,
@@ -1183,24 +1206,52 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const vouchersList = normalizeVouchers(siteContent.vouchers);
     let matched = vouchersList.find((v) => v.code.toUpperCase() === cleanCode && v.active);
 
+    const effectiveCustomerEmail = (customerEmail || currentUser?.email || '').trim().toLowerCase();
+
     // Also check the Master registration welcome discount settings
     const regCode = (siteContent.registrationDiscountCode || 'BENVENUTO5').toUpperCase();
-    if (!matched && siteContent.registrationDiscountEnabled !== false && cleanCode === regCode) {
-      matched = {
-        id: 'vch-welcome-auto',
-        code: regCode,
-        title: `Sconto Benvenuto ${siteContent.registrationDiscountPercent || 5}%`,
-        discountType: 'percent',
-        discountValue: siteContent.registrationDiscountPercent || 5,
-        targetProduct: 'all',
-        applicableProducts: ['all'],
-        description: `Sconto Benvenuto ${siteContent.registrationDiscountPercent || 5}% alla registrazione`,
-        active: true,
-        isRegistrationWelcome: true,
-        isRegistrationVoucher: true,
-        singleUsePerAccount: true,
-        usageCount: 0,
-      };
+    if (!matched && siteContent.registrationDiscountEnabled !== false) {
+      if (cleanCode === regCode) {
+        matched = {
+          id: 'vch-welcome-auto',
+          code: regCode,
+          title: `Sconto Benvenuto ${siteContent.registrationDiscountPercent || 5}%`,
+          discountType: 'percent',
+          discountValue: siteContent.registrationDiscountPercent || 5,
+          targetProduct: 'all',
+          applicableProducts: ['all'],
+          description: `Sconto Benvenuto ${siteContent.registrationDiscountPercent || 5}% alla registrazione`,
+          active: true,
+          isRegistrationWelcome: true,
+          isRegistrationVoucher: true,
+          singleUsePerAccount: true,
+          usageCount: 0,
+        };
+      } else if (cleanCode.startsWith('171-WELCOME')) {
+        const savedUsersMap = getSavedRegisteredUsers();
+        const savedUser = effectiveCustomerEmail ? savedUsersMap[effectiveCustomerEmail] : currentUser;
+        const userPersonalCode = (savedUser?.welcomeDiscountCode || '').toUpperCase();
+        if (userPersonalCode && cleanCode === userPersonalCode) {
+          matched = {
+            id: `vch-welcome-${effectiveCustomerEmail.replace(/[^a-z0-9]/gi, '_') || 'usr'}`,
+            code: userPersonalCode,
+            title: `Sconto Benvenuto ${siteContent.registrationDiscountPercent || 5}%`,
+            discountType: 'percent',
+            discountValue: siteContent.registrationDiscountPercent || 5,
+            targetProduct: 'all',
+            applicableProducts: ['all'],
+            description: `Sconto Benvenuto ${siteContent.registrationDiscountPercent || 5}% riservato a ${savedUser?.name || effectiveCustomerEmail}`,
+            active: true,
+            isRegistrationWelcome: true,
+            isRegistrationVoucher: true,
+            assignedToEmail: effectiveCustomerEmail,
+            assignedToUserName: savedUser?.name,
+            singleUsePerAccount: true,
+            usedByEmails: savedUser?.welcomeDiscountUsed ? [effectiveCustomerEmail] : [],
+            usageCount: savedUser?.welcomeDiscountUsed ? 1 : 0,
+          };
+        }
+      }
     }
 
     if (!matched) {
@@ -1211,8 +1262,6 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         message: `Il codice sconto "${cleanCode}" non è valido o è inesistente.`,
       };
     }
-
-    const effectiveCustomerEmail = (customerEmail || currentUser?.email || '').trim().toLowerCase();
 
     // 1. NON-TRANSFERABLE CHECK:
     // If voucher is personalized for a specific account email, it CANNOT be redeemed by another account!
@@ -2834,8 +2883,18 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       }
     });
 
+    albumOrders.forEach((o) => {
+      if (o.userEmail) {
+        const email = o.userEmail.toLowerCase();
+        if (!isOfficialMasterEmail(email) && !seenEmails.has(email)) {
+          usersList.push({ email: o.userEmail, name: o.userName || email.split('@')[0] });
+          seenEmails.add(email);
+        }
+      }
+    });
+
     return usersList;
-  }, [currentUser, bookings, activities]);
+  }, [currentUser, bookings, activities, albumOrders]);
 
   return (
     <StudioContext.Provider
