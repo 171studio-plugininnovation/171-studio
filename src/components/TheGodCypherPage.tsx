@@ -8,6 +8,7 @@ import {
 import { PageId } from '../types';
 import { AlbumOrderRecord } from '../types/cms';
 import { useStudio } from '../context/StudioContext';
+import { ALBUM_MP3_DOWNLOAD_URL, ALBUM_MASTER_DOWNLOAD_URL } from '../utils/albumDownloads';
 
 interface TheGodCypherPageProps {
   onNavigate: (page: PageId) => void;
@@ -170,8 +171,8 @@ export const TheGodCypherPage: React.FC<TheGodCypherPageProps> = ({ onNavigate }
 
     // Determine target download package (CD buyers also get the complete Master Pack!)
     const targetZipUrl = orderTier === 'digital_mp3'
-      ? '/assets/the-god-cypher/downloads/THE_GOD_CYPHER_MP3_EDITION.zip'
-      : '/assets/the-god-cypher/downloads/THE_GOD_CYPHER_MASTER_PACK.zip';
+      ? ALBUM_MP3_DOWNLOAD_URL
+      : ALBUM_MASTER_DOWNLOAD_URL;
     const targetZipName = orderTier === 'digital_mp3'
       ? 'THE_GOD_CYPHER_MP3_EDITION.zip'
       : 'THE_GOD_CYPHER_MASTER_PACK.zip';
@@ -1272,7 +1273,9 @@ export const TheGodCypherPage: React.FC<TheGodCypherPageProps> = ({ onNavigate }
                   </p>
                   <div>
                     <a
-                      href={orderTier === 'digital_mp3' ? "/assets/the-god-cypher/downloads/THE_GOD_CYPHER_MP3_EDITION.zip" : "/assets/the-god-cypher/downloads/THE_GOD_CYPHER_MASTER_PACK.zip"}
+                      href={orderTier === 'digital_mp3' ? ALBUM_MP3_DOWNLOAD_URL : ALBUM_MASTER_DOWNLOAD_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       download={orderTier === 'digital_mp3' ? "THE_GOD_CYPHER_MP3_EDITION.zip" : "THE_GOD_CYPHER_MASTER_PACK.zip"}
                       className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-['Cinzel_Decorative',serif] font-black text-xs uppercase tracking-wider shadow-lg transition-all cursor-pointer"
                     >

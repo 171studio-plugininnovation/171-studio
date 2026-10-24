@@ -11,6 +11,7 @@ import { PageId } from '../types';
 import { useStudio } from '../context/StudioContext';
 import { BookingRecord, ClientFileItem, STUDIO_PAYPAL_EMAIL, AlbumOrderRecord } from '../types/cms';
 import { getPayPalPaymentUrl } from '../utils/emailService';
+import { ALBUM_MP3_DOWNLOAD_URL, ALBUM_MASTER_DOWNLOAD_URL } from '../utils/albumDownloads';
 
 interface ClientAccountPageProps {
   onNavigate: (page: PageId) => void;
@@ -1205,7 +1206,9 @@ Data: ${new Date(file.createdAt).toLocaleString('it-IT')}
                                   }
                                 </p>
                                 <a
-                                  href={order.basePrice <= 3.50 ? "/assets/the-god-cypher/downloads/THE_GOD_CYPHER_MP3_EDITION.zip" : "/assets/the-god-cypher/downloads/THE_GOD_CYPHER_MASTER_PACK.zip"}
+                                  href={order.basePrice <= 3.50 ? ALBUM_MP3_DOWNLOAD_URL : ALBUM_MASTER_DOWNLOAD_URL}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
                                   download={order.basePrice <= 3.50 ? "THE_GOD_CYPHER_MP3_EDITION.zip" : "THE_GOD_CYPHER_MASTER_PACK.zip"}
                                   className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-['Cinzel_Decorative',serif] text-xs font-bold uppercase tracking-wider transition-all shadow-md cursor-pointer"
                                 >
@@ -1226,7 +1229,9 @@ Data: ${new Date(file.createdAt).toLocaleString('it-IT')}
                               <span>Con la copia fisica hai diritto anche al <strong>Master Pack Digitale immediato</strong> (WAV 24-bit + MP3 + grafiche).</span>
                             </span>
                             <a
-                              href="/assets/the-god-cypher/downloads/THE_GOD_CYPHER_MASTER_PACK.zip"
+                              href={ALBUM_MASTER_DOWNLOAD_URL}
+                              target="_blank"
+                              rel="noopener noreferrer"
                               download="THE_GOD_CYPHER_MASTER_PACK.zip"
                               className="px-3 py-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-neutral-200 text-[11px] font-bold uppercase tracking-wider flex items-center gap-1.5 shrink-0 transition-colors cursor-pointer"
                             >
