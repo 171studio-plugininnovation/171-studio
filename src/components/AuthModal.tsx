@@ -27,14 +27,14 @@ export const AuthModal: React.FC = () => {
           setIsLoading(false);
           return;
         }
-        await login(email.trim(), name.trim() || undefined);
+        await login(email.trim(), name.trim() || undefined, password);
       } else {
         if (!name.trim() || !email.trim()) {
           setError('Inserisci nome ed indirizzo email per registrarti');
           setIsLoading(false);
           return;
         }
-        await register(email.trim(), name.trim());
+        await register(email.trim(), name.trim(), password);
       }
     } catch (err: unknown) {
       const e = err as Error;
