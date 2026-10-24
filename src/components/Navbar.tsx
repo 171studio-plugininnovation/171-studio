@@ -3,6 +3,7 @@ import { Menu, X, Shield, Radio, User, LogOut, LogIn, ChevronDown, ChevronsDown,
 import { PageId } from '../types';
 import { AudioVisualizer } from './AudioVisualizer';
 import { useStudio } from '../context/StudioContext';
+import { getAssetUrl } from '../utils/assetPath';
 
 interface NavbarProps {
   currentPage: PageId;
@@ -181,7 +182,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               {/* Soft dark aura */}
               <div className="absolute inset-0 bg-radial from-amber-500/15 via-transparent to-black pointer-events-none" />
               <img
-                src="/assets/aistudio/171_logo_standalone.png"
+                src={getAssetUrl('/assets/aistudio/171_logo_standalone.png')}
                 alt="171 Logo"
                 className="w-full h-full object-contain relative z-10 group-hover:scale-105 transition-transform duration-300"
                 style={{

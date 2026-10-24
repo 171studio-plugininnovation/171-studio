@@ -9,6 +9,7 @@ import { PageId } from '../types';
 import { AlbumOrderRecord } from '../types/cms';
 import { useStudio } from '../context/StudioContext';
 import { ALBUM_MP3_DOWNLOAD_URL, ALBUM_MASTER_DOWNLOAD_URL } from '../utils/albumDownloads';
+import { getAssetUrl } from '../utils/assetPath';
 
 interface TheGodCypherPageProps {
   onNavigate: (page: PageId) => void;
@@ -283,13 +284,13 @@ export const TheGodCypherPage: React.FC<TheGodCypherPageProps> = ({ onNavigate }
                   className="relative z-10 w-full aspect-square rounded-2xl overflow-hidden border-2 border-red-700/60 shadow-[0_20px_60px_rgba(0,0,0,0.9),0_0_40px_rgba(220,38,38,0.35)] bg-black transition-transform duration-500 group-hover:scale-[1.02] cursor-pointer group/art"
                 >
                   <img
-                    src={
+                    src={getAssetUrl(
                       activeCover === 'front' 
                         ? '/assets/the-god-cypher/covers/cover-front.png' 
                         : activeCover === 'back' 
                           ? '/assets/the-god-cypher/covers/cover-back.jpg' 
                           : '/assets/the-god-cypher/covers/locandina.png'
-                    }
+                    )}
                     alt="The God Cypher Album Artwork"
                     className="w-full h-full object-cover transition-all duration-500"
                   />
@@ -726,7 +727,7 @@ export const TheGodCypherPage: React.FC<TheGodCypherPageProps> = ({ onNavigate }
                 {/* 1400x1400 Artwork (18.jpg to 33.jpg) */}
                 <div className="w-full aspect-square rounded-2xl overflow-hidden bg-black border border-neutral-900 mb-3 shadow-inner relative group-hover:border-red-600/60 transition-colors">
                   <img
-                    src={`/assets/the-god-cypher/famiglia/${member.imageNum}.jpg`}
+                    src={getAssetUrl(`/assets/the-god-cypher/famiglia/${member.imageNum}.jpg`)}
                     alt={member.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     loading="lazy"
@@ -810,7 +811,7 @@ export const TheGodCypherPage: React.FC<TheGodCypherPageProps> = ({ onNavigate }
             <div className="md:col-span-4 flex justify-center">
               <div className="relative w-56 sm:w-64 aspect-[3/4] rounded-2xl overflow-hidden border-2 border-red-700/60 shadow-2xl bg-black">
                 <img
-                  src="/assets/the-god-cypher/booklet/1.jpg"
+                  src={getAssetUrl('/assets/the-god-cypher/booklet/1.jpg')}
                   alt="Booklet Copertina"
                   className="w-full h-full object-cover filter blur-[3px] scale-105"
                 />
@@ -1107,13 +1108,13 @@ export const TheGodCypherPage: React.FC<TheGodCypherPageProps> = ({ onNavigate }
 
             <div className="w-full aspect-square rounded-3xl overflow-hidden border-2 border-red-700/80 shadow-[0_0_60px_rgba(220,38,38,0.5)] bg-black">
               <img
-                src={
+                src={getAssetUrl(
                   activeCover === 'front' 
                     ? '/assets/the-god-cypher/covers/cover-front.png' 
                     : activeCover === 'back' 
                       ? '/assets/the-god-cypher/covers/cover-back.jpg' 
                       : '/assets/the-god-cypher/covers/locandina.png'
-                }
+                )}
                 alt="The God Cypher Artwork Fullscreen"
                 className="w-full h-full object-cover"
               />
@@ -1155,7 +1156,7 @@ export const TheGodCypherPage: React.FC<TheGodCypherPageProps> = ({ onNavigate }
 
             <div className="w-full aspect-square rounded-3xl overflow-hidden border-2 border-red-700/80 shadow-[0_0_50px_rgba(220,38,38,0.4)] bg-black">
               <img
-                src={`/assets/the-god-cypher/famiglia/${zoomedCard.imageNum}.jpg`}
+                src={getAssetUrl(`/assets/the-god-cypher/famiglia/${zoomedCard.imageNum}.jpg`)}
                 alt={zoomedCard.title}
                 className="w-full h-full object-cover"
               />

@@ -1,4 +1,5 @@
 import React from 'react';
+import { getAssetUrl } from '../utils/assetPath';
 
 interface BackgroundLayerProps {
   currentPage: string;
@@ -12,7 +13,7 @@ export const BackgroundLayer: React.FC<BackgroundLayerProps> = ({ currentPage })
     >
       {/* Primary Background Image uploaded by user */}
       <img
-        src="/assets/aistudio/Gemini_Generated_Image_778pje778pje778p_3e4279d5.jpeg"
+        src={getAssetUrl('/assets/aistudio/Gemini_Generated_Image_778pje778pje778p_3e4279d5.jpeg')}
         alt="171 Studio Background"
         className="w-full h-full object-cover object-center transform scale-105 transition-transform duration-1000 ease-out"
         style={{

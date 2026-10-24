@@ -12,6 +12,7 @@ import { useStudio } from '../context/StudioContext';
 import { BookingRecord, ClientFileItem, STUDIO_PAYPAL_EMAIL, AlbumOrderRecord } from '../types/cms';
 import { getPayPalPaymentUrl } from '../utils/emailService';
 import { ALBUM_MP3_DOWNLOAD_URL, ALBUM_MASTER_DOWNLOAD_URL } from '../utils/albumDownloads';
+import { getAssetUrl } from '../utils/assetPath';
 
 interface ClientAccountPageProps {
   onNavigate: (page: PageId) => void;
@@ -815,7 +816,7 @@ Data: ${new Date(file.createdAt).toLocaleString('it-IT')}
               <div className="flex items-center gap-4">
                 <div className="w-16 h-16 rounded-2xl overflow-hidden border border-red-700/60 shadow-lg shrink-0 bg-black">
                   <img
-                    src="/assets/the-god-cypher/covers/cover-front.png"
+                    src={getAssetUrl('/assets/the-god-cypher/covers/cover-front.png')}
                     alt="The God Cypher"
                     className="w-full h-full object-cover"
                   />
@@ -975,7 +976,7 @@ Data: ${new Date(file.createdAt).toLocaleString('it-IT')}
                           <div className="lg:col-span-4 flex items-start gap-3.5">
                             <div className="w-20 h-20 rounded-2xl overflow-hidden border border-red-700/60 shadow-lg shrink-0 bg-black">
                               <img
-                                src="/assets/the-god-cypher/covers/cover-front.png"
+                                src={getAssetUrl('/assets/the-god-cypher/covers/cover-front.png')}
                                 alt="The God Cypher"
                                 className="w-full h-full object-cover"
                               />

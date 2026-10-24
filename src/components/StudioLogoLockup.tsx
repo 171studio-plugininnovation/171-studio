@@ -1,4 +1,5 @@
 import React from 'react';
+import { getAssetUrl } from '../utils/assetPath';
 
 interface StudioLogoLockupProps {
   onClick?: () => void;
@@ -38,7 +39,7 @@ export const StudioLogoLockup: React.FC<StudioLogoLockupProps> = ({
       {/* Official 171 STUDIO PNG directly from Progetto senza titolo (1).png */}
       <div className={`relative ${sizeClass} flex items-center justify-center p-1`}>
         <img
-          src="/assets/aistudio/Progetto_senza_titolo__1__f219010a.png"
+          src={getAssetUrl('/assets/aistudio/Progetto_senza_titolo__1__f219010a.png')}
           alt="171 Studio Logo Ufficiale"
           className="w-full h-auto object-contain transition-all duration-300"
           style={{

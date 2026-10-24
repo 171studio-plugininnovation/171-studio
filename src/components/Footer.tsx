@@ -2,6 +2,7 @@ import React from 'react';
 import { Mail, MapPin, ArrowUpRight } from 'lucide-react';
 import { PageId } from '../types';
 import { useStudio } from '../context/StudioContext';
+import { getAssetUrl } from '../utils/assetPath';
 
 interface FooterProps {
   currentPage: PageId;
@@ -21,7 +22,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-neutral-900/80 border border-amber-500/40 p-1 flex items-center justify-center">
                 <img
-                  src="/assets/aistudio/171_logo_standalone.png"
+                  src={getAssetUrl('/assets/aistudio/171_logo_standalone.png')}
                   alt="171 Logo"
                   className="w-full h-full object-contain"
                 />

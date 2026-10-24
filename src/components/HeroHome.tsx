@@ -6,6 +6,7 @@ import {
 import { PageId } from '../types';
 import { useStudio } from '../context/StudioContext';
 import { StudioLogoLockup } from './StudioLogoLockup';
+import { getAssetUrl } from '../utils/assetPath';
 
 interface HeroHomeProps {
   onNavigate: (page: PageId) => void;
@@ -212,7 +213,7 @@ export const HeroHome: React.FC<HeroHomeProps> = ({ onNavigate }) => {
           <div className="flex items-center gap-5">
             <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden border-2 border-red-600/70 shadow-2xl shrink-0 group-hover:scale-105 transition-transform">
               <img 
-                src="/assets/the-god-cypher/covers/cover-front.png" 
+                src={getAssetUrl('/assets/the-god-cypher/covers/cover-front.png')} 
                 alt="The God Cypher Album" 
                 className="w-full h-full object-cover" 
               />

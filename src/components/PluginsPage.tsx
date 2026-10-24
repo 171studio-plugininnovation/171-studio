@@ -8,6 +8,7 @@ import { PageId } from '../types';
 import { useStudio } from '../context/StudioContext';
 import { PluginItem, STUDIO_PAYPAL_EMAIL } from '../types/cms';
 import { getPayPalDonationUrl, getPayPalMeUrl, triggerPluginZipFileDownload } from '../utils/emailService';
+import { getAssetUrl } from '../utils/assetPath';
 
 interface PluginsPageProps {
   onNavigate: (page: PageId) => void;
@@ -624,7 +625,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
                     {plugin.imageUrl && (
                       <div className="relative rounded-2xl overflow-hidden border border-neutral-800 group/img bg-neutral-950">
                         <img 
-                          src={plugin.imageUrl} 
+                          src={getAssetUrl(plugin.imageUrl)} 
                           alt={`${plugin.name} GUI Snapshot`} 
                           className="w-full h-44 object-cover object-center group-hover/img:scale-105 transition-transform duration-500 cursor-pointer"
                           onClick={() => setPreviewModalImage(plugin.imageUrl || null)}
@@ -808,7 +809,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
             </div>
             <div className="rounded-2xl overflow-hidden border border-neutral-800 max-h-[75vh] flex items-center justify-center bg-black">
               <img 
-                src={previewModalImage} 
+                src={getAssetUrl(previewModalImage)} 
                 alt="Hardware GUI Snapshot" 
                 className="w-full h-auto max-h-[75vh] object-contain"
               />
