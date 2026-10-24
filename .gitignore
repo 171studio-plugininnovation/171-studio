@@ -11,3 +11,4 @@ coverage/
 .antigravity/
 *.png
 !public/**/*.png
+public/assets/the-god-cypher/downloads/*.zip
