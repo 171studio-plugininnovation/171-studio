@@ -5,7 +5,7 @@ import {
   Sparkles, Shield, LogOut, ArrowRight, X, Check, Lock, History,
   CreditCard, FolderOpen, HelpCircle, Copy, Search, Disc, Truck,
   MapPin, PackageCheck, Package, MailCheck, ShoppingBag, Eye, ShieldCheck,
-  Bug, Wrench, Send, Tag, Gift, Info, AlertCircle, Heart, Award
+  Bug, Wrench, Send, Tag, Gift, Info, AlertCircle, Heart, Award, Mail
 } from 'lucide-react';
 import { PageId } from '../types';
 import { useStudio } from '../context/StudioContext';
@@ -45,6 +45,10 @@ export const ClientAccountPage: React.FC<ClientAccountPageProps> = ({ onNavigate
     createPluginDonation,
     confirmPluginDonationPayPal,
     getUserCumulativeDonations,
+    openGmailWebCompose,
+    openMailtoCompose,
+    downloadBookingCalendarIcs,
+    openGoogleCalendarWeb,
   } = useStudio();
 
   const userCumulativeStats = getUserCumulativeDonations(currentUser?.email);
@@ -2039,6 +2043,39 @@ Data: ${new Date(file.createdAt).toLocaleString('it-IT')}
                             Note: "{booking.notes}"
                           </p>
                         )}
+
+                        {/* 1-Click Calendar & Email Toolbar */}
+                        <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-neutral-900">
+                          <button
+                            type="button"
+                            onClick={() => openGoogleCalendarWeb(booking.id)}
+                            className="px-2.5 py-1.5 rounded-lg bg-neutral-900 hover:bg-neutral-800 text-amber-300 hover:text-white border border-amber-500/30 text-[11px] font-mono flex items-center gap-1.5 transition-all cursor-pointer"
+                            title="Aggiungi al tuo Google Calendar con 1 click senza autenticazione"
+                          >
+                            <Calendar className="w-3 h-3 text-amber-400" />
+                            <span>Google Calendar (1 Click)</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => downloadBookingCalendarIcs(booking.id)}
+                            className="px-2.5 py-1.5 rounded-lg bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-800 text-[11px] font-mono flex items-center gap-1.5 transition-all cursor-pointer"
+                            title="Scarica file .ICS universale (Apple Calendar su iPhone/Mac o Outlook su Windows)"
+                          >
+                            <Download className="w-3 h-3 text-neutral-400" />
+                            <span>Scarica .ICS (Apple/Outlook)</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => openGmailWebCompose(booking.id, 'receipt')}
+                            className="px-2.5 py-1.5 rounded-lg bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-800 text-[11px] font-mono flex items-center gap-1.5 transition-all cursor-pointer"
+                            title="Apri riepilogo e ricevuta sessione pre-compilata su Gmail Web"
+                          >
+                            <Mail className="w-3 h-3 text-blue-400" />
+                            <span>Ricevuta Gmail</span>
+                          </button>
+                        </div>
                       </div>
 
                       <div className="flex flex-wrap items-center gap-2.5 w-full lg:w-auto justify-end pt-3 lg:pt-0 border-t lg:border-t-0 border-neutral-800">
@@ -2122,6 +2159,7 @@ Data: ${new Date(file.createdAt).toLocaleString('it-IT')}
                     <th className="p-3.5">Durata / Quota</th>
                     <th className="p-3.5">Stato Sessione</th>
                     <th className="p-3.5">Pagamento</th>
+                    <th className="p-3.5">Calendario & Posta</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-neutral-800/60">
@@ -2169,6 +2207,34 @@ Data: ${new Date(file.createdAt).toLocaleString('it-IT')}
                         >
                           {b.paymentStatus === 'saldato' ? 'SALDATO' : 'DA SALDARE'}
                         </span>
+                      </td>
+                      <td className="p-3.5 whitespace-nowrap">
+                        <div className="flex items-center gap-1.5">
+                          <button
+                            type="button"
+                            onClick={() => openGoogleCalendarWeb(b.id)}
+                            className="p-1.5 rounded-lg bg-neutral-900 hover:bg-neutral-800 text-amber-400 border border-neutral-800 hover:border-amber-500/40 transition-colors cursor-pointer"
+                            title="Aggiungi a Google Calendar (1 Click)"
+                          >
+                            <Calendar className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => downloadBookingCalendarIcs(b.id)}
+                            className="p-1.5 rounded-lg bg-neutral-900 hover:bg-neutral-800 text-neutral-300 border border-neutral-800 hover:border-neutral-700 transition-colors cursor-pointer"
+                            title="Scarica file .ICS per Apple Calendar o Outlook"
+                          >
+                            <Download className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => openGmailWebCompose(b.id, 'receipt')}
+                            className="p-1.5 rounded-lg bg-neutral-900 hover:bg-neutral-800 text-neutral-300 border border-neutral-800 hover:border-neutral-700 transition-colors cursor-pointer"
+                            title="Apri riepilogo in Gmail Web"
+                          >
+                            <Mail className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}

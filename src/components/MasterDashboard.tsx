@@ -35,7 +35,12 @@ import {
   DEFAULT_PAGE_VALUES,
   DEFAULT_PLUGIN_BENEFITS,
 } from '../types/cms';
-import { getPayPalPaymentUrl, getPayPalMeUrl, triggerPluginZipFileDownload } from '../utils/emailService';
+import { 
+  getPayPalPaymentUrl, 
+  getPayPalMeUrl, 
+  triggerPluginZipFileDownload,
+  sendEmailViaWebhook 
+} from '../utils/emailService';
 import { getGoogleCalendarWebUrl } from '../utils/googleCalendarService';
 import { BookingAnalyticsDashboard } from './BookingAnalyticsDashboard';
 import { MasterCalendarControl } from './MasterCalendarControl';
@@ -61,7 +66,8 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
     setAlbumOrderTracking, setAlbumOrderPickupReady, confirmAlbumOrderPayPalPayment,
     pluginBugReports, updatePluginBugReportStatus, deletePluginBugReport, verifyPluginBugReportAndReward,
     pluginDonations, confirmPluginDonationPayPal, updatePluginDonation, deletePluginDonation,
-    registeredUsers
+    registeredUsers,
+    openGmailWebCompose, openMailtoCompose, downloadBookingCalendarIcs, openGoogleCalendarWeb
   } = useStudio();
 
   const [activeTab, setActiveTab] = useState<'preview' | 'cms' | 'pricing' | 'vouchers' | 'calendar' | 'desk' | 'deliveries' | 'album_orders' | 'plugin_bug_reports' | 'plugin_donations' | 'history' | 'analytics' | 'emails' | 'plugins' | 'audit'>('desk');
@@ -116,6 +122,11 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
     aboutValues: siteContent.aboutValues || DEFAULT_PAGE_VALUES,
     pluginBenefits: siteContent.pluginBenefits || DEFAULT_PLUGIN_BENEFITS,
     albumPlayer: siteContent.albumPlayer || DEFAULT_ALBUM_CONFIG,
+    emailWebhookUrl: siteContent.emailWebhookUrl || '',
+    emailjsServiceId: siteContent.emailjsServiceId || '',
+    emailjsTemplateIdReceipt: siteContent.emailjsTemplateIdReceipt || '',
+    emailjsTemplateIdConfirmation: siteContent.emailjsTemplateIdConfirmation || '',
+    emailjsPublicKey: siteContent.emailjsPublicKey || '',
   }));
   const [savedNotice, setSavedNotice] = useState(false);
   const [copiedOrderId, setCopiedOrderId] = useState<string | null>(null);
@@ -127,6 +138,8 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
   const [syncingBookingId, setSyncingBookingId] = useState<string | null>(null);
   const [calendarNotice, setCalendarNotice] = useState<string | null>(null);
   const [isTestingGmail, setIsTestingGmail] = useState(false);
+  const [isTestingWebhook, setIsTestingWebhook] = useState(false);
+  const [webhookTestNotice, setWebhookTestNotice] = useState<string | null>(null);
 
   // Direct offline studio session state
   const [showAddDirectSession, setShowAddDirectSession] = useState(false);
@@ -507,8 +520,43 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
 
   const handleConfirmFromDesk = async (b: BookingRecord) => {
     await updateBookingStatus(b.id, 'confermata');
-    setDeskActionNotice(`Sessione #${b.orderCode} (${b.userName}) CONFERMATA! Email inviata via Gmail (${MASTER_EMAIL} -> ${b.userEmail}) con testo 'Ordine confermato! Grazie per averci scelto', link PayPal 'Paga prima di arrivare in studio' e firma Igor Rozanov.`);
-    setTimeout(() => setDeskActionNotice(null), 7000);
+    openGmailWebCompose(b.id, 'confirmation');
+    setDeskActionNotice(`✅ Sessione #${b.orderCode} (${b.userName}) CONFERMATA! Aperta finestra Gmail Web con destinatario (${b.userEmail}), link PayPal (${b.estimatedPrice}€) e firma Igor Rozanov pre-compilati.`);
+    setTimeout(() => setDeskActionNotice(null), 8000);
+  };
+
+  const handleTestWebhook = async () => {
+    const url = formData.emailWebhookUrl?.trim();
+    if (!url) {
+      setWebhookTestNotice('⚠️ Inserisci prima un URL webhook valido (es. Make.com, Zapier o Formspree).');
+      return;
+    }
+    setIsTestingWebhook(true);
+    setWebhookTestNotice(null);
+    try {
+      const res = await sendEmailViaWebhook(url, {
+        event: 'test_notification',
+        timestamp: new Date().toISOString(),
+        studioEmail: MASTER_EMAIL,
+        recipientEmail: STUDIO_PAYPAL_EMAIL,
+        recipientName: 'Test Ricevente 171 Studio',
+        orderCode: 'TEST-' + Math.floor(1000 + Math.random() * 9000),
+        subject: 'Test Connessione Webhook 171 Studio Messina',
+        body: 'Questo è un messaggio di test per verificare che il webhook riceva correttamente le notifiche di prenotazione senza Google OAuth.',
+        amount: 50,
+        paypalEmail: siteContent.paypalEmail || STUDIO_PAYPAL_EMAIL,
+      });
+      if (res.success) {
+        setWebhookTestNotice('✅ Webhook verificato con successo! Il server endpoint ha risposto con codice HTTP 200.');
+      } else {
+        setWebhookTestNotice(`❌ Errore durante la chiamata webhook: ${res.error || 'Server non raggiungibile'}`);
+      }
+    } catch (err: any) {
+      setWebhookTestNotice(`❌ Errore di rete: ${err?.message || 'Connessione fallita'}`);
+    } finally {
+      setIsTestingWebhook(false);
+      setTimeout(() => setWebhookTestNotice(null), 8000);
+    }
   };
 
   const handleTriggerTestEmailFlow = async () => {
@@ -3590,6 +3638,39 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
                           <span>Dossier</span>
                         </button>
                       </div>
+
+                      {/* 1-Click Fast Actions for Email & Calendar */}
+                      <div className="flex flex-wrap items-center gap-1.5 w-full sm:w-auto justify-end pt-1">
+                        <button
+                          type="button"
+                          onClick={() => openGmailWebCompose(b.id, 'receipt')}
+                          className="px-2.5 py-1 rounded-lg bg-neutral-950 hover:bg-neutral-800 text-blue-300 border border-neutral-800 text-[11px] font-mono flex items-center gap-1 transition-all cursor-pointer"
+                          title="Apri email di ricezione/preventivo già compilata su Gmail Web"
+                        >
+                          <Mail className="w-3 h-3 text-blue-400" />
+                          <span>Gmail Ricevuta</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => openGoogleCalendarWeb(b.id)}
+                          className="px-2.5 py-1 rounded-lg bg-neutral-950 hover:bg-neutral-800 text-amber-300 border border-neutral-800 text-[11px] font-mono flex items-center gap-1 transition-all cursor-pointer"
+                          title="Aggiungi a Google Calendar (1 Click)"
+                        >
+                          <Calendar className="w-3 h-3 text-amber-400" />
+                          <span>Google Cal</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => downloadBookingCalendarIcs(b.id)}
+                          className="px-2.5 py-1 rounded-lg bg-neutral-950 hover:bg-neutral-800 text-neutral-300 border border-neutral-800 text-[11px] font-mono flex items-center gap-1 transition-all cursor-pointer"
+                          title="Scarica .ICS per Apple Calendar o Outlook"
+                        >
+                          <Download className="w-3 h-3 text-neutral-400" />
+                          <span>.ICS</span>
+                        </button>
+                      </div>
                     </div>
                   </div>
                 );
@@ -6139,7 +6220,28 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
                           title="Re-invia email con codice e link PayPal all'artista"
                         >
                           <Mail className="w-3.5 h-3.5 text-amber-400" />
-                          <span>Re-invia Email</span>
+                          <span>Re-invia</span>
+                        </button>
+
+                        {/* 1-Click Gmail Web */}
+                        <button
+                          type="button"
+                          onClick={() => openGmailWebCompose(b.id, 'confirmation')}
+                          className="px-3 py-1.5 rounded-xl bg-blue-500/20 hover:bg-blue-500 text-blue-300 hover:text-white border border-blue-500/40 text-xs font-mono uppercase flex items-center gap-1 transition-all cursor-pointer"
+                          title="Apri email di conferma già compilata su Gmail Web (1 Click)"
+                        >
+                          <Globe className="w-3.5 h-3.5 text-blue-400" />
+                          <span>Gmail Web</span>
+                        </button>
+
+                        {/* 1-Click Universal Calendar .ICS */}
+                        <button
+                          type="button"
+                          onClick={() => downloadBookingCalendarIcs(b.id)}
+                          className="p-1.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-800 transition-all cursor-pointer"
+                          title="Scarica file .ICS per Apple Calendar o Outlook"
+                        >
+                          <Download className="w-3.5 h-3.5 text-neutral-400" />
                         </button>
 
                         {/* Mark completed */}
@@ -6230,6 +6332,194 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
       {/* TAB 4: REGISTRO EMAIL AUTOMATICHE & EDITOR TESTI EMAIL */}
       {activeTab === 'emails' && (
         <div className="space-y-8">
+          {/* BANNER ARCHITETTURA INVIO SENZA GOOGLE OAUTH */}
+          <div className="p-6 rounded-3xl bg-neutral-900/90 border border-blue-500/40 backdrop-blur-xl shadow-xl space-y-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-neutral-800 pb-3">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-blue-500/20 border border-blue-500/40 flex items-center justify-center text-blue-400">
+                  <Globe className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="text-sm font-heading font-bold text-white">
+                    Sistema Invio Email & Automazioni (Senza Google OAuth)
+                  </h4>
+                  <span className="text-[10px] font-mono text-blue-300">
+                    Nessuna configurazione complessa di Google Cloud richiesta per l'invio e il calendario
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span className="px-2.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-[10px] font-mono font-bold">
+                  ✓ GMAIL WEB 1-CLICK ATTIVO
+                </span>
+                <span className="px-2.5 py-1 rounded-full bg-blue-500/15 border border-blue-500/30 text-blue-300 text-[10px] font-mono font-bold">
+                  ✓ CALENDARIO .ICS & WEB ATTIVO
+                </span>
+              </div>
+            </div>
+
+            <p className="text-xs text-neutral-300 font-mono leading-relaxed">
+              Dato che il sito è distribuito come Single Page Application statica su GitHub Pages senza backend proprietario, le email e i calendari operano tramite:
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs font-mono pt-1">
+              <div className="p-3.5 rounded-2xl bg-neutral-950 border border-neutral-800 space-y-1">
+                <strong className="text-blue-400 block flex items-center gap-1.5">
+                  <Globe className="w-4 h-4 text-blue-400" />
+                  <span>1. Gmail Web (1 Click)</span>
+                </strong>
+                <p className="text-neutral-400 text-[11px] leading-relaxed">
+                  Apre la tua casella <code className="text-white">mail.google.com</code> autenticata con destinatario, codice ordine, orari e link PayPal già formattati nel corpo. Premi solo "Invia"!
+                </p>
+              </div>
+
+              <div className="p-3.5 rounded-2xl bg-neutral-950 border border-neutral-800 space-y-1">
+                <strong className="text-emerald-400 block flex items-center gap-1.5">
+                  <Mail className="w-4 h-4 text-emerald-400" />
+                  <span>2. App Posta (Mailto)</span>
+                </strong>
+                <p className="text-neutral-400 text-[11px] leading-relaxed">
+                  Apre l'app predefinita del computer o smartphone (Apple Mail su iPhone/Mac, Outlook su Windows, Thunderbird).
+                </p>
+              </div>
+
+              <div className="p-3.5 rounded-2xl bg-neutral-950 border border-neutral-800 space-y-1">
+                <strong className="text-amber-400 block flex items-center gap-1.5">
+                  <Send className="w-4 h-4 text-amber-400" />
+                  <span>3. Webhook / EmailJS</span>
+                </strong>
+                <p className="text-neutral-400 text-[11px] leading-relaxed">
+                  Opzionale: collega un webhook gratuito (Make, Zapier, Formspree) o EmailJS per invio 100% in background senza click manuali.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* CONFIGURAZIONE WEBHOOK & EMAILJS (OPZIONALE) */}
+          <div className="p-6 sm:p-8 rounded-3xl bg-neutral-900/80 border border-neutral-800 space-y-5 shadow-xl">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-neutral-800 pb-3">
+              <div>
+                <span className="text-[10px] font-mono uppercase tracking-widest text-amber-400 font-bold block">
+                  CONNETTORE ESTERNO OPZIONALE (AUTOMAZIONE ZERO-CLICK)
+                </span>
+                <h4 className="text-lg font-heading font-bold text-white flex items-center gap-2 mt-0.5">
+                  <Send className="w-4 h-4 text-amber-400" />
+                  <span>Configurazione Webhook & EmailJS</span>
+                </h4>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleTestWebhook}
+                  disabled={isTestingWebhook || !formData.emailWebhookUrl}
+                  className="px-3.5 py-2 rounded-xl bg-neutral-800 hover:bg-neutral-700 text-neutral-300 disabled:opacity-50 text-xs font-mono flex items-center gap-1.5 cursor-pointer border border-neutral-700"
+                  title="Invia una richiesta POST di prova all'URL specificato"
+                >
+                  <Send className="w-3.5 h-3.5 text-amber-400" />
+                  <span>{isTestingWebhook ? 'Verifica in corso...' : 'Testa Webhook Ora'}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    updateSiteContent({
+                      ...siteContent,
+                      emailWebhookUrl: formData.emailWebhookUrl?.trim(),
+                      emailjsServiceId: formData.emailjsServiceId?.trim(),
+                      emailjsTemplateIdReceipt: formData.emailjsTemplateIdReceipt?.trim(),
+                      emailjsTemplateIdConfirmation: formData.emailjsTemplateIdConfirmation?.trim(),
+                      emailjsPublicKey: formData.emailjsPublicKey?.trim(),
+                    });
+                    setDeskActionNotice('✅ Configurazione Webhook & EmailJS salvata con successo nel CMS!');
+                    setTimeout(() => setDeskActionNotice(null), 5000);
+                  }}
+                  className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-xs font-mono uppercase tracking-wider flex items-center gap-1.5 cursor-pointer shadow-md"
+                >
+                  <Save className="w-4 h-4" />
+                  <span>Salva Configurazione</span>
+                </button>
+              </div>
+            </div>
+
+            {webhookTestNotice && (
+              <div className="p-3.5 rounded-xl bg-neutral-950 border border-amber-500/40 text-xs font-mono text-amber-300">
+                {webhookTestNotice}
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono">
+              <div className="space-y-1 md:col-span-2">
+                <label className="block text-[11px] uppercase text-neutral-400">
+                  URL Webhook Automatico (Make.com / Zapier / Formspree / Cloudflare Worker)
+                </label>
+                <input
+                  type="url"
+                  placeholder="https://hook.eu2.make.com/... oppure https://formspree.io/f/..."
+                  value={formData.emailWebhookUrl || ''}
+                  onChange={(e) => setFormData({ ...formData, emailWebhookUrl: e.target.value })}
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-neutral-950 border border-neutral-800 text-white focus:border-amber-400 outline-none font-mono"
+                />
+                <span className="text-[10px] text-neutral-500 block">
+                  Quando un cliente prenota o il master conferma, verrà inviato un payload JSON completo a questo endpoint.
+                </span>
+              </div>
+
+              <div className="space-y-1">
+                <label className="block text-[11px] uppercase text-neutral-400">
+                  EmailJS Service ID (Opzionale)
+                </label>
+                <input
+                  type="text"
+                  placeholder="es. service_171studio"
+                  value={formData.emailjsServiceId || ''}
+                  onChange={(e) => setFormData({ ...formData, emailjsServiceId: e.target.value })}
+                  className="w-full px-3.5 py-2 rounded-xl bg-neutral-950 border border-neutral-800 text-white focus:border-amber-400 outline-none font-mono"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="block text-[11px] uppercase text-neutral-400">
+                  EmailJS Public Key (Opzionale)
+                </label>
+                <input
+                  type="text"
+                  placeholder="es. user_xxxxxxxxxxxxxxx"
+                  value={formData.emailjsPublicKey || ''}
+                  onChange={(e) => setFormData({ ...formData, emailjsPublicKey: e.target.value })}
+                  className="w-full px-3.5 py-2 rounded-xl bg-neutral-950 border border-neutral-800 text-white focus:border-amber-400 outline-none font-mono"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="block text-[11px] uppercase text-neutral-400">
+                  EmailJS Template ID (Ricevuta Prenotazione)
+                </label>
+                <input
+                  type="text"
+                  placeholder="es. template_receipt_171"
+                  value={formData.emailjsTemplateIdReceipt || ''}
+                  onChange={(e) => setFormData({ ...formData, emailjsTemplateIdReceipt: e.target.value })}
+                  className="w-full px-3.5 py-2 rounded-xl bg-neutral-950 border border-neutral-800 text-white focus:border-amber-400 outline-none font-mono"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="block text-[11px] uppercase text-neutral-400">
+                  EmailJS Template ID (Conferma Master)
+                </label>
+                <input
+                  type="text"
+                  placeholder="es. template_confirmed_171"
+                  value={formData.emailjsTemplateIdConfirmation || ''}
+                  onChange={(e) => setFormData({ ...formData, emailjsTemplateIdConfirmation: e.target.value })}
+                  className="w-full px-3.5 py-2 rounded-xl bg-neutral-950 border border-neutral-800 text-white focus:border-amber-400 outline-none font-mono"
+                />
+              </div>
+            </div>
+          </div>
+
           {/* MASTER EMAIL TEMPLATE EDITOR */}
           <form onSubmit={handleSaveEmailTemplates} className="p-6 sm:p-8 rounded-3xl bg-neutral-900/80 border border-amber-500/40 space-y-6 shadow-xl">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-800 pb-4">
@@ -6446,11 +6736,19 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
                       <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase ${
                         log.deliveryMethod === 'gmail_api'
                           ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                          : log.deliveryMethod === 'webhook'
+                          ? 'bg-blue-500/20 text-blue-300 border border-blue-500/40'
+                          : log.deliveryMethod === 'emailjs'
+                          ? 'bg-purple-500/20 text-purple-300 border border-purple-500/40'
                           : 'bg-amber-500/15 text-amber-300 border border-amber-500/30'
                       }`}>
                         {log.deliveryMethod === 'gmail_api'
-                          ? `✓ INVIATA REALE VIA GMAIL API (${log.gmailMessageId || 'OK'})`
-                          : '● IN CODA (CLICCA INVIA CON GMAIL)'}
+                          ? `✓ INVIATA VIA GMAIL API (${log.gmailMessageId || 'OK'})`
+                          : log.deliveryMethod === 'webhook'
+                          ? '✓ INVIATA VIA WEBHOOK'
+                          : log.deliveryMethod === 'emailjs'
+                          ? '✓ INVIATA VIA EMAILJS'
+                          : '● IN CODA (CLICCA GMAIL WEB)'}
                       </span>
                       <span className="font-mono text-xs font-bold text-white">
                         {log.subject}
@@ -6497,6 +6795,56 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
                   </div>
 
                   <div className="flex flex-wrap items-center justify-end gap-2 pt-2">
+                    {/* 1-Click Gmail Web */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (log.gmailWebComposeUrl) {
+                          window.open(log.gmailWebComposeUrl, '_blank');
+                        } else {
+                          openGmailWebCompose(log.bookingId, log.type === 'PRENOTAZIONE_CONFERMATA' ? 'confirmation' : 'receipt');
+                        }
+                      }}
+                      className="px-3.5 py-1.5 rounded-xl bg-blue-500 hover:bg-blue-400 text-white font-extrabold text-xs font-mono flex items-center gap-1.5 transition-all cursor-pointer shadow-md"
+                      title="Apri email pre-compilata su mail.google.com in 1 click"
+                    >
+                      <Globe className="w-3.5 h-3.5" />
+                      <span>Invia con Gmail Web (1 Click)</span>
+                    </button>
+
+                    {/* Mailto link */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (log.mailtoUrl) {
+                          window.location.href = log.mailtoUrl;
+                        } else {
+                          openMailtoCompose(log.bookingId, log.type === 'PRENOTAZIONE_CONFERMATA' ? 'confirmation' : 'receipt');
+                        }
+                      }}
+                      className="px-3 py-1.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-700 text-xs font-mono flex items-center gap-1.5 transition-all cursor-pointer"
+                      title="Apri con client di posta (Apple Mail / Outlook)"
+                    >
+                      <Mail className="w-3.5 h-3.5" />
+                      <span>App Posta</span>
+                    </button>
+
+                    {/* Copy text */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        navigator.clipboard.writeText(`Riepilogo Notifica 171 Studio Messina:\n\n${log.summary}\n\nLink Pagamento PayPal: ${log.paypalLink}`);
+                        setDeskActionNotice(`✅ Testo notifica ordine #${log.orderCode} copiato negli appunti!`);
+                        setTimeout(() => setDeskActionNotice(null), 4000);
+                      }}
+                      className="px-3 py-1.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-700 text-xs font-mono flex items-center gap-1.5 transition-all cursor-pointer"
+                      title="Copia testo per WhatsApp o chat privata"
+                    >
+                      <Copy className="w-3.5 h-3.5" />
+                      <span>Copia Testo</span>
+                    </button>
+
+                    {/* Re-send via API / Webhook */}
                     <button
                       type="button"
                       onClick={async () => {
@@ -6506,17 +6854,17 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
                             : await sendReceiptEmailViaGmail(log.bookingId);
                         if (res.success) {
                           setDeskActionNotice(
-                            `✅ Email "${log.subject}" spedita con successo via Gmail API a ${log.recipientEmail} (ID: ${res.messageId})!`
+                            `✅ Email inviata con successo via Webhook / API a ${log.recipientEmail}!`
                           );
                         } else {
-                          setDeskActionNotice(`Avviso Gmail: ${res.error}`);
+                          setDeskActionNotice(`Avviso Invio: ${res.error}`);
                         }
                         setTimeout(() => setDeskActionNotice(null), 6000);
                       }}
-                      className="px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-xs font-mono flex items-center gap-1.5 transition-all cursor-pointer"
+                      className="px-3.5 py-1.5 rounded-xl bg-neutral-800 hover:bg-neutral-700 text-amber-300 border border-neutral-700 text-xs font-mono flex items-center gap-1.5 transition-all cursor-pointer"
                     >
                       <Send className="w-3.5 h-3.5" />
-                      <span>Invia / Re-invia Reale con Gmail API</span>
+                      <span>Invia via Webhook / API</span>
                     </button>
 
                     <a
@@ -6526,7 +6874,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
                       className="px-3 py-1.5 rounded-xl bg-neutral-950 text-amber-300 hover:text-white border border-amber-500/30 text-xs font-mono flex items-center gap-1.5 transition-all"
                     >
                       <ExternalLink className="w-3.5 h-3.5" />
-                      <span>Verifica Link PayPal ({log.amount}€)</span>
+                      <span>Verifica PayPal ({log.amount}€)</span>
                     </a>
                   </div>
                 </div>
@@ -7013,39 +7361,89 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
               </div>
             </div>
 
-            {/* Google Calendar Section */}
+            {/* Google Calendar & Universal Calendar Section */}
             <div className="p-4 rounded-2xl bg-neutral-950 border border-neutral-800 text-xs font-mono space-y-2">
               <span className="text-neutral-400 uppercase text-[10px] font-bold block">
-                Google Calendar 171 Studio
+                Google Calendar & Calendario Universale (.ICS)
               </span>
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <span className="text-neutral-300">
                   {selectedBookingDossier.calendarSynced 
                     ? `Sincronizzato: ID Evento #${selectedBookingDossier.calendarEventId || 'primary'}`
-                    : 'Non ancora sincronizzato direttamente nell\'account Calendar.'}
+                    : 'Disponibile per sincronizzazione immediata con 1 click (senza autorizzazioni).'}
                 </span>
 
-                <div className="flex items-center gap-2">
-                  <a
-                    href={selectedBookingDossier.calendarEventUrl || getGoogleCalendarWebUrl(selectedBookingDossier)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-3 py-1.5 rounded-xl bg-neutral-800 hover:bg-neutral-700 text-amber-300 border border-neutral-700 text-xs flex items-center gap-1.5 transition-colors"
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => openGoogleCalendarWeb(selectedBookingDossier.id)}
+                    className="px-3 py-1.5 rounded-xl bg-neutral-800 hover:bg-neutral-700 text-amber-300 border border-neutral-700 text-xs flex items-center gap-1.5 transition-colors cursor-pointer"
+                    title="Aggiungi automaticamente al tuo Google Calendar"
                   >
                     <Calendar className="w-3.5 h-3.5" />
-                    <span>Visualizza in Google Calendar</span>
+                    <span>Aggiungi a Google Cal (1 Click)</span>
                     <ExternalLink className="w-3 h-3" />
-                  </a>
+                  </button>
 
                   <button
                     type="button"
-                    onClick={() => handleSyncCalendarSingle(selectedBookingDossier)}
-                    disabled={syncingBookingId === selectedBookingDossier.id}
-                    className="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs transition-colors cursor-pointer"
+                    onClick={() => downloadBookingCalendarIcs(selectedBookingDossier.id)}
+                    className="px-3 py-1.5 rounded-xl bg-neutral-800 hover:bg-neutral-700 text-neutral-200 border border-neutral-700 text-xs flex items-center gap-1.5 transition-colors cursor-pointer"
+                    title="Scarica file .ICS universale compatibile con iPhone, Mac, Windows Outlook e Android"
                   >
-                    {syncingBookingId === selectedBookingDossier.id ? 'Sincronizzazione...' : 'Sincronizza Ora'}
+                    <Download className="w-3.5 h-3.5" />
+                    <span>Scarica .ICS</span>
                   </button>
                 </div>
+              </div>
+            </div>
+
+            {/* Email Dispatch Section (Senza Google OAuth) */}
+            <div className="p-4 rounded-2xl bg-neutral-950 border border-blue-500/30 text-xs font-mono space-y-3">
+              <div className="flex items-center justify-between border-b border-neutral-800 pb-2">
+                <span className="text-blue-400 uppercase text-[10px] font-bold flex items-center gap-1.5">
+                  <Mail className="w-3.5 h-3.5" />
+                  <span>Invio Email al Cliente (Senza Google OAuth)</span>
+                </span>
+                <span className="text-[10px] text-neutral-400 font-mono">
+                  Destinatario: {selectedBookingDossier.userEmail}
+                </span>
+              </div>
+
+              <p className="text-neutral-300 text-[11px]">
+                Invia con 1 click l'email di conferma o ricevuta con codice ordine e link PayPal già compilati:
+              </p>
+
+              <div className="flex flex-wrap items-center gap-2 pt-1">
+                <button
+                  type="button"
+                  onClick={() => openGmailWebCompose(selectedBookingDossier.id, 'confirmation')}
+                  className="px-3.5 py-1.5 rounded-xl bg-blue-500 hover:bg-blue-400 text-white font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer"
+                  title="Apre mail.google.com con il testo di conferma pronto per l'invio"
+                >
+                  <Globe className="w-3.5 h-3.5" />
+                  <span>Invia Conferma via Gmail Web (1 Click)</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => openGmailWebCompose(selectedBookingDossier.id, 'receipt')}
+                  className="px-3 py-1.5 rounded-xl bg-neutral-800 hover:bg-neutral-700 text-amber-300 border border-neutral-700 text-xs flex items-center gap-1.5 transition-colors cursor-pointer"
+                  title="Apre mail.google.com con il riepilogo/ricevuta pronto"
+                >
+                  <Mail className="w-3.5 h-3.5" />
+                  <span>Invia Ricevuta via Gmail Web</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => openMailtoCompose(selectedBookingDossier.id, 'confirmation')}
+                  className="px-3 py-1.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-neutral-300 border border-neutral-700 text-xs flex items-center gap-1.5 transition-colors cursor-pointer"
+                  title="Invia tramite programma di posta del computer (Apple Mail / Outlook)"
+                >
+                  <Mail className="w-3.5 h-3.5" />
+                  <span>App Posta (Mailto)</span>
+                </button>
               </div>
             </div>
 

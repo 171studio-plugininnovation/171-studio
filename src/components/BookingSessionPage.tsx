@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { 
   ArrowLeft, Calendar as CalendarIcon, Clock, User, Mail, Phone, 
   CheckCircle2, Sparkles, Info, ShieldCheck, DollarSign, Send, RotateCcw,
-  Lock, LogIn, ChevronRight, Check, CreditCard, ExternalLink, Copy, Sliders, Sun, Moon, Zap, Tag, Gift, Percent, X
+  Lock, LogIn, ChevronRight, Check, CreditCard, ExternalLink, Copy, Sliders, Sun, Moon, Zap, Tag, Gift, Percent, X, Download
 } from 'lucide-react';
 import { PageId } from '../types';
 import { 
@@ -28,6 +28,10 @@ export const BookingSessionPage: React.FC<BookingSessionPageProps> = ({ onNaviga
     isGmailConnected,
     sendReceiptEmailViaGmail,
     validateAndCalculateDiscount,
+    openGmailWebCompose,
+    openMailtoCompose,
+    downloadBookingCalendarIcs,
+    openGoogleCalendarWeb,
   } = useStudio();
 
   const todayStr = useMemo(() => {
@@ -313,35 +317,97 @@ export const BookingSessionPage: React.FC<BookingSessionPageProps> = ({ onNaviga
               Grazie, {nome}!
             </h2>
 
-            {/* Email Notification Alert */}
-            <div className="w-full my-4 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-mono flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-left">
-              <div className="flex items-start gap-3">
-                <Mail className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-                <div>
-                  <strong className="text-white block mb-0.5">
-                    {lastSentEmail?.deliveryMethod === 'gmail_api'
-                      ? `✓ Email Automatica Inviata tramite Gmail (171studiomessina@gmail.com)`
-                      : `Email Automatica Registrata (171studiomessina@gmail.com)`}
+            {/* Email Notification & 1-Click Dispatch (Zero Google Auth Required) */}
+            <div className="w-full my-4 p-5 rounded-2xl bg-gradient-to-r from-amber-950/30 via-neutral-900/90 to-amber-950/20 border border-amber-500/40 text-xs font-mono space-y-3 text-left shadow-lg">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-neutral-800 pb-2.5">
+                <div className="flex items-center gap-2">
+                  <Mail className="w-4 h-4 text-amber-400 shrink-0" />
+                  <strong className="text-white text-xs uppercase tracking-wide">
+                    Notifica di Presa in Carico ({submittedBooking?.userEmail || email})
                   </strong>
-                  <span>
-                    Messaggio: <em>"Grazie della tua prenotazione! Il nostro staff sta verificando la disponibilità..."</em> inviato a{' '}
-                    <span className="text-white font-bold">{submittedBooking?.userEmail || email}</span> (Ordine{' '}
-                    <span className="text-amber-400 font-bold">{submittedBooking?.orderCode}</span>).
-                  </span>
                 </div>
+                <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase border ${
+                  lastSentEmail?.deliveryMethod === 'gmail_api' || lastSentEmail?.deliveryMethod === 'webhook' || lastSentEmail?.deliveryMethod === 'emailjs'
+                    ? 'bg-emerald-950/80 text-emerald-300 border-emerald-500/50'
+                    : 'bg-amber-500/15 text-amber-300 border border-amber-500/40'
+                }`}>
+                  {lastSentEmail?.deliveryMethod === 'gmail_api'
+                    ? '✓ Inviata via Gmail API'
+                    : lastSentEmail?.deliveryMethod === 'webhook'
+                    ? '✓ Inoltrata via Webhook'
+                    : lastSentEmail?.deliveryMethod === 'emailjs'
+                    ? '✓ Inviata via EmailJS'
+                    : '● Pronta per Invio Diretto (1 Click)'}
+                </span>
               </div>
 
+              <p className="text-[11.5px] text-neutral-300 font-sans leading-relaxed">
+                La tua richiesta per l'ordine <strong className="text-amber-400 font-mono">#{submittedBooking?.orderCode}</strong> è registrata nel sistema di 171 Studio. Poiché l'accesso non richiede Google OAuth, puoi aprire e inviare direttamente la ricevuta con 1 clic:
+              </p>
+
               {submittedBooking && (
-                <button
-                  type="button"
-                  onClick={() => sendReceiptEmailViaGmail(submittedBooking.id)}
-                  className="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-[11px] font-mono uppercase tracking-wider shrink-0 flex items-center gap-1.5 transition-all cursor-pointer"
-                >
-                  <Send className="w-3.5 h-3.5" />
-                  <span>{isGmailConnected ? 'Re-invia con Gmail' : 'Autorizza & Invia con Gmail'}</span>
-                </button>
+                <div className="flex flex-wrap items-center gap-2 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => openGmailWebCompose(submittedBooking.id, 'receipt')}
+                    className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black font-extrabold text-[11px] font-mono uppercase tracking-wider flex items-center gap-1.5 transition-all cursor-pointer shadow-md"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                    <span>Invia con Gmail Web (1 Click)</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => openMailtoCompose(submittedBooking.id, 'receipt')}
+                    className="px-3.5 py-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-neutral-200 border border-neutral-700 text-[11px] font-mono uppercase tracking-wider flex items-center gap-1.5 transition-all cursor-pointer"
+                  >
+                    <Mail className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Invia con App Posta (Mailto)</span>
+                  </button>
+                </div>
               )}
             </div>
+
+            {/* Calendar Integration (Universal 1-Click Web & .ICS Download) */}
+            {submittedBooking && (
+              <div className="w-full mb-6 p-4 rounded-2xl bg-neutral-900/80 border border-neutral-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-left">
+                <div className="flex items-start gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
+                    <CalendarIcon className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <strong className="text-white text-xs font-mono uppercase block mb-0.5">
+                      Connessione Calendario Sessione
+                    </strong>
+                    <p className="text-[11px] text-neutral-400 font-sans">
+                      Aggiungi la sessione del <strong className="text-white">{dataPreferita}</strong> ({oraPreferita} - {calculatedEndTime}) al tuo calendario personale:
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => openGoogleCalendarWeb(submittedBooking.id)}
+                    className="px-3 py-1.5 rounded-xl bg-neutral-950 hover:bg-neutral-800 text-amber-300 hover:text-white border border-amber-500/40 text-xs font-mono flex items-center gap-1.5 transition-all cursor-pointer"
+                    title="Aggiungi a Google Calendar"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Google Calendar (1 Click)</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => downloadBookingCalendarIcs(submittedBooking.id)}
+                    className="px-3 py-1.5 rounded-xl bg-neutral-950 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-700 text-xs font-mono flex items-center gap-1.5 transition-all cursor-pointer"
+                    title="Scarica file .ICS per Apple Calendar / Outlook"
+                  >
+                    <Download className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>Scarica .ICS (Apple/Outlook)</span>
+                  </button>
+                </div>
+              </div>
+            )}
 
             <p className="text-sm text-neutral-300 font-light mb-6 leading-relaxed">
               La tua sessione di{' '}

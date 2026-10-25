@@ -75,6 +75,94 @@ export function createMailtoLink(to: string, subject: string, body: string): str
 }
 
 /**
+ * Generates a direct Gmail Web Compose URL (zero Google OAuth tokens or backend required!).
+ * Opens directly in user's or master's browser with To, Subject, and pre-formatted body ready.
+ */
+export function getGmailWebComposeUrl(to: string, subject: string, body: string): string {
+  return `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(to)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+
+/**
+ * Sends real email via generic Webhook (e.g. Formspree, Make.com, Zapier, Pipedream, Cloudflare Worker).
+ * No Google OAuth or complex setup needed!
+ */
+export async function sendEmailViaWebhook(
+  webhookUrl: string,
+  payload: Record<string, any>
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const res = await fetch(webhookUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (res.ok) {
+      return { success: true };
+    }
+    const errText = await res.text();
+    return { success: false, error: `Webhook error (${res.status}): ${errText}` };
+  } catch (err: any) {
+    return { success: false, error: err.message || 'Errore di connessione webhook' };
+  }
+}
+
+/**
+ * Sends real email via EmailJS REST API directly from the browser (Zero backend & Zero Google OAuth).
+ */
+export async function sendEmailViaEmailJS(
+  serviceId: string,
+  templateId: string,
+  publicKey: string,
+  templateParams: Record<string, any>
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const res = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        service_id: serviceId,
+        template_id: templateId,
+        user_id: publicKey,
+        template_params: templateParams,
+      }),
+    });
+    if (res.ok) {
+      return { success: true };
+    }
+    const errText = await res.text();
+    return { success: false, error: `EmailJS error (${res.status}): ${errText}` };
+  } catch (err: any) {
+    return { success: false, error: err.message || 'Errore di connessione EmailJS' };
+  }
+}
+
+/**
+ * Loads current email automation settings from localStorage
+ */
+export function getEmailAutomationConfig(): {
+  emailWebhookUrl?: string;
+  emailjsServiceId?: string;
+  emailjsTemplateIdReceipt?: string;
+  emailjsTemplateIdConfirmation?: string;
+  emailjsPublicKey?: string;
+} {
+  try {
+    const saved = localStorage.getItem('171_site_content');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      return {
+        emailWebhookUrl: parsed.emailWebhookUrl,
+        emailjsServiceId: parsed.emailjsServiceId,
+        emailjsTemplateIdReceipt: parsed.emailjsTemplateIdReceipt,
+        emailjsTemplateIdConfirmation: parsed.emailjsTemplateIdConfirmation,
+        emailjsPublicKey: parsed.emailjsPublicKey,
+      };
+    }
+  } catch {}
+  return {};
+}
+
+/**
  * Loads current custom email templates from localStorage or falls back to defaults
  */
 export function getActiveEmailTemplates(custom?: Partial<EmailTemplatesConfig>): EmailTemplatesConfig {
@@ -520,6 +608,8 @@ Mittente Ufficiale: ${MASTER_EMAIL}
   `.trim();
 
   const htmlBody = buildBookingReceivedEmailHtml(booking, orderCode, paypalEmail, tpl);
+  const gmailWebComposeUrl = getGmailWebComposeUrl(booking.userEmail, subject, textBody);
+  const mailtoUrl = createMailtoLink(booking.userEmail, subject, textBody);
 
   const emailLog: EmailLog = {
     id: `email-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
@@ -536,11 +626,15 @@ Mittente Ufficiale: ${MASTER_EMAIL}
     sentAt: new Date().toLocaleString('it-IT', { dateStyle: 'short', timeStyle: 'medium' }),
     status: 'inviata',
     summary: textBody,
+    gmailWebComposeUrl,
+    mailtoUrl,
   };
 
   const token = explicitToken || getCachedAccessToken();
   emailLog.oauthTokenPresent = Boolean(token);
+  let sent = false;
 
+  // 1. Try Gmail API if OAuth token is active
   if (token) {
     try {
       const sendResult = await sendGmailMessage(token, {
@@ -560,24 +654,80 @@ Mittente Ufficiale: ${MASTER_EMAIL}
         emailLog.deliveryMethod = 'gmail_api';
         emailLog.gmailMessageId = sendResult.messageId;
         emailLog.gmailThreadId = sendResult.threadId;
-      } else {
-        emailLog.status = 'errore';
-        emailLog.deliveryMethod = 'outbox';
-        emailLog.error = sendResult.error;
+        sent = true;
       }
     } catch (err) {
-      emailLog.status = 'errore';
-      emailLog.deliveryMethod = 'outbox';
-      emailLog.httpStatusCode = 0;
-      emailLog.errorCode = 'NETWORK_EXCEPTION';
       emailLog.error = err instanceof Error ? err.message : String(err);
     }
-  } else {
-    emailLog.status = 'in_attesa_invio_gmail';
-    emailLog.deliveryMethod = 'outbox';
-    emailLog.httpStatusCode = 0;
-    emailLog.errorCode = 'AUTH_TOKEN_MISSING';
-    emailLog.error = 'In attesa di autorizzazione OAuth Gmail (171studiomessina@gmail.com)';
+  }
+
+  // 2. If no OAuth token or Gmail API failed, check Webhook or EmailJS
+  if (!sent) {
+    const autoCfg = getEmailAutomationConfig();
+
+    if (autoCfg.emailWebhookUrl) {
+      try {
+        const whRes = await sendEmailViaWebhook(autoCfg.emailWebhookUrl, {
+          eventType: 'PRENOTAZIONE_RICEVUTA',
+          orderCode,
+          booking,
+          recipientEmail: booking.userEmail,
+          recipientName: booking.userName,
+          subject,
+          textBody,
+          htmlBody,
+          paypalUrl,
+        });
+        if (whRes.success) {
+          emailLog.status = 'inviata_con_webhook';
+          emailLog.deliveryMethod = 'webhook';
+          sent = true;
+        } else {
+          emailLog.error = whRes.error;
+        }
+      } catch (err: any) {
+        emailLog.error = err?.message;
+      }
+    } else if (autoCfg.emailjsServiceId && autoCfg.emailjsPublicKey) {
+      try {
+        const tmplId = autoCfg.emailjsTemplateIdReceipt || autoCfg.emailjsTemplateIdConfirmation;
+        if (tmplId) {
+          const ejsRes = await sendEmailViaEmailJS(
+            autoCfg.emailjsServiceId,
+            tmplId,
+            autoCfg.emailjsPublicKey,
+            {
+              to_name: booking.userName,
+              to_email: booking.userEmail,
+              order_code: orderCode,
+              service_title: booking.serviceTitle,
+              session_date: booking.date,
+              session_time: booking.time,
+              session_price: booking.estimatedPrice,
+              paypal_link: paypalUrl,
+              subject,
+              message: textBody,
+            }
+          );
+          if (ejsRes.success) {
+            emailLog.status = 'inviata_con_emailjs';
+            emailLog.deliveryMethod = 'emailjs';
+            sent = true;
+          } else {
+            emailLog.error = ejsRes.error;
+          }
+        }
+      } catch (err: any) {
+        emailLog.error = err?.message;
+      }
+    }
+  }
+
+  // 3. Fallback to 1-Click Gmail Web & Mailto
+  if (!sent) {
+    emailLog.status = 'in_attesa';
+    emailLog.deliveryMethod = 'gmail_web';
+    emailLog.error = 'In attesa: usa il pulsante rapido "Invia con Gmail Web (1 Click)" o configura un Webhook/EmailJS.';
   }
 
   try {
@@ -654,6 +804,8 @@ Mittente Ufficiale: ${MASTER_EMAIL}
   `.trim();
 
   const htmlBody = buildBookingConfirmedEmailHtml(booking, orderCode, paypalEmail, tpl);
+  const gmailWebComposeUrl = getGmailWebComposeUrl(booking.userEmail, subject, textBody);
+  const mailtoUrl = createMailtoLink(booking.userEmail, subject, textBody);
 
   const emailLog: EmailLog = {
     id: `email-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
@@ -670,11 +822,15 @@ Mittente Ufficiale: ${MASTER_EMAIL}
     sentAt: new Date().toLocaleString('it-IT', { dateStyle: 'short', timeStyle: 'medium' }),
     status: 'inviata',
     summary: textBody,
+    gmailWebComposeUrl,
+    mailtoUrl,
   };
 
   const token = explicitToken || getCachedAccessToken();
   emailLog.oauthTokenPresent = Boolean(token);
+  let sent = false;
 
+  // 1. Try Gmail API if OAuth token is active
   if (token) {
     try {
       const sendResult = await sendGmailMessage(token, {
@@ -694,24 +850,80 @@ Mittente Ufficiale: ${MASTER_EMAIL}
         emailLog.deliveryMethod = 'gmail_api';
         emailLog.gmailMessageId = sendResult.messageId;
         emailLog.gmailThreadId = sendResult.threadId;
-      } else {
-        emailLog.status = 'errore';
-        emailLog.deliveryMethod = 'outbox';
-        emailLog.error = sendResult.error;
+        sent = true;
       }
     } catch (err) {
-      emailLog.status = 'errore';
-      emailLog.deliveryMethod = 'outbox';
-      emailLog.httpStatusCode = 0;
-      emailLog.errorCode = 'NETWORK_EXCEPTION';
       emailLog.error = err instanceof Error ? err.message : String(err);
     }
-  } else {
-    emailLog.status = 'in_attesa_invio_gmail';
-    emailLog.deliveryMethod = 'outbox';
-    emailLog.httpStatusCode = 0;
-    emailLog.errorCode = 'AUTH_TOKEN_MISSING';
-    emailLog.error = 'In attesa di autorizzazione OAuth Gmail (171studiomessina@gmail.com)';
+  }
+
+  // 2. If no OAuth token or Gmail API failed, check Webhook or EmailJS
+  if (!sent) {
+    const autoCfg = getEmailAutomationConfig();
+
+    if (autoCfg.emailWebhookUrl) {
+      try {
+        const whRes = await sendEmailViaWebhook(autoCfg.emailWebhookUrl, {
+          eventType: 'PRENOTAZIONE_CONFERMATA',
+          orderCode,
+          booking,
+          recipientEmail: booking.userEmail,
+          recipientName: booking.userName,
+          subject,
+          textBody,
+          htmlBody,
+          paypalUrl,
+        });
+        if (whRes.success) {
+          emailLog.status = 'inviata_con_webhook';
+          emailLog.deliveryMethod = 'webhook';
+          sent = true;
+        } else {
+          emailLog.error = whRes.error;
+        }
+      } catch (err: any) {
+        emailLog.error = err?.message;
+      }
+    } else if (autoCfg.emailjsServiceId && autoCfg.emailjsPublicKey) {
+      try {
+        const tmplId = autoCfg.emailjsTemplateIdConfirmation || autoCfg.emailjsTemplateIdReceipt;
+        if (tmplId) {
+          const ejsRes = await sendEmailViaEmailJS(
+            autoCfg.emailjsServiceId,
+            tmplId,
+            autoCfg.emailjsPublicKey,
+            {
+              to_name: booking.userName,
+              to_email: booking.userEmail,
+              order_code: orderCode,
+              service_title: booking.serviceTitle,
+              session_date: booking.date,
+              session_time: booking.time,
+              session_price: booking.estimatedPrice,
+              paypal_link: paypalUrl,
+              subject,
+              message: textBody,
+            }
+          );
+          if (ejsRes.success) {
+            emailLog.status = 'inviata_con_emailjs';
+            emailLog.deliveryMethod = 'emailjs';
+            sent = true;
+          } else {
+            emailLog.error = ejsRes.error;
+          }
+        }
+      } catch (err: any) {
+        emailLog.error = err?.message;
+      }
+    }
+  }
+
+  // 3. Fallback to 1-Click Gmail Web & Mailto
+  if (!sent) {
+    emailLog.status = 'in_attesa';
+    emailLog.deliveryMethod = 'gmail_web';
+    emailLog.error = 'In attesa: usa il pulsante rapido "Invia con Gmail Web (1 Click)" o configura un Webhook/EmailJS.';
   }
 
   try {

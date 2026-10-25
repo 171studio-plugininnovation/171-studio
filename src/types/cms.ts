@@ -382,6 +382,12 @@ export interface SiteContent {
   registrationDiscountEnabled?: boolean;
   registrationDiscountPercent?: number;
   registrationDiscountCode?: string;
+  // Automated Email dispatch without Google OAuth Settings
+  emailWebhookUrl?: string; // Webhook endpoint (Formspree, Make.com, Zapier, Pipedream, etc.)
+  emailjsServiceId?: string; // EmailJS service ID (e.g. service_171studio)
+  emailjsTemplateIdReceipt?: string; // EmailJS template for booking received
+  emailjsTemplateIdConfirmation?: string; // EmailJS template for booking confirmed
+  emailjsPublicKey?: string; // EmailJS public key / user ID
 
   // --- CMS TEXTS & CONTENT FOR ALL PUBLIC PAGES ---
   // 1. Frontpage / Home
@@ -561,8 +567,10 @@ export interface EmailLog {
   paypalEmail: string;
   paypalLink: string;
   sentAt: string;
-  status: 'inviata' | 'inviata_con_gmail' | 'in_attesa_invio_gmail' | 'errore';
-  deliveryMethod?: 'gmail_api' | 'outbox' | 'manual';
+  status: 'inviata' | 'inviata_con_gmail' | 'inviata_con_webhook' | 'inviata_con_emailjs' | 'in_attesa_invio_gmail' | 'in_attesa' | 'errore';
+  deliveryMethod?: 'gmail_api' | 'webhook' | 'emailjs' | 'outbox' | 'manual' | 'gmail_web';
+  gmailWebComposeUrl?: string;
+  mailtoUrl?: string;
   gmailMessageId?: string;
   gmailThreadId?: string;
   httpStatusCode?: number;

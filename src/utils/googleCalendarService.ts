@@ -32,6 +32,80 @@ export const getGoogleCalendarWebUrl = (booking: BookingRecord): string => {
 };
 
 /**
+ * Generates an RFC 5545 compliant iCalendar (.ics) string
+ * for universal calendar compatibility (Apple Calendar, iOS, macOS, Outlook, Google Calendar).
+ */
+export const generateBookingIcsContent = (booking: BookingRecord): string => {
+  const [startHour = 10, startMin = 0] = (booking.time || '10:00').split(':').map(Number);
+  const endHour = Math.min(23, startHour + (booking.hours || 2));
+
+  const cleanDate = (booking.date || '2026-10-25').replace(/-/g, '');
+  const startStr = `${cleanDate}T${String(startHour).padStart(2, '0')}${String(startMin).padStart(2, '0')}00`;
+  const endStr = `${cleanDate}T${String(endHour).padStart(2, '0')}${String(startMin).padStart(2, '0')}00`;
+  const nowIso = new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+
+  const orderCode = booking.orderCode || booking.id.slice(-8);
+  const summary = `171 STUDIO: ${booking.serviceTitle} - ${booking.userName}`;
+  const description = [
+    `171 STUDIO MESSINA - SESSIONE REGISTRAZIONE & PRODUZIONE`,
+    `Codice Ordine: #${orderCode}`,
+    `Artista: ${booking.userName}`,
+    `Email: ${booking.userEmail}`,
+    `Telefono: ${booking.userPhone}`,
+    `Servizio: ${booking.serviceTitle} (${booking.hours} ore)`,
+    `Totale: ${booking.estimatedPrice} EUR`,
+    `PayPal: ${STUDIO_PAYPAL_EMAIL}`,
+    `Note: ${booking.notes || 'Nessuna specifica'}`,
+  ].join('\\n');
+
+  return [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//171 Studio Messina//Booking System//IT',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
+    'BEGIN:VEVENT',
+    `UID:session-${orderCode}@171studio.com`,
+    `DTSTAMP:${nowIso}`,
+    `DTSTART:${startStr}`,
+    `DTEND:${endStr}`,
+    `SUMMARY:${summary.replace(/,/g, '\\,')}`,
+    `DESCRIPTION:${description.replace(/,/g, '\\,')}`,
+    'LOCATION:171 Studio - Messina (ME)\\, Sicilia\\, Italia',
+    'STATUS:CONFIRMED',
+    'BEGIN:VALARM',
+    'TRIGGER:-PT2H',
+    'ACTION:DISPLAY',
+    'DESCRIPTION:Promemoria Sessione 171 Studio tra 2 ore',
+    'END:VALARM',
+    'BEGIN:VALARM',
+    'TRIGGER:-P1D',
+    'ACTION:DISPLAY',
+    'DESCRIPTION:Promemoria Sessione 171 Studio domani',
+    'END:VALARM',
+    'END:VEVENT',
+    'END:VCALENDAR',
+  ].join('\r\n');
+};
+
+/**
+ * Downloads a universal .ics calendar file directly in the browser
+ */
+export const downloadBookingIcsFile = (booking: BookingRecord): void => {
+  const icsContent = generateBookingIcsContent(booking);
+  const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  const fileName = `171_Studio_Sessione_${booking.orderCode || 'ORD'}.ics`;
+  link.download = fileName;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+};
+
+/**
  * Calls Google Calendar REST API v3 using the client-side OAuth Bearer token.
  * Inserts the confirmed recording session directly into the user's Google Calendar.
  */

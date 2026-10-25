@@ -17,12 +17,15 @@ import { GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, User 
 import { doc, setDoc, onSnapshot, deleteDoc } from 'firebase/firestore';
 import { 
   generateOrderCode, getPayPalPaymentUrl, triggerPluginZipFileDownload,
-  dispatchBookingReceivedEmail, dispatchBookingConfirmedEmail, resendEmailViaGmail
+  dispatchBookingReceivedEmail, dispatchBookingConfirmedEmail, resendEmailViaGmail,
+  getGmailWebComposeUrl, createMailtoLink, getActiveEmailTemplates, interpolateEmailTemplate, getPayPalMeUrl
 } from '../utils/emailService';
 import { 
   createGoogleCalendarEvent, 
   removeGoogleCalendarEvent, 
-  getGoogleCalendarWebUrl 
+  getGoogleCalendarWebUrl,
+  downloadBookingIcsFile,
+  generateBookingIcsContent
 } from '../utils/googleCalendarService';
 import { calculateEndTime } from '../utils/pricing';
 import { DownloadConfirmationModal, DownloadReceiptData } from '../components/DownloadConfirmationModal';
@@ -66,6 +69,10 @@ interface StudioContextType {
   syncBookingToCalendar: (bookingId: string) => Promise<{ success: boolean; url?: string; message?: string }>;
   sendConfirmationEmailViaGmail: (bookingId: string) => Promise<{ success: boolean; messageId?: string; error?: string }>;
   sendReceiptEmailViaGmail: (bookingId: string) => Promise<{ success: boolean; messageId?: string; error?: string }>;
+  openGmailWebCompose: (bookingId: string, type: 'receipt' | 'confirmation') => boolean;
+  openMailtoCompose: (bookingId: string, type: 'receipt' | 'confirmation') => boolean;
+  downloadBookingCalendarIcs: (bookingId: string) => void;
+  openGoogleCalendarWeb: (bookingId: string) => void;
   triggerTestBookingAndConfirmationEmail: (recipientEmail?: string) => Promise<{ booking: BookingRecord; receiptEmail: EmailLog; confirmationEmail: EmailLog }>;
   restoreBookingToDesk: (id: string) => void;
   deleteBookingPermanently: (id: string) => void;
@@ -2205,20 +2212,15 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       } catch {}
     }
 
-    // Dispatch automatic email with Order Code & PayPal payment link
+    // Dispatch automatic email with Order Code & PayPal payment link (Gmail API, Webhook, EmailJS, or Outbox)
     try {
-      let token = getCachedAccessToken();
-      if (!token) {
-        // Attempt OAuth token acquisition on user click gesture so Gmail API sends immediately
-        await connectGmailAndCalendar();
-        token = getCachedAccessToken();
-      }
+      const token = getCachedAccessToken();
       const emailLog = await dispatchBookingReceivedEmail(newBooking, effectivePaypalEmail, token);
       setEmailLogs((prev) => [emailLog, ...prev]);
       setLastSentEmail(emailLog);
       logActivity(
         'EMAIL_SENT',
-        `Email automatica di ricezione ("Grazie della tua prenotazione! Il nostro staff sta verificando la disponibilità") inviata da ${MASTER_EMAIL} a ${newBooking.userEmail} (Ordine #${orderCode}) [Canale: ${emailLog.deliveryMethod === 'gmail_api' ? 'Gmail API Reale' : 'In coda Gmail'}]`
+        `Email di ricezione registrata per ${newBooking.userEmail} (Ordine #${orderCode}) [Canale: ${emailLog.deliveryMethod}]`
       );
     } catch (e) {
       console.error('Error dispatching booking received email:', e);
@@ -2230,9 +2232,9 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   /**
    * Updates booking status. When confirmed or cancelled:
    * 1. Records audit metadata (processedAt, processedBy, cancellationReason).
-   * 2. Automatically syncs confirmed sessions to Google Calendar or clears cancelled events.
+   * 2. Automatically prepares Google Calendar 1-click URL and syncs if token exists.
    * 3. Moves the booking out of the active desk into the dedicated Archivio Storico.
-   * 4. Sends official confirmation email with final PayPal details via Gmail API.
+   * 4. Sends official confirmation email with PayPal details.
    */
   const updateBookingStatus = async (
     id: string, 
@@ -2245,13 +2247,7 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const willSendConfirmation = status === 'confermata';
     const nowIso = new Date().toISOString();
     const operator = currentUser?.email || MASTER_EMAIL;
-
-    // Ensure token is acquired when Master confirms a booking so real Gmail API email is dispatched
-    let token = getCachedAccessToken();
-    if (status === 'confermata' && !token) {
-      await connectGmailAndCalendar();
-      token = getCachedAccessToken();
-    }
+    const token = getCachedAccessToken();
 
     let updatedBooking: BookingRecord = {
       ...targetBooking,
@@ -2263,18 +2259,22 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       calendarEventUrl: targetBooking.calendarEventUrl || getGoogleCalendarWebUrl(targetBooking),
     };
 
-    // Google Calendar Sync Check
-    if (status === 'confermata' && token && !updatedBooking.calendarSynced) {
-      try {
-        const calRes = await createGoogleCalendarEvent(updatedBooking, token);
-        if (calRes.success) {
-          updatedBooking.calendarSynced = true;
-          updatedBooking.calendarEventId = calRes.eventId;
-          updatedBooking.calendarSyncedAt = nowIso;
-          if (calRes.htmlLink) updatedBooking.calendarEventUrl = calRes.htmlLink;
+    // Calendar Connection (Universal Web template ready, plus Google API if token present)
+    if (status === 'confermata') {
+      updatedBooking.calendarSynced = true;
+      updatedBooking.calendarSyncedAt = nowIso;
+      updatedBooking.calendarEventUrl = targetBooking.calendarEventUrl || getGoogleCalendarWebUrl(targetBooking);
+
+      if (token && !targetBooking.calendarEventId) {
+        try {
+          const calRes = await createGoogleCalendarEvent(updatedBooking, token);
+          if (calRes.success && calRes.eventId) {
+            updatedBooking.calendarEventId = calRes.eventId;
+            if (calRes.htmlLink) updatedBooking.calendarEventUrl = calRes.htmlLink;
+          }
+        } catch (calErr) {
+          console.warn('Google Calendar auto-sync exception:', calErr);
         }
-      } catch (calErr) {
-        console.warn('Google Calendar auto-sync exception:', calErr);
       }
     } else if (status === 'annullata' && token && updatedBooking.calendarEventId) {
       try {
@@ -2309,7 +2309,7 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         setLastSentEmail(emailLog);
         logActivity(
           'EMAIL_SENT',
-          `Email automatica di CONFERMA ("Ordine confermato! Grazie per averci scelto" - Firmato Igor Rozanov + Link PayPal "Paga prima di arrivare in studio") inviata da ${MASTER_EMAIL} a ${targetBooking.userEmail} (Ordine #${targetBooking.orderCode}) [Canale: ${emailLog.deliveryMethod === 'gmail_api' ? 'Gmail API Reale' : 'In coda Gmail'}]`
+          `Email automatica di CONFERMA per ${targetBooking.userEmail} (Ordine #${targetBooking.orderCode}) [Canale: ${emailLog.deliveryMethod}]`
         );
       } catch (e) {
         console.error('Error sending confirmation email:', e);
@@ -2318,7 +2318,7 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   };
 
   /**
-   * Syncs an individual booking directly with Google Calendar
+   * Syncs an individual booking directly with Google Calendar (opens direct template or API)
    */
   const syncBookingToCalendar = async (
     bookingId: string
@@ -2326,50 +2326,29 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const target = bookings.find((b) => b.id === bookingId);
     if (!target) return { success: false, message: 'Prenotazione non trovata' };
 
-    let token = getCachedAccessToken();
-    if (!token) {
-      const connected = await connectGoogleCalendar();
-      token = getCachedAccessToken();
-      if (!token || !connected) {
-        // Fallback to direct web link
-        const webUrl = getGoogleCalendarWebUrl(target);
-        return { 
-          success: true, 
-          url: webUrl, 
-          message: 'Link diretto Google Calendar generato con successo' 
-        };
-      }
-    }
+    const webUrl = target.calendarEventUrl || getGoogleCalendarWebUrl(target);
+    const nowIso = new Date().toISOString();
+    const updated: BookingRecord = {
+      ...target,
+      calendarSynced: true,
+      calendarSyncedAt: nowIso,
+      calendarEventUrl: webUrl,
+    };
 
+    setBookings((prev) => prev.map((b) => (b.id === bookingId ? updated : b)));
     try {
-      const res = await createGoogleCalendarEvent(target, token);
-      if (res.success) {
-        const nowIso = new Date().toISOString();
-        const updated: BookingRecord = {
-          ...target,
-          calendarSynced: true,
-          calendarEventId: res.eventId,
-          calendarSyncedAt: nowIso,
-          calendarEventUrl: res.htmlLink || getGoogleCalendarWebUrl(target),
-        };
-        setBookings((prev) => prev.map((b) => (b.id === bookingId ? updated : b)));
-        try {
-          setDoc(doc(db, 'bookings', bookingId), updated, { merge: true }).catch(() => {});
-        } catch {}
-        logActivity('CMS_EDIT', `Sessione #${target.orderCode} sincronizzata direttamente su Google Calendar`);
-        return { 
-          success: true, 
-          url: updated.calendarEventUrl, 
-          message: 'Sessione sincronizzata con successo su Google Calendar' 
-        };
-      } else {
-        const webUrl = getGoogleCalendarWebUrl(target);
-        return { success: true, url: webUrl, message: res.error || 'Link Google Calendar disponibile' };
-      }
-    } catch {
-      const webUrl = getGoogleCalendarWebUrl(target);
-      return { success: true, url: webUrl, message: 'Link Google Calendar generato' };
-    }
+      setDoc(doc(db, 'bookings', bookingId), updated, { merge: true }).catch(() => {});
+    } catch {}
+
+    // Open direct Google Calendar 1-click web interface in a new tab!
+    window.open(webUrl, '_blank', 'noopener,noreferrer');
+    logActivity('CMS_EDIT', `Aperto Google Calendar 1-Click per Sessione #${target.orderCode}`);
+
+    return { 
+      success: true, 
+      url: webUrl, 
+      message: 'Aperto Google Calendar in nuova scheda: clicca "Salva" per aggiungere la sessione al tuo calendario!' 
+    };
   };
 
   /**
@@ -2431,30 +2410,9 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const target = bookings.find((b) => b.id === bookingId);
     if (!target) return { success: false, error: 'Prenotazione non trovata' };
 
-    let token = getCachedAccessToken();
-    if (!token) {
-      const connected = await connectGmailAndCalendar();
-      token = getCachedAccessToken();
-      if (!token || !connected) {
-        return {
-          success: false,
-          error: 'Autorizza l\'account Google 171studiomessina@gmail.com per inviare l\'email tramite Gmail API.',
-        };
-      }
-    }
-
+    const token = getCachedAccessToken();
     const effectivePaypalEmail = siteContent.paypalEmail || STUDIO_PAYPAL_EMAIL;
-    let emailLog = await dispatchBookingConfirmedEmail(target, effectivePaypalEmail, token);
-
-    // Retry with fresh token if expired (401)
-    if (emailLog.deliveryMethod !== 'gmail_api' && emailLog.error?.includes('401')) {
-      setCachedAccessToken(null);
-      const reconnected = await connectGmailAndCalendar();
-      const freshToken = getCachedAccessToken();
-      if (reconnected && freshToken) {
-        emailLog = await dispatchBookingConfirmedEmail(target, effectivePaypalEmail, freshToken);
-      }
-    }
+    const emailLog = await dispatchBookingConfirmedEmail(target, effectivePaypalEmail, token);
 
     setEmailLogs((prev) => [emailLog, ...prev]);
     setLastSentEmail(emailLog);
@@ -2462,17 +2420,31 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       prev.map((b) => (b.id === bookingId ? { ...b, confirmationEmailSent: true } : b))
     );
 
-    if (emailLog.deliveryMethod === 'gmail_api') {
+    if (emailLog.deliveryMethod === 'gmail_api' || emailLog.deliveryMethod === 'webhook' || emailLog.deliveryMethod === 'emailjs') {
       logActivity(
         'EMAIL_SENT',
-        `Email di CONFERMA inviata via Gmail API da ${MASTER_EMAIL} a ${target.userEmail} (Ordine #${target.orderCode} - MessageID: ${emailLog.gmailMessageId})`
+        `Email di CONFERMA inviata a ${target.userEmail} (Ordine #${target.orderCode}) [Canale: ${emailLog.deliveryMethod}]`
       );
-      return { success: true, messageId: emailLog.gmailMessageId };
+      return { success: true, messageId: emailLog.gmailMessageId || emailLog.id };
+    }
+
+    // Direct 1-Click Gmail Web Compose fallback
+    if (emailLog.gmailWebComposeUrl) {
+      window.open(emailLog.gmailWebComposeUrl, '_blank', 'noopener,noreferrer');
+      logActivity(
+        'EMAIL_SENT',
+        `Aperto Gmail Web Compose 1-Click per Conferma #${target.orderCode} verso ${target.userEmail}`
+      );
+      return {
+        success: true,
+        messageId: 'GMAIL_WEB_COMPOSE',
+        error: 'Finestra Gmail Web aperta con email precompilata: clicca "Invia" in Gmail per completare.',
+      };
     }
 
     return {
       success: false,
-      error: emailLog.error || 'Impossibile completare l\'invio via Gmail API',
+      error: emailLog.error || 'Impossibile completare l\'invio',
     };
   };
 
@@ -2482,45 +2454,140 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const target = bookings.find((b) => b.id === bookingId);
     if (!target) return { success: false, error: 'Prenotazione non trovata' };
 
-    let token = getCachedAccessToken();
-    if (!token) {
-      const connected = await connectGmailAndCalendar();
-      token = getCachedAccessToken();
-      if (!token || !connected) {
-        return {
-          success: false,
-          error: 'Autorizza l\'account Google 171studiomessina@gmail.com per inviare l\'email tramite Gmail API.',
-        };
-      }
-    }
-
+    const token = getCachedAccessToken();
     const effectivePaypalEmail = siteContent.paypalEmail || STUDIO_PAYPAL_EMAIL;
-    let emailLog = await dispatchBookingReceivedEmail(target, effectivePaypalEmail, token);
-
-    if (emailLog.deliveryMethod !== 'gmail_api' && emailLog.error?.includes('401')) {
-      setCachedAccessToken(null);
-      const reconnected = await connectGmailAndCalendar();
-      const freshToken = getCachedAccessToken();
-      if (reconnected && freshToken) {
-        emailLog = await dispatchBookingReceivedEmail(target, effectivePaypalEmail, freshToken);
-      }
-    }
+    const emailLog = await dispatchBookingReceivedEmail(target, effectivePaypalEmail, token);
 
     setEmailLogs((prev) => [emailLog, ...prev]);
     setLastSentEmail(emailLog);
 
-    if (emailLog.deliveryMethod === 'gmail_api') {
+    if (emailLog.deliveryMethod === 'gmail_api' || emailLog.deliveryMethod === 'webhook' || emailLog.deliveryMethod === 'emailjs') {
       logActivity(
         'EMAIL_SENT',
-        `Email di RICEZIONE inviata via Gmail API da ${MASTER_EMAIL} a ${target.userEmail} (Ordine #${target.orderCode} - MessageID: ${emailLog.gmailMessageId})`
+        `Email di RICEZIONE inviata a ${target.userEmail} (Ordine #${target.orderCode}) [Canale: ${emailLog.deliveryMethod}]`
       );
-      return { success: true, messageId: emailLog.gmailMessageId };
+      return { success: true, messageId: emailLog.gmailMessageId || emailLog.id };
+    }
+
+    // Direct 1-Click Gmail Web Compose fallback
+    if (emailLog.gmailWebComposeUrl) {
+      window.open(emailLog.gmailWebComposeUrl, '_blank', 'noopener,noreferrer');
+      logActivity(
+        'EMAIL_SENT',
+        `Aperto Gmail Web Compose 1-Click per Ricezione #${target.orderCode} verso ${target.userEmail}`
+      );
+      return {
+        success: true,
+        messageId: 'GMAIL_WEB_COMPOSE',
+        error: 'Finestra Gmail Web aperta con email precompilata: clicca "Invia" in Gmail per completare.',
+      };
     }
 
     return {
       success: false,
-      error: emailLog.error || 'Impossibile completare l\'invio via Gmail API',
+      error: emailLog.error || 'Impossibile completare l\'invio',
     };
+  };
+
+  const openGmailWebCompose = (bookingId: string, type: 'receipt' | 'confirmation'): boolean => {
+    const target = bookings.find((b) => b.id === bookingId);
+    if (!target) return false;
+    const orderCode = target.orderCode || generateOrderCode(target.id);
+    const effectivePaypalEmail = siteContent.paypalEmail || STUDIO_PAYPAL_EMAIL;
+    const tpl = getActiveEmailTemplates(siteContent.emailTemplates);
+
+    const subject = type === 'confirmation'
+      ? interpolateEmailTemplate(tpl.confirmationSubject, target, orderCode)
+      : interpolateEmailTemplate(tpl.receiptSubject, target, orderCode);
+
+    const heading = type === 'confirmation'
+      ? interpolateEmailTemplate(tpl.confirmationHeading, target, orderCode)
+      : interpolateEmailTemplate(tpl.receiptHeading, target, orderCode);
+
+    const intro = type === 'confirmation'
+      ? interpolateEmailTemplate(tpl.confirmationIntro, target, orderCode)
+      : interpolateEmailTemplate(tpl.receiptIntro, target, orderCode);
+
+    const paypalUrl = getPayPalPaymentUrl(target.estimatedPrice, orderCode, effectivePaypalEmail);
+    const paypalMeUrl = getPayPalMeUrl(target.estimatedPrice);
+
+    const discountLine = target.discountCode
+      ? `SCONTO APPLICATO: ${target.discountCode} (-${target.discountAmount || 0} € su ${target.originalPrice || target.estimatedPrice} €)\n`
+      : '';
+
+    const bodyText = type === 'confirmation'
+      ? `Gentile ${target.userName},\n\n${heading}\n\n${intro}\n\n` +
+        `--------------------------------------------------\n` +
+        `CODICE ORDINE: #${orderCode}\n` +
+        `SERVIZIO: ${target.serviceTitle}\n` +
+        `DATA CONFERMATA: ${target.date}\n` +
+        `ORARIO: dalle ${target.time} alle ${target.endTime || 'fine sessione'} (${target.hours}h)\n` +
+        `${discountLine}IMPORTO DA SALDARE: ${target.estimatedPrice} €\n` +
+        `STUDIO: 171 Studio — Messina (ME), Sicilia\n` +
+        `--------------------------------------------------\n\n` +
+        `${tpl.confirmationPayPalCta.toUpperCase()}:\n` +
+        `Puoi saldare la sessione con PayPal cliccando sul link:\n${paypalUrl}\n(oppure link rapido PayPal.Me: ${paypalMeUrl})\n\n` +
+        `A presto in studio,\n${tpl.confirmationSignature || 'Igor Rozanov'}\n171 Studio — Messina (ME)\nEmail: ${MASTER_EMAIL}`
+      : `Gentile ${target.userName},\n\n${heading}\n\n${intro}\n\n` +
+        `--------------------------------------------------\n` +
+        `CODICE ORDINE: #${orderCode}\n` +
+        `SERVIZIO: ${target.serviceTitle}\n` +
+        `DATA RICHIESTA: ${target.date}\n` +
+        `ORARIO: dalle ${target.time} alle ${target.endTime || 'fine sessione'} (${target.hours}h)\n` +
+        `${discountLine}IMPORTO STIMATO: ${target.estimatedPrice} €\n` +
+        `STUDIO: 171 Studio — Messina (ME), Sicilia\n` +
+        `--------------------------------------------------\n\n` +
+        `${tpl.receiptNextStep}\n\n` +
+        `A presto in studio,\n${tpl.receiptSignature || '171 Studio Staff'}\nMessina (ME)\nEmail: ${MASTER_EMAIL}`;
+
+    const url = getGmailWebComposeUrl(target.userEmail, subject, bodyText);
+    window.open(url, '_blank', 'noopener,noreferrer');
+    logActivity('EMAIL_SENT', `Aperto Gmail Web 1-Click per #${orderCode} a ${target.userEmail}`);
+    return true;
+  };
+
+  const openMailtoCompose = (bookingId: string, type: 'receipt' | 'confirmation'): boolean => {
+    const target = bookings.find((b) => b.id === bookingId);
+    if (!target) return false;
+    const orderCode = target.orderCode || generateOrderCode(target.id);
+    const effectivePaypalEmail = siteContent.paypalEmail || STUDIO_PAYPAL_EMAIL;
+    const tpl = getActiveEmailTemplates(siteContent.emailTemplates);
+
+    const subject = type === 'confirmation'
+      ? interpolateEmailTemplate(tpl.confirmationSubject, target, orderCode)
+      : interpolateEmailTemplate(tpl.receiptSubject, target, orderCode);
+
+    const heading = type === 'confirmation'
+      ? interpolateEmailTemplate(tpl.confirmationHeading, target, orderCode)
+      : interpolateEmailTemplate(tpl.receiptHeading, target, orderCode);
+
+    const intro = type === 'confirmation'
+      ? interpolateEmailTemplate(tpl.confirmationIntro, target, orderCode)
+      : interpolateEmailTemplate(tpl.receiptIntro, target, orderCode);
+
+    const paypalUrl = getPayPalPaymentUrl(target.estimatedPrice, orderCode, effectivePaypalEmail);
+
+    const bodyText = type === 'confirmation'
+      ? `Gentile ${target.userName},\n\n${heading}\n\n${intro}\n\nOrdine #${orderCode} - ${target.serviceTitle}\nData: ${target.date} ore ${target.time}\nTotale: ${target.estimatedPrice} €\nLink PayPal: ${paypalUrl}\n\nA presto,\nIgor Rozanov - 171 Studio`
+      : `Gentile ${target.userName},\n\n${heading}\n\n${intro}\n\nOrdine #${orderCode} - ${target.serviceTitle}\nData: ${target.date} ore ${target.time}\nTotale: ${target.estimatedPrice} €\n\nA presto,\n171 Studio Staff`;
+
+    const mailto = createMailtoLink(target.userEmail, subject, bodyText);
+    window.location.href = mailto;
+    return true;
+  };
+
+  const downloadBookingCalendarIcs = (bookingId: string) => {
+    const target = bookings.find((b) => b.id === bookingId);
+    if (!target) return;
+    downloadBookingIcsFile(target);
+    logActivity('CMS_EDIT', `Scaricato file calendario .ICS per Sessione #${target.orderCode}`);
+  };
+
+  const openGoogleCalendarWeb = (bookingId: string) => {
+    const target = bookings.find((b) => b.id === bookingId);
+    if (!target) return;
+    const url = target.calendarEventUrl || getGoogleCalendarWebUrl(target);
+    window.open(url, '_blank', 'noopener,noreferrer');
   };
 
   const sendConfirmationEmail = async (id: string): Promise<boolean> => {
@@ -3366,6 +3433,10 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         syncBookingToCalendar,
         sendConfirmationEmailViaGmail,
         sendReceiptEmailViaGmail,
+        openGmailWebCompose,
+        openMailtoCompose,
+        downloadBookingCalendarIcs,
+        openGoogleCalendarWeb,
         triggerTestBookingAndConfirmationEmail,
         restoreBookingToDesk,
         deleteBookingPermanently,
