@@ -6,7 +6,7 @@ import {
   DollarSign, CreditCard, Send, Copy, AlertCircle, Eye, ChevronDown, ChevronUp,
   Inbox, Archive, Search, RotateCcw, Printer, X, BarChart3, TrendingUp,
   Upload, Download, FolderArchive, FolderOpen, Tag, Gift, Percent, MessageSquare, Star,
-  Sliders, Music, Monitor, Smartphone, Tablet, Truck, Bug, Wrench, Globe
+  Sliders, Music, Monitor, Smartphone, Tablet, Truck, Bug, Wrench, Globe, Heart
 } from 'lucide-react';
 import { useStudio } from '../context/StudioContext';
 import { PageId } from '../types';
@@ -59,11 +59,12 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
     updateBookingDriveDelivery, confirmBookingDriveDownload, openDownloadReceiptModal,
     albumOrders, createAlbumOrder, updateAlbumOrder, deleteAlbumOrder, validateAlbumOrderEmail,
     setAlbumOrderTracking, setAlbumOrderPickupReady, confirmAlbumOrderPayPalPayment,
-    pluginBugReports, updatePluginBugReportStatus, deletePluginBugReport,
+    pluginBugReports, updatePluginBugReportStatus, deletePluginBugReport, verifyPluginBugReportAndReward,
+    pluginDonations, confirmPluginDonationPayPal, updatePluginDonation, deletePluginDonation,
     registeredUsers
   } = useStudio();
 
-  const [activeTab, setActiveTab] = useState<'preview' | 'cms' | 'pricing' | 'vouchers' | 'calendar' | 'desk' | 'deliveries' | 'album_orders' | 'plugin_bug_reports' | 'history' | 'analytics' | 'emails' | 'plugins' | 'audit'>('desk');
+  const [activeTab, setActiveTab] = useState<'preview' | 'cms' | 'pricing' | 'vouchers' | 'calendar' | 'desk' | 'deliveries' | 'album_orders' | 'plugin_bug_reports' | 'plugin_donations' | 'history' | 'analytics' | 'emails' | 'plugins' | 'audit'>('desk');
   const [previewTabDevice, setPreviewTabDevice] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
   const [previewTabPage, setPreviewTabPage] = useState<PageId>('home');
   const [copiedLocalUrl, setCopiedLocalUrl] = useState(false);
@@ -74,6 +75,13 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
   const [editingAdminNotesId, setEditingAdminNotesId] = useState<string | null>(null);
   const [adminNotesInput, setAdminNotesInput] = useState<string>('');
   const [bugActionNotice, setBugActionNotice] = useState<string | null>(null);
+
+  // Plugin Donations & Early Supporters Management State (Master Account)
+  const [donationFilter, setDonationFilter] = useState<'all' | 'early_supporters' | 'convalidate' | 'in_attesa'>('all');
+  const [donationSearch, setDonationSearch] = useState<string>('');
+  const [verifyingDonationId, setVerifyingDonationId] = useState<string | null>(null);
+  const [manualDonationTxInput, setManualDonationTxInput] = useState<string>('');
+  const [donationActionNotice, setDonationActionNotice] = useState<string | null>(null);
   
   // Google Drive Deliveries Management State
   const [showAddDriveDelivery, setShowAddDriveDelivery] = useState(false);
@@ -957,6 +965,24 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
           {pluginBugReports.filter((b) => b.status !== 'risolto').length > 0 && (
             <span className="ml-1 px-2 py-0.5 rounded-full bg-red-950 text-red-300 border border-red-700/60 text-[10px] font-bold animate-pulse">
               {pluginBugReports.filter((b) => b.status !== 'risolto').length}
+            </span>
+          )}
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab('plugin_donations')}
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-mono uppercase tracking-wider transition-all cursor-pointer ${
+            activeTab === 'plugin_donations'
+              ? 'bg-amber-500 text-black font-bold shadow-md shadow-amber-500/30'
+              : 'text-neutral-400 hover:text-white hover:bg-neutral-900'
+          }`}
+        >
+          <Heart className="w-4 h-4 text-amber-400 fill-amber-400" />
+          <span>Donazioni & Supporter</span>
+          {pluginDonations.length > 0 && (
+            <span className="ml-1 px-2 py-0.5 rounded-full bg-neutral-900 text-amber-300 border border-amber-500/40 text-[10px] font-bold">
+              {pluginDonations.length}
             </span>
           )}
         </button>
@@ -5457,6 +5483,31 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
                   {/* Actions Bar */}
                   <div className="pt-2 border-t border-neutral-800/80 flex flex-wrap items-center justify-between gap-3">
                     <div className="flex flex-wrap items-center gap-2">
+                      {/* Reward button for verified bug */}
+                      {report.rewardGranted ? (
+                        <div className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-950 to-cyan-950 border border-emerald-500/70 text-emerald-300 font-mono text-xs font-bold flex items-center gap-1.5 shadow-md">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                          <span>Ricompensa Assegnata: Buono {report.rewardVoucherCode} (-25€) & Badge Bug Hunter</span>
+                        </div>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (window.confirm(`Vuoi approvare questo bug come "Problema Reale Verificato" e assegnare all'account ${report.userEmail} un Voucher da 25€, il Badge Tester Certificato e la licenza gratuita a vita dei futuri plugin?`)) {
+                              const res = verifyPluginBugReportAndReward(report.id, 25);
+                              if (res.success) {
+                                setBugActionNotice(res.message);
+                                setTimeout(() => setBugActionNotice(null), 6000);
+                              }
+                            }
+                          }}
+                          className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-400 via-amber-500 to-amber-400 hover:from-amber-300 hover:to-amber-400 text-black font-mono text-xs font-black uppercase tracking-wider flex items-center gap-1.5 cursor-pointer shadow-lg shadow-amber-500/20"
+                        >
+                          <Sparkles className="w-3.5 h-3.5 text-black" />
+                          <span>Approva Feedback Verificato & Assegna Ricompensa (25€ + Badge)</span>
+                        </button>
+                      )}
+
                       {report.status !== 'in_esame' && (
                         <button
                           type="button"
@@ -5533,6 +5584,277 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
 
                 </div>
               ));
+            })()}
+          </div>
+
+        </div>
+      )}
+
+      {/* TAB: GESTIONE DONAZIONI PLUGIN & EARLY SUPPORTERS (SOLO MASTER ACCOUNT) */}
+      {activeTab === 'plugin_donations' && (
+        <div className="space-y-6 animate-in fade-in duration-200">
+          
+          {/* Action notification banner */}
+          {donationActionNotice && (
+            <div className="p-4 rounded-2xl bg-emerald-500/20 border border-emerald-500/50 text-emerald-300 font-mono text-xs flex items-center justify-between">
+              <span>{donationActionNotice}</span>
+              <button 
+                type="button" 
+                onClick={() => setDonationActionNotice(null)}
+                className="text-emerald-400 hover:text-white font-bold ml-4"
+              >
+                Chiudi
+              </button>
+            </div>
+          )}
+
+          {/* Header & Controls */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-2">
+                <Heart className="w-5 h-5 text-amber-400 fill-amber-400" />
+                <h3 className="text-xl font-heading font-bold text-white">
+                  Donazioni Plugin & Early Supporters
+                </h3>
+              </div>
+              <p className="text-xs text-neutral-400 font-mono mt-1">
+                Monitoraggio transazioni PayPal, registrazione donazioni e sblocco Lifetime Pass (&ge; 20€) per 171 Plugin Innovation.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-xs font-mono text-amber-300 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/30">
+                PayPal: <strong>{siteContent.paypalEmail || STUDIO_PAYPAL_EMAIL}</strong>
+              </span>
+            </div>
+          </div>
+
+          {/* 4 Stats Cards */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="p-4 rounded-2xl bg-neutral-900/60 border border-neutral-800">
+              <span className="text-[10px] font-mono uppercase text-neutral-400 block mb-1">Totale Donazioni</span>
+              <span className="text-2xl font-heading font-black text-white">{pluginDonations.length}</span>
+              <span className="text-[10px] font-mono text-neutral-500 block mt-0.5">Tutti i record registrati</span>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-neutral-900/60 border border-amber-500/40">
+              <span className="text-[10px] font-mono uppercase text-amber-400 block mb-1">🌟 Early Supporters (&ge;20€)</span>
+              <span className="text-2xl font-heading font-black text-amber-400">
+                {pluginDonations.filter(d => d.isEarlySupporterPass || d.amount >= 20).length}
+              </span>
+              <span className="text-[10px] font-mono text-amber-300 block mt-0.5">Con Lifetime Pass a vita</span>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-neutral-900/60 border border-emerald-500/40">
+              <span className="text-[10px] font-mono uppercase text-emerald-400 block mb-1">Convalidate (Saldate)</span>
+              <span className="text-2xl font-heading font-black text-emerald-400">
+                {pluginDonations.filter(d => d.status === 'convalidata' || d.paymentStatus === 'saldato').length}
+              </span>
+              <span className="text-[10px] font-mono text-emerald-300 block mt-0.5">Pagamento verificato</span>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-neutral-900/60 border border-neutral-800">
+              <span className="text-[10px] font-mono uppercase text-neutral-400 block mb-1">Incasso Donazioni Totale</span>
+              <span className="text-2xl font-heading font-black text-white">
+                €{pluginDonations
+                  .filter(d => d.status === 'convalidata' || d.paymentStatus === 'saldato')
+                  .reduce((sum, d) => sum + d.amount, 0)
+                  .toFixed(2)}
+              </span>
+              <span className="text-[10px] font-mono text-neutral-500 block mt-0.5">Ricevuti su PayPal</span>
+            </div>
+          </div>
+
+          {/* Filters & Search */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-4 rounded-2xl bg-neutral-900/60 border border-neutral-800">
+            <div className="flex flex-wrap items-center gap-2">
+              {[
+                { id: 'all', label: `Tutte (${pluginDonations.length})` },
+                { id: 'early_supporters', label: `Early Supporters (${pluginDonations.filter(d => d.isEarlySupporterPass || d.amount >= 20).length})` },
+                { id: 'convalidate', label: `Convalidate (${pluginDonations.filter(d => d.status === 'convalidata' || d.paymentStatus === 'saldato').length})` },
+                { id: 'in_attesa', label: `In Attesa (${pluginDonations.filter(d => d.status === 'in_attesa_pagamento' && d.paymentStatus !== 'saldato').length})` },
+              ].map((filterTab) => (
+                <button
+                  key={filterTab.id}
+                  type="button"
+                  onClick={() => setDonationFilter(filterTab.id as typeof donationFilter)}
+                  className={`px-3 py-1.5 rounded-xl font-mono text-xs uppercase tracking-wider transition-all cursor-pointer ${
+                    donationFilter === filterTab.id
+                      ? 'bg-amber-500 text-black font-bold shadow-md'
+                      : 'bg-neutral-950 text-neutral-400 hover:text-white border border-neutral-800'
+                  }`}
+                >
+                  {filterTab.label}
+                </button>
+              ))}
+            </div>
+
+            <div className="relative w-full sm:w-64">
+              <Search className="w-3.5 h-3.5 text-neutral-500 absolute left-3 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                value={donationSearch}
+                onChange={(e) => setDonationSearch(e.target.value)}
+                placeholder="Cerca per codice, email, TX..."
+                className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-black border border-neutral-800 text-white font-mono text-xs focus:border-amber-500 focus:outline-none"
+              />
+            </div>
+          </div>
+
+          {/* Donations List */}
+          <div className="space-y-3">
+            {(() => {
+              const filtered = pluginDonations.filter((don) => {
+                if (donationFilter === 'early_supporters' && !don.isEarlySupporterPass && don.amount < 20) return false;
+                if (donationFilter === 'convalidate' && don.status !== 'convalidata' && don.paymentStatus !== 'saldato') return false;
+                if (donationFilter === 'in_attesa' && (don.status === 'convalidata' || don.paymentStatus === 'saldato')) return false;
+
+                if (donationSearch.trim()) {
+                  const q = donationSearch.toLowerCase();
+                  const matchCode = don.donationCode.toLowerCase().includes(q);
+                  const matchEmail = don.userEmail.toLowerCase().includes(q);
+                  const matchName = don.userName.toLowerCase().includes(q);
+                  const matchTx = (don.paypalTransactionId || '').toLowerCase().includes(q);
+                  if (!matchCode && !matchEmail && !matchName && !matchTx) return false;
+                }
+
+                return true;
+              });
+
+              if (filtered.length === 0) {
+                return (
+                  <div className="p-8 rounded-2xl bg-neutral-900/40 border border-neutral-800 text-center font-mono text-xs text-neutral-500">
+                    Nessuna donazione trovata per i filtri selezionati.
+                  </div>
+                );
+              }
+
+              return filtered.map((don) => {
+                const isSaldato = don.status === 'convalidata' || don.paymentStatus === 'saldato';
+                const isEarly = don.isEarlySupporterPass || don.amount >= 20;
+
+                return (
+                  <div
+                    key={don.id}
+                    className={`p-4 sm:p-5 rounded-2xl border transition-all text-xs font-mono space-y-3 ${
+                      isSaldato
+                        ? 'bg-neutral-900/70 border-neutral-800'
+                        : 'bg-gradient-to-r from-amber-950/25 via-neutral-900 to-neutral-950 border-amber-500/60'
+                    }`}
+                  >
+                    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-neutral-800/80 pb-2.5">
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-white text-sm">#{don.donationCode}</span>
+                        <span className="text-neutral-400 text-[11px]">
+                          {new Date(don.createdAt).toLocaleString('it-IT')}
+                        </span>
+                        {isEarly && (
+                          <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[9px] font-black uppercase">
+                            🌟 Early Supporter (Lifetime Pass)
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <span className="text-base font-heading font-black text-white">
+                          €{don.amount.toFixed(2)}
+                        </span>
+                        <span
+                          className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase border ${
+                            isSaldato
+                              ? 'bg-emerald-950/80 text-emerald-300 border-emerald-500/60'
+                              : 'bg-amber-950/80 text-amber-300 border-amber-500/60'
+                          }`}
+                        >
+                          {isSaldato ? '✓ Saldato / Convalidato' : '● In Attesa Convalida'}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-wrap items-center justify-between gap-2 text-neutral-300">
+                      <div>
+                        <span className="text-neutral-500 text-[10px] uppercase block">Donatore:</span>
+                        <strong className="text-white">{don.userName}</strong> ({don.userEmail})
+                      </div>
+                      {don.notes && (
+                        <div className="text-neutral-400 italic text-[11px] max-w-md">
+                          "{don.notes}"
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Transaction Details or Quick Verification for Master */}
+                    <div className="pt-2 border-t border-neutral-800/80 flex flex-wrap items-center justify-between gap-3">
+                      {isSaldato ? (
+                        <div className="flex flex-wrap items-center gap-3 text-[11px]">
+                          <span className="text-neutral-400">
+                            TX PayPal: <strong className="text-emerald-400 font-mono">{don.paypalTransactionId || 'VERIFICATA'}</strong>
+                          </span>
+                          {don.paypalPaidAt && (
+                            <span className="text-neutral-500">
+                              (Convalidata: {new Date(don.paypalPaidAt).toLocaleString('it-IT')})
+                            </span>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="flex-1 flex flex-wrap items-center gap-2">
+                          <input
+                            type="text"
+                            placeholder="Codice Transazione PayPal (es. 9XY81742...)"
+                            value={verifyingDonationId === don.id ? manualDonationTxInput : ''}
+                            onFocus={() => {
+                              setVerifyingDonationId(don.id);
+                              setManualDonationTxInput('');
+                            }}
+                            onChange={(e) => {
+                              setVerifyingDonationId(don.id);
+                              setManualDonationTxInput(e.target.value);
+                            }}
+                            className="px-3 py-1.5 rounded-xl bg-black border border-neutral-700 text-white text-xs font-mono focus:border-amber-500 focus:outline-none min-w-[240px]"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const tx = (verifyingDonationId === don.id ? manualDonationTxInput : '').trim();
+                              try {
+                                const confirmed = confirmPluginDonationPayPal(don.id, tx || undefined, don.amount);
+                                if (confirmed) {
+                                  setDonationActionNotice(
+                                    `Donazione #${don.donationCode} convalidata con successo! ${confirmed.isEarlySupporterPass ? 'Badge Early Supporter Lifetime Pass attivato sul profilo.' : ''}`
+                                  );
+                                  setTimeout(() => setDonationActionNotice(null), 5000);
+                                  setVerifyingDonationId(null);
+                                  setManualDonationTxInput('');
+                                }
+                              } catch (err: any) {
+                                alert(err.message || 'Errore nella convalida della donazione.');
+                              }
+                            }}
+                            className="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs uppercase cursor-pointer"
+                          >
+                            Convalida Saldo & Assegna Badge
+                          </button>
+                        </div>
+                      )}
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (window.confirm(`Sei sicuro di voler eliminare la donazione #${don.donationCode}?`)) {
+                            deletePluginDonation(don.id);
+                            setDonationActionNotice(`Donazione #${don.donationCode} eliminata.`);
+                            setTimeout(() => setDonationActionNotice(null), 4000);
+                          }
+                        }}
+                        className="p-2 rounded-xl bg-neutral-950 hover:bg-red-950/60 text-neutral-400 hover:text-red-400 border border-neutral-800 transition-colors cursor-pointer"
+                        title="Elimina donazione"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                );
+              });
             })()}
           </div>
 

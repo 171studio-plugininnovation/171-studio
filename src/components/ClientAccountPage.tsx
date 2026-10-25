@@ -5,11 +5,11 @@ import {
   Sparkles, Shield, LogOut, ArrowRight, X, Check, Lock, History,
   CreditCard, FolderOpen, HelpCircle, Copy, Search, Disc, Truck,
   MapPin, PackageCheck, Package, MailCheck, ShoppingBag, Eye, ShieldCheck,
-  Bug, Wrench, Send, Tag, Gift, Info, AlertCircle
+  Bug, Wrench, Send, Tag, Gift, Info, AlertCircle, Heart, Award
 } from 'lucide-react';
 import { PageId } from '../types';
 import { useStudio } from '../context/StudioContext';
-import { BookingRecord, ClientFileItem, STUDIO_PAYPAL_EMAIL, AlbumOrderRecord } from '../types/cms';
+import { BookingRecord, ClientFileItem, STUDIO_PAYPAL_EMAIL, AlbumOrderRecord, PluginDonationRecord } from '../types/cms';
 import { getPayPalPaymentUrl } from '../utils/emailService';
 import { ALBUM_MP3_DOWNLOAD_URL, ALBUM_MASTER_DOWNLOAD_URL } from '../utils/albumDownloads';
 import { getAssetUrl } from '../utils/assetPath';
@@ -41,12 +41,54 @@ export const ClientAccountPage: React.FC<ClientAccountPageProps> = ({ onNavigate
     createBooking,
     confirmDriveFileDownload,
     confirmBookingDriveDownload,
+    pluginDonations,
+    createPluginDonation,
+    confirmPluginDonationPayPal,
   } = useStudio();
 
-  const [activeSection, setActiveSection] = useState<'overview' | 'album_orders' | 'sessions' | 'files' | 'plugins' | 'keybpm' | 'bug_report' | 'vouchers'>('overview');
+  const [activeSection, setActiveSection] = useState<'overview' | 'album_orders' | 'sessions' | 'files' | 'plugins' | 'keybpm' | 'bug_report' | 'vouchers' | 'donations'>('overview');
   const [bookingToCancel, setBookingToCancel] = useState<BookingRecord | null>(null);
   const [cancelReason, setCancelReason] = useState('');
   const [actionBanner, setActionBanner] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+  // Dedicated Donation Verification State
+  const [donationVerifyingMap, setDonationVerifyingMap] = useState<Record<string, boolean>>({});
+  const [donationTxInputMap, setDonationTxInputMap] = useState<Record<string, string>>({});
+  const [donationTxErrorMap, setDonationTxErrorMap] = useState<Record<string, string | null>>({});
+
+  const handleVerifyDonationPayPal = (donationId: string) => {
+    const rawTx = (donationTxInputMap[donationId] || '').trim();
+    if (!rawTx || rawTx.length < 5) {
+      setDonationTxErrorMap((prev) => ({
+        ...prev,
+        [donationId]: 'Inserisci un codice transazione o ID ricevuta PayPal valido (almeno 5 caratteri).',
+      }));
+      return;
+    }
+
+    setDonationVerifyingMap((prev) => ({ ...prev, [donationId]: true }));
+    setDonationTxErrorMap((prev) => ({ ...prev, [donationId]: null }));
+
+    try {
+      const confirmed = confirmPluginDonationPayPal(donationId, rawTx);
+      if (confirmed) {
+        setDonationVerifyingMap((prev) => ({ ...prev, [donationId]: false }));
+        setActionBanner({
+          type: 'success',
+          text: confirmed.isEarlySupporterPass
+            ? `Transazione PayPal #${rawTx} convalidata con successo! Badge "🌟 EARLY SUPPORTER — LIFETIME PASS" sbloccato sul tuo account!`
+            : `Transazione PayPal #${rawTx} convalidata con successo per la donazione #${confirmed.donationCode}!`,
+        });
+        setTimeout(() => setActionBanner(null), 6000);
+      } else {
+        setDonationVerifyingMap((prev) => ({ ...prev, [donationId]: false }));
+        setDonationTxErrorMap((prev) => ({ ...prev, [donationId]: 'Impossibile verificare la donazione.' }));
+      }
+    } catch (err: any) {
+      setDonationVerifyingMap((prev) => ({ ...prev, [donationId]: false }));
+      setDonationTxErrorMap((prev) => ({ ...prev, [donationId]: err.message || 'Errore nella convalida della transazione.' }));
+    }
+  };
 
   // Dedicated Voucher Copy State
   const [copiedVoucherCode, setCopiedVoucherCode] = useState<string | null>(null);
@@ -205,6 +247,18 @@ export const ClientAccountPage: React.FC<ClientAccountPageProps> = ({ onNavigate
         (o.userEmail && o.userEmail.toLowerCase().trim() === uEmail)
     );
   }, [albumOrders, currentUser]);
+
+  // Plugin Donations belonging to current user (171 Plugin Innovation)
+  const userDonations: PluginDonationRecord[] = useMemo(() => {
+    if (!currentUser) return [];
+    const uEmail = currentUser.email.toLowerCase().trim();
+    const uId = currentUser.id;
+    return (pluginDonations || []).filter(
+      (d) =>
+        (d.userId && d.userId === uId) ||
+        (d.userEmail && d.userEmail.toLowerCase().trim() === uEmail)
+    );
+  }, [pluginDonations, currentUser]);
 
   // Combine clientFiles with direct Google Drive deliveries from bookings
   const combinedUserFiles: ClientFileItem[] = useMemo(() => {
@@ -481,6 +535,18 @@ Data: ${new Date(file.createdAt).toLocaleString('it-IT')}
               {isMaster && (
                 <span className="text-[10px] font-mono uppercase px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold">
                   ACCOUNT MASTER
+                </span>
+              )}
+              {currentUser.isEarlySupporter && (
+                <span className="text-[10px] font-mono uppercase px-2.5 py-0.5 rounded-full bg-gradient-to-r from-amber-500/25 to-amber-400/15 text-amber-300 border border-amber-400 font-extrabold flex items-center gap-1 shadow-md shadow-amber-500/20">
+                  <Award className="w-3.5 h-3.5 text-amber-400" />
+                  <span>🌟 EARLY SUPPORTER — LIFETIME PASS</span>
+                </span>
+              )}
+              {currentUser.isVerifiedBugHunter && (
+                <span className="text-[10px] font-mono uppercase px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-400 font-extrabold flex items-center gap-1 shadow-md shadow-cyan-500/20">
+                  <Wrench className="w-3.5 h-3.5 text-cyan-400" />
+                  <span>🛠️ TESTER CERTIFICATO & BUG HUNTER</span>
                 </span>
               )}
             </div>
@@ -793,6 +859,12 @@ Data: ${new Date(file.createdAt).toLocaleString('it-IT')}
             label: `I Miei Ordini Album (${userAlbumOrders.length})`, 
             icon: Disc,
             highlight: userAlbumOrders.length > 0
+          },
+          { 
+            id: 'donations', 
+            label: `Donazioni & Supporter Pass (${userDonations.length})`, 
+            icon: Heart,
+            highlight: Boolean(currentUser?.isEarlySupporter || userDonations.length > 0)
           },
           { id: 'sessions', label: `Sessioni & Cancellazione 24h (${userBookings.length})`, icon: Calendar },
           { 
@@ -1349,6 +1421,230 @@ Data: ${new Date(file.createdAt).toLocaleString('it-IT')}
       )}
 
       {/* ========================================================================= */}
+      {/* SECTION: LE MIE DONAZIONI & EARLY SUPPORTER LIFETIME PASS                 */}
+      {/* ========================================================================= */}
+      {(activeSection === 'overview' || activeSection === 'donations') && (
+        <div className="mb-12 p-6 sm:p-8 rounded-3xl bg-neutral-900/80 border border-amber-500/30 space-y-6 shadow-xl backdrop-blur-xl">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-800 pb-4">
+            <div className="flex items-start gap-3">
+              <div className="w-11 h-11 rounded-2xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 shrink-0">
+                <Heart className="w-5 h-5 fill-amber-400" />
+              </div>
+              <div>
+                <span className="text-[10px] font-mono uppercase tracking-widest text-amber-400 font-bold block">
+                  171 PLUGIN INNOVATION • EARLY SUPPORTER PROGRAM
+                </span>
+                <h3 className="text-xl sm:text-2xl font-heading font-black text-white">
+                  Le Mie Donazioni & Early Supporter Lifetime Pass
+                </h3>
+                <p className="text-xs text-neutral-400 font-mono mt-0.5">
+                  Verifica stato donazioni, ID transazioni PayPal e accesso a vita a tutte le future release DSP.
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => onNavigate('plugin-innovation')}
+              className="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-mono text-xs font-extrabold uppercase tracking-wider flex items-center gap-2 cursor-pointer self-start sm:self-auto shadow-md shadow-amber-500/20"
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Supporta i Plugin</span>
+            </button>
+          </div>
+
+          {/* Supporter Badge Summary Card */}
+          {currentUser.isEarlySupporter ? (
+            <div className="p-5 rounded-2xl bg-gradient-to-r from-amber-950/70 via-neutral-900 to-amber-950/50 border-2 border-amber-500/80 shadow-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+              <div className="space-y-1.5">
+                <div className="flex items-center gap-2">
+                  <span className="px-2.5 py-0.5 rounded-full bg-amber-500 text-black text-[10px] font-mono font-black uppercase tracking-wider shadow-md">
+                    🌟 LIFETIME PASS ATTIVO
+                  </span>
+                  <span className="text-xs font-mono text-amber-300 font-bold">
+                    Badge Convalidato
+                  </span>
+                </div>
+                <h4 className="text-lg font-heading font-black text-white">
+                  Early Supporter Ufficiale di 171 Plugin Innovation
+                </h4>
+                <p className="text-xs text-neutral-300 font-sans leading-relaxed max-w-2xl">
+                  Il tuo account è ufficialmente registrato come <strong>Early Supporter</strong>! Hai diritto all'<strong>Accesso a Vita</strong> ad ogni singolo plugin, espansione o algoritmo DSP sviluppato in futuro da 171 Plugin Innovation, inclusi tutti i futuri aggiornamenti e release commerciali a pagamento!
+                </p>
+                {currentUser.earlySupporterTxId && (
+                  <p className="text-[11px] font-mono text-amber-400/90">
+                    Transazione PayPal verificata: <strong>{currentUser.earlySupporterTxId}</strong>
+                    {currentUser.earlySupporterUnlockedAt && ` • Sbloccato il ${new Date(currentUser.earlySupporterUnlockedAt).toLocaleDateString('it-IT')}`}
+                  </p>
+                )}
+              </div>
+
+              <div className="p-4 rounded-xl bg-black/60 border border-amber-500/40 text-center shrink-0 w-full md:w-auto">
+                <span className="text-[10px] font-mono text-neutral-400 uppercase block mb-1">Stato Licenza</span>
+                <span className="text-sm font-heading font-black text-emerald-400 block">ILLIMITATA A VITA</span>
+                <span className="text-[10px] font-mono text-neutral-400">Tutti i plugin futuri gratuiti</span>
+              </div>
+            </div>
+          ) : (
+            <div className="p-5 rounded-2xl bg-neutral-950 border border-amber-500/40 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="px-2.5 py-0.5 rounded-full bg-neutral-800 text-neutral-300 border border-neutral-700 text-[10px] font-mono font-bold uppercase">
+                    Pass Non Ancora Sbloccato
+                  </span>
+                </div>
+                <h4 className="text-base font-heading font-black text-white">
+                  Sblocca il Badge Early Supporter con una donazione di 20$ / 20€
+                </h4>
+                <p className="text-xs text-neutral-300 font-sans leading-relaxed max-w-2xl">
+                  La suite è attualmente in Early Access gratuito per permettere lo sviluppo di plugin sempre più precisi e potenti. Con una donazione di 20$ (o 20€) ti garantisci l'Accesso a Vita a qualsiasi plugin commerciale futuro!
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => onNavigate('plugin-innovation')}
+                className="w-full md:w-auto px-5 py-3 rounded-xl bg-gradient-to-r from-amber-400 via-amber-500 to-amber-400 hover:from-amber-300 hover:to-amber-400 text-black font-heading font-black text-xs uppercase tracking-wider shrink-0 transition-all cursor-pointer shadow-lg shadow-amber-500/20 flex items-center justify-center gap-1.5"
+              >
+                <Heart className="w-4 h-4 fill-black" />
+                <span>Dona 20€ & Sblocca Badge</span>
+              </button>
+            </div>
+          )}
+
+          {/* User's Donations History & Verification List */}
+          <div className="space-y-4 pt-2">
+            <h4 className="text-xs font-mono uppercase tracking-widest text-neutral-400 font-bold">
+              Storico Donazioni Registrate ({userDonations.length})
+            </h4>
+
+            {userDonations.length === 0 ? (
+              <div className="p-8 rounded-2xl bg-black/40 border border-neutral-800/80 text-center text-xs font-mono text-neutral-500">
+                Nessuna donazione registrata con questo account. Effettua una donazione nella pagina Plugin per supportare lo sviluppo!
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {userDonations.map((don) => {
+                  const isVerified = don.status === 'convalidata' || don.paymentStatus === 'saldato';
+                  const isVerifying = Boolean(donationVerifyingMap[don.id]);
+                  const txError = donationTxErrorMap[don.id];
+
+                  return (
+                    <div
+                      key={don.id}
+                      className={`p-4 sm:p-5 rounded-2xl border transition-all text-xs font-mono space-y-3 ${
+                        isVerified
+                          ? 'bg-black/80 border-neutral-800'
+                          : 'bg-gradient-to-r from-amber-950/20 via-neutral-950 to-neutral-950 border-amber-500/50'
+                      }`}
+                    >
+                      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-neutral-800/80 pb-2.5">
+                        <div className="flex items-center gap-2">
+                          <strong className="text-white font-bold text-sm">#{don.donationCode}</strong>
+                          <span className="text-neutral-400 text-[11px]">
+                            {new Date(don.createdAt).toLocaleDateString('it-IT')}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-base font-heading font-black text-white">
+                            €{don.amount.toFixed(2)}
+                          </span>
+                          <span
+                            className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase border ${
+                              isVerified
+                                ? 'bg-emerald-950/80 text-emerald-300 border-emerald-500/60'
+                                : 'bg-amber-950/80 text-amber-300 border-amber-500/60'
+                            }`}
+                          >
+                            {isVerified ? '✓ Convalidata (Saldato)' : '● In Attesa Convalida PayPal'}
+                          </span>
+                          {don.isEarlySupporterPass && (
+                            <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[9px] font-black uppercase">
+                              🌟 Early Supporter
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      {don.notes && (
+                        <p className="text-neutral-300 text-[11.5px] font-sans">
+                          {don.notes}
+                        </p>
+                      )}
+
+                      {/* If verified, show transaction details */}
+                      {isVerified ? (
+                        <div className="p-3 rounded-xl bg-neutral-900/60 border border-neutral-800 flex flex-wrap items-center justify-between gap-2 text-[11px]">
+                          <div>
+                            <span className="text-neutral-500 block text-[10px] uppercase">Codice Transazione PayPal:</span>
+                            <span className="text-emerald-400 font-bold">{don.paypalTransactionId || 'Convalidata'}</span>
+                          </div>
+                          {don.paypalPaidAt && (
+                            <div className="text-neutral-400 text-[10px]">
+                              Saldato il: {new Date(don.paypalPaidAt).toLocaleString('it-IT')}
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        /* If pending, show PayPal verification input */
+                        <div className="p-3.5 rounded-xl bg-neutral-900/90 border border-amber-500/50 space-y-2.5">
+                          <div className="flex items-center justify-between">
+                            <span className="text-[11px] text-amber-300 font-bold uppercase">
+                              Convalida Transazione PayPal
+                            </span>
+                            {don.paypalPaymentUrl && (
+                              <a
+                                href={don.paypalPaymentUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-[11px] text-amber-400 hover:underline flex items-center gap-1 font-bold"
+                              >
+                                <span>Paga su PayPal ({don.amount} €)</span>
+                                <ExternalLink className="w-3 h-3" />
+                              </a>
+                            )}
+                          </div>
+                          <p className="text-[11px] text-neutral-300 font-sans leading-relaxed">
+                            Inserisci il codice transazione ricevuto via email da PayPal dopo aver inviato la donazione per sbloccare istantaneamente il badge sul tuo account:
+                          </p>
+
+                          {txError && (
+                            <div className="p-2 rounded-lg bg-red-950/80 border border-red-500/60 text-[11px] text-red-300">
+                              {txError}
+                            </div>
+                          )}
+
+                          <div className="flex gap-2">
+                            <input
+                              type="text"
+                              value={donationTxInputMap[don.id] || ''}
+                              onChange={(e) =>
+                                setDonationTxInputMap((prev) => ({ ...prev, [don.id]: e.target.value }))
+                              }
+                              placeholder="Codice Transazione PayPal (es. 9XY81742...)"
+                              className="flex-1 px-3 py-2 rounded-xl bg-black border border-neutral-700 text-white text-xs focus:border-amber-500 focus:outline-none"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => handleVerifyDonationPayPal(don.id)}
+                              disabled={isVerifying || !(donationTxInputMap[don.id] || '').trim()}
+                              className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs uppercase cursor-pointer disabled:opacity-50"
+                            >
+                              {isVerifying ? 'Verifica...' : 'Convalida Transazione'}
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
       {/* SECTION: I MIEI SCONTI & VOUCHER RISERVATI (PERSONALIZZATI & BENVENUTO)   */}
       {/* ========================================================================= */}
       {(activeSection === 'overview' || activeSection === 'vouchers') && (
@@ -1514,6 +1810,15 @@ Data: ${new Date(file.createdAt).toLocaleString('it-IT')}
                               {isPct ? `-${v.discountValue}%` : `-${v.discountValue} €`}
                             </span>
                           </div>
+
+                          {v.code.startsWith('171-TESTER-VIP') && (
+                            <div className="mb-2">
+                              <span className="px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-400 font-bold text-[9px] uppercase tracking-wider flex items-center gap-1 w-max">
+                                <Wrench className="w-3 h-3 text-cyan-400" />
+                                <span>🏆 RICOMPENSA BUG HUNTER 171 STUDIO</span>
+                              </span>
+                            </div>
+                          )}
 
                           <p className="text-xs text-white font-medium mb-1">
                             {v.title || v.description}
@@ -2727,6 +3032,47 @@ Data: ${new Date(file.createdAt).toLocaleString('it-IT')}
                       <div className="text-neutral-400 text-[11px] bg-neutral-950 p-2.5 rounded-xl border border-neutral-800/80">
                         <strong className="text-neutral-300 block text-[10px] uppercase mb-0.5">Passaggi per riprodurre:</strong>
                         {report.stepsToReproduce}
+                      </div>
+                    )}
+
+                    {report.isVerifiedRealProblem && (
+                      <div className="p-3.5 rounded-xl bg-gradient-to-r from-emerald-950/70 via-neutral-900 to-cyan-950/70 border border-emerald-500/60 text-emerald-200 text-xs space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="font-bold flex items-center gap-1.5 text-emerald-400">
+                            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                            <span>PROBLEMA TECNICO REALE CONFERMATO DAL MASTER</span>
+                          </span>
+                          <span className="px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-400 font-bold text-[9px] uppercase tracking-wider">
+                            RICOMPENSA ASSEGNATA
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-neutral-300 font-sans leading-relaxed">
+                          Grazie alla tua segnalazione verificata sul plugin <strong>{report.pluginName}</strong>, hai sbloccato il <strong>Badge Tester Certificato</strong>, l'accesso gratuito ai futuri plugin commerciali e il seguente buono sconto in studio:
+                        </p>
+                        {report.rewardVoucherCode && (
+                          <div className="flex items-center justify-between p-2 rounded-lg bg-black/70 border border-emerald-500/40">
+                            <span className="font-mono font-bold text-amber-300 text-xs">
+                              Voucher: {report.rewardVoucherCode} (-25€)
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => handleCopyVoucher(report.rewardVoucherCode!)}
+                              className="px-2.5 py-1 rounded-md bg-emerald-600 hover:bg-emerald-500 text-black text-[10px] font-bold uppercase transition-colors flex items-center gap-1 cursor-pointer"
+                            >
+                              {copiedVoucherCode === report.rewardVoucherCode ? (
+                                <>
+                                  <Check className="w-3 h-3" />
+                                  <span>Copiato</span>
+                                </>
+                              ) : (
+                                <>
+                                  <Copy className="w-3 h-3" />
+                                  <span>Copia Codice</span>
+                                </>
+                              )}
+                            </button>
+                          </div>
+                        )}
                       </div>
                     )}
 

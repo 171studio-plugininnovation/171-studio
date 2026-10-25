@@ -27,6 +27,11 @@ export interface PluginFeedbackItem {
   rating: number;
   dawUsed: string;
   comment: string;
+  // Verified Real Problem & Reward System
+  isVerifiedRealProblem?: boolean;
+  rewardGranted?: boolean;
+  rewardVoucherCode?: string;
+  rewardGrantedAt?: string;
   createdAt: string;
 }
 
@@ -45,6 +50,12 @@ export interface PluginBugReport {
   stepsToReproduce?: string;
   status: 'aperto' | 'in_esame' | 'risolto' | 'archiviato';
   adminNotes?: string;
+  // Verified Real Problem & Reward System
+  isVerifiedRealProblem?: boolean;
+  rewardGranted?: boolean;
+  rewardVoucherCode?: string;
+  rewardGrantedAt?: string;
+  rewardGrantedBy?: string;
   createdAt: string;
   updatedAt?: string;
 }
@@ -416,6 +427,15 @@ export interface UserAccount {
   welcomeDiscountCode?: string;
   welcomeDiscountUsed?: boolean;
   usedVouchers?: string[];
+  // Early Supporter Lifetime Pass ($20 / 20€ donation)
+  isEarlySupporter?: boolean;
+  earlySupporterUnlockedAt?: string;
+  earlySupporterTxId?: string;
+  earlySupporterAmount?: number;
+  // Bug Hunter / Verified Technical Feedback
+  isVerifiedBugHunter?: boolean;
+  verifiedBugHunterUnlockedAt?: string;
+  lifetimeCommercialPluginsFree?: boolean;
 }
 
 export interface UserActivity {
@@ -423,7 +443,7 @@ export interface UserActivity {
   userId: string;
   userEmail: string;
   userName: string;
-  action: 'LOGIN' | 'REGISTER' | 'BOOKING_CREATED' | 'BOOKING_CANCELLED' | 'PLUGIN_DOWNLOADED' | 'KEY_BPM_USED' | 'FILE_UPLOADED' | 'FILE_DELIVERY_CREATED' | 'FILE_DOWNLOAD_CONFIRMED' | 'CMS_EDIT' | 'EMAIL_SENT' | 'ALBUM_ORDER_CREATED' | 'ALBUM_ORDER_UPDATED' | 'ALBUM_PAYPAL_CONFIRMED' | 'PLUGIN_BUG_REPORTED' | 'PLUGIN_BUG_UPDATED';
+  action: 'LOGIN' | 'REGISTER' | 'BOOKING_CREATED' | 'BOOKING_CANCELLED' | 'PLUGIN_DOWNLOADED' | 'KEY_BPM_USED' | 'FILE_UPLOADED' | 'FILE_DELIVERY_CREATED' | 'FILE_DOWNLOAD_CONFIRMED' | 'CMS_EDIT' | 'EMAIL_SENT' | 'ALBUM_ORDER_CREATED' | 'ALBUM_ORDER_UPDATED' | 'ALBUM_PAYPAL_CONFIRMED' | 'PLUGIN_BUG_REPORTED' | 'PLUGIN_BUG_UPDATED' | 'PLUGIN_DONATION_CREATED' | 'PLUGIN_DONATION_CONFIRMED' | 'BUG_HUNTER_REWARD_GRANTED';
   details: string;
   timestamp: string;
 }
@@ -599,6 +619,26 @@ export interface AlbumOrderRecord {
   paypalPaidAt?: string;
   paypalAmountPaid?: number;
   
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface PluginDonationRecord {
+  id: string;
+  donationCode: string; // e.g. 171-DON-9241
+  userId: string;
+  userName: string;
+  userEmail: string;
+  amount: number;
+  currency: 'EUR' | 'USD';
+  paypalTransactionId?: string; // Must be validated (>= 5 chars & unique)
+  paypalEmail: string; // vkrealhakiesake@gmail.com
+  paypalPaymentUrl?: string;
+  paypalPaidAt?: string;
+  status: 'in_attesa_pagamento' | 'convalidata';
+  paymentStatus: 'in_attesa' | 'saldato';
+  isEarlySupporterPass: boolean; // true if amount >= 20
+  notes?: string;
   createdAt: string;
   updatedAt?: string;
 }

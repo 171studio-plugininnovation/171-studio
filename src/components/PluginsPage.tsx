@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 import { PageId } from '../types';
 import { useStudio } from '../context/StudioContext';
-import { PluginItem, STUDIO_PAYPAL_EMAIL } from '../types/cms';
+import { PluginItem, STUDIO_PAYPAL_EMAIL, PluginDonationRecord } from '../types/cms';
 import { getPayPalDonationUrl, getPayPalMeUrl, triggerPluginZipFileDownload } from '../utils/emailService';
 import { getAssetUrl } from '../utils/assetPath';
 
@@ -23,10 +23,22 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
     openAuthModal,
     pluginFeedbacks,
     addPluginFeedback,
+    pluginDonations,
+    createPluginDonation,
+    confirmPluginDonationPayPal,
   } = useStudio();
 
   const [downloadSuccessId, setDownloadSuccessId] = useState<string | null>(null);
   const [thankYouPlugin, setThankYouPlugin] = useState<PluginItem | null>(null);
+
+  // Early Supporter Lifetime Pass & Verified PayPal Donation State
+  const [activeDonation, setActiveDonation] = useState<PluginDonationRecord | null>(null);
+  const [donationTxInput, setDonationTxInput] = useState('');
+  const [donationTxError, setDonationTxError] = useState<string | null>(null);
+  const [donationTxSuccess, setDonationTxSuccess] = useState<string | null>(null);
+  const [isVerifyingDonation, setIsVerifyingDonation] = useState(false);
+  const [donorEmailInput, setDonorEmailInput] = useState('');
+  const [showDonationModal, setShowDonationModal] = useState(false);
 
   // Expanded technologies state for each plugin (all open by default so user can read everything)
   const [expandedTechPluginId, setExpandedTechPluginId] = useState<Record<string, boolean>>({
@@ -114,6 +126,62 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
 
     setFeedbackSubmitted(true);
     setFeedbackComment('');
+  };
+
+  const handleStartDonation = (amount: number = 20) => {
+    const emailToUse = (currentUser?.email || donorEmailInput).trim().toLowerCase();
+    if (!emailToUse && !currentUser) {
+      openAuthModal('Accedi o registrati per associare il Badge Early Supporter Lifetime Pass al tuo account');
+      return;
+    }
+
+    const newDonation = createPluginDonation({
+      amount: Math.max(1, amount),
+      currency: 'EUR',
+      userEmail: emailToUse || undefined,
+      userName: currentUser?.name || undefined,
+    });
+
+    setActiveDonation(newDonation);
+    setDonationTxInput('');
+    setDonationTxError(null);
+    setDonationTxSuccess(null);
+
+    if (newDonation.paypalPaymentUrl) {
+      window.open(newDonation.paypalPaymentUrl, '_blank', 'noopener,noreferrer');
+    }
+  };
+
+  const handleVerifyDonationTx = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!activeDonation) return;
+
+    const rawTx = donationTxInput.trim();
+    if (!rawTx || rawTx.length < 5) {
+      setDonationTxError('Inserisci un codice transazione o ID ricevuta PayPal valido (almeno 5 caratteri).');
+      return;
+    }
+
+    setIsVerifyingDonation(true);
+    setDonationTxError(null);
+
+    try {
+      const confirmed = confirmPluginDonationPayPal(activeDonation.id, rawTx, activeDonation.amount);
+      if (confirmed) {
+        setActiveDonation(confirmed);
+        setDonationTxSuccess(
+          confirmed.isEarlySupporterPass
+            ? `🎉 Donazione convalidata con successo! Il Badge "🌟 EARLY SUPPORTER — LIFETIME PASS" è ora ATTIVO sul tuo account (${confirmed.userEmail}) con accesso a vita a tutti i futuri plugin e aggiornamenti DSP!`
+            : `🎉 Donazione #${confirmed.donationCode} convalidata con successo! Grazie per il supporto allo sviluppo di 171 Studio.`
+        );
+      } else {
+        setDonationTxError('Impossibile verificare la donazione.');
+      }
+    } catch (err: any) {
+      setDonationTxError(err.message || 'Errore nella convalida della transazione PayPal.');
+    } finally {
+      setIsVerifyingDonation(false);
+    }
   };
 
   // POST-DOWNLOAD DEDICATED PAGE: "Grazie per aver scaricato <Nome del Plugin>" + Feedback + Free PayPal Donation
@@ -374,96 +442,195 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
                   </div>
                 </div>
 
-                {/* Callout box: 20$ Lifetime Pass */}
-                <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/40 text-xs font-mono space-y-1.5 text-amber-200">
-                  <div className="font-bold text-amber-300 uppercase tracking-wide flex items-center gap-1.5">
-                    <Award className="w-4 h-4 text-amber-400 shrink-0" />
-                    <span>Accesso a Vita con 20$ / 20€:</span>
+                {currentUser?.isEarlySupporter ? (
+                  <div className="p-4 rounded-xl bg-amber-500/15 border border-amber-400/80 space-y-2.5">
+                    <div className="flex items-center gap-2 text-amber-300 font-bold text-xs uppercase font-mono">
+                      <Award className="w-4 h-4 text-amber-400 shrink-0" />
+                      <span>🌟 BADGE EARLY SUPPORTER ATTIVO</span>
+                    </div>
+                    <p className="text-xs text-neutral-200 leading-relaxed font-sans">
+                      Il tuo account (<strong>{currentUser.email}</strong>) dispone del <strong>Lifetime Supporter Pass</strong> convalidato. Hai accesso garantito a vita a ogni singolo plugin commerciale, aggiornamento ed espansione DSP di 171 Plugin Innovation!
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => onNavigate('il-mio-account')}
+                      className="w-full py-2 px-3 rounded-lg bg-amber-500 hover:bg-amber-400 text-black font-black text-xs uppercase tracking-wider transition-all cursor-pointer shadow-md"
+                    >
+                      Visualizza il Tuo Badge in "Il Mio Account" ➔
+                    </button>
                   </div>
-                  <p className="text-[11px] text-neutral-200 leading-relaxed">
-                    Una donazione oggi di <strong>20$ (o 20€)</strong> ti permetterà di avere <strong>Accesso a Vita</strong> ad ogni singolo plugin, espansione o processore audio sviluppato da <strong>171 Plugin Innovation</strong>, inclusi tutti i futuri aggiornamenti e le release commerciali!
-                  </p>
-                </div>
+                ) : (
+                  <>
+                    {/* Callout box: 20$ Lifetime Pass */}
+                    <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/40 text-xs font-mono space-y-1.5 text-amber-200">
+                      <div className="font-bold text-amber-300 uppercase tracking-wide flex items-center gap-1.5">
+                        <Award className="w-4 h-4 text-amber-400 shrink-0" />
+                        <span>Accesso a Vita con 20$ / 20€:</span>
+                      </div>
+                      <p className="text-[11px] text-neutral-200 leading-relaxed">
+                        Una donazione oggi di <strong>20$ (o 20€)</strong> ti garantirà l'<strong>Accesso a Vita</strong> ad ogni singolo plugin, espansione o algoritmo DSP sviluppato in futuro da <strong>171 Plugin Innovation</strong>, inclusi tutti i futuri aggiornamenti e le release commerciali!
+                      </p>
+                    </div>
 
-                {/* Early Access Development Explanation */}
-                <p className="text-xs text-neutral-300 leading-relaxed font-sans">
-                  Il fatto che la suite sia attualmente scaricabile gratis fa parte del nostro <strong>Early Access di Development</strong>. Questa apertura totale permette lo sviluppo di plugin <strong>sempre più precisi, trasparenti e potenti</strong> grazie ai feedback e ai test sul campo della community.
-                </p>
+                    {/* Early Access Development Explanation */}
+                    <p className="text-xs text-neutral-300 leading-relaxed font-sans">
+                      Il fatto che la suite sia attualmente scaricabile gratis fa parte del nostro <strong>Early Access di Development</strong>. Questa apertura totale permette lo sviluppo di plugin <strong>sempre più precisi, trasparenti e potenti</strong> grazie ai feedback e ai test sul campo della community.
+                    </p>
 
-                {/* Rewards for verified feedback */}
-                <div className="p-3 rounded-xl bg-emerald-950/30 border border-emerald-500/40 text-[11px] font-mono text-emerald-300 space-y-1">
-                  <div className="font-bold uppercase tracking-wider flex items-center gap-1.5 text-emerald-400">
-                    <Gift className="w-3.5 h-3.5 shrink-0" />
-                    <span>Premi per Feedback Verificati:</span>
-                  </div>
-                  <p className="text-neutral-300 leading-relaxed">
-                    Gli account registrati che forniranno feedback tecnici verificati e dettagliati con problemi reali riscontrati nelle DAW verranno ricompensati con <strong>buoni sconto esclusivi per le sessioni in studio</strong> e con <strong>licenze gratuite dei futuri plugin a pagamento</strong>!
-                  </p>
-                </div>
+                    {/* Rewards for verified feedback */}
+                    <div className="p-3 rounded-xl bg-emerald-950/30 border border-emerald-500/40 text-[11px] font-mono text-emerald-300 space-y-1">
+                      <div className="font-bold uppercase tracking-wider flex items-center gap-1.5 text-emerald-400">
+                        <Gift className="w-3.5 h-3.5 shrink-0" />
+                        <span>Premi per Feedback Verificati:</span>
+                      </div>
+                      <p className="text-neutral-300 leading-relaxed">
+                        Gli account registrati che forniranno feedback tecnici verificati e dettagliati con problemi reali riscontrati nelle DAW verranno ricompensati con <strong>buoni sconto esclusivi per le sessioni in studio</strong> e con <strong>copie gratuite dei futuri plugin commerciali a pagamento</strong>!
+                      </p>
+                    </div>
 
-                {/* Preset Donation Chips */}
-                <div className="space-y-1.5 pt-1">
-                  <span className="text-[10px] font-mono uppercase text-neutral-400 block">
-                    Seleziona l'importo donazione:
-                  </span>
-                  <div className="grid grid-cols-4 gap-2 text-xs font-mono">
-                    {[
-                      { label: '20 € (Lifetime)', val: 20 },
-                      { label: '10 €', val: 10 },
-                      { label: '5 €', val: 5 },
-                      { label: 'Libera', val: undefined },
-                    ].map((opt) => {
-                      const isSel = selectedDonationAmount === opt.val;
-                      return (
-                        <button
-                          key={opt.label}
-                          type="button"
-                          onClick={() => setSelectedDonationAmount(opt.val)}
-                          className={`py-2 px-1 rounded-xl border font-bold text-center transition-all cursor-pointer ${
-                            isSel
-                              ? 'bg-amber-500 text-black border-amber-400 shadow-md scale-102'
-                              : 'bg-neutral-950 text-neutral-300 border-neutral-800 hover:border-amber-500/40'
-                          }`}
+                    {/* Preset Donation Chips */}
+                    <div className="space-y-1.5 pt-1">
+                      <span className="text-[10px] font-mono uppercase text-neutral-400 block">
+                        Seleziona l'importo donazione:
+                      </span>
+                      <div className="grid grid-cols-4 gap-2 text-xs font-mono">
+                        {[
+                          { label: '20 € (Lifetime)', val: 20 },
+                          { label: '30 €', val: 30 },
+                          { label: '50 €', val: 50 },
+                          { label: '10 €', val: 10 },
+                        ].map((opt) => {
+                          const isSel = selectedDonationAmount === opt.val;
+                          return (
+                            <button
+                              key={opt.label}
+                              type="button"
+                              onClick={() => setSelectedDonationAmount(opt.val)}
+                              className={`py-2 px-1 rounded-xl border font-bold text-center transition-all cursor-pointer ${
+                                isSel
+                                  ? 'bg-amber-500 text-black border-amber-400 shadow-md scale-102'
+                                  : 'bg-neutral-950 text-neutral-300 border-neutral-800 hover:border-amber-500/40'
+                              }`}
+                            >
+                              {opt.label}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+
+              {!currentUser?.isEarlySupporter && (
+                <div className="space-y-3 pt-2 border-t border-neutral-800/80">
+                  {activeDonation ? (
+                    <div className="p-3.5 rounded-xl bg-neutral-950/90 border border-amber-500/60 space-y-2.5">
+                      <div className="flex items-center justify-between text-xs font-mono">
+                        <span className="text-amber-400 font-bold">DONAZIONE #{activeDonation.donationCode}</span>
+                        <span className="text-white font-black">€{activeDonation.amount.toFixed(2)}</span>
+                      </div>
+                      <p className="text-[11px] text-neutral-300 font-sans leading-relaxed">
+                        Hai completato la donazione su PayPal? Inserisci il <strong>Codice Transazione / ID Ricevuta PayPal</strong> per convalidarla istantaneamente e sbloccare il badge:
+                      </p>
+
+                      {donationTxError && (
+                        <div className="p-2 rounded-lg bg-red-950/80 border border-red-500/60 text-[11px] font-mono text-red-300">
+                          {donationTxError}
+                        </div>
+                      )}
+
+                      {donationTxSuccess ? (
+                        <div className="p-3 rounded-lg bg-emerald-950/80 border border-emerald-500/80 text-xs font-mono text-emerald-300 space-y-2">
+                          <p className="font-bold">{donationTxSuccess}</p>
+                          <button
+                            type="button"
+                            onClick={() => onNavigate('il-mio-account')}
+                            className="w-full py-2 px-3 rounded-lg bg-emerald-500 text-black font-black text-xs uppercase tracking-wider hover:bg-emerald-400 cursor-pointer"
+                          >
+                            Visualizza il Tuo Badge in "Il Mio Account" ➔
+                          </button>
+                        </div>
+                      ) : (
+                        <form onSubmit={handleVerifyDonationTx} className="space-y-2">
+                          <input
+                            type="text"
+                            value={donationTxInput}
+                            onChange={(e) => setDonationTxInput(e.target.value)}
+                            placeholder="es. 9XY81742... o ID Ricevuta PayPal"
+                            className="w-full px-3 py-2 rounded-xl bg-black border border-neutral-700 focus:border-amber-500 text-white font-mono text-xs focus:outline-none"
+                          />
+                          <div className="flex gap-2">
+                            <button
+                              type="submit"
+                              disabled={isVerifyingDonation || !donationTxInput.trim()}
+                              className="flex-1 py-2.5 px-3 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black font-black text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+                            >
+                              <CheckCircle2 className="w-3.5 h-3.5" />
+                              <span>{isVerifyingDonation ? 'Verifica in corso...' : 'Convalida Transazione & Sblocca Badge'}</span>
+                            </button>
+                            <a
+                              href={activeDonation.paypalPaymentUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="py-2.5 px-3 rounded-xl bg-neutral-800 hover:bg-neutral-700 text-neutral-300 text-xs font-mono flex items-center gap-1"
+                              title="Riapri PayPal"
+                            >
+                              <ExternalLink className="w-3.5 h-3.5" />
+                            </a>
+                          </div>
+                        </form>
+                      )}
+                    </div>
+                  ) : (
+                    <>
+                      {!currentUser && (
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-mono text-neutral-400 uppercase block">
+                            La tua Email per associare il Badge Supporter:
+                          </label>
+                          <input
+                            type="email"
+                            value={donorEmailInput}
+                            onChange={(e) => setDonorEmailInput(e.target.value)}
+                            placeholder="nome@dominio.com"
+                            className="w-full px-3 py-2 rounded-xl bg-black border border-neutral-800 focus:border-amber-500 text-white font-mono text-xs focus:outline-none"
+                          />
+                        </div>
+                      )}
+
+                      <button
+                        type="button"
+                        onClick={() => handleStartDonation(selectedDonationAmount || 20)}
+                        className="w-full py-3.5 px-5 rounded-xl bg-gradient-to-r from-amber-400 via-amber-500 to-amber-400 hover:from-amber-300 hover:to-amber-400 text-black font-heading font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-xl shadow-amber-500/25 transition-all cursor-pointer"
+                      >
+                        <Heart className="w-4 h-4 fill-black" />
+                        <span>
+                          {selectedDonationAmount === 20
+                            ? 'Dona 20$ / 20€ • Sblocca Early Supporter Lifetime Pass'
+                            : selectedDonationAmount
+                            ? `Dona ${selectedDonationAmount} € su PayPal`
+                            : 'Donazione Libera con PayPal'}
+                        </span>
+                        <ExternalLink className="w-3.5 h-3.5" />
+                      </button>
+
+                      <div className="flex items-center justify-between text-[11px] font-mono text-neutral-400 px-1">
+                        <span>PayPal Destinatario: <strong className="text-white">{effectivePaypalEmail}</strong></span>
+                        <a
+                          href={paypalMeLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-amber-400 hover:underline flex items-center gap-1 font-bold"
                         >
-                          {opt.label}
-                        </button>
-                      );
-                    })}
-                  </div>
+                          <span>PayPal.Me Diretto</span>
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
+                      </div>
+                    </>
+                  )}
                 </div>
-              </div>
-
-              <div className="space-y-3 pt-2 border-t border-neutral-800/80">
-                <a
-                  href={donationUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full py-3.5 px-5 rounded-xl bg-gradient-to-r from-amber-400 via-amber-500 to-amber-400 hover:from-amber-300 hover:to-amber-400 text-black font-heading font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-xl shadow-amber-500/25 transition-all cursor-pointer"
-                >
-                  <Heart className="w-4 h-4 fill-black" />
-                  <span>
-                    {selectedDonationAmount === 20
-                      ? 'Dona 20$ / 20€ • Early Supporter Lifetime Pass'
-                      : selectedDonationAmount
-                      ? `Dona ${selectedDonationAmount} € su PayPal`
-                      : 'Donazione Libera con PayPal'}
-                  </span>
-                  <ExternalLink className="w-3.5 h-3.5" />
-                </a>
-
-                <div className="flex items-center justify-between text-[11px] font-mono text-neutral-400 px-1">
-                  <span>PayPal Destinatario: <strong className="text-white">{effectivePaypalEmail}</strong></span>
-                  <a
-                    href={paypalMeLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-amber-400 hover:underline flex items-center gap-1 font-bold"
-                  >
-                    <span>PayPal.Me Diretto</span>
-                    <ExternalLink className="w-3 h-3" />
-                  </a>
-                </div>
-              </div>
+              )}
             </div>
           </div>
 
@@ -801,28 +968,219 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
           </div>
 
           <div className="flex flex-col sm:flex-row items-center gap-3 shrink-0 w-full lg:w-auto">
-            <a
-              href={getPayPalDonationUrl(20, '171 Plugin Innovation - Early Supporter Lifetime Pass', siteContent.paypalEmail || STUDIO_PAYPAL_EMAIL)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-500 to-amber-400 hover:from-amber-300 hover:to-amber-400 text-black font-heading font-black text-xs uppercase tracking-wider transition-all shadow-xl shadow-amber-500/20 flex items-center justify-center gap-2 cursor-pointer"
-            >
-              <Heart className="w-4 h-4 fill-black" />
-              <span>Dona 20$ (Lifetime Pass)</span>
-              <ExternalLink className="w-3.5 h-3.5" />
-            </a>
+            {currentUser?.isEarlySupporter ? (
+              <button
+                type="button"
+                onClick={() => onNavigate('il-mio-account')}
+                className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-amber-500 hover:bg-amber-400 text-black font-heading font-black text-xs uppercase tracking-wider transition-all shadow-xl shadow-amber-500/20 flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <Award className="w-4 h-4" />
+                <span>🌟 Sei Early Supporter (Lifetime Pass Attivo)</span>
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedDonationAmount(20);
+                  setShowDonationModal(true);
+                }}
+                className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-500 to-amber-400 hover:from-amber-300 hover:to-amber-400 text-black font-heading font-black text-xs uppercase tracking-wider transition-all shadow-xl shadow-amber-500/20 flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <Heart className="w-4 h-4 fill-black" />
+                <span>Dona 20$ / 20€ • Sblocca Lifetime Pass</span>
+                <Sparkles className="w-3.5 h-3.5 text-black" />
+              </button>
+            )}
 
-            <a
-              href={`mailto:${siteContent.contactEmail}?subject=Feedback%20Tecnico%20171%20Plugin%20Innovation`}
+            <button
+              type="button"
+              onClick={() => onNavigate('il-mio-account')}
               className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-neutral-900 hover:bg-neutral-800 text-amber-300 border border-amber-500/40 font-mono font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
-              <Mail className="w-4 h-4" />
-              <span>Invia Feedback Tecnico</span>
-            </a>
+              <Bug className="w-4 h-4 text-red-400" />
+              <span>Invia Feedback Tecnico / Bug</span>
+            </button>
           </div>
         </div>
 
       </div>
+
+      {/* Dedicated Early Supporter Donation & PayPal Verification Modal */}
+      {showDonationModal && (
+        <div
+          className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-200"
+          onClick={() => setShowDonationModal(false)}
+        >
+          <div
+            className="relative max-w-xl w-full bg-neutral-950 border-2 border-amber-500/70 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 text-left"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between pb-4 border-b border-neutral-800">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400">
+                  <Sparkles className="w-5 h-5" />
+                </div>
+                <div>
+                  <span className="text-[10px] font-mono uppercase tracking-widest text-amber-400 font-bold block">
+                    EARLY SUPPORTER LIFETIME PASS
+                  </span>
+                  <h3 className="text-lg font-heading font-black text-white">
+                    Supporta lo Sviluppo & Accesso a Vita
+                  </h3>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowDonationModal(false)}
+                className="p-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-neutral-400 hover:text-white transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/40 text-xs font-mono space-y-1.5 text-amber-200">
+              <div className="font-bold text-amber-300 uppercase tracking-wide flex items-center gap-1.5">
+                <Award className="w-4 h-4 text-amber-400 shrink-0" />
+                <span>Accesso a Vita Garantito con 20$ / 20€:</span>
+              </div>
+              <p className="text-[11.5px] text-neutral-200 leading-relaxed font-sans">
+                Una donazione oggi di <strong>20$ (o 20€)</strong> ti garantirà l'<strong>Accesso a Vita</strong> ad ogni singolo plugin, espansione o algoritmo DSP sviluppato in futuro da <strong>171 Plugin Innovation</strong>, inclusi tutti i futuri aggiornamenti e le release commerciali!
+              </p>
+            </div>
+
+            <p className="text-xs text-neutral-300 leading-relaxed font-sans">
+              La suite gratuita è in <strong>Early Access di Development</strong>: questo permette alla community di testare gli algoritmi DSP nelle DAW e aiutarci a renderli <strong>sempre più precisi e potenti</strong>. Inoltre, chi invia feedback tecnici verificati riceverà <strong>buoni sconto in studio e plugin commerciali gratuiti</strong>!
+            </p>
+
+            {/* Chips */}
+            <div className="space-y-1.5">
+              <span className="text-[10px] font-mono uppercase text-neutral-400 block">
+                Seleziona importo donazione:
+              </span>
+              <div className="grid grid-cols-4 gap-2 text-xs font-mono">
+                {[
+                  { label: '20 € (Lifetime)', val: 20 },
+                  { label: '30 €', val: 30 },
+                  { label: '50 €', val: 50 },
+                  { label: '10 €', val: 10 },
+                ].map((opt) => (
+                  <button
+                    key={opt.label}
+                    type="button"
+                    onClick={() => setSelectedDonationAmount(opt.val)}
+                    className={`py-2 px-1 rounded-xl border font-bold text-center transition-all cursor-pointer ${
+                      selectedDonationAmount === opt.val
+                        ? 'bg-amber-500 text-black border-amber-400 shadow-md'
+                        : 'bg-neutral-900 text-neutral-300 border-neutral-800 hover:border-amber-500/40'
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Verification Box or Start Button */}
+            {activeDonation ? (
+              <div className="p-4 rounded-2xl bg-black border border-amber-500/60 space-y-3">
+                <div className="flex items-center justify-between text-xs font-mono">
+                  <span className="text-amber-400 font-bold">DONAZIONE #{activeDonation.donationCode}</span>
+                  <span className="text-white font-black">€{activeDonation.amount.toFixed(2)}</span>
+                </div>
+                <p className="text-xs text-neutral-300 font-sans">
+                  Inserisci il <strong>Codice Transazione / ID Ricevuta PayPal</strong> per verificare e sbloccare il badge:
+                </p>
+
+                {donationTxError && (
+                  <div className="p-2.5 rounded-xl bg-red-950/80 border border-red-500/60 text-xs font-mono text-red-300">
+                    {donationTxError}
+                  </div>
+                )}
+
+                {donationTxSuccess ? (
+                  <div className="p-4 rounded-xl bg-emerald-950/90 border border-emerald-500/80 text-xs font-mono text-emerald-300 space-y-3">
+                    <p className="font-bold flex items-center gap-1.5">
+                      <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+                      <span>{donationTxSuccess}</span>
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowDonationModal(false);
+                        onNavigate('il-mio-account');
+                      }}
+                      className="w-full py-2.5 px-4 rounded-xl bg-emerald-500 text-black font-black text-xs uppercase tracking-wider hover:bg-emerald-400 transition-colors cursor-pointer"
+                    >
+                      Vai a Il Mio Account per visualizzare il tuo Badge ➔
+                    </button>
+                  </div>
+                ) : (
+                  <form onSubmit={handleVerifyDonationTx} className="space-y-2.5">
+                    <input
+                      type="text"
+                      value={donationTxInput}
+                      onChange={(e) => setDonationTxInput(e.target.value)}
+                      placeholder="es. 9XY81742... o ID Ricevuta PayPal"
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-neutral-900 border border-neutral-700 focus:border-amber-500 text-white font-mono text-xs focus:outline-none"
+                    />
+                    <div className="flex gap-2">
+                      <button
+                        type="submit"
+                        disabled={isVerifyingDonation || !donationTxInput.trim()}
+                        className="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black font-black text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+                      >
+                        <CheckCircle2 className="w-4 h-4" />
+                        <span>{isVerifyingDonation ? 'Verifica in corso...' : 'Convalida Transazione & Sblocca Badge'}</span>
+                      </button>
+                      <a
+                        href={activeDonation.paypalPaymentUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="py-3 px-4 rounded-xl bg-neutral-800 hover:bg-neutral-700 text-neutral-300 text-xs font-mono flex items-center gap-1"
+                        title="Riapri PayPal"
+                      >
+                        <ExternalLink className="w-4 h-4" />
+                      </a>
+                    </div>
+                  </form>
+                )}
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {!currentUser && (
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-mono text-neutral-400 uppercase block">
+                      Tua Email per associare il Badge Supporter:
+                    </label>
+                    <input
+                      type="email"
+                      value={donorEmailInput}
+                      onChange={(e) => setDonorEmailInput(e.target.value)}
+                      placeholder="nome@dominio.com"
+                      className="w-full px-3.5 py-2 rounded-xl bg-neutral-900 border border-neutral-800 text-white font-mono text-xs focus:border-amber-500 focus:outline-none"
+                    />
+                  </div>
+                )}
+                <button
+                  type="button"
+                  onClick={() => handleStartDonation(selectedDonationAmount || 20)}
+                  className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-500 to-amber-400 hover:from-amber-300 hover:to-amber-400 text-black font-heading font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-xl shadow-amber-500/25 transition-all cursor-pointer"
+                >
+                  <Heart className="w-4 h-4 fill-black" />
+                  <span>
+                    {selectedDonationAmount === 20
+                      ? 'Dona 20$ / 20€ • Sblocca Early Supporter Lifetime Pass'
+                      : selectedDonationAmount
+                      ? `Dona ${selectedDonationAmount} € su PayPal`
+                      : 'Dona su PayPal'}
+                  </span>
+                  <ExternalLink className="w-4 h-4" />
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* High-Resolution Hardware GUI Modal */}
       {previewModalImage && (

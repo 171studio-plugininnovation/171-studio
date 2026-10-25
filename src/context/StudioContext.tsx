@@ -6,7 +6,7 @@ import {
   ClientFileItem, DownloadedPluginRecord, KeyBpmAnalysisRecord,
   EmailTemplatesConfig, DEFAULT_EMAIL_TEMPLATES, VoucherItem, DEFAULT_VOUCHERS,
   DEFAULT_ALBUM_CONFIG, DEFAULT_FRONTPAGE_SPECS, DEFAULT_PAGE_VALUES, DEFAULT_PLUGIN_BENEFITS,
-  AlbumOrderRecord
+  AlbumOrderRecord, PluginDonationRecord
 } from '../types/cms';
 import { 
   auth, db, googleProvider, googleAuthProvider, googleCalendarProvider, googleWorkspaceProvider,
@@ -189,6 +189,28 @@ interface StudioContextType {
   setAlbumOrderTracking: (id: string, trackingNumber: string, carrier?: string) => void;
   setAlbumOrderPickupReady: (id: string, readyDate: string, timeSlot?: string) => void;
   confirmAlbumOrderPayPalPayment: (id: string, transactionId?: string, paidAmount?: number) => AlbumOrderRecord | null;
+  // Plugin Donations & Early Supporter System
+  pluginDonations: PluginDonationRecord[];
+  createPluginDonation: (data: {
+    amount: number;
+    currency?: 'EUR' | 'USD';
+    userEmail?: string;
+    userName?: string;
+    notes?: string;
+  }) => PluginDonationRecord;
+  confirmPluginDonationPayPal: (
+    donationId: string,
+    transactionId?: string,
+    paidAmount?: number
+  ) => PluginDonationRecord | null;
+  updatePluginDonation: (id: string, updates: Partial<PluginDonationRecord>) => void;
+  deletePluginDonation: (id: string) => void;
+  // Bug Hunter Verified Technical Feedback Reward System
+  verifyPluginBugReportAndReward: (
+    reportId: string,
+    customVoucherDiscount?: number,
+    adminNotes?: string
+  ) => { success: boolean; voucherCode?: string; message: string };
 }
 
 const DEFAULT_PLUGINS: PluginItem[] = [
@@ -436,6 +458,13 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         createdAt: user.createdAt,
         welcomeDiscountCode: user.welcomeDiscountCode,
         welcomeDiscountUsed: user.welcomeDiscountUsed,
+        isEarlySupporter: user.isEarlySupporter ?? false,
+        earlySupporterUnlockedAt: user.earlySupporterUnlockedAt ?? null,
+        earlySupporterTxId: user.earlySupporterTxId ?? null,
+        earlySupporterAmount: user.earlySupporterAmount ?? null,
+        isVerifiedBugHunter: user.isVerifiedBugHunter ?? false,
+        verifiedBugHunterUnlockedAt: user.verifiedBugHunterUnlockedAt ?? null,
+        lifetimeCommercialPluginsFree: user.lifetimeCommercialPluginsFree ?? false,
         updatedAt: new Date().toISOString(),
       }, { merge: true }).catch(() => {});
     } catch {}
@@ -655,6 +684,32 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     } catch {}
   }, [albumOrders]);
 
+  // Plugin Donations & Early Supporter Pass state ("171 Plugin Innovation" Support)
+  const [pluginDonations, setPluginDonations] = useState<PluginDonationRecord[]>(() => {
+    try {
+      const saved = localStorage.getItem('171_plugin_donations');
+      if (saved) {
+        const parsed: PluginDonationRecord[] = JSON.parse(saved);
+        return parsed.filter(
+          (d) =>
+            !d.id.startsWith('don-demo-') &&
+            !d.id.startsWith('don-bot-') &&
+            !d.userEmail?.includes('demo') &&
+            !d.userEmail?.includes('bot.test')
+        );
+      }
+      return [];
+    } catch {
+      return [];
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('171_plugin_donations', JSON.stringify(pluginDonations));
+    } catch {}
+  }, [pluginDonations]);
+
   // Google Workspace (Gmail & Calendar) connection state
   const [isGoogleCalendarConnected, setIsGoogleCalendarConnected] = useState<boolean>(() => Boolean(getCachedAccessToken()));
   const [isGmailConnected, setIsGmailConnected] = useState<boolean>(() => Boolean(getCachedAccessToken()));
@@ -856,6 +911,13 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
           welcomeDiscountCode: personalWelcomeCode,
           welcomeDiscountUsed: existing?.welcomeDiscountUsed || false,
           usedVouchers: existing?.usedVouchers || [],
+          isEarlySupporter: existing?.isEarlySupporter || false,
+          earlySupporterUnlockedAt: existing?.earlySupporterUnlockedAt,
+          earlySupporterTxId: existing?.earlySupporterTxId,
+          earlySupporterAmount: existing?.earlySupporterAmount,
+          isVerifiedBugHunter: existing?.isVerifiedBugHunter || false,
+          verifiedBugHunterUnlockedAt: existing?.verifiedBugHunterUnlockedAt,
+          lifetimeCommercialPluginsFree: existing?.lifetimeCommercialPluginsFree || false,
         };
         saveRegisteredUserToMap(user);
 
@@ -989,6 +1051,13 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       welcomeDiscountCode: personalWelcomeCode,
       welcomeDiscountUsed: existing?.welcomeDiscountUsed || false,
       usedVouchers: existing?.usedVouchers || [],
+      isEarlySupporter: existing?.isEarlySupporter || false,
+      earlySupporterUnlockedAt: existing?.earlySupporterUnlockedAt,
+      earlySupporterTxId: existing?.earlySupporterTxId,
+      earlySupporterAmount: existing?.earlySupporterAmount,
+      isVerifiedBugHunter: existing?.isVerifiedBugHunter || false,
+      verifiedBugHunterUnlockedAt: existing?.verifiedBugHunterUnlockedAt,
+      lifetimeCommercialPluginsFree: existing?.lifetimeCommercialPluginsFree || false,
     };
     saveRegisteredUserToMap(user);
 
@@ -1065,6 +1134,13 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       welcomeDiscountCode: personalWelcomeCode,
       welcomeDiscountUsed: existing?.welcomeDiscountUsed || false,
       usedVouchers: existing?.usedVouchers || [],
+      isEarlySupporter: existing?.isEarlySupporter || false,
+      earlySupporterUnlockedAt: existing?.earlySupporterUnlockedAt,
+      earlySupporterTxId: existing?.earlySupporterTxId,
+      earlySupporterAmount: existing?.earlySupporterAmount,
+      isVerifiedBugHunter: existing?.isVerifiedBugHunter || false,
+      verifiedBugHunterUnlockedAt: existing?.verifiedBugHunterUnlockedAt,
+      lifetimeCommercialPluginsFree: existing?.lifetimeCommercialPluginsFree || false,
     };
     saveRegisteredUserToMap(user);
 
@@ -2859,6 +2935,289 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     return { ...existing, ...updates };
   };
 
+  // Plugin Donations & Early Supporter Lifetime Pass Management
+  const createPluginDonation = (data: {
+    amount: number;
+    currency?: 'EUR' | 'USD';
+    userEmail?: string;
+    userName?: string;
+    notes?: string;
+  }): PluginDonationRecord => {
+    const rawEmail = (data.userEmail || currentUser?.email || 'donatore@171studio.com').trim().toLowerCase();
+    const cleanName = (data.userName || currentUser?.name || rawEmail.split('@')[0] || 'Early Supporter').trim();
+    const effectiveAmount = Math.max(1, Number(data.amount) || 20);
+    const isEarlyPass = effectiveAmount >= 20;
+    const donationCode = `171-DON-${Date.now().toString().slice(-4)}-${Math.floor(100 + Math.random() * 900)}`;
+
+    const donationItemName = isEarlyPass
+      ? '171 Plugin Innovation - Early Supporter Lifetime Pass'
+      : '171 Plugin Innovation - Donazione Sviluppo';
+
+    const newDonation: PluginDonationRecord = {
+      id: `don-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      donationCode,
+      userId: currentUser?.id || `usr-${rawEmail.replace(/[^a-z0-9]/gi, '_')}`,
+      userName: cleanName,
+      userEmail: rawEmail,
+      amount: effectiveAmount,
+      currency: data.currency || 'EUR',
+      paypalEmail: siteContent.paypalEmail || STUDIO_PAYPAL_EMAIL,
+      paypalPaymentUrl: getPayPalPaymentUrl(effectiveAmount, donationItemName, siteContent.paypalEmail || STUDIO_PAYPAL_EMAIL),
+      status: 'in_attesa_pagamento',
+      paymentStatus: 'in_attesa',
+      isEarlySupporterPass: isEarlyPass,
+      notes: data.notes?.trim() || (isEarlyPass ? 'Early Supporter Lifetime Pass (Sblocca badge e accesso a vita a tutti i plugin futuri)' : 'Supporto Sviluppo 171 Plugin Innovation'),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    setPluginDonations((prev) => [newDonation, ...prev]);
+
+    try {
+      setDoc(doc(db, 'plugin_donations', newDonation.id), newDonation).catch(() => {});
+    } catch {}
+
+    logActivity(
+      'PLUGIN_DONATION_CREATED',
+      `Iniziata donazione #${newDonation.donationCode} da ${newDonation.userName} (${newDonation.userEmail}) di €${newDonation.amount.toFixed(2)} [${isEarlyPass ? 'Qualifica Early Supporter Lifetime Pass' : 'Donazione Libera'}]`
+    );
+
+    return newDonation;
+  };
+
+  const updatePluginDonation = (id: string, updates: Partial<PluginDonationRecord>) => {
+    setPluginDonations((prev) =>
+      prev.map((d) => (d.id === id ? { ...d, ...updates, updatedAt: new Date().toISOString() } : d))
+    );
+    try {
+      setDoc(doc(db, 'plugin_donations', id), updates, { merge: true }).catch(() => {});
+    } catch {}
+  };
+
+  const deletePluginDonation = (id: string) => {
+    setPluginDonations((prev) => prev.filter((d) => d.id !== id));
+    try {
+      deleteDoc(doc(db, 'plugin_donations', id)).catch(() => {});
+    } catch {}
+  };
+
+  const confirmPluginDonationPayPal = (
+    donationId: string,
+    transactionId?: string,
+    paidAmount?: number
+  ): PluginDonationRecord | null => {
+    const existing = pluginDonations.find((d) => d.id === donationId);
+    if (!existing) return null;
+
+    let txId = (transactionId || '').trim();
+    if (txId) {
+      if (txId.length < 5) {
+        throw new Error('Inserisci un codice transazione o ID ricevuta PayPal valido (almeno 5 caratteri).');
+      }
+      // Anti-duplication check against other donations
+      const dupDonation = pluginDonations.find(
+        (d) => d.id !== donationId && d.paypalTransactionId && d.paypalTransactionId.toLowerCase() === txId.toLowerCase()
+      );
+      if (dupDonation) {
+        throw new Error(`Il codice transazione PayPal "${txId}" risulta già associato e convalidato per la donazione #${dupDonation.donationCode}.`);
+      }
+      // Anti-duplication check against album orders
+      const dupAlbum = albumOrders.find(
+        (o) => o.paypalTransactionId && o.paypalTransactionId.toLowerCase() === txId.toLowerCase()
+      );
+      if (dupAlbum) {
+        throw new Error(`Il codice transazione PayPal "${txId}" risulta già associato e convalidato per l'ordine album #${dupAlbum.orderCode}.`);
+      }
+    } else {
+      txId = `171-DON-TX-${Date.now().toString().slice(-6)}-${Math.floor(100 + Math.random() * 900)}`;
+    }
+
+    const finalAmount = paidAmount !== undefined ? paidAmount : existing.amount;
+    const nowIso = new Date().toISOString();
+    const qualifiesEarlySupporter = existing.isEarlySupporterPass || finalAmount >= 20;
+
+    const updates: Partial<PluginDonationRecord> = {
+      status: 'convalidata',
+      paymentStatus: 'saldato',
+      paypalTransactionId: txId,
+      paypalPaidAt: nowIso,
+      paypalEmail: siteContent.paypalEmail || STUDIO_PAYPAL_EMAIL,
+      amount: finalAmount,
+      isEarlySupporterPass: qualifiesEarlySupporter,
+      updatedAt: nowIso,
+    };
+
+    updatePluginDonation(donationId, updates);
+
+    // If qualifying for Early Supporter Pass (amount >= 20), unlock the badge on the user's account!
+    if (qualifiesEarlySupporter && existing.userEmail) {
+      const targetEmail = existing.userEmail.trim().toLowerCase();
+      const usersMap = getSavedRegisteredUsers();
+      const userToUpdate = usersMap[targetEmail] || (currentUser?.email.toLowerCase() === targetEmail ? currentUser : null);
+
+      if (userToUpdate) {
+        const updatedUser: UserAccount = {
+          ...userToUpdate,
+          isEarlySupporter: true,
+          earlySupporterUnlockedAt: nowIso,
+          earlySupporterTxId: txId,
+          earlySupporterAmount: finalAmount,
+        };
+        saveRegisteredUserToMap(updatedUser);
+
+        if (currentUser && currentUser.email.toLowerCase() === targetEmail) {
+          setCurrentUser(updatedUser);
+        }
+      } else {
+        const newUser: UserAccount = {
+          id: existing.userId || `usr-${targetEmail.replace(/[^a-z0-9]/gi, '_')}`,
+          email: targetEmail,
+          name: existing.userName,
+          role: 'client',
+          createdAt: nowIso,
+          isEarlySupporter: true,
+          earlySupporterUnlockedAt: nowIso,
+          earlySupporterTxId: txId,
+          earlySupporterAmount: finalAmount,
+        };
+        saveRegisteredUserToMap(newUser);
+      }
+    }
+
+    logActivity(
+      'PLUGIN_DONATION_CONFIRMED',
+      `Donazione PayPal Convalidata per #${existing.donationCode} (${existing.userName} - ${existing.userEmail}) • TX: ${txId} • €${finalAmount.toFixed(2)} • ${qualifiesEarlySupporter ? '🌟 BADGE EARLY SUPPORTER LIFETIME PASS SBLOCCATO!' : 'Supporto Sviluppo Convalidato'}`
+    );
+
+    return { ...existing, ...updates };
+  };
+
+  // Bug Hunter Verified Technical Feedback Reward System
+  const verifyPluginBugReportAndReward = (
+    reportId: string,
+    customVoucherDiscount: number = 25,
+    adminNotes?: string
+  ): { success: boolean; voucherCode?: string; message: string } => {
+    const report = pluginBugReports.find((r) => r.id === reportId);
+    if (!report) {
+      return { success: false, message: 'Segnalazione bug non trovata.' };
+    }
+
+    const cleanEmail = (report.userEmail || '').trim().toLowerCase();
+    if (!cleanEmail) {
+      return { success: false, message: 'La segnalazione non contiene un indirizzo email valido per assegnare la ricompensa.' };
+    }
+
+    const nowIso = new Date().toISOString();
+    const cleanUserSlug = cleanEmail.replace(/[^a-z0-9]/g, '').slice(0, 5).toUpperCase() || 'TESTER';
+    const randNum = Math.floor(1000 + Math.random() * 9000);
+    const randHex = Math.random().toString(36).substring(2, 6).toUpperCase();
+    const voucherCode = `171-TESTER-VIP-${cleanUserSlug}-${randNum}-${randHex}`;
+
+    // 1. Generate VIP Studio Discount Voucher for 25€ (or custom amount)
+    const newVoucher: VoucherItem = {
+      id: `vch-tester-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+      code: voucherCode,
+      title: `Buono Ricompensa Tester Certificato (-${customVoucherDiscount}€)`,
+      discountType: 'fixed',
+      discountValue: customVoucherDiscount,
+      targetProduct: 'all',
+      applicableProducts: ['all'],
+      description: `Buono sconto speciale assegnato dal Master per bug/feedback verificato su "${report.pluginName}" (${report.operatingSystem} / ${report.dawUsed})`,
+      active: true,
+      assignedToEmail: cleanEmail,
+      assignedToUserName: report.userName,
+      singleUsePerAccount: true,
+      usedByEmails: [],
+      usageCount: 0,
+    };
+
+    // Add to siteContent vouchers
+    const currentVouchers = normalizeVouchers(siteContent.vouchers);
+    updateSiteContent({ vouchers: [newVoucher, ...currentVouchers] });
+
+    // 2. Mark bug report as verified real problem, reward granted, status 'risolto'
+    const updatedNotes = adminNotes?.trim() 
+      ? `${report.adminNotes ? report.adminNotes + '\n' : ''}Ricompensa Tester Assegnata: Buono ${voucherCode} (-${customVoucherDiscount}€) + Badge Tester Certificato. Nota: ${adminNotes.trim()}`
+      : `${report.adminNotes ? report.adminNotes + '\n' : ''}Ricompensa Tester Assegnata: Buono ${voucherCode} (-${customVoucherDiscount}€) + Badge Tester Certificato + Licenza Commerciale Gratuita.`;
+
+    setPluginBugReports((prev) =>
+      prev.map((r) =>
+        r.id === reportId
+          ? {
+              ...r,
+              status: 'risolto',
+              isVerifiedRealProblem: true,
+              rewardGranted: true,
+              rewardVoucherCode: voucherCode,
+              rewardGrantedAt: nowIso,
+              rewardGrantedBy: '171 Studio Master',
+              adminNotes: updatedNotes,
+              updatedAt: nowIso,
+            }
+          : r
+      )
+    );
+
+    try {
+      setDoc(
+        doc(db, 'plugin_bug_reports', reportId),
+        {
+          status: 'risolto',
+          isVerifiedRealProblem: true,
+          rewardGranted: true,
+          rewardVoucherCode: voucherCode,
+          rewardGrantedAt: nowIso,
+          rewardGrantedBy: '171 Studio Master',
+          adminNotes: updatedNotes,
+          updatedAt: nowIso,
+        },
+        { merge: true }
+      ).catch(() => {});
+    } catch {}
+
+    // 3. Update User profile with isVerifiedBugHunter badge and lifetime commercial plugins free!
+    const usersMap = getSavedRegisteredUsers();
+    const userToUpdate = usersMap[cleanEmail] || (currentUser?.email.toLowerCase() === cleanEmail ? currentUser : null);
+
+    if (userToUpdate) {
+      const updatedUser: UserAccount = {
+        ...userToUpdate,
+        isVerifiedBugHunter: true,
+        verifiedBugHunterUnlockedAt: nowIso,
+        lifetimeCommercialPluginsFree: true,
+      };
+      saveRegisteredUserToMap(updatedUser);
+
+      if (currentUser && currentUser.email.toLowerCase() === cleanEmail) {
+        setCurrentUser(updatedUser);
+      }
+    } else {
+      const newUser: UserAccount = {
+        id: report.userId || `usr-${cleanEmail.replace(/[^a-z0-9]/gi, '_')}`,
+        email: cleanEmail,
+        name: report.userName,
+        role: 'client',
+        createdAt: nowIso,
+        isVerifiedBugHunter: true,
+        verifiedBugHunterUnlockedAt: nowIso,
+        lifetimeCommercialPluginsFree: true,
+      };
+      saveRegisteredUserToMap(newUser);
+    }
+
+    logActivity(
+      'BUG_HUNTER_REWARD_GRANTED',
+      `Ricompensa Tester Certificato assegnata a ${report.userName} (${cleanEmail}) per report "${report.pluginName}": Voucher ${voucherCode} (-${customVoucherDiscount}€) + Badge Bug Hunter + Copie Gratuite Plugin Commerciali Futuri!`
+    );
+
+    return {
+      success: true,
+      voucherCode,
+      message: `Ricompensa assegnata con successo a ${cleanEmail}! Voucher generato: ${voucherCode} (-${customVoucherDiscount}€), badge Bug Hunter e licenza commerciale gratuita sbloccati.`,
+    };
+  };
+
   const registeredUsers = useMemo(() => {
     const map = getSavedRegisteredUsers();
     const usersList: { email: string; name: string }[] = [];
@@ -2907,8 +3266,18 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       }
     });
 
+    pluginDonations.forEach((d) => {
+      if (d.userEmail) {
+        const email = d.userEmail.toLowerCase();
+        if (!isOfficialMasterEmail(email) && !seenEmails.has(email)) {
+          usersList.push({ email: d.userEmail, name: d.userName || email.split('@')[0] });
+          seenEmails.add(email);
+        }
+      }
+    });
+
     return usersList;
-  }, [currentUser, bookings, activities, albumOrders]);
+  }, [currentUser, bookings, activities, albumOrders, pluginDonations]);
 
   return (
     <StudioContext.Provider
@@ -2986,11 +3355,18 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         setAlbumOrderTracking,
         setAlbumOrderPickupReady,
         confirmAlbumOrderPayPalPayment,
-        // Plugin Bug Reports Management
+        // Plugin Bug Reports Management & Rewards
         pluginBugReports,
         addPluginBugReport,
         updatePluginBugReportStatus,
         deletePluginBugReport,
+        verifyPluginBugReportAndReward,
+        // Plugin Donations & Early Supporter Lifetime Pass
+        pluginDonations,
+        createPluginDonation,
+        confirmPluginDonationPayPal,
+        updatePluginDonation,
+        deletePluginDonation,
       }}
     >
       {children}
