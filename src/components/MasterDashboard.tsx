@@ -122,7 +122,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
     aboutValues: siteContent.aboutValues || DEFAULT_PAGE_VALUES,
     pluginBenefits: siteContent.pluginBenefits || DEFAULT_PLUGIN_BENEFITS,
     albumPlayer: siteContent.albumPlayer || DEFAULT_ALBUM_CONFIG,
-    emailWebhookUrl: siteContent.emailWebhookUrl || '',
+    emailWebhookUrl: siteContent.emailWebhookUrl || 'https://hook.eu1.make.com/a03ihbpq25iwo69o1slek8vmn9cjgec8',
     emailjsServiceId: siteContent.emailjsServiceId || '',
     emailjsTemplateIdReceipt: siteContent.emailjsTemplateIdReceipt || '',
     emailjsTemplateIdConfirmation: siteContent.emailjsTemplateIdConfirmation || '',

@@ -151,7 +151,7 @@ export function getEmailAutomationConfig(): {
     if (saved) {
       const parsed = JSON.parse(saved);
       return {
-        emailWebhookUrl: parsed.emailWebhookUrl,
+        emailWebhookUrl: parsed.emailWebhookUrl || 'https://hook.eu1.make.com/a03ihbpq25iwo69o1slek8vmn9cjgec8',
         emailjsServiceId: parsed.emailjsServiceId,
         emailjsTemplateIdReceipt: parsed.emailjsTemplateIdReceipt,
         emailjsTemplateIdConfirmation: parsed.emailjsTemplateIdConfirmation,
@@ -159,7 +159,9 @@ export function getEmailAutomationConfig(): {
       };
     }
   } catch {}
-  return {};
+  return {
+    emailWebhookUrl: 'https://hook.eu1.make.com/a03ihbpq25iwo69o1slek8vmn9cjgec8',
+  };
 }
 
 /**

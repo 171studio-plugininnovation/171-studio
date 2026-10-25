@@ -388,6 +388,7 @@ const DEFAULT_CONTENT: SiteContent = {
 
   // 5. Official Album Player "The God Cypher"
   albumPlayer: DEFAULT_ALBUM_CONFIG,
+  emailWebhookUrl: 'https://hook.eu1.make.com/a03ihbpq25iwo69o1slek8vmn9cjgec8',
 };
 
 const StudioContext = createContext<StudioContextType | undefined>(undefined);
@@ -557,6 +558,7 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
             ...DEFAULT_EMAIL_TEMPLATES,
             ...(parsed.emailTemplates || {}),
           },
+          emailWebhookUrl: parsed.emailWebhookUrl || 'https://hook.eu1.make.com/a03ihbpq25iwo69o1slek8vmn9cjgec8',
           vouchers: normalizeVouchers(parsed.vouchers),
         };
       }
