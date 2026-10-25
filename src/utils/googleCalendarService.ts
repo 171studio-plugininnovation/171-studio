@@ -1,10 +1,11 @@
-import { BookingRecord, STUDIO_PAYPAL_EMAIL } from '../types/cms';
+import { BookingRecord, STUDIO_PAYPAL_EMAIL, MASTER_EMAIL } from '../types/cms';
 
 /**
  * Creates a direct Google Calendar web template URL that the user or master
  * can open in one click to view or add the event to their Google Calendar.
+ * If isForClient is true, formats the title and description specifically for the client's private agenda.
  */
-export const getGoogleCalendarWebUrl = (booking: BookingRecord): string => {
+export const getGoogleCalendarWebUrl = (booking: BookingRecord, isForClient: boolean = false): string => {
   const [startHour = 10, startMin = 0] = (booking.time || '10:00').split(':').map(Number);
   const endHour = Math.min(23, startHour + (booking.hours || 2));
 
@@ -13,18 +14,32 @@ export const getGoogleCalendarWebUrl = (booking: BookingRecord): string => {
   const startStr = `${cleanDate}T${String(startHour).padStart(2, '0')}${String(startMin).padStart(2, '0')}00`;
   const endStr = `${cleanDate}T${String(endHour).padStart(2, '0')}${String(startMin).padStart(2, '0')}00`;
 
-  const title = encodeURIComponent(`171 STUDIO: ${booking.serviceTitle} [${booking.userName}]`);
+  const title = encodeURIComponent(
+    isForClient
+      ? `Sessione Studio @ 171 Studio: ${booking.serviceTitle}`
+      : `171 STUDIO: ${booking.serviceTitle} [${booking.userName}]`
+  );
+
   const details = encodeURIComponent(
-    `171 STUDIO - SESSIONE REGISTRAZIONE / PRODUZIONE\n\n` +
-    `• Codice Ordine: #${booking.orderCode}\n` +
-    `• Artista: ${booking.userName} (${booking.userEmail})\n` +
-    `• Telefono: ${booking.userPhone}\n` +
-    `• Servizio: ${booking.serviceTitle}\n` +
-    `• Durata: ${booking.hours} ore\n` +
-    `• Importo Totale: ${booking.estimatedPrice} €\n` +
-    `• Destinatario PayPal: ${booking.paypalPaymentUrl ? STUDIO_PAYPAL_EMAIL : '-'}\n` +
-    `• Note Artista: ${booking.notes || 'Nessuna specifica aggiuntiva'}\n` +
-    `• Stato Sessione: ${booking.status.toUpperCase()}`
+    isForClient
+      ? `LA TUA SESSIONE A 171 STUDIO MESSINA\n\n` +
+        `• Servizio: ${booking.serviceTitle}\n` +
+        `• Codice Ordine: #${booking.orderCode}\n` +
+        `• Data & Orario: ${booking.date} alle ore ${booking.time} (${booking.hours}h di studio)\n` +
+        `• Importo: ${booking.estimatedPrice} €\n` +
+        `• Luogo: 171 Studio - Messina (ME), Sicilia\n\n` +
+        `💡 Ricordati di portare basi musicali, testi o stems su chiavetta USB o link Cloud Drive.\n` +
+        `Contatti Studio: ${MASTER_EMAIL} (Igor Rozanov)`
+      : `171 STUDIO - SESSIONE REGISTRAZIONE / PRODUZIONE\n\n` +
+        `• Codice Ordine: #${booking.orderCode}\n` +
+        `• Artista: ${booking.userName} (${booking.userEmail})\n` +
+        `• Telefono: ${booking.userPhone}\n` +
+        `• Servizio: ${booking.serviceTitle}\n` +
+        `• Durata: ${booking.hours} ore\n` +
+        `• Importo Totale: ${booking.estimatedPrice} €\n` +
+        `• Destinatario PayPal: ${booking.paypalPaymentUrl ? STUDIO_PAYPAL_EMAIL : '-'}\n` +
+        `• Note Artista: ${booking.notes || 'Nessuna specifica aggiuntiva'}\n` +
+        `• Stato Sessione: ${booking.status.toUpperCase()}`
   );
   const location = encodeURIComponent('171 Studio - Messina (ME), Sicilia, Italia');
 
@@ -35,7 +50,7 @@ export const getGoogleCalendarWebUrl = (booking: BookingRecord): string => {
  * Generates an RFC 5545 compliant iCalendar (.ics) string
  * for universal calendar compatibility (Apple Calendar, iOS, macOS, Outlook, Google Calendar).
  */
-export const generateBookingIcsContent = (booking: BookingRecord): string => {
+export const generateBookingIcsContent = (booking: BookingRecord, isForClient: boolean = false): string => {
   const [startHour = 10, startMin = 0] = (booking.time || '10:00').split(':').map(Number);
   const endHour = Math.min(23, startHour + (booking.hours || 2));
 
@@ -45,18 +60,42 @@ export const generateBookingIcsContent = (booking: BookingRecord): string => {
   const nowIso = new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
 
   const orderCode = booking.orderCode || booking.id.slice(-8);
-  const summary = `171 STUDIO: ${booking.serviceTitle} - ${booking.userName}`;
-  const description = [
-    `171 STUDIO MESSINA - SESSIONE REGISTRAZIONE & PRODUZIONE`,
-    `Codice Ordine: #${orderCode}`,
-    `Artista: ${booking.userName}`,
-    `Email: ${booking.userEmail}`,
-    `Telefono: ${booking.userPhone}`,
-    `Servizio: ${booking.serviceTitle} (${booking.hours} ore)`,
-    `Totale: ${booking.estimatedPrice} EUR`,
-    `PayPal: ${STUDIO_PAYPAL_EMAIL}`,
-    `Note: ${booking.notes || 'Nessuna specifica'}`,
-  ].join('\\n');
+
+  const summary = isForClient
+    ? `Sessione in Studio: ${booking.serviceTitle} @ 171 Studio`
+    : `171 STUDIO: ${booking.serviceTitle} - ${booking.userName}`;
+
+  const descriptionLines = isForClient
+    ? [
+        `LA TUA SESSIONE A 171 STUDIO MESSINA`,
+        `Codice Ordine: #${orderCode}`,
+        `Servizio: ${booking.serviceTitle}`,
+        `Orario: ${booking.date} alle ore ${booking.time} (${booking.hours} ore)`,
+        `Quota: ${booking.estimatedPrice} EUR`,
+        `Luogo: 171 Studio - Messina (ME)\\, Sicilia`,
+        `Assistenza / Contatti: ${MASTER_EMAIL}`,
+      ]
+    : [
+        `171 STUDIO MESSINA - SESSIONE REGISTRAZIONE & PRODUZIONE`,
+        `Codice Ordine: #${orderCode}`,
+        `Artista: ${booking.userName}`,
+        `Email: ${booking.userEmail}`,
+        `Telefono: ${booking.userPhone}`,
+        `Servizio: ${booking.serviceTitle} (${booking.hours} ore)`,
+        `Totale: ${booking.estimatedPrice} EUR`,
+        `PayPal: ${STUDIO_PAYPAL_EMAIL}`,
+        `Note: ${booking.notes || 'Nessuna specifica'}`,
+      ];
+
+  const description = descriptionLines.join('\\n');
+
+  const alarmDesc2h = isForClient
+    ? 'Promemoria: la tua sessione a 171 Studio inizia tra 2 ore'
+    : `Sessione #${orderCode} con ${booking.userName} tra 2 ore`;
+
+  const alarmDesc1d = isForClient
+    ? 'Promemoria: domani hai la sessione a 171 Studio Messina'
+    : `Sessione #${orderCode} con ${booking.userName} domani`;
 
   return [
     'BEGIN:VCALENDAR',
@@ -76,12 +115,12 @@ export const generateBookingIcsContent = (booking: BookingRecord): string => {
     'BEGIN:VALARM',
     'TRIGGER:-PT2H',
     'ACTION:DISPLAY',
-    'DESCRIPTION:Promemoria Sessione 171 Studio tra 2 ore',
+    `DESCRIPTION:${alarmDesc2h}`,
     'END:VALARM',
     'BEGIN:VALARM',
     'TRIGGER:-P1D',
     'ACTION:DISPLAY',
-    'DESCRIPTION:Promemoria Sessione 171 Studio domani',
+    `DESCRIPTION:${alarmDesc1d}`,
     'END:VALARM',
     'END:VEVENT',
     'END:VCALENDAR',
@@ -91,13 +130,15 @@ export const generateBookingIcsContent = (booking: BookingRecord): string => {
 /**
  * Downloads a universal .ics calendar file directly in the browser
  */
-export const downloadBookingIcsFile = (booking: BookingRecord): void => {
-  const icsContent = generateBookingIcsContent(booking);
+export const downloadBookingIcsFile = (booking: BookingRecord, isForClient: boolean = false): void => {
+  const icsContent = generateBookingIcsContent(booking, isForClient);
   const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
-  const fileName = `171_Studio_Sessione_${booking.orderCode || 'ORD'}.ics`;
+  const fileName = isForClient
+    ? `171_Studio_La_Mia_Sessione_${booking.orderCode || 'ORD'}.ics`
+    : `171_Studio_Sessione_${booking.orderCode || 'ORD'}.ics`;
   link.download = fileName;
   document.body.appendChild(link);
   link.click();

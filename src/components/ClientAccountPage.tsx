@@ -47,6 +47,7 @@ export const ClientAccountPage: React.FC<ClientAccountPageProps> = ({ onNavigate
     getUserCumulativeDonations,
     openGmailWebCompose,
     openMailtoCompose,
+    openClientContactStudioGmail,
     downloadBookingCalendarIcs,
     openGoogleCalendarWeb,
   } = useStudio();
@@ -2044,36 +2045,36 @@ Data: ${new Date(file.createdAt).toLocaleString('it-IT')}
                           </p>
                         )}
 
-                        {/* 1-Click Calendar & Email Toolbar */}
+                        {/* 1-Click Calendar & Contact Toolbar (Solo per il cliente e la sua sessione) */}
                         <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-neutral-900">
                           <button
                             type="button"
-                            onClick={() => openGoogleCalendarWeb(booking.id)}
+                            onClick={() => openGoogleCalendarWeb(booking.id, true)}
                             className="px-2.5 py-1.5 rounded-lg bg-neutral-900 hover:bg-neutral-800 text-amber-300 hover:text-white border border-amber-500/30 text-[11px] font-mono flex items-center gap-1.5 transition-all cursor-pointer"
-                            title="Aggiungi al tuo Google Calendar con 1 click senza autenticazione"
+                            title="Aggiungi la tua sessione al tuo Google Calendar personale"
                           >
                             <Calendar className="w-3 h-3 text-amber-400" />
-                            <span>Google Calendar (1 Click)</span>
+                            <span>Aggiungi al Tuo Google Calendar</span>
                           </button>
 
                           <button
                             type="button"
-                            onClick={() => downloadBookingCalendarIcs(booking.id)}
+                            onClick={() => downloadBookingCalendarIcs(booking.id, true)}
                             className="px-2.5 py-1.5 rounded-lg bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-800 text-[11px] font-mono flex items-center gap-1.5 transition-all cursor-pointer"
-                            title="Scarica file .ICS universale (Apple Calendar su iPhone/Mac o Outlook su Windows)"
+                            title="Scarica promemoria .ICS per il tuo iPhone (Apple Calendar) o Outlook"
                           >
                             <Download className="w-3 h-3 text-neutral-400" />
-                            <span>Scarica .ICS (Apple/Outlook)</span>
+                            <span>Promemoria iPhone/Outlook (.ICS)</span>
                           </button>
 
                           <button
                             type="button"
-                            onClick={() => openGmailWebCompose(booking.id, 'receipt')}
+                            onClick={() => openClientContactStudioGmail(booking.id)}
                             className="px-2.5 py-1.5 rounded-lg bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-800 text-[11px] font-mono flex items-center gap-1.5 transition-all cursor-pointer"
-                            title="Apri riepilogo e ricevuta sessione pre-compilata su Gmail Web"
+                            title="Invia note, richieste o link alle tue basi musicali direttamente a Igor Rozanov"
                           >
-                            <Mail className="w-3 h-3 text-blue-400" />
-                            <span>Ricevuta Gmail</span>
+                            <Mail className="w-3 h-3 text-amber-400" />
+                            <span>Invia File / Note allo Studio</span>
                           </button>
                         </div>
                       </div>
@@ -2212,25 +2213,25 @@ Data: ${new Date(file.createdAt).toLocaleString('it-IT')}
                         <div className="flex items-center gap-1.5">
                           <button
                             type="button"
-                            onClick={() => openGoogleCalendarWeb(b.id)}
+                            onClick={() => openGoogleCalendarWeb(b.id, true)}
                             className="p-1.5 rounded-lg bg-neutral-900 hover:bg-neutral-800 text-amber-400 border border-neutral-800 hover:border-amber-500/40 transition-colors cursor-pointer"
-                            title="Aggiungi a Google Calendar (1 Click)"
+                            title="Salva nel tuo Google Calendar personale"
                           >
                             <Calendar className="w-3.5 h-3.5" />
                           </button>
                           <button
                             type="button"
-                            onClick={() => downloadBookingCalendarIcs(b.id)}
+                            onClick={() => downloadBookingCalendarIcs(b.id, true)}
                             className="p-1.5 rounded-lg bg-neutral-900 hover:bg-neutral-800 text-neutral-300 border border-neutral-800 hover:border-neutral-700 transition-colors cursor-pointer"
-                            title="Scarica file .ICS per Apple Calendar o Outlook"
+                            title="Scarica file .ICS promemoria per iPhone / Outlook"
                           >
                             <Download className="w-3.5 h-3.5" />
                           </button>
                           <button
                             type="button"
-                            onClick={() => openGmailWebCompose(b.id, 'receipt')}
+                            onClick={() => openClientContactStudioGmail(b.id)}
                             className="p-1.5 rounded-lg bg-neutral-900 hover:bg-neutral-800 text-neutral-300 border border-neutral-800 hover:border-neutral-700 transition-colors cursor-pointer"
-                            title="Apri riepilogo in Gmail Web"
+                            title="Invia note o basi allo Studio via Gmail"
                           >
                             <Mail className="w-3.5 h-3.5" />
                           </button>

@@ -71,8 +71,9 @@ interface StudioContextType {
   sendReceiptEmailViaGmail: (bookingId: string) => Promise<{ success: boolean; messageId?: string; error?: string }>;
   openGmailWebCompose: (bookingId: string, type: 'receipt' | 'confirmation') => boolean;
   openMailtoCompose: (bookingId: string, type: 'receipt' | 'confirmation') => boolean;
-  downloadBookingCalendarIcs: (bookingId: string) => void;
-  openGoogleCalendarWeb: (bookingId: string) => void;
+  openClientContactStudioGmail: (bookingId: string) => boolean;
+  downloadBookingCalendarIcs: (bookingId: string, isForClient?: boolean) => void;
+  openGoogleCalendarWeb: (bookingId: string, isForClient?: boolean) => void;
   triggerTestBookingAndConfirmationEmail: (recipientEmail?: string) => Promise<{ booking: BookingRecord; receiptEmail: EmailLog; confirmationEmail: EmailLog }>;
   restoreBookingToDesk: (id: string) => void;
   deleteBookingPermanently: (id: string) => void;
@@ -2576,18 +2577,40 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     return true;
   };
 
-  const downloadBookingCalendarIcs = (bookingId: string) => {
+  const downloadBookingCalendarIcs = (bookingId: string, isForClient: boolean = false) => {
     const target = bookings.find((b) => b.id === bookingId);
     if (!target) return;
-    downloadBookingIcsFile(target);
-    logActivity('CMS_EDIT', `Scaricato file calendario .ICS per Sessione #${target.orderCode}`);
+    downloadBookingIcsFile(target, isForClient);
+    logActivity('CMS_EDIT', `Scaricato file calendario .ICS per Sessione #${target.orderCode} (${isForClient ? 'Cliente' : 'Master'})`);
   };
 
-  const openGoogleCalendarWeb = (bookingId: string) => {
+  const openGoogleCalendarWeb = (bookingId: string, isForClient: boolean = false) => {
     const target = bookings.find((b) => b.id === bookingId);
     if (!target) return;
-    const url = target.calendarEventUrl || getGoogleCalendarWebUrl(target);
+    const url = isForClient ? getGoogleCalendarWebUrl(target, true) : (target.calendarEventUrl || getGoogleCalendarWebUrl(target, false));
     window.open(url, '_blank', 'noopener,noreferrer');
+  };
+
+  const openClientContactStudioGmail = (bookingId: string): boolean => {
+    const target = bookings.find((b) => b.id === bookingId);
+    if (!target) return false;
+    const orderCode = target.orderCode || generateOrderCode(target.id);
+    const subject = `Sessione #${orderCode}: ${target.serviceTitle} - ${target.userName}`;
+    const bodyText =
+      `Gentile Igor Rozanov / 171 Studio Messina,\n\n` +
+      `Vi contatto in merito alla mia sessione prenotata:\n` +
+      `• Codice Prenotazione: #${orderCode}\n` +
+      `• Servizio: ${target.serviceTitle}\n` +
+      `• Data & Orario: ${target.date} alle ore ${target.time} (${target.hours}h)\n` +
+      `• Artista: ${target.userName}\n` +
+      `• Telefono: ${target.userPhone || 'Non specificato'}\n\n` +
+      `Messaggio / Note per lo Studio:\n` +
+      `[Scrivi qui le tue richieste, note tecniche o incolla il link alle tue basi musicali / stems...]\n\n` +
+      `A presto,\n${target.userName}`;
+
+    const url = getGmailWebComposeUrl(MASTER_EMAIL, subject, bodyText);
+    window.open(url, '_blank', 'noopener,noreferrer');
+    return true;
   };
 
   const sendConfirmationEmail = async (id: string): Promise<boolean> => {
@@ -3435,6 +3458,7 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         sendReceiptEmailViaGmail,
         openGmailWebCompose,
         openMailtoCompose,
+        openClientContactStudioGmail,
         downloadBookingCalendarIcs,
         openGoogleCalendarWeb,
         triggerTestBookingAndConfirmationEmail,
