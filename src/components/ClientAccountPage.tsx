@@ -44,7 +44,10 @@ export const ClientAccountPage: React.FC<ClientAccountPageProps> = ({ onNavigate
     pluginDonations,
     createPluginDonation,
     confirmPluginDonationPayPal,
+    getUserCumulativeDonations,
   } = useStudio();
+
+  const userCumulativeStats = getUserCumulativeDonations(currentUser?.email);
 
   const [activeSection, setActiveSection] = useState<'overview' | 'album_orders' | 'sessions' | 'files' | 'plugins' | 'keybpm' | 'bug_report' | 'vouchers' | 'donations'>('overview');
   const [bookingToCancel, setBookingToCancel] = useState<BookingRecord | null>(null);
@@ -1462,7 +1465,7 @@ Data: ${new Date(file.createdAt).toLocaleString('it-IT')}
                     🌟 LIFETIME PASS ATTIVO
                   </span>
                   <span className="text-xs font-mono text-amber-300 font-bold">
-                    Badge Convalidato
+                    Badge Early Supporter Convalidato
                   </span>
                 </div>
                 <h4 className="text-lg font-heading font-black text-white">
@@ -1471,12 +1474,15 @@ Data: ${new Date(file.createdAt).toLocaleString('it-IT')}
                 <p className="text-xs text-neutral-300 font-sans leading-relaxed max-w-2xl">
                   Il tuo account è ufficialmente registrato come <strong>Early Supporter</strong>! Hai diritto all'<strong>Accesso a Vita</strong> ad ogni singolo plugin, espansione o algoritmo DSP sviluppato in futuro da 171 Plugin Innovation, inclusi tutti i futuri aggiornamenti e release commerciali a pagamento!
                 </p>
-                {currentUser.earlySupporterTxId && (
-                  <p className="text-[11px] font-mono text-amber-400/90">
-                    Transazione PayPal verificata: <strong>{currentUser.earlySupporterTxId}</strong>
-                    {currentUser.earlySupporterUnlockedAt && ` • Sbloccato il ${new Date(currentUser.earlySupporterUnlockedAt).toLocaleDateString('it-IT')}`}
-                  </p>
-                )}
+                <div className="flex flex-wrap items-center gap-3 text-[11px] font-mono text-amber-400/90 pt-0.5">
+                  <span>Totale donazioni accumulate: <strong>€{userCumulativeStats.totalDonated.toFixed(2)}</strong></span>
+                  {currentUser.earlySupporterTxId && (
+                    <span>• Transazione PayPal: <strong>{currentUser.earlySupporterTxId}</strong></span>
+                  )}
+                  {currentUser.earlySupporterUnlockedAt && (
+                    <span>• Sbloccato il {new Date(currentUser.earlySupporterUnlockedAt).toLocaleDateString('it-IT')}</span>
+                  )}
+                </div>
               </div>
 
               <div className="p-4 rounded-xl bg-black/60 border border-amber-500/40 text-center shrink-0 w-full md:w-auto">
@@ -1486,29 +1492,65 @@ Data: ${new Date(file.createdAt).toLocaleString('it-IT')}
               </div>
             </div>
           ) : (
-            <div className="p-5 rounded-2xl bg-neutral-950 border border-amber-500/40 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <span className="px-2.5 py-0.5 rounded-full bg-neutral-800 text-neutral-300 border border-neutral-700 text-[10px] font-mono font-bold uppercase">
-                    Pass Non Ancora Sbloccato
-                  </span>
+            <div className="p-5 rounded-2xl bg-gradient-to-r from-amber-950/25 via-neutral-950 to-neutral-900 border-2 border-amber-500/50 shadow-xl space-y-4">
+              <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div className="space-y-1.5 max-w-2xl">
+                  <div className="flex items-center gap-2">
+                    <span className="px-2.5 py-0.5 rounded-full bg-neutral-800 text-amber-300 border border-amber-500/40 text-[10px] font-mono font-bold uppercase">
+                      Pass Non Ancora Sbloccato
+                    </span>
+                    <span className="text-[11px] font-mono text-neutral-400">
+                      Soglia per Lifetime Pass: <strong>20$ / 20€</strong>
+                    </span>
+                  </div>
+                  <h4 className="text-base sm:text-lg font-heading font-black text-white">
+                    Grazie per il supporto, le donazioni sono cumulabili: quando arriverai a 20 dollari sbloccherai tutti i plugin
+                  </h4>
+                  <p className="text-xs text-neutral-300 font-sans leading-relaxed">
+                    La suite è attualmente in <strong>Early Access gratuito</strong> per permettere lo sviluppo di plugin sempre più precisi e potenti. Con una o più donazioni cumulabili fino a raggiungere 20$ (o 20€) ti garantisci l'<strong>Accesso a Vita</strong> e copie gratuite di tutti i futuri plugin commerciali sviluppati da 171 Plugin Innovation!
+                  </p>
                 </div>
-                <h4 className="text-base font-heading font-black text-white">
-                  Sblocca il Badge Early Supporter con una donazione di 20$ / 20€
-                </h4>
-                <p className="text-xs text-neutral-300 font-sans leading-relaxed max-w-2xl">
-                  La suite è attualmente in Early Access gratuito per permettere lo sviluppo di plugin sempre più precisi e potenti. Con una donazione di 20$ (o 20€) ti garantisci l'Accesso a Vita a qualsiasi plugin commerciale futuro!
-                </p>
+
+                <div className="flex flex-col sm:flex-row md:flex-col gap-2 shrink-0 w-full md:w-auto">
+                  <button
+                    type="button"
+                    onClick={() => onNavigate('plugin-innovation')}
+                    className="px-5 py-3 rounded-xl bg-gradient-to-r from-amber-400 via-amber-500 to-amber-400 hover:from-amber-300 hover:to-amber-400 text-black font-heading font-black text-xs uppercase tracking-wider shrink-0 transition-all cursor-pointer shadow-lg shadow-amber-500/20 flex items-center justify-center gap-1.5"
+                  >
+                    <Heart className="w-4 h-4 fill-black" />
+                    <span>Dona e Completa Soglia (€{userCumulativeStats.remainingForLifetime.toFixed(2)})</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => onNavigate('plugin-innovation')}
+                    className="px-4 py-2.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-amber-300 border border-amber-500/40 font-mono text-xs uppercase tracking-wider shrink-0 transition-all cursor-pointer flex items-center justify-center gap-1.5"
+                  >
+                    <span>Donazione Libera (Cumulabile) ➔</span>
+                  </button>
+                </div>
               </div>
 
-              <button
-                type="button"
-                onClick={() => onNavigate('plugin-innovation')}
-                className="w-full md:w-auto px-5 py-3 rounded-xl bg-gradient-to-r from-amber-400 via-amber-500 to-amber-400 hover:from-amber-300 hover:to-amber-400 text-black font-heading font-black text-xs uppercase tracking-wider shrink-0 transition-all cursor-pointer shadow-lg shadow-amber-500/20 flex items-center justify-center gap-1.5"
-              >
-                <Heart className="w-4 h-4 fill-black" />
-                <span>Dona 20€ & Sblocca Badge</span>
-              </button>
+              {/* Cumulative Progress Bar in Account Dashboard */}
+              <div className="p-3 rounded-xl bg-black/60 border border-neutral-800 space-y-2">
+                <div className="flex items-center justify-between text-xs font-mono">
+                  <span className="text-neutral-300">
+                    Avanzamento Donazioni Cumulate: <strong className="text-amber-400 font-bold">€{userCumulativeStats.totalDonated.toFixed(2)}</strong> / €20.00
+                  </span>
+                  <span className="text-amber-300 font-bold">
+                    {userCumulativeStats.remainingForLifetime <= 0
+                      ? '🌟 100% Raggiunto!'
+                      : `Mancano €${userCumulativeStats.remainingForLifetime.toFixed(2)}`}
+                  </span>
+                </div>
+                <div className="w-full h-2.5 rounded-full bg-neutral-900 border border-neutral-700 overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-amber-500 via-amber-400 to-amber-300 transition-all duration-500"
+                    style={{
+                      width: `${Math.min(100, Math.round((userCumulativeStats.totalDonated / 20) * 100))}%`,
+                    }}
+                  />
+                </div>
+              </div>
             </div>
           )}
 

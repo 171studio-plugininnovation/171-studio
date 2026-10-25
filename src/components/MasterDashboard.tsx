@@ -5640,9 +5640,19 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
             <div className="p-4 rounded-2xl bg-neutral-900/60 border border-amber-500/40">
               <span className="text-[10px] font-mono uppercase text-amber-400 block mb-1">🌟 Early Supporters (&ge;20€)</span>
               <span className="text-2xl font-heading font-black text-amber-400">
-                {pluginDonations.filter(d => d.isEarlySupporterPass || d.amount >= 20).length}
+                {(() => {
+                  const emails = Array.from(new Set(pluginDonations.map(d => (d.userEmail || '').trim().toLowerCase()).filter(Boolean)));
+                  const cumulativeQualifiers = emails.filter(email => {
+                    const sum = pluginDonations
+                      .filter(d => (d.userEmail || '').trim().toLowerCase() === email && (d.status === 'convalidata' || d.paymentStatus === 'saldato'))
+                      .reduce((s, d) => s + d.amount, 0);
+                    return sum >= 20;
+                  }).length;
+                  const directPasses = pluginDonations.filter(d => d.isEarlySupporterPass && (d.status === 'convalidata' || d.paymentStatus === 'saldato')).length;
+                  return Math.max(cumulativeQualifiers, directPasses);
+                })()}
               </span>
-              <span className="text-[10px] font-mono text-amber-300 block mt-0.5">Con Lifetime Pass a vita</span>
+              <span className="text-[10px] font-mono text-amber-300 block mt-0.5">Con Lifetime Pass a vita (cumulati &ge;20€)</span>
             </div>
 
             <div className="p-4 rounded-2xl bg-neutral-900/60 border border-emerald-500/40">
@@ -5731,7 +5741,12 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
 
               return filtered.map((don) => {
                 const isSaldato = don.status === 'convalidata' || don.paymentStatus === 'saldato';
-                const isEarly = don.isEarlySupporterPass || don.amount >= 20;
+                const userCleanEmail = (don.userEmail || '').trim().toLowerCase();
+                const donorConfirmed = pluginDonations.filter(
+                  (d) => (d.userEmail || '').trim().toLowerCase() === userCleanEmail && (d.status === 'convalidata' || d.paymentStatus === 'saldato')
+                );
+                const donorCumulativeSum = donorConfirmed.reduce((sum, d) => sum + d.amount, 0);
+                const isEarly = don.isEarlySupporterPass || don.amount >= 20 || donorCumulativeSum >= 20;
 
                 return (
                   <div
@@ -5776,12 +5791,18 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
                         <span className="text-neutral-500 text-[10px] uppercase block">Donatore:</span>
                         <strong className="text-white">{don.userName}</strong> ({don.userEmail})
                       </div>
-                      {don.notes && (
-                        <div className="text-neutral-400 italic text-[11px] max-w-md">
-                          "{don.notes}"
-                        </div>
-                      )}
+                      <div className="text-right">
+                        <span className="text-neutral-500 text-[10px] uppercase block">Totale Cumulato Utente:</span>
+                        <span className="text-amber-400 font-bold">€{donorCumulativeSum.toFixed(2)}</span>
+                        <span className="text-neutral-400 text-[11px]"> / €20.00 ({donorConfirmed.length} saldate)</span>
+                      </div>
                     </div>
+
+                    {don.notes && (
+                      <div className="text-neutral-400 italic text-[11px] bg-black/40 p-2 rounded-lg border border-neutral-800">
+                        "{don.notes}"
+                      </div>
+                    )}
 
                     {/* Transaction Details or Quick Verification for Master */}
                     <div className="pt-2 border-t border-neutral-800/80 flex flex-wrap items-center justify-between gap-3">

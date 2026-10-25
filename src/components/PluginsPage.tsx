@@ -26,6 +26,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
     pluginDonations,
     createPluginDonation,
     confirmPluginDonationPayPal,
+    getUserCumulativeDonations,
   } = useStudio();
 
   const [downloadSuccessId, setDownloadSuccessId] = useState<string | null>(null);
@@ -57,8 +58,21 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
   const [feedbackComment, setFeedbackComment] = useState<string>('');
   const [feedbackSubmitted, setFeedbackSubmitted] = useState<boolean>(false);
 
-  // Donation amount state (20 € default for Early Supporter Lifetime Pass)
-  const [selectedDonationAmount, setSelectedDonationAmount] = useState<number | undefined>(20);
+  // Donation amount state (20 € default for Early Supporter Lifetime Pass, or custom amount)
+  const [selectedDonationAmount, setSelectedDonationAmount] = useState<number | 'custom'>(20);
+  const [customDonationInput, setCustomDonationInput] = useState<string>('5');
+
+  // Cumulative donations tracking for the active user / email
+  const targetEmailForDonation = (currentUser?.email || donorEmailInput || '').trim().toLowerCase();
+  const cumulativeStats = getUserCumulativeDonations(targetEmailForDonation);
+
+  const getEffectiveDonationAmount = (): number => {
+    if (selectedDonationAmount === 'custom') {
+      const parsed = parseFloat(customDonationInput.replace(',', '.'));
+      return isNaN(parsed) || parsed <= 0 ? 5 : Math.max(1, Math.round(parsed * 100) / 100);
+    }
+    return typeof selectedDonationAmount === 'number' ? selectedDonationAmount : 20;
+  };
 
   const benefitIcons = [Flame, Zap, Sliders, Shield];
   const dynamicBenefits = siteContent.pluginBenefits && siteContent.pluginBenefits.length > 0
@@ -128,15 +142,16 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
     setFeedbackComment('');
   };
 
-  const handleStartDonation = (amount: number = 20) => {
+  const handleStartDonation = (explicitAmount?: number) => {
+    const finalAmount = explicitAmount !== undefined ? explicitAmount : getEffectiveDonationAmount();
     const emailToUse = (currentUser?.email || donorEmailInput).trim().toLowerCase();
     if (!emailToUse && !currentUser) {
-      openAuthModal('Accedi o registrati per associare il Badge Early Supporter Lifetime Pass al tuo account');
+      openAuthModal('Accedi o registrati per associare le donazioni e il Badge Early Supporter Lifetime Pass al tuo account');
       return;
     }
 
     const newDonation = createPluginDonation({
-      amount: Math.max(1, amount),
+      amount: Math.max(1, finalAmount),
       currency: 'EUR',
       userEmail: emailToUse || undefined,
       userName: currentUser?.name || undefined,
@@ -171,8 +186,8 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
         setActiveDonation(confirmed);
         setDonationTxSuccess(
           confirmed.isEarlySupporterPass
-            ? `🎉 Donazione convalidata con successo! Il Badge "🌟 EARLY SUPPORTER — LIFETIME PASS" è ora ATTIVO sul tuo account (${confirmed.userEmail}) con accesso a vita a tutti i futuri plugin e aggiornamenti DSP!`
-            : `🎉 Donazione #${confirmed.donationCode} convalidata con successo! Grazie per il supporto allo sviluppo di 171 Studio.`
+            ? `🎉 Donazione convalidata con successo! Traguardo raggiunto: il Badge "🌟 EARLY SUPPORTER — LIFETIME PASS" è ora ATTIVO sul tuo account (${confirmed.userEmail}) con accesso a vita a tutti i futuri plugin e aggiornamenti DSP!`
+            : `🎉 Donazione #${confirmed.donationCode} (€${confirmed.amount.toFixed(2)}) convalidata con successo! Grazie per il supporto, le donazioni sono cumulabili: al raggiungimento di 20$ (o 20€) sbloccherai automaticamente tutti i plugin a vita!`
         );
       } else {
         setDonationTxError('Impossibile verificare la donazione.');
@@ -187,8 +202,9 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
   // POST-DOWNLOAD DEDICATED PAGE: "Grazie per aver scaricato <Nome del Plugin>" + Feedback + Free PayPal Donation
   if (thankYouPlugin) {
     const effectivePaypalEmail = siteContent.paypalEmail || STUDIO_PAYPAL_EMAIL;
-    const donationUrl = getPayPalDonationUrl(selectedDonationAmount, thankYouPlugin.name, effectivePaypalEmail);
-    const paypalMeLink = getPayPalMeUrl(selectedDonationAmount);
+    const currentDonationAmount = getEffectiveDonationAmount();
+    const donationUrl = getPayPalDonationUrl(currentDonationAmount, thankYouPlugin.name, effectivePaypalEmail);
+    const paypalMeLink = getPayPalMeUrl(currentDonationAmount);
     const zipName =
       thankYouPlugin.zipFileName ||
       `${thankYouPlugin.name.replace(/\s+/g, '_')}_VST3_AU_Installer.zip`;
@@ -451,6 +467,10 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
                     <p className="text-xs text-neutral-200 leading-relaxed font-sans">
                       Il tuo account (<strong>{currentUser.email}</strong>) dispone del <strong>Lifetime Supporter Pass</strong> convalidato. Hai accesso garantito a vita a ogni singolo plugin commerciale, aggiornamento ed espansione DSP di 171 Plugin Innovation!
                     </p>
+                    <div className="p-2.5 rounded-lg bg-black/60 border border-amber-500/30 flex items-center justify-between text-xs font-mono">
+                      <span className="text-neutral-400">Totale donazioni registrate:</span>
+                      <strong className="text-amber-400 font-bold">€{cumulativeStats.totalDonated.toFixed(2)}</strong>
+                    </div>
                     <button
                       type="button"
                       onClick={() => onNavigate('il-mio-account')}
@@ -461,20 +481,42 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
                   </div>
                 ) : (
                   <>
-                    {/* Callout box: 20$ Lifetime Pass */}
-                    <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/40 text-xs font-mono space-y-1.5 text-amber-200">
+                    {/* Callout box: 20$ Cumulative Lifetime Pass */}
+                    <div className="p-3.5 rounded-xl bg-gradient-to-r from-amber-500/15 via-amber-400/10 to-amber-500/15 border border-amber-500/50 text-xs font-mono space-y-2 text-amber-200 shadow-md">
                       <div className="font-bold text-amber-300 uppercase tracking-wide flex items-center gap-1.5">
                         <Award className="w-4 h-4 text-amber-400 shrink-0" />
-                        <span>Accesso a Vita con 20$ / 20€:</span>
+                        <span>Donazioni Cumulabili verso il Lifetime Pass:</span>
                       </div>
-                      <p className="text-[11px] text-neutral-200 leading-relaxed">
-                        Una donazione oggi di <strong>20$ (o 20€)</strong> ti garantirà l'<strong>Accesso a Vita</strong> ad ogni singolo plugin, espansione o algoritmo DSP sviluppato in futuro da <strong>171 Plugin Innovation</strong>, inclusi tutti i futuri aggiornamenti e le release commerciali!
+                      <p className="text-[11.5px] text-white leading-relaxed font-sans">
+                        <strong>Grazie per il supporto, le donazioni sono cumulabili: quando arriverai a 20 dollari (o 20€) sbloccherai tutti i plugin</strong> a vita, inclusi aggiornamenti futuri ed espansioni commerciali!
                       </p>
+
+                      {/* Cumulative Progress Tracker */}
+                      <div className="pt-1 space-y-1.5 border-t border-amber-500/20">
+                        <div className="flex items-center justify-between text-[11px] font-mono">
+                          <span className="text-neutral-300">
+                            Donato finora: <strong className="text-amber-400 font-bold">€{cumulativeStats.totalDonated.toFixed(2)}</strong> / €20.00
+                          </span>
+                          <span className="text-amber-300 font-bold">
+                            {cumulativeStats.remainingForLifetime <= 0
+                              ? '🌟 100% (Pass Sbloccato!)'
+                              : `Mancano €${cumulativeStats.remainingForLifetime.toFixed(2)}`}
+                          </span>
+                        </div>
+                        <div className="w-full h-2 rounded-full bg-neutral-900 border border-neutral-700 overflow-hidden">
+                          <div
+                            className="h-full bg-gradient-to-r from-amber-500 via-amber-400 to-amber-300 transition-all duration-500"
+                            style={{
+                              width: `${Math.min(100, Math.round((cumulativeStats.totalDonated / 20) * 100))}%`,
+                            }}
+                          />
+                        </div>
+                      </div>
                     </div>
 
                     {/* Early Access Development Explanation */}
                     <p className="text-xs text-neutral-300 leading-relaxed font-sans">
-                      Il fatto che la suite sia attualmente scaricabile gratis fa parte del nostro <strong>Early Access di Development</strong>. Questa apertura totale permette lo sviluppo di plugin <strong>sempre più precisi, trasparenti e potenti</strong> grazie ai feedback e ai test sul campo della community.
+                      Il fatto che la suite sia attualmente scaricabile gratis fa parte del nostro <strong>Early Access di Development</strong>. Questa apertura permette lo sviluppo di plugin <strong>sempre più precisi e potenti</strong> grazie ai feedback e ai test sul campo della community.
                     </p>
 
                     {/* Rewards for verified feedback */}
@@ -484,21 +526,21 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
                         <span>Premi per Feedback Verificati:</span>
                       </div>
                       <p className="text-neutral-300 leading-relaxed">
-                        Gli account registrati che forniranno feedback tecnici verificati e dettagliati con problemi reali riscontrati nelle DAW verranno ricompensati con <strong>buoni sconto esclusivi per le sessioni in studio</strong> e con <strong>copie gratuite dei futuri plugin commerciali a pagamento</strong>!
+                        Gli account registrati che forniranno feedback tecnici verificati con problemi reali riscontrati nelle DAW verranno ricompensati con <strong>buoni sconto studio</strong> e <strong>copie gratuite dei futuri plugin commerciali</strong>!
                       </p>
                     </div>
 
-                    {/* Preset Donation Chips */}
-                    <div className="space-y-1.5 pt-1">
+                    {/* Preset & Custom Donation Selection */}
+                    <div className="space-y-2 pt-1">
                       <span className="text-[10px] font-mono uppercase text-neutral-400 block">
-                        Seleziona l'importo donazione:
+                        Seleziona importo o Donazione Libera:
                       </span>
                       <div className="grid grid-cols-4 gap-2 text-xs font-mono">
                         {[
                           { label: '20 € (Lifetime)', val: 20 },
-                          { label: '30 €', val: 30 },
-                          { label: '50 €', val: 50 },
                           { label: '10 €', val: 10 },
+                          { label: '5 €', val: 5 },
+                          { label: 'Donazione Libera', val: 'custom' as const },
                         ].map((opt) => {
                           const isSel = selectedDonationAmount === opt.val;
                           return (
@@ -517,6 +559,36 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
                           );
                         })}
                       </div>
+
+                      {/* Custom Amount Input Field */}
+                      {selectedDonationAmount === 'custom' && (
+                        <div className="p-3 rounded-xl bg-black border border-amber-500/50 flex flex-wrap items-center gap-2 animate-in fade-in duration-150">
+                          <span className="text-xs font-mono text-amber-400 font-bold uppercase shrink-0">
+                            Importo Libero (€):
+                          </span>
+                          <input
+                            type="number"
+                            min="1"
+                            step="1"
+                            value={customDonationInput}
+                            onChange={(e) => setCustomDonationInput(e.target.value)}
+                            placeholder="es. 5, 15, 25..."
+                            className="flex-1 min-w-[90px] px-3 py-1.5 rounded-lg bg-neutral-900 border border-neutral-700 text-white font-mono text-xs focus:border-amber-400 focus:outline-none"
+                          />
+                          <div className="flex gap-1 shrink-0">
+                            {[3, 5, 10, 15, 25].map((presetVal) => (
+                              <button
+                                key={presetVal}
+                                type="button"
+                                onClick={() => setCustomDonationInput(presetVal.toString())}
+                                className="px-2 py-1 rounded bg-neutral-900 hover:bg-neutral-800 text-[10px] font-mono text-neutral-300 hover:text-amber-400 border border-neutral-700 transition-colors cursor-pointer"
+                              >
+                                {presetVal}€
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </>
                 )}
@@ -531,7 +603,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
                         <span className="text-white font-black">€{activeDonation.amount.toFixed(2)}</span>
                       </div>
                       <p className="text-[11px] text-neutral-300 font-sans leading-relaxed">
-                        Hai completato la donazione su PayPal? Inserisci il <strong>Codice Transazione / ID Ricevuta PayPal</strong> per convalidarla istantaneamente e sbloccare il badge:
+                        Hai completato la donazione su PayPal? Inserisci il <strong>Codice Transazione / ID Ricevuta PayPal</strong> per convalidarla istantaneamente e aggiornare il tuo cumulo:
                       </p>
 
                       {donationTxError && (
@@ -567,7 +639,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
                               className="flex-1 py-2.5 px-3 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black font-black text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
                             >
                               <CheckCircle2 className="w-3.5 h-3.5" />
-                              <span>{isVerifyingDonation ? 'Verifica in corso...' : 'Convalida Transazione & Sblocca Badge'}</span>
+                              <span>{isVerifyingDonation ? 'Verifica in corso...' : 'Convalida Transazione & Aggiorna Cumulo'}</span>
                             </button>
                             <a
                               href={activeDonation.paypalPaymentUrl}
@@ -587,7 +659,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
                       {!currentUser && (
                         <div className="space-y-1">
                           <label className="text-[10px] font-mono text-neutral-400 uppercase block">
-                            La tua Email per associare il Badge Supporter:
+                            La tua Email per associare le donazioni cumulabili:
                           </label>
                           <input
                             type="email"
@@ -601,16 +673,14 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
 
                       <button
                         type="button"
-                        onClick={() => handleStartDonation(selectedDonationAmount || 20)}
+                        onClick={() => handleStartDonation()}
                         className="w-full py-3.5 px-5 rounded-xl bg-gradient-to-r from-amber-400 via-amber-500 to-amber-400 hover:from-amber-300 hover:to-amber-400 text-black font-heading font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-xl shadow-amber-500/25 transition-all cursor-pointer"
                       >
                         <Heart className="w-4 h-4 fill-black" />
                         <span>
-                          {selectedDonationAmount === 20
-                            ? 'Dona 20$ / 20€ • Sblocca Early Supporter Lifetime Pass'
-                            : selectedDonationAmount
-                            ? `Dona ${selectedDonationAmount} € su PayPal`
-                            : 'Donazione Libera con PayPal'}
+                          {cumulativeStats.totalDonated + getEffectiveDonationAmount() >= 20 || getEffectiveDonationAmount() >= 20
+                            ? `Dona ${getEffectiveDonationAmount()} € • Sblocca Subito Tutti i Plugin a Vita!`
+                            : `Dona ${getEffectiveDonationAmount()} € (Cumulabile verso i 20$)`}
                         </span>
                         <ExternalLink className="w-3.5 h-3.5" />
                       </button>
@@ -978,24 +1048,38 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
                 <span>🌟 Sei Early Supporter (Lifetime Pass Attivo)</span>
               </button>
             ) : (
-              <button
-                type="button"
-                onClick={() => {
-                  setSelectedDonationAmount(20);
-                  setShowDonationModal(true);
-                }}
-                className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-500 to-amber-400 hover:from-amber-300 hover:to-amber-400 text-black font-heading font-black text-xs uppercase tracking-wider transition-all shadow-xl shadow-amber-500/20 flex items-center justify-center gap-2 cursor-pointer"
-              >
-                <Heart className="w-4 h-4 fill-black" />
-                <span>Dona 20$ / 20€ • Sblocca Lifetime Pass</span>
-                <Sparkles className="w-3.5 h-3.5 text-black" />
-              </button>
+              <>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedDonationAmount(20);
+                    setShowDonationModal(true);
+                  }}
+                  className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-500 to-amber-400 hover:from-amber-300 hover:to-amber-400 text-black font-heading font-black text-xs uppercase tracking-wider transition-all shadow-xl shadow-amber-500/20 flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <Heart className="w-4 h-4 fill-black" />
+                  <span>Dona 20$ / 20€ • Sblocca Lifetime Pass</span>
+                  <Sparkles className="w-3.5 h-3.5 text-black" />
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedDonationAmount('custom');
+                    setShowDonationModal(true);
+                  }}
+                  className="w-full sm:w-auto px-5 py-3.5 rounded-2xl bg-neutral-900 hover:bg-neutral-800 text-amber-300 border border-amber-500/50 font-heading font-black text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md"
+                >
+                  <Heart className="w-4 h-4 text-amber-400" />
+                  <span>Donazione Libera (Cumulabile)</span>
+                </button>
+              </>
             )}
 
             <button
               type="button"
               onClick={() => onNavigate('il-mio-account')}
-              className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-neutral-900 hover:bg-neutral-800 text-amber-300 border border-amber-500/40 font-mono font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-neutral-900 hover:bg-neutral-800 text-neutral-300 border border-neutral-700 font-mono font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
               <Bug className="w-4 h-4 text-red-400" />
               <span>Invia Feedback Tecnico / Bug</span>
@@ -1022,7 +1106,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
                 </div>
                 <div>
                   <span className="text-[10px] font-mono uppercase tracking-widest text-amber-400 font-bold block">
-                    EARLY SUPPORTER LIFETIME PASS
+                    EARLY SUPPORTER & DONAZIONI CUMULABILI
                   </span>
                   <h3 className="text-lg font-heading font-black text-white">
                     Supporta lo Sviluppo & Accesso a Vita
@@ -1038,31 +1122,54 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
               </button>
             </div>
 
-            <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/40 text-xs font-mono space-y-1.5 text-amber-200">
+            {/* Core cumulative message card */}
+            <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-500/15 via-amber-400/10 to-amber-500/15 border-2 border-amber-500/50 text-xs font-mono space-y-2 text-amber-200 shadow-md">
               <div className="font-bold text-amber-300 uppercase tracking-wide flex items-center gap-1.5">
                 <Award className="w-4 h-4 text-amber-400 shrink-0" />
-                <span>Accesso a Vita Garantito con 20$ / 20€:</span>
+                <span>Accesso a Vita Garantito & Cumulo Donazioni:</span>
               </div>
-              <p className="text-[11.5px] text-neutral-200 leading-relaxed font-sans">
-                Una donazione oggi di <strong>20$ (o 20€)</strong> ti garantirà l'<strong>Accesso a Vita</strong> ad ogni singolo plugin, espansione o algoritmo DSP sviluppato in futuro da <strong>171 Plugin Innovation</strong>, inclusi tutti i futuri aggiornamenti e le release commerciali!
+              <p className="text-[11.5px] text-white leading-relaxed font-sans">
+                <strong>Grazie per il supporto, le donazioni sono cumulabili: quando arriverai a 20 dollari (o 20€) sbloccherai tutti i plugin</strong> a vita, inclusi tutti i futuri algoritmi DSP e release commerciali di 171 Plugin Innovation!
               </p>
+
+              {/* Real-time cumulative progress bar */}
+              <div className="pt-1.5 space-y-1.5 border-t border-amber-500/25">
+                <div className="flex items-center justify-between text-[11px] font-mono">
+                  <span className="text-neutral-300">
+                    Totale donato finora: <strong className="text-amber-400 font-bold">€{cumulativeStats.totalDonated.toFixed(2)}</strong> / €20.00
+                  </span>
+                  <span className="text-amber-300 font-bold">
+                    {cumulativeStats.remainingForLifetime <= 0
+                      ? '🌟 100% (Pass Sbloccato!)'
+                      : `Mancano €${cumulativeStats.remainingForLifetime.toFixed(2)}`}
+                  </span>
+                </div>
+                <div className="w-full h-2 rounded-full bg-neutral-900 border border-neutral-700 overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-amber-500 via-amber-400 to-amber-300 transition-all duration-500"
+                    style={{
+                      width: `${Math.min(100, Math.round((cumulativeStats.totalDonated / 20) * 100))}%`,
+                    }}
+                  />
+                </div>
+              </div>
             </div>
 
             <p className="text-xs text-neutral-300 leading-relaxed font-sans">
-              La suite gratuita è in <strong>Early Access di Development</strong>: questo permette alla community di testare gli algoritmi DSP nelle DAW e aiutarci a renderli <strong>sempre più precisi e potenti</strong>. Inoltre, chi invia feedback tecnici verificati riceverà <strong>buoni sconto in studio e plugin commerciali gratuiti</strong>!
+              La suite gratuita è in <strong>Early Access di Development</strong> per permettere alla community di testare gli algoritmi DSP nelle DAW e aiutarci a renderli <strong>sempre più precisi e potenti</strong>. Inoltre, chi invia feedback tecnici verificati riceverà <strong>buoni sconto in studio e plugin commerciali gratuiti</strong>!
             </p>
 
-            {/* Chips */}
-            <div className="space-y-1.5">
+            {/* Chips selector */}
+            <div className="space-y-2">
               <span className="text-[10px] font-mono uppercase text-neutral-400 block">
-                Seleziona importo donazione:
+                Seleziona importo o scegli Donazione Libera:
               </span>
               <div className="grid grid-cols-4 gap-2 text-xs font-mono">
                 {[
                   { label: '20 € (Lifetime)', val: 20 },
-                  { label: '30 €', val: 30 },
-                  { label: '50 €', val: 50 },
                   { label: '10 €', val: 10 },
+                  { label: '5 €', val: 5 },
+                  { label: 'Donazione Libera', val: 'custom' as const },
                 ].map((opt) => (
                   <button
                     key={opt.label}
@@ -1070,7 +1177,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
                     onClick={() => setSelectedDonationAmount(opt.val)}
                     className={`py-2 px-1 rounded-xl border font-bold text-center transition-all cursor-pointer ${
                       selectedDonationAmount === opt.val
-                        ? 'bg-amber-500 text-black border-amber-400 shadow-md'
+                        ? 'bg-amber-500 text-black border-amber-400 shadow-md scale-102'
                         : 'bg-neutral-900 text-neutral-300 border-neutral-800 hover:border-amber-500/40'
                     }`}
                   >
@@ -1078,6 +1185,36 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
                   </button>
                 ))}
               </div>
+
+              {/* Custom Amount Input Field */}
+              {selectedDonationAmount === 'custom' && (
+                <div className="p-3 rounded-xl bg-neutral-900 border border-amber-500/50 flex flex-wrap items-center gap-2 animate-in fade-in duration-150">
+                  <span className="text-xs font-mono text-amber-400 font-bold uppercase shrink-0">
+                    Importo Libero (€):
+                  </span>
+                  <input
+                    type="number"
+                    min="1"
+                    step="1"
+                    value={customDonationInput}
+                    onChange={(e) => setCustomDonationInput(e.target.value)}
+                    placeholder="es. 5, 15, 25..."
+                    className="flex-1 min-w-[90px] px-3 py-1.5 rounded-lg bg-black border border-neutral-700 text-white font-mono text-xs focus:border-amber-400 focus:outline-none"
+                  />
+                  <div className="flex gap-1 shrink-0">
+                    {[3, 5, 10, 15, 25].map((presetVal) => (
+                      <button
+                        key={presetVal}
+                        type="button"
+                        onClick={() => setCustomDonationInput(presetVal.toString())}
+                        className="px-2 py-1 rounded bg-black hover:bg-neutral-800 text-[10px] font-mono text-neutral-300 hover:text-amber-400 border border-neutral-700 transition-colors cursor-pointer"
+                      >
+                        {presetVal}€
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Verification Box or Start Button */}
@@ -1088,7 +1225,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
                   <span className="text-white font-black">€{activeDonation.amount.toFixed(2)}</span>
                 </div>
                 <p className="text-xs text-neutral-300 font-sans">
-                  Inserisci il <strong>Codice Transazione / ID Ricevuta PayPal</strong> per verificare e sbloccare il badge:
+                  Inserisci il <strong>Codice Transazione / ID Ricevuta PayPal</strong> per verificare e aggiornare il tuo cumulo:
                 </p>
 
                 {donationTxError && (
@@ -1130,7 +1267,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
                         className="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black font-black text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
                       >
                         <CheckCircle2 className="w-4 h-4" />
-                        <span>{isVerifyingDonation ? 'Verifica in corso...' : 'Convalida Transazione & Sblocca Badge'}</span>
+                        <span>{isVerifyingDonation ? 'Verifica in corso...' : 'Convalida Transazione & Aggiorna Cumulo'}</span>
                       </button>
                       <a
                         href={activeDonation.paypalPaymentUrl}
@@ -1150,7 +1287,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
                 {!currentUser && (
                   <div className="space-y-1">
                     <label className="text-[10px] font-mono text-neutral-400 uppercase block">
-                      Tua Email per associare il Badge Supporter:
+                      Tua Email per associare le donazioni cumulabili:
                     </label>
                     <input
                       type="email"
@@ -1163,16 +1300,14 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
                 )}
                 <button
                   type="button"
-                  onClick={() => handleStartDonation(selectedDonationAmount || 20)}
+                  onClick={() => handleStartDonation()}
                   className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-500 to-amber-400 hover:from-amber-300 hover:to-amber-400 text-black font-heading font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-xl shadow-amber-500/25 transition-all cursor-pointer"
                 >
                   <Heart className="w-4 h-4 fill-black" />
                   <span>
-                    {selectedDonationAmount === 20
-                      ? 'Dona 20$ / 20€ • Sblocca Early Supporter Lifetime Pass'
-                      : selectedDonationAmount
-                      ? `Dona ${selectedDonationAmount} € su PayPal`
-                      : 'Dona su PayPal'}
+                    {cumulativeStats.totalDonated + getEffectiveDonationAmount() >= 20 || getEffectiveDonationAmount() >= 20
+                      ? `Dona ${getEffectiveDonationAmount()} € • Sblocca Subito Tutti i Plugin a Vita!`
+                      : `Dona ${getEffectiveDonationAmount()} € (Cumulabile verso i 20$)`}
                   </span>
                   <ExternalLink className="w-4 h-4" />
                 </button>

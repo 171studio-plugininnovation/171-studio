@@ -205,6 +205,12 @@ interface StudioContextType {
   ) => PluginDonationRecord | null;
   updatePluginDonation: (id: string, updates: Partial<PluginDonationRecord>) => void;
   deletePluginDonation: (id: string) => void;
+  getUserCumulativeDonations: (email?: string) => {
+    totalDonated: number;
+    remainingForLifetime: number;
+    isEarlySupporter: boolean;
+    donationsCount: number;
+  };
   // Bug Hunter Verified Technical Feedback Reward System
   verifyPluginBugReportAndReward: (
     reportId: string,
@@ -2946,7 +2952,13 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const rawEmail = (data.userEmail || currentUser?.email || 'donatore@171studio.com').trim().toLowerCase();
     const cleanName = (data.userName || currentUser?.name || rawEmail.split('@')[0] || 'Early Supporter').trim();
     const effectiveAmount = Math.max(1, Number(data.amount) || 20);
-    const isEarlyPass = effectiveAmount >= 20;
+
+    // Cumulative calculation: check previous confirmed donations by this user
+    const userPriorConfirmed = pluginDonations
+      .filter((d) => (d.userEmail || '').trim().toLowerCase() === rawEmail && (d.status === 'convalidata' || d.paymentStatus === 'saldato'))
+      .reduce((sum, d) => sum + d.amount, 0);
+    const projectedTotal = userPriorConfirmed + effectiveAmount;
+    const isEarlyPass = projectedTotal >= 20 || effectiveAmount >= 20;
     const donationCode = `171-DON-${Date.now().toString().slice(-4)}-${Math.floor(100 + Math.random() * 900)}`;
 
     const donationItemName = isEarlyPass
@@ -2966,7 +2978,7 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       status: 'in_attesa_pagamento',
       paymentStatus: 'in_attesa',
       isEarlySupporterPass: isEarlyPass,
-      notes: data.notes?.trim() || (isEarlyPass ? 'Early Supporter Lifetime Pass (Sblocca badge e accesso a vita a tutti i plugin futuri)' : 'Supporto Sviluppo 171 Plugin Innovation'),
+      notes: data.notes?.trim() || (isEarlyPass ? 'Early Supporter Lifetime Pass (Sblocca badge e accesso a vita a tutti i plugin futuri)' : 'Supporto Sviluppo 171 Plugin Innovation - Donazione cumulabile'),
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
@@ -2979,7 +2991,7 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     logActivity(
       'PLUGIN_DONATION_CREATED',
-      `Iniziata donazione #${newDonation.donationCode} da ${newDonation.userName} (${newDonation.userEmail}) di €${newDonation.amount.toFixed(2)} [${isEarlyPass ? 'Qualifica Early Supporter Lifetime Pass' : 'Donazione Libera'}]`
+      `Iniziata donazione #${newDonation.donationCode} da ${newDonation.userName} (${newDonation.userEmail}) di €${newDonation.amount.toFixed(2)} [${isEarlyPass ? 'Qualifica Early Supporter Lifetime Pass' : 'Donazione Libera Cumulabile'}]`
     );
 
     return newDonation;
@@ -3034,7 +3046,20 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     const finalAmount = paidAmount !== undefined ? paidAmount : existing.amount;
     const nowIso = new Date().toISOString();
-    const qualifiesEarlySupporter = existing.isEarlySupporterPass || finalAmount >= 20;
+
+    // Cumulative sum across all donations by this email
+    const cleanUserEmail = (existing.userEmail || '').trim().toLowerCase();
+    const otherConfirmedSum = pluginDonations
+      .filter(
+        (d) =>
+          d.id !== donationId &&
+          (d.userEmail || '').trim().toLowerCase() === cleanUserEmail &&
+          (d.status === 'convalidata' || d.paymentStatus === 'saldato')
+      )
+      .reduce((sum, d) => sum + d.amount, 0);
+
+    const totalDonatedForUser = otherConfirmedSum + finalAmount;
+    const qualifiesEarlySupporter = existing.isEarlySupporterPass || finalAmount >= 20 || totalDonatedForUser >= 20;
 
     const updates: Partial<PluginDonationRecord> = {
       status: 'convalidata',
@@ -3049,19 +3074,21 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     updatePluginDonation(donationId, updates);
 
-    // If qualifying for Early Supporter Pass (amount >= 20), unlock the badge on the user's account!
-    if (qualifiesEarlySupporter && existing.userEmail) {
+    // Update or create user account with cumulative donation total and badge if qualified
+    if (existing.userEmail) {
       const targetEmail = existing.userEmail.trim().toLowerCase();
       const usersMap = getSavedRegisteredUsers();
       const userToUpdate = usersMap[targetEmail] || (currentUser?.email.toLowerCase() === targetEmail ? currentUser : null);
 
       if (userToUpdate) {
+        const isNowSupporter = Boolean(userToUpdate.isEarlySupporter || qualifiesEarlySupporter);
         const updatedUser: UserAccount = {
           ...userToUpdate,
-          isEarlySupporter: true,
-          earlySupporterUnlockedAt: nowIso,
+          isEarlySupporter: isNowSupporter,
+          lifetimeCommercialPluginsFree: isNowSupporter ? true : userToUpdate.lifetimeCommercialPluginsFree,
+          earlySupporterUnlockedAt: isNowSupporter ? (userToUpdate.earlySupporterUnlockedAt || nowIso) : undefined,
           earlySupporterTxId: txId,
-          earlySupporterAmount: finalAmount,
+          earlySupporterAmount: totalDonatedForUser,
         };
         saveRegisteredUserToMap(updatedUser);
 
@@ -3075,10 +3102,11 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
           name: existing.userName,
           role: 'client',
           createdAt: nowIso,
-          isEarlySupporter: true,
-          earlySupporterUnlockedAt: nowIso,
+          isEarlySupporter: qualifiesEarlySupporter,
+          lifetimeCommercialPluginsFree: qualifiesEarlySupporter,
+          earlySupporterUnlockedAt: qualifiesEarlySupporter ? nowIso : undefined,
           earlySupporterTxId: txId,
-          earlySupporterAmount: finalAmount,
+          earlySupporterAmount: totalDonatedForUser,
         };
         saveRegisteredUserToMap(newUser);
       }
@@ -3086,10 +3114,32 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     logActivity(
       'PLUGIN_DONATION_CONFIRMED',
-      `Donazione PayPal Convalidata per #${existing.donationCode} (${existing.userName} - ${existing.userEmail}) • TX: ${txId} • €${finalAmount.toFixed(2)} • ${qualifiesEarlySupporter ? '🌟 BADGE EARLY SUPPORTER LIFETIME PASS SBLOCCATO!' : 'Supporto Sviluppo Convalidato'}`
+      `Donazione PayPal Convalidata per #${existing.donationCode} (${existing.userName} - ${existing.userEmail}) • TX: ${txId} • €${finalAmount.toFixed(2)} (Totale Cumulato: €${totalDonatedForUser.toFixed(2)}) • ${qualifiesEarlySupporter ? '🌟 BADGE EARLY SUPPORTER LIFETIME PASS SBLOCCATO!' : 'Supporto Sviluppo Convalidato (Cumulabile)'}`
     );
 
     return { ...existing, ...updates };
+  };
+
+  const getUserCumulativeDonations = (email?: string) => {
+    const targetEmail = (email || currentUser?.email || '').trim().toLowerCase();
+    if (!targetEmail) {
+      return { totalDonated: 0, remainingForLifetime: 20, isEarlySupporter: false, donationsCount: 0 };
+    }
+    const userConfirmed = pluginDonations.filter(
+      (d) =>
+        (d.userEmail || '').trim().toLowerCase() === targetEmail &&
+        (d.status === 'convalidata' || d.paymentStatus === 'saldato')
+    );
+    const totalDonated = userConfirmed.reduce((sum, d) => sum + d.amount, 0);
+    const remainingForLifetime = Math.max(0, 20 - totalDonated);
+    const usersMap = getSavedRegisteredUsers();
+    const savedUser = usersMap[targetEmail];
+    const isEarlySupporter = Boolean(
+      (currentUser?.email.toLowerCase() === targetEmail && currentUser.isEarlySupporter) ||
+      savedUser?.isEarlySupporter ||
+      totalDonated >= 20
+    );
+    return { totalDonated, remainingForLifetime, isEarlySupporter, donationsCount: userConfirmed.length };
   };
 
   // Bug Hunter Verified Technical Feedback Reward System
@@ -3367,6 +3417,7 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         confirmPluginDonationPayPal,
         updatePluginDonation,
         deletePluginDonation,
+        getUserCumulativeDonations,
       }}
     >
       {children}
