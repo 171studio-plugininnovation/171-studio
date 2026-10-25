@@ -136,8 +136,8 @@ export const ClientAccountPage: React.FC<ClientAccountPageProps> = ({ onNavigate
   };
 
   // Dedicated Bug Report Form State ("Report Plugin Bug and Help Us")
-  const [bugPluginId, setBugPluginId] = useState<string>('plugin-1');
-  const [bugPluginName, setBugPluginName] = useState<string>('171 Vocal Sculptor');
+  const [bugPluginId, setBugPluginId] = useState<string>('plugin-optocom');
+  const [bugPluginName, setBugPluginName] = useState<string>('171 DriveOptocom');
   const [bugDaw, setBugDaw] = useState<string>('FL Studio');
   const [bugOs, setBugOs] = useState<string>('Windows 11 (64-bit)');
   const [bugFormat, setBugFormat] = useState<string>('VST3 (64-bit)');
@@ -3013,10 +3013,9 @@ Data: ${new Date(file.createdAt).toLocaleString('it-IT')}
                 >
                   <option value="" disabled>Seleziona il plugin...</option>
                   {(siteContent.plugins && siteContent.plugins.length > 0 ? siteContent.plugins : [
-                    { id: 'plugin-1', name: '171 Vocal Sculptor' },
-                    { id: 'plugin-2', name: '171 LowEnd Punch' },
-                    { id: 'plugin-3', name: '171 Analog Warmth' },
-                    { id: 'plugin-4', name: '171 Spatializer 3D' },
+                    { id: 'plugin-optocom', name: '171 DriveOptocom' },
+                    { id: 'plugin-cleandrive', name: '171 CleanDrive' },
+                    { id: 'plugin-cleanreso', name: '171 CleanReso' },
                   ]).map((p) => (
                     <option key={p.id} value={p.name}>{p.name}</option>
                   ))}

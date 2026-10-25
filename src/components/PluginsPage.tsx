@@ -44,7 +44,6 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
   // Expanded technologies state for each plugin (all open by default so user can read everything)
   const [expandedTechPluginId, setExpandedTechPluginId] = useState<Record<string, boolean>>({
     'plugin-optocom': true,
-    'plugin-perfectpre': true,
     'plugin-cleandrive': true,
     'plugin-cleanreso': true,
   });
@@ -862,7 +861,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {siteContent.plugins.map((plugin) => {
               const isDownloaded = downloadSuccessId === plugin.id;
               const zipFileLabel =
@@ -899,17 +898,21 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
 
                     {/* Preview Image if available */}
                     {plugin.imageUrl && (
-                      <div className="relative rounded-2xl overflow-hidden border border-neutral-800 group/img bg-neutral-950">
+                      <div className="relative rounded-2xl overflow-hidden border border-neutral-800 hover:border-amber-500/50 group/img bg-neutral-950 aspect-[1024/571] flex items-center justify-center transition-all duration-300 shadow-inner">
                         <img 
                           src={getAssetUrl(plugin.imageUrl)} 
                           alt={`${plugin.name} GUI Snapshot`} 
-                          className="w-full h-44 object-cover object-center group-hover/img:scale-105 transition-transform duration-500 cursor-pointer"
+                          className="w-full h-full object-cover object-center group-hover/img:scale-105 transition-transform duration-500 cursor-pointer"
                           onClick={() => setPreviewModalImage(plugin.imageUrl || null)}
                         />
+                        <div className="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-md bg-black/75 backdrop-blur-md border border-neutral-700/80 text-[10px] font-mono text-neutral-300 flex items-center gap-1.5 pointer-events-none">
+                          <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                          <span>GUI Fotorealistica</span>
+                        </div>
                         <button
                           type="button"
                           onClick={() => setPreviewModalImage(plugin.imageUrl || null)}
-                          className="absolute bottom-2.5 right-2.5 px-3 py-1.5 rounded-xl bg-black/80 hover:bg-black text-amber-400 border border-amber-500/40 text-[11px] font-mono flex items-center gap-1.5 backdrop-blur-md transition-all cursor-pointer"
+                          className="absolute bottom-2.5 right-2.5 px-3 py-1.5 rounded-xl bg-black/85 hover:bg-black text-amber-400 hover:text-amber-300 border border-amber-500/40 text-[11px] font-mono flex items-center gap-1.5 backdrop-blur-md transition-all cursor-pointer shadow-lg"
                         >
                           <Eye className="w-3.5 h-3.5" />
                           <span>Ingrandisci GUI Hardware</span>
@@ -1318,39 +1321,54 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
       )}
 
       {/* High-Resolution Hardware GUI Modal */}
-      {previewModalImage && (
-        <div 
-          className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-200"
-          onClick={() => setPreviewModalImage(null)}
-        >
+      {previewModalImage && (() => {
+        const activePluginPreview = siteContent.plugins.find((p) => p.imageUrl === previewModalImage);
+        return (
           <div 
-            className="relative max-w-5xl w-full bg-neutral-950 border border-amber-500/40 rounded-3xl p-4 sm:p-6 shadow-2xl space-y-4"
-            onClick={(e) => e.stopPropagation()}
+            className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-200"
+            onClick={() => setPreviewModalImage(null)}
           >
-            <div className="flex items-center justify-between pb-3 border-b border-neutral-800">
-              <span className="text-xs font-mono text-amber-400 font-bold uppercase tracking-wider flex items-center gap-2">
-                <Sparkles className="w-4 h-4" />
-                Snapshot Hardware Ufficiale Interfaccia Utente
-              </span>
-              <button
-                type="button"
-                onClick={() => setPreviewModalImage(null)}
-                className="p-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-neutral-400 hover:text-white transition-colors cursor-pointer"
-                title="Chiudi anteprima"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            <div className="rounded-2xl overflow-hidden border border-neutral-800 max-h-[75vh] flex items-center justify-center bg-black">
-              <img 
-                src={getAssetUrl(previewModalImage)} 
-                alt="Hardware GUI Snapshot" 
-                className="w-full h-auto max-h-[75vh] object-contain"
-              />
+            <div 
+              className="relative max-w-5xl w-full bg-neutral-950 border border-amber-500/40 rounded-3xl p-4 sm:p-6 shadow-2xl space-y-4"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between pb-3 border-b border-neutral-800">
+                <div className="flex items-center gap-2.5">
+                  <Sparkles className="w-4 h-4 text-amber-400" />
+                  <div>
+                    <h3 className="text-sm font-heading font-black text-white flex items-center gap-2">
+                      <span>{activePluginPreview?.name || '171 Plugin Innovation'}</span>
+                      {activePluginPreview?.badge && (
+                        <span className="text-[10px] font-mono text-amber-400 font-bold px-2 py-0.5 rounded bg-amber-400/10 border border-amber-400/20">
+                          {activePluginPreview.badge}
+                        </span>
+                      )}
+                    </h3>
+                    <span className="text-[11px] font-mono text-neutral-400">
+                      Interfaccia Grafica Fotorealistica (1024x571) • Formato nativo VST3 / Standalone
+                    </span>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setPreviewModalImage(null)}
+                  className="p-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-neutral-400 hover:text-white transition-colors cursor-pointer"
+                  title="Chiudi anteprima"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              <div className="rounded-2xl overflow-hidden border border-neutral-800 max-h-[75vh] flex items-center justify-center bg-black/90 p-1">
+                <img 
+                  src={getAssetUrl(previewModalImage)} 
+                  alt={activePluginPreview?.name || "Hardware GUI Snapshot"} 
+                  className="w-full h-auto max-h-[72vh] object-contain rounded-xl shadow-2xl"
+                />
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
     </div>
   );

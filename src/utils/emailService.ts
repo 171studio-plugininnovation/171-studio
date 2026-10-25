@@ -10,6 +10,7 @@ import {
 import { db, handleFirestoreError, OperationType, getCachedAccessToken } from '../lib/firebase';
 import { doc, setDoc } from 'firebase/firestore';
 import { sendGmailMessage } from './gmailService';
+import { getAssetUrl } from './assetPath';
 
 /**
  * Generate a unique and clear order/booking code for 171 Studio.
@@ -227,7 +228,7 @@ export function triggerPluginZipFileDownload(plugin: PluginItem): void {
   // 1. If the plugin has a direct download URL pointing to a packaged file (e.g. /downloads/plugins/...), download it directly
   if (plugin.downloadUrl && !plugin.downloadUrl.startsWith('#')) {
     const link = document.createElement('a');
-    link.href = plugin.downloadUrl;
+    link.href = getAssetUrl(plugin.downloadUrl);
     link.download = cleanFileName;
     document.body.appendChild(link);
     link.click();

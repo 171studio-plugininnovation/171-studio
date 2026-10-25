@@ -232,49 +232,28 @@ const DEFAULT_PLUGINS: PluginItem[] = [
   {
     id: 'plugin-optocom',
     name: '171 DriveOptocom',
-    badge: 'OPTO DYNAMICS & TUBE SATURATION',
+    badge: 'OPTICAL COMPRESSOR & ANALOG TUBE DRIVE',
     status: 'DISPONIBILE',
-    description: 'Compressore optoelettronico boutique con saturazione valvolare tri-band, modellazione fisica della cella elettro-ottica T4B (LA-2A) con isteresi fotochimica a doppia trappola e oscilloscopio CRT telemetrico.',
+    description: 'Compressore optoelettronico boutique con saturazione valvolare tri-band, modellazione fisica della cella elettro-ottica T4B (LA-2A) con isteresi fotochimica a doppia trappola, galvanometro analogico VU/GR con ago a spada e oscilloscopio CRT telemetrico.',
     version: 'v1.1.0 Boutique Modern Edition',
     downloadCount: 0,
     downloadUrl: '/downloads/plugins/171_DriveOptocom_v1.1.0_Win64.zip',
     zipFileName: '171_DriveOptocom_v1.1.0_Win64.zip',
-    zipFileSize: '8.39 MB',
+    zipFileSize: '11.94 MB',
+    imageUrl: '/assets/plugins/171DriveOptocom_GUI.png',
     formats: ['VST3 (64-bit)', 'Standalone App (.EXE)'],
     technologies: [
-      "Modellazione fisica della cella elettro-ottica T4B con memoria d'isteresi fotochimica asimmetrica Teletronix LA-2A a doppia trappola",
-      'Preamp valvolare in Classe A a triodo con esaltazione di 2ª armonica e filtro DC blocker ZDF a 5 Hz',
-      'Tri-Band Saturator con crossover Linkwitz-Riley LR-4 e compensazione allpass AP2 a fase rigorosamente piatta (0.00 dB)',
-      'Circuito Stereo Link dinamico e filtro Sidechain passa-alto a 100 Hz selezionabile',
-      "Routing flessibile pre/post compressione con Punch Mode dinamico per preservare l'attacco",
-      'Doppio Display: Galvanometro analogico VU/GR ad ago a spada con lampada tungsteno + CRT oscilloscopio telemetrico con curva Knee',
-      'Spia reattiva Opto Cell Jewel Lamp ambra proporzionale alla compressione in tempo reale',
-      'Manopole fotorealistiche Teardrop Bronze, bachelite LA-2A scanalata, Neve Marconi Ruby Red e Gunmetal Knurled',
-      'True-Peak Limiter BS.1770-4 a -0.10 dBTP (zero clipping inter-sample) e latenza di soli 4 campioni',
-      'Resizable Bar fluida con aspect ratio vincolato a 1024x571 ed eseguibile Standalone per Windows 64-bit'
-    ],
-  },
-  {
-    id: 'plugin-perfectpre',
-    name: '171 PerfectPre',
-    badge: '4-CHARACTER PREAMP & NEVE 1073 EQ',
-    status: 'DISPONIBILE',
-    description: 'Preamp analogico flagship a 4 caratteri vintage con stadio di clipping asimmetrico a diodi, EQ Neve 1073 concentrico a 3 bande + HPF e De-Esser differenziale di fase SPL.',
-    version: 'v1.0.0 Flagship Edition',
-    downloadCount: 0,
-    downloadUrl: '/downloads/plugins/171_PerfectPre_v1.0.0_Win64.zip',
-    zipFileName: '171_PerfectPre_v1.0.0_Win64.zip',
-    zipFileSize: '20.24 MB',
-    imageUrl: '/assets/plugins/PerfectPre_GUI_Preview.png',
-    formats: ['VST3 (64-bit)', 'Standalone App (.EXE)'],
-    technologies: [
-      'Preamp a 4 caratteri analogici: British Vintage (Neve 1073 Class-A), American Tube (Valvole 6L6/Triodo), Vintage Germanium (Fuzz & ricchezza armonica), Clean Studio (Wire-with-gain)',
-      'Stadio a diodi asimmetrico indipendente con clipping ADAA a doppio ordine e spia Ruby Jewel Lamp',
-      'Equalizzatore Neve 1073 Concentric: HPF a 5 frequenze (Off, 50, 80, 160, 300 Hz) con manopola Marconi Blue, Low Shelf concentric (35-220 Hz, +/-16dB), Mid Peak concentric (360Hz-7.2kHz, +/-18dB), High Shelf fisso a 12 kHz (+/-16dB) e tasto EQ IN/OUT',
-      'SPL Differential Phase De-Esser con cancellazione di fase differenziale per sibilanti naturali e trasparenti',
-      'Telemetria CRT dinamica a 60 FPS in tempo reale, Ladder Meter a 12 segmenti LED, selettore Maschile/Femminile e modalità Delta Listen',
-      'Interfaccia fotorealistica 3D con angoli di ridimensionamento fluidi (Resizable Bar) e vetro studio antiriflesso',
-      'True-Peak Limiter BS.1770-4 a -0.10 dBTP con Soft-Knee Brickwall Safe Ceiling a -0.09 dBFS e Zero-Latency 64-bit Dual-Precision'
+      "Modellazione fisica della cella elettro-ottica T4B con doppia trappola di decadimento e risposta temporale asimmetrica dipendente dalla storia del segnale",
+      "Isteresi foto-chimica reale LA-2A con memoria profonda per livellamento vocale e di bus setoso",
+      "Preamp valvolare in Classe A a triodo con esaltazione di seconde armoniche calde e filtro DC blocker ZDF a 5 Hz",
+      "Tri-Band Saturator con crossover Linkwitz-Riley LR-4 e compensazione allpass AP2 a fase rigorosamente piatta (0.00 dB)",
+      "Circuito Stereo Link dinamico e filtro Sidechain passa-alto a 100 Hz selezionabile",
+      "Routing flessibile pre/post compressione con Punch Mode dinamico per preservare l'impatto ritmico",
+      "Doppio Display Incassato: Galvanometro analogico VU/GR ad ago a spada con perno in ottone e lampada al tungsteno + CRT Oscilloscopio telemetrico con curva Knee e riga ducking T4B",
+      "Spia reattiva Opto Cell Jewel Lamp ambra che brilla dinamicamente in tempo reale proporzionalmente alla compressione",
+      "CMF Differenziato & Manopole Boutique: manopole Teardrop Bronze, pomelli vintage in bachelite LA-2A, pomello classico Neve Marconi Ruby Red e Gunmetal Knurled",
+      "Sicurezza audio: ITU-R BS.1770-4 True-Peak Limiter a -0.10 dBTP (zero clipping inter-sample) e latenza host di soli 4 campioni",
+      "Resizable Bar fluida su chassis 1024x571, selettore Preset in titanio e oro, ed eseguibile Standalone per Windows 64-bit"
     ],
   },
   {
@@ -282,45 +261,52 @@ const DEFAULT_PLUGINS: PluginItem[] = [
     name: '171 CleanDrive',
     badge: 'TRANSIENT-AWARE DUAL SATURATOR',
     status: 'DISPONIBILE',
-    description: 'Saturatore a doppio stadio con separazione intelligente dei transienti per aggiungere calore valvolare, punch e presenza armonica senza impastare il mix.',
-    version: 'v1.0.0 Studio Edition',
+    description: 'Saturatore analogico boutique a doppio canale con separazione intelligente dei transienti, saturazione valvolare e a nastro, stadio Warmth & Tilt EQ Baxandall e oscilloscopio CRT a fosfori dorati a 60 FPS.',
+    version: 'v1.1.0 Studio Edition',
     downloadCount: 0,
-    downloadUrl: '/downloads/plugins/171_CleanDrive_v1.0.0_Win64.zip',
-    zipFileName: '171_CleanDrive_v1.0.0_Win64.zip',
-    zipFileSize: '6.82 MB',
+    downloadUrl: '/downloads/plugins/171_CleanDrive_v1.1.0_Win64.zip',
+    zipFileName: '171_CleanDrive_v1.1.0_Win64.zip',
+    zipFileSize: '7.63 MB',
+    imageUrl: '/assets/plugins/171CleanDrive_GUI.png',
     formats: ['VST3 (64-bit)', 'Standalone App (.EXE)'],
     technologies: [
-      'Transient-Aware Dual Saturator con splitting dinamico adattivo tra transiente percussivo e corpo armonico',
-      "Controllo indipendente del Punch per preservare l'attacco ritmico, definizione e impatto di kick, snare e 808",
-      'Saturazione calda e musicale su emulazione di valvole e nastro magnetico con zero fango sulle basse frequenze',
-      'Crossover e controlli timbrici con filtri Linkwitz-Riley LR-4 a fase lineare e stadio Warmth & Tilt EQ',
-      "Controllo Sensitivity dinamico per calibrare millimetricamente la soglia d'innesco della distorsione armonica",
-      "Visualizzatore spettrale CRT hardware retroilluminato a 60 FPS a fosfori dorati con tracciamento istantaneo dell'energia",
-      '7 Manopole Neon con ghiera in alluminio tornito CNC, alone multistadio, badge anodizzati e Master Bypass con LED',
-      'True-Peak Limiter BS.1770-4 calibrato a -0.10 dBTP e Zero-Latency pura (0 campioni introdotti) a 64-bit'
+      "Transient-Aware Dual Saturator con splitting dinamico adattivo tra transiente percussivo e corpo del segnale sonoro",
+      "Canale transiente ADAA-2 a 64-bit: soft-clipper cubico a doppia precisione con antiderivative analitiche per sopprimere l'aliasing matematico",
+      "Canale tonale a trasformatore con integrazione fisica del flusso magnetico di Faraday, bias drift a 80 ms e DC-blocker a 10 Hz",
+      "Controllo indipendente del Punch per preservare l'attacco ritmico, definizione e impatto di kick, snare, basso e 808",
+      "Crossover e controlli timbrici con filtri Linkwitz-Riley LR-4 a fase lineare per eliminare ogni cancellazione di fase",
+      "Stadio Warmth & Tilt EQ Baxandall per scolpire con precisione chirurgica il bilanciamento frequenziale analogico",
+      "Micro-tolleranze analogiche stereo (spirito TMT ±0.3%) con monitoraggio continuo della correlazione stereo (ρ ≥ 0.3) per garantire mono-compatibilità assoluta",
+      "Visualizzatore spettrale CRT hardware retroilluminato a 60 FPS a fosfori dorati con tracciamento istantaneo dell'energia disaccoppiato tramite LockFreeFIFO atomica",
+      "7 Manopole Neon con ghiera in ottone tornito CNC KnurledTeeth da 256x256 px, anelli neon multi-pass a 4 stadi e badge anodizzati",
+      "Modulo Master Bypass Heavy-Duty con placca metallica a 4 viti esagonali, LED rubino bombato e crossfade continuo a 15 ms pop-free",
+      "Analog Safety Brickwall Soft-Ceiling a -0.09 dBFS (0.9900 picco max) con True-Peak Limiter BS.1770-4 e Zero-Latency pura (0 campioni)"
     ],
   },
   {
     id: 'plugin-cleanreso',
     name: '171 CleanReso',
-    badge: 'DYNAMIC RESONANCE SUPPRESSOR',
+    badge: 'DYNAMIC RESONANCE SUPPRESSOR & SPECTRAL SHAPER',
     status: 'DISPONIBILE',
-    description: 'Soppressore dinamico intelligente di risonanze acustiche ed asprezze frequenziali con filtri notch Zero-Delay Feedback (ZDF) e modalità Delta Listen.',
-    version: 'v1.0.0 Studio Edition',
+    description: 'Soppressore dinamico intelligente di risonanze acustiche ed asprezze frequenziali con tecnologia brevettata Transient Shield (Hero Protection), filtri ZDF a 64-bit, stadio Analog Silk & Air e modalità Delta Listen.',
+    version: 'v1.1.0 Studio Edition',
     downloadCount: 0,
-    downloadUrl: '/downloads/plugins/171_CleanReso_v1.0.0_Win64.zip',
-    zipFileName: '171_CleanReso_v1.0.0_Win64.zip',
-    zipFileSize: '7.50 MB',
+    downloadUrl: '/downloads/plugins/171_CleanReso_v1.1.0_Win64.zip',
+    zipFileName: '171_CleanReso_v1.1.0_Win64.zip',
+    zipFileSize: '13.19 MB',
+    imageUrl: '/assets/plugins/171CleanReso_GUI.png',
     formats: ['VST3 (64-bit)', 'Standalone App (.EXE)'],
     technologies: [
-      'Soppressione dinamica delle risonanze e motore anti-harshness con rilevamento spettrale avanzato dei picchi risonanti fastidiosi',
-      'Mascheramento psicoacustico in tempo reale con preservazione assoluta dei transienti e della vivacità timbrica naturale',
-      'Calibrazione armonica intelligente ad altissima precisione per ripulire tracce vocali, piatti batteria, chitarre acustiche ed elettriche, synth',
-      'Filtri Zero-Delay Feedback (ZDF) notch e bell con fattore Q dinamico adattivo al contenuto del segnale sonoro',
-      'Controlli chirurgici Target, Depth, Speed, Q-Sharpness, Harshness ed Air per una rifinitura millimetrica',
-      'Modalità Delta Listen per isolare e ascoltare esclusivamente le risonanze attenuate dal processing',
-      'Analizzatore CRT dual-layer in tempo reale a 60 FPS incassato dorato con overlay spettrale Pre/Post e vetro polarizzato',
-      'True-Peak Limiter BS.1770-4 a -0.10 dBTP ed elaborazione in virgola mobile a 64-bit a bassissima latenza'
+      "Transient Shield (Hero Protection): isolamento della componente impulsiva tramite inseguitore balistico a doppio inviluppo per azzerare il time-smearing su batteria, voci e plettrate",
+      "32 bande logaritmiche SVF Cytomic a topologia Zero-Delay Feedback (ZDF) a 64-bit con ponderazione psicoacustica ISO 226 (2.5 kHz - 6.5 kHz)",
+      "Stadio Analog Silk & Air: equalizzazione post Baxandall High-Air a 12 kHz combinata a saturazione valvolare di 2ª armonica per lucidare le alte frequenze",
+      "Selettore Soft/Hard: Soft per intervento organico e trasparente su voci e master bus; Hard per intervento chirurgico rapido su piatti e sibilanti",
+      "8 Preset di laboratorio calibrati: Vocal De-Harsh, Snare Ring Kill, Acoustic Guitar Tamer, Harsh Cymbals Soother, Master Bus Tamer, Electric Guitar Fizz Eliminator, Synth Resonance Shaper, Surgical Hunter",
+      "Modalità Delta Listen per isolare e monitorare in cuffia esclusivamente le frequenze aspre e le risonanze attenuate dal processing",
+      "Controlli fisici: De-Harsh (0-100%), Target Freq (1.0-12.0 kHz), Selectivity Q-factor, Trans Shield Hero knob, Analog Silk, Mix Wet/Dry e Gain d'uscita (-18dB a +12dB)",
+      "True-Peak Limiter BS.1770-4 a lookahead deterministico con sinc 4x (32 tap Kaiser beta=7.0) e ceiling rigido a -0.10 dBTP (zero clipping inter-sample)",
+      "Stereo Linking coerente al 100% (zero stereo yawing) e Master Bypass con crossfade a 15 ms pop-free bit-exact",
+      "Applicazione Standalone nativa per Windows 64-bit e plugin VST3 per tutte le principali DAW con GUI fotorealistica 1024x571"
     ],
   },
 ];
@@ -538,12 +524,16 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         const effectiveYoutube = (!parsed.youtubePlaylistId || parsed.youtubePlaylistId === 'PLMC9KNkIncKtPzgY-5rmhvj7fax8fdxoj')
           ? 'PLXK7O-W_io4CCKTgd_kyDOh_jgFYmMyfj'
           : parsed.youtubePlaylistId;
-        const hasLegacyPlugins = !parsed.plugins || parsed.plugins.some((p: any) => p.id === 'plugin-1' || p.id === 'plugin-2');
+        const officialIds = new Set(DEFAULT_PLUGINS.map((p) => p.id));
+        const hasLegacyPlugins =
+          !parsed.plugins ||
+          parsed.plugins.some((p: any) => p.id === 'plugin-1' || p.id === 'plugin-2' || !officialIds.has(p.id)) ||
+          parsed.plugins.length !== DEFAULT_PLUGINS.length;
         const effectivePlugins = (hasLegacyPlugins || !parsed.plugins?.length)
           ? DEFAULT_PLUGINS
-          : parsed.plugins.map((p: any) => {
-              const defaultMatch = DEFAULT_PLUGINS.find((dp) => dp.id === p.id);
-              return defaultMatch ? { ...defaultMatch, ...p, downloadUrl: defaultMatch.downloadUrl, zipFileName: defaultMatch.zipFileName, zipFileSize: defaultMatch.zipFileSize } : p;
+          : DEFAULT_PLUGINS.map((dp) => {
+              const userCopy = parsed.plugins.find((p: any) => p.id === dp.id);
+              return userCopy ? { ...dp, downloadCount: userCopy.downloadCount || 0 } : dp;
             });
         return {
           ...DEFAULT_CONTENT,
@@ -770,10 +760,17 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         if (snapshot.exists()) {
           const data = snapshot.data() as Partial<SiteContent>;
           setSiteContent((prev) => {
-            const hasLegacyPlugins = data.plugins && data.plugins.some((p: any) => p.id === 'plugin-1' || p.id === 'plugin-2');
-            const officialPlugins = (hasLegacyPlugins || !data.plugins || !data.plugins.some((p: any) => p.id === 'plugin-optocom'))
+            const officialIds = new Set(DEFAULT_PLUGINS.map((p) => p.id));
+            const hasLegacyPlugins =
+              !data.plugins ||
+              data.plugins.some((p: any) => p.id === 'plugin-1' || p.id === 'plugin-2' || !officialIds.has(p.id)) ||
+              data.plugins.length !== DEFAULT_PLUGINS.length;
+            const officialPlugins = (hasLegacyPlugins || !data.plugins?.length)
               ? DEFAULT_PLUGINS
-              : data.plugins;
+              : DEFAULT_PLUGINS.map((dp) => {
+                  const userCopy = data.plugins!.find((p: any) => p.id === dp.id);
+                  return userCopy ? { ...dp, downloadCount: userCopy.downloadCount || 0 } : dp;
+                });
             return {
               ...prev,
               ...data,
