@@ -146,7 +146,7 @@ export const TheGodCypherPage: React.FC<TheGodCypherPageProps> = ({ onNavigate }
 
     const productTitle = orderTier === 'physical' 
       ? 'The God Cypher — CD Deluxe Pack' 
-      : (orderTier === 'digital_master' ? 'The God Cypher — Master Pack Digitale' : 'The God Cypher — Essential MP3 Edition');
+      : (orderTier === 'digital_master' ? 'The God Cypher — Edizione Premium WAVE (Master Pack)' : 'The God Cypher — Edizione MP3');
 
     const newOrder = createAlbumOrder({
       userId: currentUser?.id,
@@ -947,7 +947,7 @@ export const TheGodCypherPage: React.FC<TheGodCypherPageProps> = ({ onNavigate }
               </button>
             </div>
 
-            {/* OPTION 2 (IN MEZZO): DIGITAL DOWNLOAD MASTER PACK (€4.99) */}
+            {/* OPTION 2 (IN MEZZO): DIGITAL DOWNLOAD PREMIUM WAVE (€4.99) */}
             <div className="p-7 sm:p-8 rounded-3xl bg-[#130707] border-2 border-amber-500/80 shadow-[0_0_50px_rgba(245,158,11,0.22)] flex flex-col justify-between relative overflow-hidden lg:-translate-y-2 z-10">
               <div className="absolute top-0 right-0 px-4 py-1.5 bg-gradient-to-r from-amber-500 to-amber-400 text-black font-['Cinzel_Decorative',serif] font-black text-[10px] uppercase tracking-widest rounded-bl-2xl shadow-lg">
                 BEST SELLER • PIÙ SCELTO
@@ -955,10 +955,10 @@ export const TheGodCypherPage: React.FC<TheGodCypherPageProps> = ({ onNavigate }
 
               <div>
                 <span className="text-xs font-mono uppercase tracking-widest text-amber-400 font-bold">
-                  FORMATO DIGITALE COMPLETO
+                  FORMATO PREMIUM STUDIO LOSSLESS
                 </span>
                 <h4 className="text-2xl sm:text-3xl font-['Cinzel_Decorative',serif] font-black text-white mt-1 mb-2">
-                  Master Pack Digitale
+                  Edizione Premium WAVE
                 </h4>
                 <div className="flex items-baseline gap-2 mb-6">
                   <span className="text-4xl font-serif font-black text-white">€4.99</span>
@@ -984,14 +984,14 @@ export const TheGodCypherPage: React.FC<TheGodCypherPageProps> = ({ onNavigate }
                   </div>
                   <div className="flex items-start gap-2.5">
                     <Check className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                    <span><strong>Locandina Poster vol. 1</strong> in alta definizione</span>
+                    <span><strong>Locandina Poster vol. 1</strong> in alta definizione + Booklet</span>
                   </div>
                   <div className="p-3 rounded-xl bg-black/70 border border-amber-500/30 text-xs font-mono text-amber-200/90 mt-4">
                     <div className="flex items-center gap-1.5 font-bold mb-1 text-amber-400">
                       <Download className="w-3.5 h-3.5" />
                       <span>PACCHETTO COMPLETO:</span>
                     </div>
-                    <div>Archivio ZIP completo audio Master + tutte le grafiche (217 MB).</div>
+                    <div>Archivio Master Pack completo (WAV 24-bit + MP3 320k + Artworks).</div>
                   </div>
                 </div>
               </div>
@@ -1001,7 +1001,7 @@ export const TheGodCypherPage: React.FC<TheGodCypherPageProps> = ({ onNavigate }
                 onClick={() => openOrderModal('digital_master')}
                 className="w-full py-4 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black font-['Cinzel_Decorative',serif] font-black text-sm uppercase tracking-widest transition-all shadow-xl shadow-amber-500/25 cursor-pointer hover:scale-[1.02]"
               >
-                Scarica Master Pack (€4.99)
+                Scarica Edizione Premium WAVE (€4.99)
               </button>
             </div>
 
@@ -1013,10 +1013,10 @@ export const TheGodCypherPage: React.FC<TheGodCypherPageProps> = ({ onNavigate }
 
               <div>
                 <span className="text-xs font-mono uppercase tracking-widest text-neutral-400 font-bold">
-                  FORMATO AUDIO MP3
+                  FORMATO AUDIO MP3 320 KBPS
                 </span>
                 <h4 className="text-2xl sm:text-3xl font-['Cinzel_Decorative',serif] font-black text-white mt-1 mb-2">
-                  Essential MP3 Pack
+                  Edizione MP3
                 </h4>
                 <div className="flex items-baseline gap-2 mb-6">
                   <span className="text-4xl font-serif font-black text-white">€2.99</span>
@@ -1045,7 +1045,7 @@ export const TheGodCypherPage: React.FC<TheGodCypherPageProps> = ({ onNavigate }
                       <Music className="w-3.5 h-3.5 text-red-500" />
                       <span>SOLO FILE AUDIO:</span>
                     </div>
-                    <div>Download istantaneo dell'archivio ZIP con le 14 canzoni (198 MB).</div>
+                    <div>Archivio audio con le 14 tracce in MP3 a 320 kbps (206 MB).</div>
                   </div>
                 </div>
               </div>
@@ -1053,9 +1053,9 @@ export const TheGodCypherPage: React.FC<TheGodCypherPageProps> = ({ onNavigate }
               <button
                 type="button"
                 onClick={() => openOrderModal('digital_mp3')}
-                className="w-full py-4 rounded-2xl bg-neutral-900 hover:bg-neutral-800 text-white font-['Cinzel_Decorative',serif] font-black text-sm uppercase tracking-widest transition-all border border-neutral-700 cursor-pointer hover:scale-[1.02]"
+                className="w-full py-4 rounded-2xl bg-neutral-900 hover:bg-neutral-800 text-[#fdf6e2] border border-neutral-700 font-['Cinzel_Decorative',serif] font-bold text-sm uppercase tracking-widest transition-all cursor-pointer hover:border-red-600/50"
               >
-                Scarica Solo MP3 (€2.99)
+                Scarica Edizione MP3 (€2.99)
               </button>
             </div>
 
@@ -1467,8 +1467,8 @@ export const TheGodCypherPage: React.FC<TheGodCypherPageProps> = ({ onNavigate }
                     </div>
                     <p className="text-[11px] font-mono text-neutral-300 leading-relaxed">
                       {orderTier === 'digital_mp3'
-                        ? "L'archivio THE_GOD_CYPHER_MP3_EDITION.zip (198 MB, 14 tracce MP3 ad alta fedeltà a 320 kbps) è ora pronto per il download."
-                        : "Il Master Pack Completo THE_GOD_CYPHER_MASTER_PACK.zip (217 MB, 14 tracce WAV 24-bit + MP3, copertine e le 16 grafiche ufficiali dei singoli) è sbloccato."
+                        ? "L'archivio THE_GOD_CYPHER_MP3_EDITION.zip (206 MB, 14 tracce MP3 ad alta fedeltà a 320 kbps) è ora pronto per il download."
+                        : "L'archivio completo THE_GOD_CYPHER_PREMIUM_WAVE.zip (14 tracce Master WAV 24-bit studio lossless + MP3 320k, copertine e le 16 grafiche ufficiali dei singoli) è sbloccato."
                       }
                     </p>
                     <div>
@@ -1476,11 +1476,11 @@ export const TheGodCypherPage: React.FC<TheGodCypherPageProps> = ({ onNavigate }
                         href={orderTier === 'digital_mp3' ? ALBUM_MP3_DOWNLOAD_URL : ALBUM_MASTER_DOWNLOAD_URL}
                         target="_blank"
                         rel="noopener noreferrer"
-                        download={orderTier === 'digital_mp3' ? "THE_GOD_CYPHER_MP3_EDITION.zip" : "THE_GOD_CYPHER_MASTER_PACK.zip"}
+                        download={orderTier === 'digital_mp3' ? "THE_GOD_CYPHER_MP3_EDITION.zip" : "THE_GOD_CYPHER_PREMIUM_WAVE.zip"}
                         className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-['Cinzel_Decorative',serif] font-black text-xs uppercase tracking-wider shadow-lg transition-all cursor-pointer"
                       >
                         <Download className="w-3.5 h-3.5" />
-                        <span>{orderTier === 'digital_mp3' ? 'Scarica Ora MP3 (198 MB)' : 'Scarica Ora Master Pack (217 MB)'}</span>
+                        <span>{orderTier === 'digital_mp3' ? 'Scarica Ora Edizione MP3 (206 MB)' : 'Scarica Ora Edizione Premium WAVE'}</span>
                       </a>
                     </div>
                   </div>

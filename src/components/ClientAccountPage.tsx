@@ -1268,7 +1268,7 @@ Data: ${new Date(file.createdAt).toLocaleString('it-IT')}
                                 <div className="flex items-center justify-between">
                                   <div className="flex items-center gap-1.5 font-bold text-[11px] text-emerald-300 uppercase">
                                     <Download className="w-4 h-4 text-emerald-400" />
-                                    <span>{order.basePrice <= 3.50 ? 'Essential MP3 Edition (Solo Audio)' : 'Master Pack Digitale 24-bit'}</span>
+                                    <span>{order.basePrice <= 3.50 ? 'Edizione MP3 (14 Tracce MP3 320k)' : 'Edizione Premium WAVE (WAV 24-bit + Master Pack)'}</span>
                                   </div>
                                   <span className={`text-[9px] px-2 py-0.5 rounded-full font-bold uppercase border ${
                                     order.paymentStatus === 'saldato'
@@ -1281,7 +1281,7 @@ Data: ${new Date(file.createdAt).toLocaleString('it-IT')}
                                 <p className="text-[11px] text-neutral-300">
                                   {order.basePrice <= 3.50 
                                     ? 'Tutte le 14 tracce ufficiali dell\'album in formato MP3 ad alta fedeltà (320 kbps).'
-                                    : 'Tutti i 14 brani master WAV 24-bit + MP3 320k, copertine fronte/retro e le 16 grafiche dei singoli.'
+                                    : 'Tutti i 14 brani master WAV 24-bit studio quality + MP3 320k, copertine fronte/retro e le 16 grafiche ufficiali dei singoli.'
                                   }
                                 </p>
                                 {order.paymentStatus === 'saldato' ? (
@@ -1289,11 +1289,11 @@ Data: ${new Date(file.createdAt).toLocaleString('it-IT')}
                                     href={order.basePrice <= 3.50 ? ALBUM_MP3_DOWNLOAD_URL : ALBUM_MASTER_DOWNLOAD_URL}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    download={order.basePrice <= 3.50 ? "THE_GOD_CYPHER_MP3_EDITION.zip" : "THE_GOD_CYPHER_MASTER_PACK.zip"}
+                                    download={order.basePrice <= 3.50 ? "THE_GOD_CYPHER_MP3_EDITION.zip" : "THE_GOD_CYPHER_PREMIUM_WAVE.zip"}
                                     className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-['Cinzel_Decorative',serif] text-xs font-bold uppercase tracking-wider transition-all shadow-md cursor-pointer"
                                   >
                                     <Download className="w-3.5 h-3.5" />
-                                    <span>{order.basePrice <= 3.50 ? 'Scarica 14 Tracce MP3 (198 MB)' : 'Scarica Master Pack (217 MB)'}</span>
+                                    <span>{order.basePrice <= 3.50 ? 'Scarica Edizione MP3 (206 MB)' : 'Scarica Edizione Premium WAVE (1 GB)'}</span>
                                   </a>
                                 ) : (
                                   <div className="p-2.5 rounded-lg bg-black/60 border border-amber-500/30 flex items-center justify-between gap-2 text-[11px] text-amber-300">
@@ -1324,11 +1324,11 @@ Data: ${new Date(file.createdAt).toLocaleString('it-IT')}
                                 href={ALBUM_MASTER_DOWNLOAD_URL}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                download="THE_GOD_CYPHER_MASTER_PACK.zip"
+                                download="THE_GOD_CYPHER_PREMIUM_WAVE.zip"
                                 className="px-3 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-black text-[11px] font-bold uppercase tracking-wider flex items-center gap-1.5 shrink-0 transition-colors cursor-pointer"
                               >
                                 <Download className="w-3 h-3" />
-                                <span>Scarica ZIP Master (217 MB)</span>
+                                <span>Scarica Edizione Premium WAVE (1 GB)</span>
                               </a>
                             ) : (
                               <span className="px-3 py-1.5 rounded-lg bg-neutral-800 text-neutral-500 text-[11px] font-bold uppercase tracking-wider flex items-center gap-1.5 shrink-0">
