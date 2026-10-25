@@ -5,7 +5,7 @@ import {
   Sparkles, Shield, LogOut, ArrowRight, X, Check, Lock, History,
   CreditCard, FolderOpen, HelpCircle, Copy, Search, Disc, Truck,
   MapPin, PackageCheck, Package, MailCheck, ShoppingBag, Eye, ShieldCheck,
-  Bug, Wrench, Send, Tag, Gift, Info, AlertCircle, Heart, Award, Mail
+  Bug, Wrench, Send, Tag, Gift, Info, AlertCircle, Heart, Award, Mail, Edit2
 } from 'lucide-react';
 import { PageId } from '../types';
 import { useStudio } from '../context/StudioContext';
@@ -50,6 +50,7 @@ export const ClientAccountPage: React.FC<ClientAccountPageProps> = ({ onNavigate
     openClientContactStudioGmail,
     downloadBookingCalendarIcs,
     openGoogleCalendarWeb,
+    updateUserProfileName,
   } = useStudio();
 
   const userCumulativeStats = getUserCumulativeDonations(currentUser?.email);
@@ -58,6 +59,33 @@ export const ClientAccountPage: React.FC<ClientAccountPageProps> = ({ onNavigate
   const [bookingToCancel, setBookingToCancel] = useState<BookingRecord | null>(null);
   const [cancelReason, setCancelReason] = useState('');
   const [actionBanner, setActionBanner] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+  // User Profile Name / Username Edit State
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [editedName, setEditedName] = useState(currentUser?.name || '');
+  const [isSavingName, setIsSavingName] = useState(false);
+
+  const handleSaveName = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editedName.trim()) return;
+    setIsSavingName(true);
+    try {
+      await updateUserProfileName(editedName.trim());
+      setIsEditingName(false);
+      setActionBanner({
+        type: 'success',
+        text: `Username / Nome d'Arte aggiornato con successo a "${editedName.trim()}". Tutte le future prenotazioni ed email useranno questo nome!`,
+      });
+      setTimeout(() => setActionBanner(null), 6000);
+    } catch {
+      setActionBanner({
+        type: 'error',
+        text: 'Errore durante il salvataggio del nome utente.',
+      });
+    } finally {
+      setIsSavingName(false);
+    }
+  };
 
   // Dedicated Donation Verification State
   const [donationVerifyingMap, setDonationVerifyingMap] = useState<Record<string, boolean>>({});
@@ -558,9 +586,54 @@ Data: ${new Date(file.createdAt).toLocaleString('it-IT')}
                 </span>
               )}
             </div>
-            <h1 className="text-2xl sm:text-3xl font-heading font-black text-white mt-1">
-              Benvenuto, {currentUser.name}
-            </h1>
+            <div className="flex flex-wrap items-center gap-2 mt-1">
+              <h1 className="text-2xl sm:text-3xl font-heading font-black text-white">
+                Benvenuto, {currentUser.name}
+              </h1>
+              {!isEditingName && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditedName(currentUser.name);
+                    setIsEditingName(true);
+                  }}
+                  className="px-2.5 py-1 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-amber-300 border border-amber-500/30 text-[11px] font-mono flex items-center gap-1 transition-all cursor-pointer"
+                  title="Modifica Username / Nome d'Arte"
+                >
+                  <Edit2 className="w-3 h-3" />
+                  <span>Modifica Username</span>
+                </button>
+              )}
+            </div>
+
+            {isEditingName && (
+              <form onSubmit={handleSaveName} className="mt-2 mb-2 flex flex-wrap items-center gap-2 p-2.5 rounded-2xl bg-black/60 border border-amber-500/40">
+                <input
+                  type="text"
+                  value={editedName}
+                  onChange={(e) => setEditedName(e.target.value)}
+                  placeholder="Nuovo Nome o Username..."
+                  className="px-3 py-1.5 rounded-xl bg-neutral-900 border border-neutral-700 focus:border-amber-400 text-xs text-white outline-none font-mono"
+                  autoFocus
+                  required
+                />
+                <button
+                  type="submit"
+                  disabled={isSavingName || !editedName.trim()}
+                  className="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-mono text-xs font-bold uppercase transition-all cursor-pointer disabled:opacity-50 flex items-center gap-1"
+                >
+                  <Check className="w-3.5 h-3.5" />
+                  <span>Salva</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsEditingName(false)}
+                  className="px-3 py-1.5 rounded-xl bg-neutral-800 hover:bg-neutral-700 text-neutral-300 font-mono text-xs uppercase transition-all cursor-pointer"
+                >
+                  Annulla
+                </button>
+              </form>
+            )}
             <p className="text-xs font-mono text-neutral-400">
               Email registrata: <strong className="text-neutral-200">{currentUser.email}</strong> • Gestione sessioni (cancellazione fino a 24h prima), file audio, plugin e Key & BPM Finder
             </p>

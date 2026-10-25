@@ -41,6 +41,7 @@ interface StudioContextType {
   loginWithGoogle: () => Promise<boolean>;
   logout: () => void;
   register: (email: string, name: string, password?: string) => Promise<boolean>;
+  updateUserProfileName: (newName: string) => Promise<boolean>;
   loginAsMaster: () => void;
   siteContent: SiteContent;
   updateSiteContent: (updates: Partial<SiteContent>) => void;
@@ -1208,6 +1209,31 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       logActivity('LOGIN', `Logout effettuato da ${currentUser.email}`);
     }
     setCurrentUser(null);
+  };
+
+  const updateUserProfileName = async (newName: string): Promise<boolean> => {
+    if (!currentUser) return false;
+    const clean = newName.trim();
+    if (!clean) return false;
+
+    const updatedUser: UserAccount = {
+      ...currentUser,
+      name: clean,
+    };
+
+    setCurrentUser(updatedUser);
+    try {
+      localStorage.setItem('171_current_user', JSON.stringify(updatedUser));
+    } catch {}
+
+    saveRegisteredUserToMap(updatedUser);
+
+    setRegisteredUsers((prev) =>
+      prev.map((u) => (u.email.toLowerCase() === updatedUser.email.toLowerCase() ? { ...u, name: clean } : u))
+    );
+
+    logActivity('CMS_EDIT', `Nome utente / artista aggiornato a "${clean}" (${updatedUser.email})`);
+    return true;
   };
 
   const updateSiteContent = (updates: Partial<SiteContent>) => {
@@ -3434,6 +3460,7 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         loginWithGoogle,
         logout,
         register,
+        updateUserProfileName,
         loginAsMaster,
         siteContent,
         updateSiteContent,

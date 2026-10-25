@@ -68,8 +68,8 @@ export const BookingSessionPage: React.FC<BookingSessionPageProps> = ({ onNaviga
   // Pre-fill user data when logged in & auto-suggest registration 5% code if available
   useEffect(() => {
     if (currentUser) {
-      if (!nome) setNome(currentUser.name);
-      if (!email) setEmail(currentUser.email);
+      setNome(currentUser.name);
+      setEmail(currentUser.email);
       const regCode = currentUser.welcomeDiscountCode || siteContent.registrationDiscountCode || 'BENVENUTO5';
       if (
         !appliedVoucherCode &&
@@ -79,7 +79,7 @@ export const BookingSessionPage: React.FC<BookingSessionPageProps> = ({ onNaviga
         setVoucherInput(regCode);
       }
     }
-  }, [currentUser, nome, email, appliedVoucherCode, siteContent.registrationDiscountCode, siteContent.registrationDiscountEnabled]);
+  }, [currentUser, appliedVoucherCode, siteContent.registrationDiscountCode, siteContent.registrationDiscountEnabled]);
 
   const dynamicServiceOptions = useMemo(() => getDynamicServiceOptions(siteContent), [siteContent]);
   const currentServiceObj = dynamicServiceOptions.find((s) => s.id === selectedService) || dynamicServiceOptions[0];
