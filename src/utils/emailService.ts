@@ -195,15 +195,20 @@ export function interpolateEmailTemplate(
   booking: BookingRecord,
   orderCode: string
 ): string {
+  const userName = booking.userName?.trim() || 'Artista';
   return templateText
-    .replace(/\{nome\}/g, booking.userName || 'Artista')
-    .replace(/\{codice_ordine\}/g, orderCode)
-    .replace(/\{servizio\}/g, booking.serviceTitle || 'Sessione in Studio')
-    .replace(/\{data\}/g, booking.date || '')
-    .replace(/\{ora\}/g, booking.time || '')
-    .replace(/\{importo\}/g, `${booking.estimatedPrice} €`)
+    .replace(/\{nome\}/gi, userName)
+    .replace(/\{user\}/gi, userName)
+    .replace(/\{username\}/gi, userName)
+    .replace(/\{codice_ordine\}/gi, orderCode)
+    .replace(/\{servizio\}/gi, booking.serviceTitle || 'Sessione in Studio')
+    .replace(/\{data\}/gi, booking.date || '')
+    .replace(/\{ora\}/gi, booking.time || '')
+    .replace(/\{importo\}/gi, `${booking.estimatedPrice} €`)
+    .replace(/\{email\}/gi, booking.userEmail || '')
+    .replace(/\{telefono\}/gi, booking.userPhone || '')
     .replace(
-      /\{sconto\}/g,
+      /\{sconto\}/gi,
       booking.discountCode
         ? `Codice ${booking.discountCode} (-${booking.discountAmount || 0}€)`
         : 'Nessuno'
@@ -669,6 +674,11 @@ Mittente Ufficiale: ${MASTER_EMAIL}
 
     if (autoCfg.emailWebhookUrl) {
       try {
+        const [startHour = 10, startMin = 0] = (booking.time || '10:00').split(':').map(Number);
+        const endHour = Math.min(23, startHour + (booking.hours || 2));
+        const startIso = `${booking.date}T${String(startHour).padStart(2, '0')}:${String(startMin).padStart(2, '0')}:00`;
+        const endIso = `${booking.date}T${String(endHour).padStart(2, '0')}:${String(startMin).padStart(2, '0')}:00`;
+
         const whRes = await sendEmailViaWebhook(autoCfg.emailWebhookUrl, {
           eventType: 'PRENOTAZIONE_RICEVUTA',
           orderCode,
@@ -679,6 +689,11 @@ Mittente Ufficiale: ${MASTER_EMAIL}
           textBody,
           htmlBody,
           paypalUrl,
+          calendarEventTitle: `171 STUDIO: ${booking.serviceTitle} - ${booking.userName}`,
+          calendarEventStart: startIso,
+          calendarEventEnd: endIso,
+          calendarLocation: '171 Studio - Messina (ME), Sicilia, Italia',
+          calendarDescription: textBody,
         });
         if (whRes.success) {
           emailLog.status = 'inviata_con_webhook';
@@ -865,6 +880,11 @@ Mittente Ufficiale: ${MASTER_EMAIL}
 
     if (autoCfg.emailWebhookUrl) {
       try {
+        const [startHour = 10, startMin = 0] = (booking.time || '10:00').split(':').map(Number);
+        const endHour = Math.min(23, startHour + (booking.hours || 2));
+        const startIso = `${booking.date}T${String(startHour).padStart(2, '0')}:${String(startMin).padStart(2, '0')}:00`;
+        const endIso = `${booking.date}T${String(endHour).padStart(2, '0')}:${String(startMin).padStart(2, '0')}:00`;
+
         const whRes = await sendEmailViaWebhook(autoCfg.emailWebhookUrl, {
           eventType: 'PRENOTAZIONE_CONFERMATA',
           orderCode,
@@ -875,6 +895,11 @@ Mittente Ufficiale: ${MASTER_EMAIL}
           textBody,
           htmlBody,
           paypalUrl,
+          calendarEventTitle: `171 STUDIO: ${booking.serviceTitle} - ${booking.userName}`,
+          calendarEventStart: startIso,
+          calendarEventEnd: endIso,
+          calendarLocation: '171 Studio - Messina (ME), Sicilia, Italia',
+          calendarDescription: textBody,
         });
         if (whRes.success) {
           emailLog.status = 'inviata_con_webhook';
