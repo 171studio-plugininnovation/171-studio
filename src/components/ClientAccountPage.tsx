@@ -5,7 +5,7 @@ import {
   Sparkles, Shield, LogOut, ArrowRight, X, Check, Lock, History,
   CreditCard, FolderOpen, HelpCircle, Copy, Search, Disc, Truck,
   MapPin, PackageCheck, Package, MailCheck, ShoppingBag, Eye, ShieldCheck,
-  Bug, Wrench, Send, Tag, Gift, Info
+  Bug, Wrench, Send, Tag, Gift, Info, AlertCircle
 } from 'lucide-react';
 import { PageId } from '../types';
 import { useStudio } from '../context/StudioContext';
@@ -70,6 +70,42 @@ export const ClientAccountPage: React.FC<ClientAccountPageProps> = ({ onNavigate
   // Dedicated Album Order State
   const [copiedOrderCodeId, setCopiedOrderCodeId] = useState<string | null>(null);
   const [copiedTrackingId, setCopiedTrackingId] = useState<string | null>(null);
+  const [orderTxInputMap, setOrderTxInputMap] = useState<Record<string, string>>({});
+  const [orderTxErrorMap, setOrderTxErrorMap] = useState<Record<string, string>>({});
+  const [orderVerifyingMap, setOrderVerifyingMap] = useState<Record<string, boolean>>({});
+
+  const handleVerifyOrderPayment = (orderId: string, totalAmount: number, orderCode: string) => {
+    const rawTx = (orderTxInputMap[orderId] || '').trim();
+    if (!rawTx) {
+      setOrderTxErrorMap((prev) => ({ ...prev, [orderId]: "Inserisci l'ID transazione PayPal o codice ricevuta." }));
+      return;
+    }
+    if (rawTx.length < 5) {
+      setOrderTxErrorMap((prev) => ({ ...prev, [orderId]: 'Codice non valido: deve contenere almeno 5 caratteri.' }));
+      return;
+    }
+
+    setOrderVerifyingMap((prev) => ({ ...prev, [orderId]: true }));
+    setOrderTxErrorMap((prev) => ({ ...prev, [orderId]: '' }));
+
+    try {
+      const confirmed = confirmAlbumOrderPayPalPayment(orderId, rawTx, totalAmount);
+      if (confirmed) {
+        setOrderVerifyingMap((prev) => ({ ...prev, [orderId]: false }));
+        setActionBanner({
+          type: 'success',
+          text: `Transazione PayPal #${rawTx} convalidata con successo per l'ordine #${orderCode}! Il download del Master Pack è sbloccato.`,
+        });
+        setTimeout(() => setActionBanner(null), 5000);
+      } else {
+        setOrderVerifyingMap((prev) => ({ ...prev, [orderId]: false }));
+        setOrderTxErrorMap((prev) => ({ ...prev, [orderId]: "Impossibile verificare l'ordine." }));
+      }
+    } catch (err: any) {
+      setOrderVerifyingMap((prev) => ({ ...prev, [orderId]: false }));
+      setOrderTxErrorMap((prev) => ({ ...prev, [orderId]: err?.message || 'Errore durante la convalida.' }));
+    }
+  };
 
   // Dedicated My Files State
   const [myFilesCategory, setMyFilesCategory] = useState<'master_shared' | 'all' | 'client_uploaded'>('master_shared');
@@ -1032,23 +1068,56 @@ Data: ${new Date(file.createdAt).toLocaleString('it-IT')}
                               </div>
 
                               {order.paymentStatus !== 'saldato' && (
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    if (order.paypalPaymentUrl) {
-                                      window.open(order.paypalPaymentUrl, '_blank');
-                                    }
-                                    confirmAlbumOrderPayPalPayment(order.id);
-                                    setActionBanner({
-                                      type: 'success',
-                                      text: `Pagamento PayPal confermato per l'ordine #${order.orderCode} a vkrealhakiesake@gmail.com!`,
-                                    });
-                                    setTimeout(() => setActionBanner(null), 5000);
-                                  }}
-                                  className="w-full py-2 px-3 rounded-lg bg-[#ffc439] hover:bg-[#f4b82d] text-black font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md mt-1"
-                                >
-                                  <span>Paga Ora con PayPal (€{order.totalAmount.toFixed(2)})</span>
-                                </button>
+                                <div className="space-y-2 mt-2 pt-2 border-t border-amber-900/40">
+                                  <a
+                                    href={order.paypalPaymentUrl || 'https://www.paypal.com/paypalme/igorrozanov171'}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="w-full py-2 px-3 rounded-lg bg-[#ffc439] hover:bg-[#f4b82d] text-black font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md"
+                                  >
+                                    <ExternalLink className="w-3.5 h-3.5" />
+                                    <span>Paga Ora con PayPal (€{order.totalAmount.toFixed(2)})</span>
+                                  </a>
+
+                                  <div className="p-2.5 rounded-lg bg-black/60 border border-neutral-700/80 space-y-1.5">
+                                    <div className="text-[10px] text-amber-300 font-bold uppercase tracking-wider flex items-center gap-1">
+                                      <ShieldCheck className="w-3 h-3 text-emerald-400" />
+                                      <span>Verifica ID Transazione PayPal:</span>
+                                    </div>
+                                    <p className="text-[10px] text-neutral-400">
+                                      Inserisci il codice ricevuto da PayPal per registrare il pagamento e sbloccare il download:
+                                    </p>
+                                    <div className="flex gap-1.5">
+                                      <input
+                                        type="text"
+                                        value={orderTxInputMap[order.id] || ''}
+                                        onChange={(e) => {
+                                          const val = e.target.value;
+                                          setOrderTxInputMap((prev) => ({ ...prev, [order.id]: val }));
+                                          if (orderTxErrorMap[order.id]) {
+                                            setOrderTxErrorMap((prev) => ({ ...prev, [order.id]: '' }));
+                                          }
+                                        }}
+                                        placeholder="Es. 9AB12345CD67890EF"
+                                        className="flex-1 px-2.5 py-1.5 rounded-md bg-neutral-900 border border-neutral-700 text-white font-mono text-xs uppercase focus:outline-none focus:border-amber-400 placeholder:text-neutral-600"
+                                      />
+                                      <button
+                                        type="button"
+                                        onClick={() => handleVerifyOrderPayment(order.id, order.totalAmount, order.orderCode)}
+                                        disabled={orderVerifyingMap[order.id] || !(orderTxInputMap[order.id] || '').trim()}
+                                        className="px-3 py-1.5 rounded-md bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed text-black font-bold text-[11px] uppercase tracking-wider cursor-pointer shrink-0 transition-colors"
+                                      >
+                                        {orderVerifyingMap[order.id] ? 'Verifica...' : 'Sblocca'}
+                                      </button>
+                                    </div>
+                                    {orderTxErrorMap[order.id] && (
+                                      <div className="text-[10px] text-red-400 flex items-center gap-1">
+                                        <AlertCircle className="w-3 h-3 shrink-0" />
+                                        <span>{orderTxErrorMap[order.id]}</span>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
                               )}
                             </div>
 
@@ -1196,9 +1265,18 @@ Data: ${new Date(file.createdAt).toLocaleString('it-IT')}
 
                             {isDigital && (
                               <div className="p-4 rounded-xl bg-neutral-900 border border-emerald-500/30 text-xs font-mono space-y-2.5 md:col-span-2">
-                                <div className="flex items-center gap-1.5 font-bold text-[11px] text-emerald-300 uppercase">
-                                  <Download className="w-4 h-4 text-emerald-400" />
-                                  <span>{order.basePrice <= 3.50 ? 'Essential MP3 Edition (Solo Audio)' : 'Master Pack Digitale 24-bit'}</span>
+                                <div className="flex items-center justify-between">
+                                  <div className="flex items-center gap-1.5 font-bold text-[11px] text-emerald-300 uppercase">
+                                    <Download className="w-4 h-4 text-emerald-400" />
+                                    <span>{order.basePrice <= 3.50 ? 'Essential MP3 Edition (Solo Audio)' : 'Master Pack Digitale 24-bit'}</span>
+                                  </div>
+                                  <span className={`text-[9px] px-2 py-0.5 rounded-full font-bold uppercase border ${
+                                    order.paymentStatus === 'saldato'
+                                      ? 'bg-emerald-950 text-emerald-300 border-emerald-700/60'
+                                      : 'bg-amber-950 text-amber-300 border-amber-700/60'
+                                  }`}>
+                                    {order.paymentStatus === 'saldato' ? '✓ Download Sbloccato' : '🔒 Download Bloccato'}
+                                  </span>
                                 </div>
                                 <p className="text-[11px] text-neutral-300">
                                   {order.basePrice <= 3.50 
@@ -1206,39 +1284,58 @@ Data: ${new Date(file.createdAt).toLocaleString('it-IT')}
                                     : 'Tutti i 14 brani master WAV 24-bit + MP3 320k, copertine fronte/retro e le 16 grafiche dei singoli.'
                                   }
                                 </p>
-                                <a
-                                  href={order.basePrice <= 3.50 ? ALBUM_MP3_DOWNLOAD_URL : ALBUM_MASTER_DOWNLOAD_URL}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  download={order.basePrice <= 3.50 ? "THE_GOD_CYPHER_MP3_EDITION.zip" : "THE_GOD_CYPHER_MASTER_PACK.zip"}
-                                  className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-['Cinzel_Decorative',serif] text-xs font-bold uppercase tracking-wider transition-all shadow-md cursor-pointer"
-                                >
-                                  <Download className="w-3.5 h-3.5" />
-                                  <span>{order.basePrice <= 3.50 ? 'Scarica 14 Tracce MP3 (198 MB)' : 'Scarica Master Pack (217 MB)'}</span>
-                                </a>
+                                {order.paymentStatus === 'saldato' ? (
+                                  <a
+                                    href={order.basePrice <= 3.50 ? ALBUM_MP3_DOWNLOAD_URL : ALBUM_MASTER_DOWNLOAD_URL}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    download={order.basePrice <= 3.50 ? "THE_GOD_CYPHER_MP3_EDITION.zip" : "THE_GOD_CYPHER_MASTER_PACK.zip"}
+                                    className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-['Cinzel_Decorative',serif] text-xs font-bold uppercase tracking-wider transition-all shadow-md cursor-pointer"
+                                  >
+                                    <Download className="w-3.5 h-3.5" />
+                                    <span>{order.basePrice <= 3.50 ? 'Scarica 14 Tracce MP3 (198 MB)' : 'Scarica Master Pack (217 MB)'}</span>
+                                  </a>
+                                ) : (
+                                  <div className="p-2.5 rounded-lg bg-black/60 border border-amber-500/30 flex items-center justify-between gap-2 text-[11px] text-amber-300">
+                                    <div className="flex items-center gap-1.5">
+                                      <Lock className="w-3.5 h-3.5 shrink-0 text-amber-400" />
+                                      <span>Download protetto: inserisci e convalida l'ID Transazione PayPal nel box di pagamento sopra per sbloccare i file master.</span>
+                                    </div>
+                                    <span className="px-2 py-0.5 rounded bg-neutral-800 text-neutral-500 text-[10px] uppercase font-bold shrink-0">
+                                      Bloccato
+                                    </span>
+                                  </div>
+                                )}
                               </div>
                             )}
 
                           </div>
                         </div>
 
-                        {/* If physical order: also grant digital download CTA */}
+                        {/* If physical order: also grant digital download CTA ONLY AFTER payment */}
                         {isPhysical && (
                           <div className="p-3 rounded-xl bg-neutral-900/60 border border-neutral-800/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-mono">
                             <span className="text-neutral-400 flex items-center gap-1.5">
                               <Sparkles className="w-3.5 h-3.5 text-amber-400 shrink-0" />
                               <span>Con la copia fisica hai diritto anche al <strong>Master Pack Digitale immediato</strong> (WAV 24-bit + MP3 + grafiche).</span>
                             </span>
-                            <a
-                              href={ALBUM_MASTER_DOWNLOAD_URL}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              download="THE_GOD_CYPHER_MASTER_PACK.zip"
-                              className="px-3 py-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-neutral-200 text-[11px] font-bold uppercase tracking-wider flex items-center gap-1.5 shrink-0 transition-colors cursor-pointer"
-                            >
-                              <Download className="w-3 h-3" />
-                              <span>Scarica ZIP Master (217 MB)</span>
-                            </a>
+                            {order.paymentStatus === 'saldato' ? (
+                              <a
+                                href={ALBUM_MASTER_DOWNLOAD_URL}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                download="THE_GOD_CYPHER_MASTER_PACK.zip"
+                                className="px-3 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-black text-[11px] font-bold uppercase tracking-wider flex items-center gap-1.5 shrink-0 transition-colors cursor-pointer"
+                              >
+                                <Download className="w-3 h-3" />
+                                <span>Scarica ZIP Master (217 MB)</span>
+                              </a>
+                            ) : (
+                              <span className="px-3 py-1.5 rounded-lg bg-neutral-800 text-neutral-500 text-[11px] font-bold uppercase tracking-wider flex items-center gap-1.5 shrink-0">
+                                <Lock className="w-3 h-3" />
+                                <span>Master Digitale Bloccato (In Attesa Saldo)</span>
+                              </span>
+                            )}
                           </div>
                         )}
                       </div>

@@ -3,7 +3,7 @@ import {
   Play, ExternalLink, Download, ShoppingBag, 
   Truck, MapPin, Check, Radio, Music, 
   ArrowLeft, Lock, Eye, Sparkles, X, ChevronRight, Award,
-  ShieldCheck, CheckCircle2, Clock, Copy
+  ShieldCheck, CheckCircle2, Clock, Copy, AlertCircle, CreditCard
 } from 'lucide-react';
 import { PageId } from '../types';
 import { AlbumOrderRecord } from '../types/cms';
@@ -91,6 +91,12 @@ export const TheGodCypherPage: React.FC<TheGodCypherPageProps> = ({ onNavigate }
   const [completedOrder, setCompletedOrder] = useState<AlbumOrderRecord | null>(null);
   const [copiedTxId, setCopiedTxId] = useState(false);
 
+  // PayPal Transaction verification state
+  const [paypalTxInput, setPaypalTxInput] = useState('');
+  const [verificationError, setVerificationError] = useState<string | null>(null);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [verificationSuccessMessage, setVerificationSuccessMessage] = useState<string | null>(null);
+
   const [orderForm, setOrderForm] = useState({
     nome: '',
     cognome: '',
@@ -125,6 +131,9 @@ export const TheGodCypherPage: React.FC<TheGodCypherPageProps> = ({ onNavigate }
     setIsOrderModalOpen(true);
     setOrderSuccess(false);
     setCompletedOrder(null);
+    setPaypalTxInput('');
+    setVerificationError(null);
+    setVerificationSuccessMessage(null);
   };
 
   const handleOrderSubmit = (e: React.FormEvent) => {
@@ -156,12 +165,13 @@ export const TheGodCypherPage: React.FC<TheGodCypherPageProps> = ({ onNavigate }
       notes: orderForm.note,
     });
 
-    // Automatically confirm PayPal payment and register transaction
-    const confirmed = confirmAlbumOrderPayPalPayment(newOrder.id);
-    const finalOrder = confirmed || newOrder;
-    setCompletedOrder(finalOrder);
+    // Strictly enforce payment verification: do NOT confirm prematurely, do NOT trigger download.
+    setCompletedOrder(newOrder);
     setCreatedOrderCode(newOrder.orderCode);
     setOrderSuccess(true);
+    setPaypalTxInput('');
+    setVerificationError(null);
+    setVerificationSuccessMessage(null);
 
     // Open PayPal checkout URL to vkrealhakiesake@gmail.com
     if (newOrder.paypalPaymentUrl) {
@@ -169,19 +179,50 @@ export const TheGodCypherPage: React.FC<TheGodCypherPageProps> = ({ onNavigate }
         window.open(newOrder.paypalPaymentUrl, '_blank');
       } catch {}
     }
+  };
 
-    // Determine target download package (CD buyers also get the complete Master Pack!)
-    const targetZipUrl = orderTier === 'digital_mp3'
-      ? ALBUM_MP3_DOWNLOAD_URL
-      : ALBUM_MASTER_DOWNLOAD_URL;
-    const targetZipName = orderTier === 'digital_mp3'
-      ? 'THE_GOD_CYPHER_MP3_EDITION.zip'
-      : 'THE_GOD_CYPHER_MASTER_PACK.zip';
+  const handleVerifyTransaction = (orderId: string) => {
+    setVerificationError(null);
+    setVerificationSuccessMessage(null);
 
-    // Automatically trigger browser download immediately
-    setTimeout(() => {
-      triggerBrowserDownload(targetZipUrl, targetZipName);
-    }, 400);
+    const rawTx = paypalTxInput.trim();
+    if (!rawTx) {
+      setVerificationError('Inserisci il Codice Transazione / ID Ricevuta PayPal ricevuto via email o nel conto PayPal.');
+      return;
+    }
+    if (rawTx.length < 5) {
+      setVerificationError('Codice transazione PayPal non valido: deve contenere almeno 5 caratteri.');
+      return;
+    }
+
+    setIsVerifying(true);
+    try {
+      const confirmed = confirmAlbumOrderPayPalPayment(orderId, rawTx, completedOrder?.totalAmount);
+      if (confirmed) {
+        setCompletedOrder(confirmed);
+        setVerificationSuccessMessage(`Transazione PayPal #${rawTx} convalidata con successo! Il download del Master Pack è sbloccato.`);
+        setIsVerifying(false);
+
+        // Target download package
+        const targetZipUrl = orderTier === 'digital_mp3'
+          ? ALBUM_MP3_DOWNLOAD_URL
+          : ALBUM_MASTER_DOWNLOAD_URL;
+        const targetZipName = orderTier === 'digital_mp3'
+          ? 'THE_GOD_CYPHER_MP3_EDITION.zip'
+          : 'THE_GOD_CYPHER_MASTER_PACK.zip';
+
+        // Trigger download only after payment confirmation
+        setTimeout(() => {
+          triggerBrowserDownload(targetZipUrl, targetZipName);
+        }, 500);
+      } else {
+        setVerificationError('Ordine non trovato o già elaborato. Ricarica la pagina.');
+        setIsVerifying(false);
+      }
+    } catch (err: any) {
+      setIsVerifying(false);
+      setVerificationError(err?.message || 'Errore durante la convalida della transazione PayPal.');
+    }
   };
 
   const rawSpotifyId = siteContent.spotifyPlaylistId || '2nLiKk1RIeFhbMabi9iQ34';
@@ -1197,148 +1238,307 @@ export const TheGodCypherPage: React.FC<TheGodCypherPageProps> = ({ onNavigate }
             </div>
 
             {orderSuccess && completedOrder ? (
-              <div className="space-y-4 py-2">
-                {/* Header confirmation badge */}
-                <div className="text-center">
-                  <div className="w-14 h-14 rounded-full bg-emerald-500/20 text-emerald-400 mx-auto flex items-center justify-center mb-2.5 border border-emerald-500/40 shadow-lg shadow-emerald-950">
-                    <Check className="w-7 h-7" />
-                  </div>
-                  <span className="text-[10px] font-mono uppercase tracking-widest text-emerald-400 font-bold block">
-                    ✓ TRANSAZIONE PAYPAL REGISTRATA CON SUCCESSO
-                  </span>
-                  <h4 className="text-xl sm:text-2xl font-['Cinzel_Decorative',serif] font-black text-white mt-0.5">
-                    Pagamento & Ordine Convalidati!
-                  </h4>
-                  <div className="text-xs text-neutral-300 font-mono mt-1">
-                    Accreditato a: <strong className="text-amber-400">vkrealhakiesake@gmail.com</strong>
-                  </div>
-                </div>
-
-                {/* PayPal Official Transaction Card */}
-                <div className="p-4 rounded-2xl bg-black/90 border border-neutral-800 space-y-2 text-xs font-mono">
-                  <div className="flex items-center justify-between border-b border-neutral-800/80 pb-1.5">
-                    <span className="text-neutral-400">Codice Ordine:</span>
-                    <span className="text-red-400 font-bold text-sm">#{completedOrder.orderCode}</span>
-                  </div>
-                  <div className="flex items-center justify-between border-b border-neutral-800/80 pb-1.5">
-                    <span className="text-neutral-400">ID Transazione PayPal:</span>
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-emerald-400 font-bold select-all">{completedOrder.paypalTransactionId}</span>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (completedOrder.paypalTransactionId) {
-                            navigator.clipboard.writeText(completedOrder.paypalTransactionId);
-                            setCopiedTxId(true);
-                            setTimeout(() => setCopiedTxId(false), 2000);
-                          }
-                        }}
-                        className="text-[10px] px-1.5 py-0.5 rounded bg-neutral-900 border border-neutral-700 text-neutral-300 hover:text-white"
-                        title="Copia ID Transazione"
-                      >
-                        {copiedTxId ? 'Copiato!' : <Copy className="w-3 h-3 inline" />}
-                      </button>
+              completedOrder.paymentStatus !== 'saldato' ? (
+                /* PENDING PAYMENT STATE: DOWNLOAD IS STRICTLY LOCKED UNTIL VERIFIED */
+                <div className="space-y-4 py-2">
+                  {/* Status Banner */}
+                  <div className="text-center">
+                    <div className="w-14 h-14 rounded-full bg-amber-500/20 text-amber-400 mx-auto flex items-center justify-center mb-2.5 border border-amber-500/40 shadow-lg shadow-amber-950/50">
+                      <Clock className="w-7 h-7 animate-pulse" />
+                    </div>
+                    <span className="text-[10px] font-mono uppercase tracking-widest text-amber-400 font-bold block">
+                      ORDINE #{completedOrder.orderCode} CREATO • IN ATTESA DEL SALDO PAYPAL
+                    </span>
+                    <h4 className="text-xl sm:text-2xl font-['Cinzel_Decorative',serif] font-black text-white mt-0.5">
+                      Completa il Pagamento PayPal
+                    </h4>
+                    <div className="text-xs text-neutral-300 font-mono mt-1">
+                      Destinatario: <strong className="text-amber-400">vkrealhakiesake@gmail.com</strong> • Importo Esatto: <strong className="text-white">€{completedOrder.totalAmount.toFixed(2)}</strong>
                     </div>
                   </div>
-                  <div className="flex items-center justify-between border-b border-neutral-800/80 pb-1.5">
-                    <span className="text-neutral-400">Importo Saldato:</span>
-                    <span className="text-white font-bold text-sm">€{completedOrder.totalAmount.toFixed(2)}</span>
-                  </div>
-                  <div className="flex items-center justify-between border-b border-neutral-800/80 pb-1.5">
-                    <span className="text-neutral-400">Email Convalidata:</span>
-                    <span className="text-emerald-300 font-bold">{completedOrder.userEmail} (✓ Convalidata)</span>
-                  </div>
-                  <div className="flex items-center justify-between pt-0.5">
-                    <span className="text-neutral-400">Avanzamento Ordine:</span>
-                    <span className="px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-700/60 font-bold text-[10px] uppercase">
-                      {completedOrder.orderType === 'digital'
-                        ? 'Completato'
-                        : completedOrder.shippingMethod === 'pickup'
-                        ? 'Pronto Ritiro in Sede'
-                        : 'In Elaborazione Laboratorio'}
-                    </span>
-                  </div>
-                </div>
 
-                {/* Automatic Download Card */}
-                <div className="p-4 rounded-2xl bg-emerald-950/30 border border-emerald-500/50 space-y-2.5">
-                  <div className="flex items-center gap-2 text-emerald-300 font-mono text-xs font-bold">
-                    <Sparkles className="w-4 h-4 text-emerald-400" />
-                    <span>Download Automatico Avviato!</span>
+                  {/* Summary Details */}
+                  <div className="p-4 rounded-2xl bg-black/90 border border-neutral-800 space-y-2 text-xs font-mono">
+                    <div className="flex items-center justify-between border-b border-neutral-800/80 pb-1.5">
+                      <span className="text-neutral-400">Prodotto:</span>
+                      <span className="text-white font-bold">{completedOrder.productTitle}</span>
+                    </div>
+                    <div className="flex items-center justify-between border-b border-neutral-800/80 pb-1.5">
+                      <span className="text-neutral-400">Totale da Saldare:</span>
+                      <span className="text-amber-300 font-bold text-sm">€{completedOrder.totalAmount.toFixed(2)}</span>
+                    </div>
+                    <div className="flex items-center justify-between border-b border-neutral-800/80 pb-1.5">
+                      <span className="text-neutral-400">Email Registrata:</span>
+                      <span className="text-neutral-200">{completedOrder.userEmail}</span>
+                    </div>
+                    <div className="flex items-center justify-between pt-0.5">
+                      <span className="text-neutral-400">Stato Download:</span>
+                      <span className="px-2 py-0.5 rounded-full bg-amber-950 text-amber-300 border border-amber-700/60 font-bold text-[10px] uppercase flex items-center gap-1">
+                        <Lock className="w-3 h-3" />
+                        <span>Bloccato fino a ricezione saldo</span>
+                      </span>
+                    </div>
                   </div>
-                  <p className="text-[11px] font-mono text-neutral-300 leading-relaxed">
-                    {orderTier === 'digital_mp3'
-                      ? "Il tuo browser sta scaricando THE_GOD_CYPHER_MP3_EDITION.zip (198 MB, 14 tracce MP3 ad alta fedeltà a 320 kbps)."
-                      : "Il tuo browser sta scaricando il Master Pack Completo THE_GOD_CYPHER_MASTER_PACK.zip (217 MB, 14 tracce WAV/MP3, copertine e le 16 grafiche ufficiali dei singoli)."
-                    }
-                  </p>
-                  <div>
+
+                  {/* Step 1: Open PayPal */}
+                  <div className="p-4 rounded-2xl bg-gradient-to-br from-[#ffc439]/10 to-amber-950/20 border border-[#ffc439]/40 space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#ffc439] flex items-center gap-1.5">
+                        <CreditCard className="w-4 h-4" />
+                        <span>FASE 1: Effettua il Pagamento su PayPal</span>
+                      </span>
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-black/60 border border-[#ffc439]/30 text-[#ffc439]">
+                        vkrealhakiesake@gmail.com
+                      </span>
+                    </div>
+                    <p className="text-[11px] font-mono text-neutral-300 leading-relaxed">
+                      Clicca sul pulsante per aprire PayPal e inviare l'importo di <strong className="text-white">€{completedOrder.totalAmount.toFixed(2)}</strong> a favore di <strong className="text-amber-400">vkrealhakiesake@gmail.com</strong> (specificando come nota/causale <strong className="text-white">#{completedOrder.orderCode}</strong>).
+                    </p>
                     <a
-                      href={orderTier === 'digital_mp3' ? ALBUM_MP3_DOWNLOAD_URL : ALBUM_MASTER_DOWNLOAD_URL}
+                      href={completedOrder.paypalPaymentUrl || 'https://www.paypal.com/paypalme/igorrozanov171'}
                       target="_blank"
                       rel="noopener noreferrer"
-                      download={orderTier === 'digital_mp3' ? "THE_GOD_CYPHER_MP3_EDITION.zip" : "THE_GOD_CYPHER_MASTER_PACK.zip"}
-                      className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-['Cinzel_Decorative',serif] font-black text-xs uppercase tracking-wider shadow-lg transition-all cursor-pointer"
+                      className="w-full py-2.5 px-4 rounded-xl bg-[#ffc439] hover:bg-[#f4b82d] text-black font-['Cinzel_Decorative',serif] font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg transition-all cursor-pointer"
                     >
-                      <Download className="w-3.5 h-3.5" />
-                      <span>{orderTier === 'digital_mp3' ? 'Scarica Manualmente MP3 (198 MB)' : 'Scarica Manualmente Master Pack (217 MB)'}</span>
+                      <ExternalLink className="w-4 h-4" />
+                      <span>Paga Ora €{completedOrder.totalAmount.toFixed(2)} su PayPal</span>
                     </a>
                   </div>
-                </div>
 
-                {/* CD Physical Order Fulfillment Card ("mandare avanti l'ordine") */}
-                {completedOrder.orderType === 'physical' && (
-                  <div className="p-4 rounded-2xl bg-red-950/30 border border-red-700/60 space-y-2 text-xs font-mono">
-                    <div className="flex items-center gap-2 text-red-400 font-bold text-xs uppercase">
-                      {completedOrder.shippingMethod === 'shipping' ? (
-                        <>
-                          <Truck className="w-4 h-4 text-red-400" />
-                          <span>Pacco CD Deluxe Preso in Carico</span>
-                        </>
-                      ) : (
-                        <>
-                          <MapPin className="w-4 h-4 text-amber-400" />
-                          <span>CD Pronto per il Ritiro in Sede</span>
-                        </>
-                      )}
+                  {/* Step 2: Verification Form */}
+                  <div className="p-4 rounded-2xl bg-neutral-900/90 border border-neutral-700 space-y-3">
+                    <div className="flex items-center gap-1.5 text-xs font-mono font-bold uppercase tracking-wider text-neutral-200">
+                      <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                      <span>FASE 2: Verifica Transazione & Sblocca Download</span>
                     </div>
-                    <p className="text-[11px] text-neutral-300 leading-relaxed">
-                      {completedOrder.shippingMethod === 'shipping' ? (
-                        <>
-                          L'ordine è stato avanzato automaticamente: il laboratorio di 171 Studio sta confezionando il CD Deluxe Jewel Box. 
-                          Riceverai il numero di tracciamento Poste Italiane SDA all'indirizzo <strong className="text-white">{completedOrder.userEmail}</strong> e nella tua area cliente.
-                        </>
-                      ) : (
-                        <>
-                          Pagamento verificato e ordine avanzato con successo! Il CD Deluxe Jewel Box è pronto al bancone di 171 Studio Messina. 
-                          Puoi passare a ritirarlo dal <strong className="text-amber-300">Lunedì al Sabato (10:00 - 20:00)</strong> esibendo il codice ordine <strong className="text-white">#{completedOrder.orderCode}</strong>.
-                        </>
-                      )}
+                    <p className="text-[11px] font-mono text-neutral-300 leading-relaxed">
+                      Una volta completato il pagamento, inserisci qui l'<strong>ID Transazione PayPal</strong> o il <strong>Codice Ricevuta</strong> (es. <code className="text-amber-300">9AB12345CD67890EF</code> o codice ricevuta email) per verificare la transazione, registrare il saldo sul sito e sbloccare istantaneamente il Master Pack.
                     </p>
-                  </div>
-                )}
 
-                {/* Footer Buttons */}
-                <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsOrderModalOpen(false);
-                      onNavigate('il-mio-account');
-                    }}
-                    className="w-full sm:flex-1 py-3 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-amber-300 border border-neutral-700 font-mono text-xs font-bold uppercase transition-all cursor-pointer text-center"
-                  >
-                    Vedi nel Mio Account ➔
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setIsOrderModalOpen(false)}
-                    className="w-full sm:w-auto px-6 py-3 rounded-xl bg-red-700 hover:bg-red-600 text-white font-mono text-xs font-bold uppercase transition-all cursor-pointer"
-                  >
-                    Chiudi
-                  </button>
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <input
+                        type="text"
+                        value={paypalTxInput}
+                        onChange={(e) => {
+                          setPaypalTxInput(e.target.value);
+                          if (verificationError) setVerificationError(null);
+                        }}
+                        placeholder="Inserisci ID Transazione / Ricevuta PayPal..."
+                        className="flex-1 px-3.5 py-2.5 rounded-xl bg-black border border-neutral-700 text-white font-mono text-xs focus:outline-none focus:border-amber-400 placeholder:text-neutral-600 uppercase"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleVerifyTransaction(completedOrder.id)}
+                        disabled={isVerifying || !paypalTxInput.trim()}
+                        className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed text-black font-mono text-xs font-black uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center gap-2 shrink-0 shadow-md"
+                      >
+                        {isVerifying ? (
+                          <>
+                            <Clock className="w-3.5 h-3.5 animate-spin" />
+                            <span>Verifica...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Check className="w-3.5 h-3.5" />
+                            <span>Verifica e Sblocca</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+
+                    {verificationError && (
+                      <div className="p-2.5 rounded-xl bg-red-950/60 border border-red-500/50 flex items-start gap-2 text-[11px] font-mono text-red-300">
+                        <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+                        <span>{verificationError}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Locked Download Card Teaser */}
+                  <div className="p-4 rounded-2xl bg-black/60 border border-red-950/80 space-y-2 opacity-80">
+                    <div className="flex items-center gap-2 text-neutral-400 font-mono text-xs font-bold">
+                      <Lock className="w-4 h-4 text-amber-500" />
+                      <span>Download Master Protetto (217 MB WAV 24-bit / MP3 320k)</span>
+                    </div>
+                    <p className="text-[11px] font-mono text-neutral-400 leading-relaxed">
+                      I file audio in qualità studio master, le copertine ad alta risoluzione e il booklet digitale saranno resi scaricabili non appena confermata la transazione PayPal con la FASE 2 qui sopra.
+                    </p>
+                    <button
+                      type="button"
+                      disabled
+                      className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-neutral-900 border border-neutral-800 text-neutral-500 font-mono text-xs font-bold uppercase tracking-wider cursor-not-allowed"
+                    >
+                      <Lock className="w-3.5 h-3.5" />
+                      <span>Download Bloccato (In Attesa del Saldo)</span>
+                    </button>
+                  </div>
+
+                  {/* Footer Buttons */}
+                  <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsOrderModalOpen(false);
+                        onNavigate('il-mio-account');
+                      }}
+                      className="w-full sm:flex-1 py-3 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-amber-300 border border-neutral-700 font-mono text-xs font-bold uppercase transition-all cursor-pointer text-center"
+                    >
+                      Completa Più Tardi in 'Il Mio Account' ➔
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setIsOrderModalOpen(false)}
+                      className="w-full sm:w-auto px-6 py-3 rounded-xl bg-neutral-800 hover:bg-neutral-700 text-white font-mono text-xs font-bold uppercase transition-all cursor-pointer"
+                    >
+                      Chiudi
+                    </button>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                /* PAID & VERIFIED STATE: DOWNLOAD UNLOCKED */
+                <div className="space-y-4 py-2">
+                  {/* Header confirmation badge */}
+                  <div className="text-center">
+                    <div className="w-14 h-14 rounded-full bg-emerald-500/20 text-emerald-400 mx-auto flex items-center justify-center mb-2.5 border border-emerald-500/40 shadow-lg shadow-emerald-950">
+                      <Check className="w-7 h-7" />
+                    </div>
+                    <span className="text-[10px] font-mono uppercase tracking-widest text-emerald-400 font-bold block">
+                      ✓ TRANSAZIONE PAYPAL VERIFICATA & REGISTRATA CON SUCCESSO
+                    </span>
+                    <h4 className="text-xl sm:text-2xl font-['Cinzel_Decorative',serif] font-black text-white mt-0.5">
+                      Pagamento Verificato: Download Sbloccato!
+                    </h4>
+                    <div className="text-xs text-neutral-300 font-mono mt-1">
+                      Accreditato a: <strong className="text-amber-400">vkrealhakiesake@gmail.com</strong>
+                    </div>
+                  </div>
+
+                  {/* PayPal Official Transaction Card */}
+                  <div className="p-4 rounded-2xl bg-black/90 border border-neutral-800 space-y-2 text-xs font-mono">
+                    <div className="flex items-center justify-between border-b border-neutral-800/80 pb-1.5">
+                      <span className="text-neutral-400">Codice Ordine:</span>
+                      <span className="text-red-400 font-bold text-sm">#{completedOrder.orderCode}</span>
+                    </div>
+                    <div className="flex items-center justify-between border-b border-neutral-800/80 pb-1.5">
+                      <span className="text-neutral-400">ID Transazione PayPal:</span>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-emerald-400 font-bold select-all">{completedOrder.paypalTransactionId}</span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (completedOrder.paypalTransactionId) {
+                              navigator.clipboard.writeText(completedOrder.paypalTransactionId);
+                              setCopiedTxId(true);
+                              setTimeout(() => setCopiedTxId(false), 2000);
+                            }
+                          }}
+                          className="text-[10px] px-1.5 py-0.5 rounded bg-neutral-900 border border-neutral-700 text-neutral-300 hover:text-white"
+                          title="Copia ID Transazione"
+                        >
+                          {copiedTxId ? 'Copiato!' : <Copy className="w-3 h-3 inline" />}
+                        </button>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between border-b border-neutral-800/80 pb-1.5">
+                      <span className="text-neutral-400">Importo Saldato:</span>
+                      <span className="text-white font-bold text-sm">€{completedOrder.totalAmount.toFixed(2)}</span>
+                    </div>
+                    <div className="flex items-center justify-between border-b border-neutral-800/80 pb-1.5">
+                      <span className="text-neutral-400">Email Convalidata:</span>
+                      <span className="text-emerald-300 font-bold">{completedOrder.userEmail} (✓ Convalidata)</span>
+                    </div>
+                    <div className="flex items-center justify-between pt-0.5">
+                      <span className="text-neutral-400">Avanzamento Ordine:</span>
+                      <span className="px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-700/60 font-bold text-[10px] uppercase">
+                        {completedOrder.orderType === 'digital'
+                          ? 'Completato'
+                          : completedOrder.shippingMethod === 'pickup'
+                          ? 'Pronto Ritiro in Sede'
+                          : 'In Elaborazione Laboratorio'}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Unlocked Download Card */}
+                  <div className="p-4 rounded-2xl bg-emerald-950/30 border border-emerald-500/50 space-y-2.5">
+                    <div className="flex items-center gap-2 text-emerald-300 font-mono text-xs font-bold">
+                      <Sparkles className="w-4 h-4 text-emerald-400" />
+                      <span>Download Sbloccato con Successo!</span>
+                    </div>
+                    <p className="text-[11px] font-mono text-neutral-300 leading-relaxed">
+                      {orderTier === 'digital_mp3'
+                        ? "L'archivio THE_GOD_CYPHER_MP3_EDITION.zip (198 MB, 14 tracce MP3 ad alta fedeltà a 320 kbps) è ora pronto per il download."
+                        : "Il Master Pack Completo THE_GOD_CYPHER_MASTER_PACK.zip (217 MB, 14 tracce WAV 24-bit + MP3, copertine e le 16 grafiche ufficiali dei singoli) è sbloccato."
+                      }
+                    </p>
+                    <div>
+                      <a
+                        href={orderTier === 'digital_mp3' ? ALBUM_MP3_DOWNLOAD_URL : ALBUM_MASTER_DOWNLOAD_URL}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        download={orderTier === 'digital_mp3' ? "THE_GOD_CYPHER_MP3_EDITION.zip" : "THE_GOD_CYPHER_MASTER_PACK.zip"}
+                        className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-['Cinzel_Decorative',serif] font-black text-xs uppercase tracking-wider shadow-lg transition-all cursor-pointer"
+                      >
+                        <Download className="w-3.5 h-3.5" />
+                        <span>{orderTier === 'digital_mp3' ? 'Scarica Ora MP3 (198 MB)' : 'Scarica Ora Master Pack (217 MB)'}</span>
+                      </a>
+                    </div>
+                  </div>
+
+                  {/* CD Physical Order Fulfillment Card */}
+                  {completedOrder.orderType === 'physical' && (
+                    <div className="p-4 rounded-2xl bg-red-950/30 border border-red-700/60 space-y-2 text-xs font-mono">
+                      <div className="flex items-center gap-2 text-red-400 font-bold text-xs uppercase">
+                        {completedOrder.shippingMethod === 'shipping' ? (
+                          <>
+                            <Truck className="w-4 h-4 text-red-400" />
+                            <span>Pacco CD Deluxe Preso in Carico</span>
+                          </>
+                        ) : (
+                          <>
+                            <MapPin className="w-4 h-4 text-amber-400" />
+                            <span>CD Pronto per il Ritiro in Sede</span>
+                          </>
+                        )}
+                      </div>
+                      <p className="text-[11px] text-neutral-300 leading-relaxed">
+                        {completedOrder.shippingMethod === 'shipping' ? (
+                          <>
+                            L'ordine è stato avanzato automaticamente: il laboratorio di 171 Studio sta confezionando il CD Deluxe Jewel Box. 
+                            Riceverai il numero di tracciamento Poste Italiane SDA all'indirizzo <strong className="text-white">{completedOrder.userEmail}</strong> e nella tua area cliente.
+                          </>
+                        ) : (
+                          <>
+                            Pagamento verificato e ordine avanzato con successo! Il CD Deluxe Jewel Box è pronto al bancone di 171 Studio Messina. 
+                            Puoi passare a ritirarlo dal <strong className="text-amber-300">Lunedì al Sabato (10:00 - 20:00)</strong> esibendo il codice ordine <strong className="text-white">#{completedOrder.orderCode}</strong>.
+                          </>
+                        )}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Footer Buttons */}
+                  <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsOrderModalOpen(false);
+                        onNavigate('il-mio-account');
+                      }}
+                      className="w-full sm:flex-1 py-3 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-amber-300 border border-neutral-700 font-mono text-xs font-bold uppercase transition-all cursor-pointer text-center"
+                    >
+                      Vedi nel Mio Account ➔
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setIsOrderModalOpen(false)}
+                      className="w-full sm:w-auto px-6 py-3 rounded-xl bg-red-700 hover:bg-red-600 text-white font-mono text-xs font-bold uppercase transition-all cursor-pointer"
+                    >
+                      Chiudi
+                    </button>
+                  </div>
+                </div>
+              )
             ) : (
               <form onSubmit={handleOrderSubmit} className="space-y-4">
                 

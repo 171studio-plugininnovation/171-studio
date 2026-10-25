@@ -589,7 +589,7 @@ export interface AlbumOrderRecord {
   emailValidatedAt?: string;
   
   // Order status
-  status: 'in_elaborazione' | 'spedito' | 'pronto_ritiro' | 'completato' | 'annullato';
+  status: 'in_attesa_pagamento' | 'in_elaborazione' | 'spedito' | 'pronto_ritiro' | 'completato' | 'annullato';
   paymentStatus: 'saldato' | 'in_attesa' | 'pagamento_al_ritiro';
   
   // PayPal Payment & Transaction Tracking

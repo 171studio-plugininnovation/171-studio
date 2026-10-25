@@ -2717,7 +2717,7 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       notes: orderData.notes || '',
       emailValidationStatus: 'in_attesa',
       emailValidatedAt: undefined,
-      status: 'in_elaborazione',
+      status: 'in_attesa_pagamento',
       paymentStatus: 'in_attesa',
       paypalEmail: STUDIO_PAYPAL_EMAIL,
       paypalPaymentUrl,
@@ -2805,7 +2805,21 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const existing = albumOrders.find((o) => o.id === id);
     if (!existing) return null;
 
-    const txId = transactionId || `PAYID-TGC-${Date.now().toString().slice(-8)}-${Math.floor(1000 + Math.random() * 9000)}`;
+    let txId = (transactionId || '').trim();
+    if (txId) {
+      if (txId.length < 5) {
+        throw new Error('Inserisci un codice transazione o ID ricevuta PayPal valido (almeno 5 caratteri).');
+      }
+      const duplicate = albumOrders.find(
+        (o) => o.id !== id && o.paypalTransactionId && o.paypalTransactionId.toLowerCase() === txId.toLowerCase()
+      );
+      if (duplicate) {
+        throw new Error(`Il codice transazione PayPal "${txId}" risulta già associato e convalidato per l'ordine #${duplicate.orderCode}.`);
+      }
+    } else {
+      txId = `171-TX-${Date.now().toString().slice(-6)}-${Math.floor(100 + Math.random() * 900)}`;
+    }
+
     const finalAmount = paidAmount !== undefined ? paidAmount : existing.totalAmount;
     const nowIso = new Date().toISOString();
 

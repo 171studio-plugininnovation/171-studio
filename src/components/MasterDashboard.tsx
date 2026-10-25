@@ -4877,9 +4877,18 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
                         <button
                           type="button"
                           onClick={() => {
-                            confirmAlbumOrderPayPalPayment(order.id);
-                            setOrderActionNotice(`Pagamento PayPal registrato per #${order.orderCode} (€${order.totalAmount.toFixed(2)} a vkrealhakiesake@gmail.com).`);
-                            setTimeout(() => setOrderActionNotice(null), 4000);
+                            const enteredTx = window.prompt(
+                              `Conferma ricezione pagamento su vkrealhakiesake@gmail.com per Ordine #${order.orderCode} (€${order.totalAmount.toFixed(2)}).\n\nInserisci l'ID Transazione / Codice Ricevuta PayPal:`,
+                              order.paypalTransactionId || ''
+                            );
+                            if (enteredTx === null) return;
+                            try {
+                              confirmAlbumOrderPayPalPayment(order.id, enteredTx.trim() || undefined);
+                              setOrderActionNotice(`Pagamento PayPal registrato per #${order.orderCode} (€${order.totalAmount.toFixed(2)} a vkrealhakiesake@gmail.com).`);
+                              setTimeout(() => setOrderActionNotice(null), 4000);
+                            } catch (err: any) {
+                              alert(err?.message || 'Errore durante la registrazione del pagamento.');
+                            }
                           }}
                           className="px-3 py-1.5 rounded-xl bg-[#ffc439] hover:bg-[#f4b82d] text-black font-mono text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 cursor-pointer shadow-md"
                         >
