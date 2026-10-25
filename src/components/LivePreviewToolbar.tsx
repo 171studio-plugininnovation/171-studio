@@ -41,7 +41,7 @@ export const LivePreviewToolbar: React.FC<LivePreviewToolbarProps> = ({
   const [copiedLink, setCopiedLink] = useState(false);
   const [showActivityDrawer, setShowActivityDrawer] = useState(false);
 
-  const localUrl = 'http://localhost:3000/';
+  const localUrl = typeof window !== 'undefined' ? (window.location.origin + window.location.pathname) : 'http://localhost:3000/';
   const networkUrl = 'http://192.168.1.51:3000/';
 
   const handleCopyLink = () => {
@@ -230,7 +230,7 @@ export const LivePreviewToolbar: React.FC<LivePreviewToolbarProps> = ({
             type="button"
             onClick={handleCopyLink}
             className="p-1.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-800 transition-colors cursor-pointer"
-            title="Copia indirizzo locale (http://localhost:3000)"
+            title={`Copia indirizzo (${localUrl})`}
           >
             {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
           </button>

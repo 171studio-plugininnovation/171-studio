@@ -1228,10 +1228,6 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     saveRegisteredUserToMap(updatedUser);
 
-    setRegisteredUsers((prev) =>
-      prev.map((u) => (u.email.toLowerCase() === updatedUser.email.toLowerCase() ? { ...u, name: clean } : u))
-    );
-
     logActivity('CMS_EDIT', `Nome utente / artista aggiornato a "${clean}" (${updatedUser.email})`);
     return true;
   };
@@ -3015,6 +3011,12 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       );
       if (duplicate) {
         throw new Error(`Il codice transazione PayPal "${txId}" risulta già associato e convalidato per l'ordine #${duplicate.orderCode}.`);
+      }
+      const dupDonation = pluginDonations.find(
+        (d) => d.paypalTransactionId && d.paypalTransactionId.toLowerCase() === txId.toLowerCase()
+      );
+      if (dupDonation) {
+        throw new Error(`Il codice transazione PayPal "${txId}" risulta già associato e convalidato per la donazione plugin #${dupDonation.donationCode}.`);
       }
     } else {
       txId = `171-TX-${Date.now().toString().slice(-6)}-${Math.floor(100 + Math.random() * 900)}`;

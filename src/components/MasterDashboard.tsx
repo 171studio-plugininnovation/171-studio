@@ -1123,12 +1123,13 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
                 <button
                   type="button"
                   onClick={() => {
-                    navigator.clipboard.writeText('http://localhost:3000/');
+                    const currentSiteUrl = window.location.origin + window.location.pathname;
+                    navigator.clipboard.writeText(currentSiteUrl);
                     setCopiedLocalUrl(true);
                     setTimeout(() => setCopiedLocalUrl(false), 2500);
                   }}
                   className="px-3.5 py-2 rounded-xl bg-neutral-950 hover:bg-neutral-800 border border-neutral-800 text-xs font-mono text-neutral-300 hover:text-white flex items-center gap-1.5 transition-all cursor-pointer"
-                  title="Copia http://localhost:3000/"
+                  title="Copia URL Sito"
                 >
                   {copiedLocalUrl ? (
                     <>
@@ -1138,13 +1139,13 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
                   ) : (
                     <>
                       <Copy className="w-3.5 h-3.5" />
-                      <span>Copia Link Locale</span>
+                      <span>Copia Link Sito</span>
                     </>
                   )}
                 </button>
 
                 <a
-                  href="http://localhost:3000/"
+                  href={window.location.origin + window.location.pathname}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-heading font-black text-xs uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-lg shadow-emerald-500/20 cursor-pointer"
