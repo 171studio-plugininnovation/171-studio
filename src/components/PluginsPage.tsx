@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import {
   ArrowLeft, Cpu, Sparkles, Zap, Flame, Shield, Sliders, Download,
   Check, Mail, Star, Heart, MessageSquare, ExternalLink, FileArchive,
-  CheckCircle2, Send, Lock, Bug, ChevronDown, ChevronUp, Eye, X, Layers
+  CheckCircle2, Send, Lock, Bug, ChevronDown, ChevronUp, Eye, X, Layers,
+  Award, Gift
 } from 'lucide-react';
 import { PageId } from '../types';
 import { useStudio } from '../context/StudioContext';
@@ -44,8 +45,8 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
   const [feedbackComment, setFeedbackComment] = useState<string>('');
   const [feedbackSubmitted, setFeedbackSubmitted] = useState<boolean>(false);
 
-  // Donation amount state (null = free amount on PayPal)
-  const [selectedDonationAmount, setSelectedDonationAmount] = useState<number | undefined>(undefined);
+  // Donation amount state (20 € default for Early Supporter Lifetime Pass)
+  const [selectedDonationAmount, setSelectedDonationAmount] = useState<number | undefined>(20);
 
   const benefitIcons = [Flame, Zap, Sliders, Shield];
   const dynamicBenefits = siteContent.pluginBenefits && siteContent.pluginBenefits.length > 0
@@ -169,10 +170,10 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
 
             <div className="p-5 rounded-2xl bg-neutral-900/90 border border-amber-500/30 text-sm sm:text-base text-neutral-200 leading-relaxed font-sans space-y-2">
               <p>
-                Per noi è molto importante che tu lasci un <strong>feedback sui nostri plugin</strong> per permetterci di migliorarli continuamente.
+                La suite 171 Plugin Innovation è attualmente in <strong>Early Access di Development gratuito</strong>: questo permette alla community di testare sul campo gli algoritmi DSP e aiutarci a renderli sempre più precisi, musicali e potenti.
               </p>
               <p className="text-amber-300 font-medium">
-                Il nostro è un <strong>progetto gratuito e sempre rimarrà tale</strong>: se vuoi sostenerci, ecco qui sotto il link PayPal per una donazione libera!
+                Con una donazione di <strong>20$ (o 20€)</strong> diventi <strong>Early Supporter</strong> con <strong>Accesso a Vita</strong> a ogni plugin futuro. Inoltre, chi invia feedback e bug verificati riceverà <strong>buoni sconto e plugin commerciali gratis</strong>!
               </p>
             </div>
 
@@ -264,6 +265,14 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
                     <strong className="text-amber-400 font-bold truncate ml-2">{currentUser.name} ({currentUser.email})</strong>
                   </div>
 
+                  {/* Reward callout */}
+                  <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-[11px] text-amber-300 flex items-start gap-2">
+                    <Gift className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                    <span>
+                      <strong>Programma Tester & Bug Hunter:</strong> Invia un feedback con dettagli tecnici o problemi reali riscontrati. Se confermati, riceverai nel tuo account <strong>buoni sconto studio</strong> e <strong>licenze gratuite per i futuri plugin commerciali</strong>!
+                    </span>
+                  </div>
+
                   <div>
                     <label className="block text-neutral-400 uppercase mb-1.5">
                       Valutazione Qualità Sonora & CPU:
@@ -344,38 +353,65 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
               )}
             </div>
 
-            {/* Column 2: Free PayPal Donation */}
-            <div className="p-6 rounded-2xl bg-gradient-to-b from-blue-950/40 via-neutral-900/90 to-neutral-950 border border-blue-500/40 flex flex-col justify-between space-y-5">
-              <div className="space-y-3">
+            {/* Column 2: Early Supporter Lifetime Pass & PayPal Donation */}
+            <div className="p-6 rounded-2xl bg-gradient-to-b from-amber-950/40 via-neutral-900/90 to-neutral-950 border-2 border-amber-500/60 flex flex-col justify-between space-y-5 relative overflow-hidden shadow-2xl">
+              <div className="absolute top-0 right-0 px-3 py-1 bg-gradient-to-r from-amber-500 to-amber-400 text-black font-['Cinzel_Decorative',serif] font-black text-[9px] uppercase tracking-widest rounded-bl-xl shadow-md">
+                LIFETIME PASS DISPONIBILE
+              </div>
+
+              <div className="space-y-3.5">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-xl bg-blue-500/20 border border-blue-500/40 flex items-center justify-center text-blue-400">
-                    <Heart className="w-5 h-5 fill-blue-400/30" />
+                  <div className="w-9 h-9 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 shadow-md">
+                    <Sparkles className="w-5 h-5" />
                   </div>
                   <div>
-                    <span className="text-[10px] font-mono uppercase tracking-widest text-blue-300 font-bold block">
-                      100% OPEN & FREEWARE DSP
+                    <span className="text-[10px] font-mono uppercase tracking-widest text-amber-400 font-bold block">
+                      DIVENTA UN EARLY SUPPORTER
                     </span>
-                    <h3 className="text-lg font-heading font-bold text-white">
-                      Sostienici con una Donazione Libera
+                    <h3 className="text-lg font-heading font-black text-white">
+                      Supporta lo Sviluppo & Accesso a Vita
                     </h3>
                   </div>
                 </div>
 
+                {/* Callout box: 20$ Lifetime Pass */}
+                <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/40 text-xs font-mono space-y-1.5 text-amber-200">
+                  <div className="font-bold text-amber-300 uppercase tracking-wide flex items-center gap-1.5">
+                    <Award className="w-4 h-4 text-amber-400 shrink-0" />
+                    <span>Accesso a Vita con 20$ / 20€:</span>
+                  </div>
+                  <p className="text-[11px] text-neutral-200 leading-relaxed">
+                    Una donazione oggi di <strong>20$ (o 20€)</strong> ti permetterà di avere <strong>Accesso a Vita</strong> ad ogni singolo plugin, espansione o processore audio sviluppato da <strong>171 Plugin Innovation</strong>, inclusi tutti i futuri aggiornamenti e le release commerciali!
+                  </p>
+                </div>
+
+                {/* Early Access Development Explanation */}
                 <p className="text-xs text-neutral-300 leading-relaxed font-sans">
-                  <strong>171 Plugin Innovation</strong> è un progetto gratuito nato a Messina e <strong>rimarrà sempre gratuito</strong> per tutti gli artisti e produttori. Se i nostri plugin ti aiutano nei tuoi mix e vuoi offrire un caffè o sostenere lo sviluppo di nuovi algoritmi DSP, puoi fare una donazione libera su PayPal:
+                  Il fatto che la suite sia attualmente scaricabile gratis fa parte del nostro <strong>Early Access di Development</strong>. Questa apertura totale permette lo sviluppo di plugin <strong>sempre più precisi, trasparenti e potenti</strong> grazie ai feedback e ai test sul campo della community.
                 </p>
 
-                {/* Optional Preset Donation Chips */}
+                {/* Rewards for verified feedback */}
+                <div className="p-3 rounded-xl bg-emerald-950/30 border border-emerald-500/40 text-[11px] font-mono text-emerald-300 space-y-1">
+                  <div className="font-bold uppercase tracking-wider flex items-center gap-1.5 text-emerald-400">
+                    <Gift className="w-3.5 h-3.5 shrink-0" />
+                    <span>Premi per Feedback Verificati:</span>
+                  </div>
+                  <p className="text-neutral-300 leading-relaxed">
+                    Gli account registrati che forniranno feedback tecnici verificati e dettagliati con problemi reali riscontrati nelle DAW verranno ricompensati con <strong>buoni sconto esclusivi per le sessioni in studio</strong> e con <strong>licenze gratuite dei futuri plugin a pagamento</strong>!
+                  </p>
+                </div>
+
+                {/* Preset Donation Chips */}
                 <div className="space-y-1.5 pt-1">
                   <span className="text-[10px] font-mono uppercase text-neutral-400 block">
-                    Scegli un importo o lascia Donazione Libera:
+                    Seleziona l'importo donazione:
                   </span>
                   <div className="grid grid-cols-4 gap-2 text-xs font-mono">
                     {[
-                      { label: 'Libera', val: undefined },
-                      { label: '5 €', val: 5 },
+                      { label: '20 € (Lifetime)', val: 20 },
                       { label: '10 €', val: 10 },
-                      { label: '25 €', val: 25 },
+                      { label: '5 €', val: 5 },
+                      { label: 'Libera', val: undefined },
                     ].map((opt) => {
                       const isSel = selectedDonationAmount === opt.val;
                       return (
@@ -383,9 +419,9 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
                           key={opt.label}
                           type="button"
                           onClick={() => setSelectedDonationAmount(opt.val)}
-                          className={`py-2 rounded-xl border font-bold transition-all cursor-pointer ${
+                          className={`py-2 px-1 rounded-xl border font-bold text-center transition-all cursor-pointer ${
                             isSel
-                              ? 'bg-amber-500 text-black border-amber-400 shadow-md'
+                              ? 'bg-amber-500 text-black border-amber-400 shadow-md scale-102'
                               : 'bg-neutral-950 text-neutral-300 border-neutral-800 hover:border-amber-500/40'
                           }`}
                         >
@@ -402,23 +438,26 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
                   href={donationUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full py-3.5 px-5 rounded-xl bg-gradient-to-r from-amber-400 via-amber-500 to-amber-400 hover:from-amber-300 hover:to-amber-400 text-black font-heading font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-xl shadow-amber-500/25 transition-all"
+                  className="w-full py-3.5 px-5 rounded-xl bg-gradient-to-r from-amber-400 via-amber-500 to-amber-400 hover:from-amber-300 hover:to-amber-400 text-black font-heading font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-xl shadow-amber-500/25 transition-all cursor-pointer"
                 >
                   <Heart className="w-4 h-4 fill-black" />
                   <span>
-                    Donazione Libera PayPal
-                    {selectedDonationAmount ? ` (${selectedDonationAmount} €)` : ''}
+                    {selectedDonationAmount === 20
+                      ? 'Dona 20$ / 20€ • Early Supporter Lifetime Pass'
+                      : selectedDonationAmount
+                      ? `Dona ${selectedDonationAmount} € su PayPal`
+                      : 'Donazione Libera con PayPal'}
                   </span>
                   <ExternalLink className="w-3.5 h-3.5" />
                 </a>
 
                 <div className="flex items-center justify-between text-[11px] font-mono text-neutral-400 px-1">
-                  <span>PayPal Studio: <strong className="text-white">{effectivePaypalEmail}</strong></span>
+                  <span>PayPal Destinatario: <strong className="text-white">{effectivePaypalEmail}</strong></span>
                   <a
                     href={paypalMeLink}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-400 hover:underline flex items-center gap-1"
+                    className="text-amber-400 hover:underline flex items-center gap-1 font-bold"
                   >
                     <span>PayPal.Me Diretto</span>
                     <ExternalLink className="w-3 h-3" />
@@ -747,36 +786,38 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
         </div>
 
         {/* Early Access / Support Card */}
-        <div className="p-8 rounded-3xl bg-neutral-950/80 border border-amber-500/30 backdrop-blur-xl shadow-xl flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
-          <div>
-            <span className="text-xs font-mono uppercase text-amber-400 tracking-wider block mb-1">
-              PROGETTO GRATUITO & SUPPORTO LIBERO
-            </span>
-            <h4 className="text-lg font-heading font-bold text-white mb-1">
-              Vuoi sostenere lo sviluppo gratuito di 171 Plugin Innovation?
+        <div className="p-8 rounded-3xl bg-gradient-to-br from-neutral-950 via-neutral-900 to-amber-950/30 border border-amber-500/40 backdrop-blur-xl shadow-2xl flex flex-col lg:flex-row items-center justify-between gap-6 text-center lg:text-left">
+          <div className="space-y-2 max-w-2xl">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-[10px] font-mono font-bold uppercase tracking-wider">
+              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+              <span>EARLY ACCESS DEVELOPMENT & EARLY SUPPORTER PASS</span>
+            </div>
+            <h4 className="text-xl sm:text-2xl font-heading font-black text-white">
+              Diventa Early Supporter ($20): Accesso a Vita a Ogni Futuro Plugin
             </h4>
-            <p className="text-xs text-neutral-300 font-light">
-              I nostri plugin sono e saranno sempre gratuiti. Puoi supportarci con una donazione libera su PayPal o scriverci il tuo feedback tecnico.
+            <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed font-sans">
+              La suite gratuita è in <strong>Early Access di Development</strong> per permettere alla community di testare gli algoritmi DSP nelle DAW e rendere ogni processore <strong>sempre più preciso e potente</strong>. Una donazione di <strong>20$ (o 20€)</strong> ti darà l'accesso a vita a tutti i plugin futuri! Inoltre, gli account che inviano <strong>feedback e bug report verificati con problemi reali</strong> verranno ricompensati con <strong>buoni sconto per lo studio e plugin commerciali gratuiti</strong>.
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3 shrink-0">
+          <div className="flex flex-col sm:flex-row items-center gap-3 shrink-0 w-full lg:w-auto">
             <a
-              href={getPayPalDonationUrl(undefined, '171 Plugin Innovation', siteContent.paypalEmail || STUDIO_PAYPAL_EMAIL)}
+              href={getPayPalDonationUrl(20, '171 Plugin Innovation - Early Supporter Lifetime Pass', siteContent.paypalEmail || STUDIO_PAYPAL_EMAIL)}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-5 py-3 rounded-full bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs uppercase tracking-wider transition-all duration-300 shadow-lg shadow-amber-500/20 flex items-center gap-2"
+              className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-500 to-amber-400 hover:from-amber-300 hover:to-amber-400 text-black font-heading font-black text-xs uppercase tracking-wider transition-all shadow-xl shadow-amber-500/20 flex items-center justify-center gap-2 cursor-pointer"
             >
               <Heart className="w-4 h-4 fill-black" />
-              <span>Donazione Libera PayPal</span>
+              <span>Dona 20$ (Lifetime Pass)</span>
+              <ExternalLink className="w-3.5 h-3.5" />
             </a>
 
             <a
-              href={`mailto:${siteContent.contactEmail}?subject=Feedback%20171%20Plugin%20Innovatio`}
-              className="px-5 py-3 rounded-full bg-neutral-900 hover:bg-neutral-800 text-amber-400 border border-amber-500/40 font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-2"
+              href={`mailto:${siteContent.contactEmail}?subject=Feedback%20Tecnico%20171%20Plugin%20Innovation`}
+              className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-neutral-900 hover:bg-neutral-800 text-amber-300 border border-amber-500/40 font-mono font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
               <Mail className="w-4 h-4" />
-              <span>Invia Feedback</span>
+              <span>Invia Feedback Tecnico</span>
             </a>
           </div>
         </div>
