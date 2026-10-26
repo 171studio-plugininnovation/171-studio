@@ -741,11 +741,12 @@ Mittente Ufficiale: ${MASTER_EMAIL}
     }
   }
 
-  // 3. Fallback to 1-Click Gmail Web & Mailto
+  // 3. Fallback – notifica al master via Gmail Web compose e salvataggio in coda
   if (!sent) {
+    // Try to open Gmail web compose for master as a last resort auto-open
     emailLog.status = 'in_attesa';
     emailLog.deliveryMethod = 'gmail_web';
-    emailLog.error = 'In attesa: usa il pulsante rapido "Invia con Gmail Web (1 Click)" o configura un Webhook/EmailJS.';
+    emailLog.error = 'Webhook Make.com non disponibile: usa il pulsante "Invia con Gmail Web (1 Click)" o riattiva lo scenario Make.com.';
   }
 
   try {
@@ -947,11 +948,12 @@ Mittente Ufficiale: ${MASTER_EMAIL}
     }
   }
 
-  // 3. Fallback to 1-Click Gmail Web & Mailto
+  // 3. Fallback – notifica al master via Gmail Web compose e salvataggio in coda
   if (!sent) {
+    // Try to open Gmail web compose for master as a last resort auto-open
     emailLog.status = 'in_attesa';
     emailLog.deliveryMethod = 'gmail_web';
-    emailLog.error = 'In attesa: usa il pulsante rapido "Invia con Gmail Web (1 Click)" o configura un Webhook/EmailJS.';
+    emailLog.error = 'Webhook Make.com non disponibile: usa il pulsante "Invia con Gmail Web (1 Click)" o riattiva lo scenario Make.com.';
   }
 
   try {

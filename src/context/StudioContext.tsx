@@ -14,7 +14,7 @@ import {
   getCachedAccessToken, setCachedAccessToken
 } from '../lib/firebase';
 import { GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
-import { doc, setDoc, onSnapshot, deleteDoc } from 'firebase/firestore';
+import { doc, setDoc, onSnapshot, deleteDoc, collection, query, orderBy, getDocs } from 'firebase/firestore';
 import { 
   generateOrderCode, getPayPalPaymentUrl, triggerPluginZipFileDownload,
   dispatchBookingReceivedEmail, dispatchBookingConfirmedEmail, resendEmailViaGmail,
@@ -855,6 +855,52 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     isOfficialMasterEmail(currentUser.email) &&
     currentUser.role === 'master'
   );
+
+  // When master logs in: pull ALL bookings from Firestore (cross-client real-time sync)
+  useEffect(() => {
+    if (!isMaster) return;
+    let unsubBookings: (() => void) | undefined;
+    try {
+      const bookingsCol = collection(db, 'bookings');
+      unsubBookings = onSnapshot(query(bookingsCol, orderBy('createdAt', 'desc')), (snap) => {
+        if (!snap.empty) {
+          const remote: BookingRecord[] = snap.docs.map((d) => d.data() as BookingRecord);
+          setBookings((prev) => {
+            // Merge: prefer remote records, keep any local ones not yet in Firestore
+            const remoteIds = new Set(remote.map((b) => b.id));
+            const localOnly = prev.filter((b) => !remoteIds.has(b.id));
+            return [...remote, ...localOnly];
+          });
+        }
+      }, () => {});
+    } catch {}
+    return () => { if (unsubBookings) unsubBookings(); };
+  }, [isMaster]);
+
+  // When master logs in: pull ALL registered users from Firestore users collection
+  useEffect(() => {
+    if (!isMaster) return;
+    try {
+      getDocs(collection(db, 'users')).then((snap) => {
+        if (!snap.empty) {
+          try {
+            const firestoreUsersMap: Record<string, UserAccount> = {};
+            snap.docs.forEach((d) => {
+              const u = d.data() as UserAccount;
+              if (u && u.email) {
+                firestoreUsersMap[u.email.toLowerCase()] = u;
+              }
+            });
+            // Merge into localStorage registered users map
+            const existingRaw = localStorage.getItem('171_registered_users_map');
+            const existing: Record<string, UserAccount> = existingRaw ? JSON.parse(existingRaw) : {};
+            const merged = { ...firestoreUsersMap, ...existing };
+            localStorage.setItem('171_registered_users_map', JSON.stringify(merged));
+          } catch {}
+        }
+      }).catch(() => {});
+    } catch {}
+  }, [isMaster]);
 
   const logActivity = (action: UserActivity['action'], details: string) => {
     const newAct: UserActivity = {

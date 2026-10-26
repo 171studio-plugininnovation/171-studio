@@ -759,7 +759,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
       </div>
 
       {/* KPI Stats Overview */}
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 mb-8">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
         <div className="p-4 rounded-2xl bg-neutral-900/60 border border-neutral-800">
           <span className="text-xs font-mono text-neutral-400 uppercase block">Prenotazioni Totali</span>
           <span className="text-3xl font-heading font-black text-amber-400 mt-1 block">
@@ -767,6 +767,16 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
           </span>
           <span className="text-[10px] text-emerald-400 font-mono">
             {bookings.filter(b => b.status === 'in_attesa').length} in attesa di approvazione
+          </span>
+        </div>
+
+        <div className="p-4 rounded-2xl bg-neutral-900/60 border border-blue-500/30 bg-blue-500/5">
+          <span className="text-xs font-mono text-blue-300 uppercase block">Account Registrati</span>
+          <span className="text-3xl font-heading font-black text-blue-400 mt-1 block">
+            {registeredUsers.length}
+          </span>
+          <span className="text-[10px] text-blue-300/70 font-mono">
+            Utenti attivi sul sito
           </span>
         </div>
 
