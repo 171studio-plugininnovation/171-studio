@@ -11,6 +11,24 @@ test('Hourly studio rate is 25 euros', () => {
   assert.equal(rec4h.total, 100);
 });
 
+test('Messina special packages calculate correctly', () => {
+  // Pack 4h Messina: 90 euros base
+  const pack4h = calculateEstimatedPrice('pack_4h_messina', 4);
+  assert.equal(pack4h.total, 90);
+
+  // Pack 4h with 1 extra hour: 90 + 25 = 115
+  const pack4hExtra = calculateEstimatedPrice('pack_4h_messina', 5);
+  assert.equal(pack4hExtra.total, 115);
+
+  // Day-Slot 8h Messina: 170 euros base
+  const daySlot8h = calculateEstimatedPrice('pack_8h_day_messina', 8);
+  assert.equal(daySlot8h.total, 170);
+
+  // Pack Weekend 16h: 320 euros base
+  const pack16h = calculateEstimatedPrice('pack_weekend_16h', 16);
+  assert.equal(pack16h.total, 320);
+});
+
 test('Mix & Master is 50 euros plus studio hours at 25 euro/hour', () => {
   const mm1h = calculateEstimatedPrice('mix_master', 1);
   assert.equal(mm1h.base, 50);
@@ -47,6 +65,6 @@ test('Produzione pricing is 50 euros without exclusivity and 150 euros with tota
   assert.equal(calculateEstimatedPrice('produzione_esclusiva').total, 150);
 });
 
-test('All 8 service options exist in catalog', () => {
-  assert.equal(SERVICE_OPTIONS.length, 8);
+test('All 11 service options exist in catalog', () => {
+  assert.equal(SERVICE_OPTIONS.length, 11);
 });

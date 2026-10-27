@@ -1,5 +1,8 @@
 export type ServiceType =
   | 'recording_hourly'
+  | 'pack_4h_messina'
+  | 'pack_8h_day_messina'
+  | 'pack_weekend_16h'
   | 'mix_master'
   | 'solo_master'
   | 'solo_mix_online'
@@ -11,7 +14,7 @@ export type ServiceType =
 export interface ServiceOption {
   id: ServiceType;
   title: string;
-  category: 'Recording' | 'Mix & Master' | 'Pacchetti Brano' | 'Produzione';
+  category: 'Recording' | 'Pacchetti Messina' | 'Mix & Master' | 'Pacchetti Brano' | 'Produzione';
   basePrice: number;
   priceNote: string;
   description: string;
@@ -28,7 +31,37 @@ export const SERVICE_OPTIONS: ServiceOption[] = [
     category: 'Recording',
     basePrice: 25,
     priceNote: '25€ / ora',
-    description: 'Registrazione vocale o strumentale in ambiente trattato con feedback diretto dall\'ingegnere del suono.',
+    description: 'Registrazione vocale o strumentale in ambiente trattato con feedback diretto dell\'ingegnere del suono.',
+    allowsExtraHours: true,
+  },
+  {
+    id: 'pack_4h_messina',
+    title: 'Pack 4 Ore Messina (Mezza Giornata)',
+    category: 'Pacchetti Messina',
+    basePrice: 90,
+    priceNote: '90€ (22,50€/h — Risparmi 10€)',
+    description: '4 ore continuative di registrazione vocale o acustica con fonico dedicato. Ideale per 1-2 tracce vocali complete.',
+    includesHours: 4,
+    allowsExtraHours: true,
+  },
+  {
+    id: 'pack_8h_day_messina',
+    title: 'Day-Slot 8 Ore Messina (Intera Giornata)',
+    category: 'Pacchetti Messina',
+    basePrice: 170,
+    priceNote: '170€ (21,25€/h — Risparmi 30€)',
+    description: 'Giornata intera di produzione e registrazione in studio (8h) con fonico e supporto editing. Formula leader a Messina.',
+    includesHours: 8,
+    allowsExtraHours: true,
+  },
+  {
+    id: 'pack_weekend_16h',
+    title: 'Pack Weekend 16 Ore (2 Giorni)',
+    category: 'Pacchetti Messina',
+    basePrice: 320,
+    priceNote: '320€ (20€/h — Risparmi 80€)',
+    description: 'Sessione intensiva su due giornate (8h + 8h) ideale per band, produzione EP da 4-5 brani o registrazione intero album.',
+    includesHours: 16,
     allowsExtraHours: true,
   },
   {
@@ -124,6 +157,9 @@ export function calculateEndTime(startTime: string, durationHours: number): stri
 
 export interface DynamicPricingConfig {
   hourlyRecordingPrice?: number;
+  pack4hMessinaPrice?: number;
+  pack8hDayMessinaPrice?: number;
+  packWeekend16hPrice?: number;
   mixMasterPrice?: number;
   soloMasterPrice?: number;
   soloMixOnlinePrice?: number;
@@ -136,6 +172,9 @@ export interface DynamicPricingConfig {
 
 export function getDynamicServiceOptions(pricing?: DynamicPricingConfig): ServiceOption[] {
   const hourlyRate = pricing?.hourlyRecordingPrice ?? 25;
+  const pack4h = pricing?.pack4hMessinaPrice ?? 90;
+  const pack8h = pricing?.pack8hDayMessinaPrice ?? 170;
+  const pack16h = pricing?.packWeekend16hPrice ?? 320;
   const mixMasterBase = pricing?.mixMasterPrice ?? 50;
   const soloMaster = pricing?.soloMasterPrice ?? 40;
   const soloMixOnline = pricing?.soloMixOnlinePrice ?? 60;
@@ -151,6 +190,24 @@ export function getDynamicServiceOptions(pricing?: DynamicPricingConfig): Servic
           ...opt,
           basePrice: hourlyRate,
           priceNote: `${hourlyRate}€ / ora`,
+        };
+      case 'pack_4h_messina':
+        return {
+          ...opt,
+          basePrice: pack4h,
+          priceNote: `${pack4h}€ (22,50€/h — Risparmi 10€)`,
+        };
+      case 'pack_8h_day_messina':
+        return {
+          ...opt,
+          basePrice: pack8h,
+          priceNote: `${pack8h}€ (21,25€/h — Risparmi 30€)`,
+        };
+      case 'pack_weekend_16h':
+        return {
+          ...opt,
+          basePrice: pack16h,
+          priceNote: `${pack16h}€ (20€/h — Risparmi 80€)`,
         };
       case 'mix_master':
         return {
@@ -217,7 +274,52 @@ export function calculateEstimatedPrice(
         base: total,
         extraHoursCost: 0,
         total,
-        explanation: `${formatDurationLabel(safeHours)} di registrazione × ${hourlyRate}€/h`,
+        explanation: `${formatDurationLabel(safeHours)} di registrazione — ${hourlyRate}€/h`,
+      };
+    }
+    case 'pack_4h_messina': {
+      const included = 4;
+      const additionalHours = Math.max(0, safeHours - included);
+      const extraHoursCost = Number((additionalHours * hourlyRate).toFixed(2));
+      const total = service.basePrice + extraHoursCost;
+      return {
+        base: service.basePrice,
+        extraHoursCost,
+        total,
+        explanation:
+          additionalHours > 0
+            ? `${service.basePrice}€ (Include 4h Mezza Giornata) + ${formatDurationLabel(additionalHours)} extra (${extraHoursCost}€)`
+            : `${service.basePrice}€ fisso (Pacchetto 4 Ore Messina incluso)`,
+      };
+    }
+    case 'pack_8h_day_messina': {
+      const included = 8;
+      const additionalHours = Math.max(0, safeHours - included);
+      const extraHoursCost = Number((additionalHours * hourlyRate).toFixed(2));
+      const total = service.basePrice + extraHoursCost;
+      return {
+        base: service.basePrice,
+        extraHoursCost,
+        total,
+        explanation:
+          additionalHours > 0
+            ? `${service.basePrice}€ (Include 8h Day-Slot) + ${formatDurationLabel(additionalHours)} extra (${extraHoursCost}€)`
+            : `${service.basePrice}€ fisso (Day-Slot 8 Ore Messina incluso)`,
+      };
+    }
+    case 'pack_weekend_16h': {
+      const included = 16;
+      const additionalHours = Math.max(0, safeHours - included);
+      const extraHoursCost = Number((additionalHours * hourlyRate).toFixed(2));
+      const total = service.basePrice + extraHoursCost;
+      return {
+        base: service.basePrice,
+        extraHoursCost,
+        total,
+        explanation:
+          additionalHours > 0
+            ? `${service.basePrice}€ (Include 16h Weekend) + ${formatDurationLabel(additionalHours)} extra (${extraHoursCost}€)`
+            : `${service.basePrice}€ fisso (Pack Weekend 16 Ore su due giorni incluso)`,
       };
     }
     case 'mix_master': {

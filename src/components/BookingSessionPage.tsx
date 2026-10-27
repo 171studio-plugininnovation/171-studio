@@ -47,6 +47,7 @@ export const BookingSessionPage: React.FC<BookingSessionPageProps> = ({ onNaviga
   const [email, setEmail] = useState('');
   const [telefono, setTelefono] = useState('');
   const [selectedService, setSelectedService] = useState<ServiceType>('recording_hourly');
+  const [serviceCategoryFilter, setServiceCategoryFilter] = useState<'Tutti' | 'Pacchetti Messina' | 'Recording' | 'Mix & Master' | 'Pacchetti Brano' | 'Produzione'>('Tutti');
   const [hours, setHours] = useState<number>(2); // Default 2h (supports 1, 1.5, 2, 2.5, 3, etc.)
   const [preferredFascia, setPreferredFascia] = useState<'tutti' | 'pomeriggio' | 'sera'>('tutti');
   const [dataPreferita, setDataPreferita] = useState(todayStr);
@@ -82,6 +83,10 @@ export const BookingSessionPage: React.FC<BookingSessionPageProps> = ({ onNaviga
   }, [currentUser, appliedVoucherCode, siteContent.registrationDiscountCode, siteContent.registrationDiscountEnabled]);
 
   const dynamicServiceOptions = useMemo(() => getDynamicServiceOptions(siteContent), [siteContent]);
+  const filteredServices = useMemo(() => {
+    if (serviceCategoryFilter === 'Tutti') return dynamicServiceOptions;
+    return dynamicServiceOptions.filter((s) => s.category === serviceCategoryFilter);
+  }, [dynamicServiceOptions, serviceCategoryFilter]);
   const currentServiceObj = dynamicServiceOptions.find((s) => s.id === selectedService) || dynamicServiceOptions[0];
   const effectiveHours = currentServiceObj.allowsExtraHours ? hours : 2;
   const estimate = calculateEstimatedPrice(selectedService, effectiveHours, siteContent);
@@ -589,15 +594,38 @@ export const BookingSessionPage: React.FC<BookingSessionPageProps> = ({ onNaviga
                 </span>
               </div>
 
+              {/* Category Filter Pills */}
+              <div className="flex flex-wrap items-center gap-1.5 mb-1">
+                {(['Tutti', 'Pacchetti Messina', 'Recording', 'Mix & Master', 'Pacchetti Brano', 'Produzione'] as const).map((cat) => (
+                  <button
+                    key={cat}
+                    type="button"
+                    onClick={() => setServiceCategoryFilter(cat)}
+                    className={`px-3 py-1 rounded-full text-[11px] font-medium transition-all cursor-pointer ${
+                      serviceCategoryFilter === cat
+                        ? 'bg-amber-400 text-black font-semibold shadow-md shadow-amber-500/20'
+                        : 'bg-neutral-800/80 text-neutral-400 hover:text-white hover:bg-neutral-800'
+                    }`}
+                  >
+                    {cat === 'Pacchetti Messina' ? '⭐ Pacchetti Messina' : cat}
+                  </button>
+                ))}
+              </div>
+
               {/* Service Cards Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                {dynamicServiceOptions.map((srv) => {
+                {filteredServices.map((srv) => {
                   const isSelected = selectedService === srv.id;
                   return (
                     <button
                       key={srv.id}
                       type="button"
-                      onClick={() => setSelectedService(srv.id)}
+                      onClick={() => {
+                        setSelectedService(srv.id);
+                        if (srv.includesHours && hours < srv.includesHours) {
+                          setHours(srv.includesHours);
+                        }
+                      }}
                       className={`text-left p-4 rounded-2xl border transition-all text-xs flex flex-col justify-between cursor-pointer ${
                         isSelected
                           ? 'bg-gradient-to-b from-amber-500/20 to-amber-600/5 border-amber-400 shadow-lg shadow-amber-500/10 ring-1 ring-amber-400'
@@ -1261,6 +1289,18 @@ export const BookingSessionPage: React.FC<BookingSessionPageProps> = ({ onNaviga
                       <span>Registrazione Vocale / Strumentale:</span>
                       <strong className="text-amber-400">{siteContent.hourlyRecordingPrice ?? 25}€ / ora</strong>
                     </li>
+                    <li className="flex justify-between border-b border-neutral-900 pb-1.5 text-amber-300">
+                      <span>Pack 4 Ore Messina (Mezza Giornata):</span>
+                      <strong className="text-amber-400">90€ (22,50€/h)</strong>
+                    </li>
+                    <li className="flex justify-between border-b border-neutral-900 pb-1.5 text-emerald-400">
+                      <span>Day-Slot 8 Ore Messina (Intera Giornata):</span>
+                      <strong className="text-emerald-400">170€ (21,25€/h)</strong>
+                    </li>
+                    <li className="flex justify-between border-b border-neutral-900 pb-1.5 text-indigo-300">
+                      <span>Pack Weekend 16 Ore (2 Giorni Intensivi):</span>
+                      <strong className="text-indigo-400">320€ (20€/h)</strong>
+                    </li>
                     <li className="flex justify-between border-b border-neutral-900 pb-1.5">
                       <span>Mix & Master in Studio:</span>
                       <strong className="text-amber-400">{siteContent.mixMasterPrice ?? 50}€ + {siteContent.hourlyRecordingPrice ?? 25}€/h</strong>
@@ -1285,9 +1325,13 @@ export const BookingSessionPage: React.FC<BookingSessionPageProps> = ({ onNaviga
                       <span>Produzione Beat / Base (Senza Esclusiva):</span>
                       <strong className="text-amber-400">{siteContent.produzioneNonEsclusivaPrice ?? 50}€</strong>
                     </li>
-                    <li className="flex justify-between pb-1">
+                    <li className="flex justify-between border-b border-neutral-900 pb-1.5">
                       <span>Produzione Beat / Base (Esclusiva Totale):</span>
                       <strong className="text-amber-400">{siteContent.produzioneEsclusivaPrice ?? siteContent.beatProductionPrice ?? 150}€</strong>
+                    </li>
+                    <li className="flex justify-between pt-1 text-[11px] text-amber-400/90 font-sans">
+                      <span>🎓 Studenti UniMe / Giovani Artisti Messina:</span>
+                      <strong>Codice UNIME10 (-10%)</strong>
                     </li>
                   </ul>
                 </div>
