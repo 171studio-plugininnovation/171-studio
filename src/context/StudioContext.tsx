@@ -379,6 +379,34 @@ const DEFAULT_CONTENT: SiteContent = {
   emailWebhookUrl: 'https://hook.eu1.make.com/a03ihbpq25iwo69o1slek8vmn9cjgec8',
 };
 
+/**
+ * Strictly determines if an email belongs to the 171 Studio Master Account.
+ * Only 171studiomessina@gmail.com (or 171studio@gmail.com) can ever be Master.
+ */
+export const isOfficialMasterEmail = (email?: string | null): boolean => {
+  if (!email) return false;
+  const clean = email.toLowerCase().trim();
+  return clean === MASTER_EMAIL.toLowerCase().trim() || clean === '171studio@gmail.com' || clean === 'vkrealhakiesake@gmail.com';
+};
+
+/**
+ * Checks if an email is not an actual registered customer/artist account.
+ * Filters out studio master emails, anonymous visitor placeholders, and invalid entries.
+ */
+export const isIgnoredUserEmail = (email?: string | null): boolean => {
+  if (!email) return true;
+  const clean = email.toLowerCase().trim();
+  return (
+    isOfficialMasterEmail(clean) ||
+    clean === 'visitatore@171studio.it' ||
+    clean.startsWith('visitatore@') ||
+    clean.includes('visitatore') ||
+    clean.includes('anonymous') ||
+    clean.includes('undefined') ||
+    clean.includes('null')
+  );
+};
+
 const StudioContext = createContext<StudioContextType | undefined>(undefined);
 
 export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -432,7 +460,21 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const getSavedRegisteredUsers = (): Record<string, UserAccount> => {
     try {
       const raw = localStorage.getItem('171_registered_users_map');
-      return raw ? JSON.parse(raw) : {};
+      if (!raw) return {};
+      const parsed: Record<string, UserAccount> = JSON.parse(raw);
+      const cleaned: Record<string, UserAccount> = {};
+      let hasIgnored = false;
+      Object.entries(parsed).forEach(([key, val]) => {
+        if (!isIgnoredUserEmail(key) && !isIgnoredUserEmail(val?.email)) {
+          cleaned[key.toLowerCase()] = val;
+        } else {
+          hasIgnored = true;
+        }
+      });
+      if (hasIgnored) {
+        localStorage.setItem('171_registered_users_map', JSON.stringify(cleaned));
+      }
+      return cleaned;
     } catch {
       return {};
     }
@@ -441,6 +483,7 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [registeredUsersMap, setRegisteredUsersMap] = useState<Record<string, UserAccount>>(() => getSavedRegisteredUsers());
 
   const saveRegisteredUserToMap = (user: UserAccount) => {
+    if (isIgnoredUserEmail(user.email)) return;
     const key = user.email.trim().toLowerCase();
     try {
       const map = getSavedRegisteredUsers();
@@ -852,16 +895,6 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     } catch {}
   }, [currentUser]);
 
-  /**
-   * Strictly determines if an email belongs to the 171 Studio Master Account.
-   * Only 171studiomessina@gmail.com (or 171studio@gmail.com) can ever be Master.
-   */
-  const isOfficialMasterEmail = (email?: string | null): boolean => {
-    if (!email) return false;
-    const clean = email.toLowerCase().trim();
-    return clean === MASTER_EMAIL.toLowerCase().trim() || clean === '171studio@gmail.com' || clean === 'vkrealhakiesake@gmail.com';
-  };
-
   // Master role check: strictly grants access ONLY to the 171 Studio master account
   const isMaster = Boolean(
     currentUser &&
@@ -901,13 +934,12 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
             const firestoreUsersMap: Record<string, UserAccount> = {};
             snap.docs.forEach((d) => {
               const u = d.data() as UserAccount;
-              if (u && u.email) {
-                firestoreUsersMap[u.email.toLowerCase()] = u;
+              if (u && u.email && !isIgnoredUserEmail(u.email)) {
+                firestoreUsersMap[u.email.toLowerCase().trim()] = u;
               }
             });
             // Merge into localStorage registered users map
-            const existingRaw = localStorage.getItem('171_registered_users_map');
-            const existing: Record<string, UserAccount> = existingRaw ? JSON.parse(existingRaw) : {};
+            const existing = getSavedRegisteredUsers();
             const merged = { ...existing, ...firestoreUsersMap };
             localStorage.setItem('171_registered_users_map', JSON.stringify(merged));
             setRegisteredUsersMap(merged);
@@ -3464,34 +3496,26 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const usersList: { email: string; name: string }[] = [];
     const seenEmails = new Set<string>();
 
-    if (currentUser && !isOfficialMasterEmail(currentUser.email)) {
+    if (currentUser && !isIgnoredUserEmail(currentUser.email)) {
       usersList.push({ email: currentUser.email, name: currentUser.name });
-      seenEmails.add(currentUser.email.toLowerCase());
+      seenEmails.add(currentUser.email.toLowerCase().trim());
     }
 
     Object.values(map).forEach((u) => {
-      const email = u.email.toLowerCase();
-      if (!isOfficialMasterEmail(email) && !seenEmails.has(email)) {
-        usersList.push({ email: u.email, name: u.name });
-        seenEmails.add(email);
-      }
-    });
-
-    bookings.forEach((b) => {
-      if (b.userEmail) {
-        const email = b.userEmail.toLowerCase();
-        if (!isOfficialMasterEmail(email) && !seenEmails.has(email)) {
-          usersList.push({ email: b.userEmail, name: b.userName || email.split('@')[0] });
+      if (u && u.email) {
+        const email = u.email.toLowerCase().trim();
+        if (!isIgnoredUserEmail(email) && !seenEmails.has(email)) {
+          usersList.push({ email: u.email, name: u.name });
           seenEmails.add(email);
         }
       }
     });
 
-    activities.forEach((a) => {
-      if (a.userEmail) {
-        const email = a.userEmail.toLowerCase();
-        if (!isOfficialMasterEmail(email) && !seenEmails.has(email)) {
-          usersList.push({ email: a.userEmail, name: a.userName || email.split('@')[0] });
+    bookings.forEach((b) => {
+      if (b.userEmail) {
+        const email = b.userEmail.toLowerCase().trim();
+        if (!isIgnoredUserEmail(email) && !seenEmails.has(email)) {
+          usersList.push({ email: b.userEmail, name: b.userName || email.split('@')[0] });
           seenEmails.add(email);
         }
       }
@@ -3499,8 +3523,8 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     albumOrders.forEach((o) => {
       if (o.userEmail) {
-        const email = o.userEmail.toLowerCase();
-        if (!isOfficialMasterEmail(email) && !seenEmails.has(email)) {
+        const email = o.userEmail.toLowerCase().trim();
+        if (!isIgnoredUserEmail(email) && !seenEmails.has(email)) {
           usersList.push({ email: o.userEmail, name: o.userName || email.split('@')[0] });
           seenEmails.add(email);
         }
@@ -3509,8 +3533,8 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     pluginDonations.forEach((d) => {
       if (d.userEmail) {
-        const email = d.userEmail.toLowerCase();
-        if (!isOfficialMasterEmail(email) && !seenEmails.has(email)) {
+        const email = d.userEmail.toLowerCase().trim();
+        if (!isIgnoredUserEmail(email) && !seenEmails.has(email)) {
           usersList.push({ email: d.userEmail, name: d.userName || email.split('@')[0] });
           seenEmails.add(email);
         }
@@ -3518,7 +3542,7 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     });
 
     return usersList;
-  }, [currentUser, bookings, activities, albumOrders, pluginDonations, registeredUsersMap]);
+  }, [currentUser, bookings, albumOrders, pluginDonations, registeredUsersMap]);
 
   return (
     <StudioContext.Provider

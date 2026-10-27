@@ -8,7 +8,7 @@ import {
   Upload, Download, FolderArchive, FolderOpen, Tag, Gift, Percent, MessageSquare, Star,
   Sliders, Music, Monitor, Smartphone, Tablet, Truck, Bug, Wrench, Globe, Heart, Users
 } from 'lucide-react';
-import { useStudio } from '../context/StudioContext';
+import { useStudio, isIgnoredUserEmail } from '../context/StudioContext';
 import { PageId } from '../types';
 import { HeroHome } from './HeroHome';
 import { BookingSessionPage } from './BookingSessionPage';
@@ -7314,8 +7314,12 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
 
           <div className="rounded-3xl bg-neutral-900 border border-neutral-800 overflow-hidden shadow-2xl">
             {registeredUsers.length === 0 ? (
-              <div className="p-12 text-center text-neutral-500 font-mono text-sm">
-                Nessun utente registrato al momento. Gli utenti che creano un account appariranno qui automaticamente.
+              <div className="p-12 text-center text-neutral-500 font-mono text-sm space-y-3">
+                <Users className="w-10 h-10 mx-auto text-neutral-600 opacity-60" />
+                <p className="text-white font-semibold text-base">Nessun utente o artista registrato al momento</p>
+                <p className="text-xs text-neutral-400 max-w-md mx-auto">
+                  Il sito e il database Cloud Firestore sono attivi e sincronizzati. Non appena un cliente creerà il proprio account (con Google o Registrazione Email) oppure effettuerà una prenotazione in studio, apparirà automaticamente qui in tempo reale con tutte le relative statistiche.
+                </p>
               </div>
             ) : (
               <div className="overflow-x-auto">
@@ -7333,6 +7337,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
                   <tbody className="divide-y divide-neutral-800/60 font-mono">
                     {registeredUsers
                       .filter((u) => {
+                        if (isIgnoredUserEmail(u.email)) return false;
                         if (!userSearchQuery) return true;
                         const q = userSearchQuery.toLowerCase();
                         return u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q);
