@@ -315,7 +315,7 @@ const DEFAULT_PLUGINS: PluginItem[] = [
 
 const DEFAULT_CONTENT: SiteContent = {
   studioName: '171 STUDIO',
-  studioBadge: 'STUDIO DI REGISTRAZIONE PROFESSIONALE',
+  studioBadge: 'BOUTIQUE PROJECT STUDIO • MESSINA',
   heroTagline: 'Acustica trattata di precisione, registrazione con feedback diretto e sviluppo di 171 Plugin Innovation.',
   aboutTitle: 'Chi Siamo',
   aboutIntro: '171 Studio è uno spazio di produzione, registrazione e audio engineering a Messina, nato dalla passione per la purezza del suono e la ricerca costante dell\'identità sonora di ogni artista.',
