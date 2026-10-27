@@ -38,6 +38,11 @@ service cloud.firestore {
       allow read, create, update, delete: if true;
     }
 
+    // Plugin donations & Early Supporter Pass
+    match /plugin_donations/{donationId} {
+      allow read, create, update, delete: if true;
+    }
+
     // Client deliveries & stems
     match /client_deliveries/{deliveryId} {
       allow read, create, update, delete: if true;

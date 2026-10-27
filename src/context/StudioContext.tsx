@@ -408,6 +408,14 @@ export const isIgnoredUserEmail = (email?: string | null): boolean => {
   );
 };
 
+/**
+ * Strips unsupported undefined values to prevent Firestore setDoc crashes.
+ */
+export function sanitizeForFirestore<T>(data: T): T {
+  if (data === undefined || data === null) return data;
+  return JSON.parse(JSON.stringify(data, (_, v) => (v === undefined ? null : v)));
+}
+
 const StudioContext = createContext<StudioContextType | undefined>(undefined);
 
 export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -959,31 +967,55 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     currentUser.role === 'master'
   );
 
-  // When master logs in: pull ALL bookings from Firestore (cross-client real-time sync)
+  // Cross-device real-time sync for Bookings, Album Orders, Plugin Donations and Users
   useEffect(() => {
-    if (!isMaster) return;
     let unsubBookings: (() => void) | undefined;
+    let unsubAlbumOrders: (() => void) | undefined;
+    let unsubDonations: (() => void) | undefined;
+    let unsubUsers: (() => void) | undefined;
+
     try {
-      const bookingsCol = collection(db, 'bookings');
-      unsubBookings = onSnapshot(query(bookingsCol, orderBy('createdAt', 'desc')), (snap) => {
+      unsubBookings = onSnapshot(collection(db, 'bookings'), (snap) => {
         if (!snap.empty) {
           const remote: BookingRecord[] = snap.docs.map((d) => d.data() as BookingRecord);
           setBookings((prev) => {
-            // Merge: prefer remote records, keep any local ones not yet in Firestore
             const remoteIds = new Set(remote.map((b) => b.id));
             const localOnly = prev.filter((b) => !remoteIds.has(b.id));
-            return [...remote, ...localOnly];
+            const combined = [...remote, ...localOnly];
+            return combined.sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
           });
         }
       }, () => {});
     } catch {}
-    return () => { if (unsubBookings) unsubBookings(); };
-  }, [isMaster]);
 
-  // When master logs in: pull and listen to ALL registered users from Firestore users collection
-  useEffect(() => {
-    if (!isMaster) return;
-    let unsubUsers: (() => void) | undefined;
+    try {
+      unsubAlbumOrders = onSnapshot(collection(db, 'album_orders'), (snap) => {
+        if (!snap.empty) {
+          const remote: AlbumOrderRecord[] = snap.docs.map((d) => d.data() as AlbumOrderRecord);
+          setAlbumOrders((prev) => {
+            const remoteIds = new Set(remote.map((o) => o.id));
+            const localOnly = prev.filter((o) => !remoteIds.has(o.id));
+            const combined = [...remote, ...localOnly];
+            return combined.sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
+          });
+        }
+      }, () => {});
+    } catch {}
+
+    try {
+      unsubDonations = onSnapshot(collection(db, 'plugin_donations'), (snap) => {
+        if (!snap.empty) {
+          const remote: PluginDonationRecord[] = snap.docs.map((d) => d.data() as PluginDonationRecord);
+          setPluginDonations((prev) => {
+            const remoteIds = new Set(remote.map((d) => d.id));
+            const localOnly = prev.filter((d) => !remoteIds.has(d.id));
+            const combined = [...remote, ...localOnly];
+            return combined.sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
+          });
+        }
+      }, () => {});
+    } catch {}
+
     try {
       unsubUsers = onSnapshot(collection(db, 'users'), (snap) => {
         if (!snap.empty) {
@@ -1004,8 +1036,14 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         }
       }, () => {});
     } catch {}
-    return () => { if (unsubUsers) unsubUsers(); };
-  }, [isMaster]);
+
+    return () => {
+      if (unsubBookings) unsubBookings();
+      if (unsubAlbumOrders) unsubAlbumOrders();
+      if (unsubDonations) unsubDonations();
+      if (unsubUsers) unsubUsers();
+    };
+  }, []);
 
   const logActivity = (action: UserActivity['action'], details: string) => {
     const newAct: UserActivity = {
@@ -2310,9 +2348,9 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       `Nuova prenotazione: ${newBooking.serviceTitle} per ${newBooking.date} (${newBooking.time} - ${newBooking.endTime || ''}) (${newBooking.estimatedPrice}€) - Ordine #${orderCode}`
     );
 
-    // Save to Firestore bookings
+    // Save to Firestore bookings (sanitizing undefined fields to prevent Firestore crashes)
     try {
-      setDoc(doc(db, 'bookings', newBooking.id), newBooking).catch((err) => {
+      setDoc(doc(db, 'bookings', newBooking.id), sanitizeForFirestore(newBooking)).catch((err) => {
         handleFirestoreError(err, OperationType.WRITE, `bookings/${newBooking.id}`);
       });
     } catch {}
@@ -3078,7 +3116,7 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setAlbumOrders((prev) => [newOrder, ...prev]);
 
     try {
-      setDoc(doc(db, 'album_orders', newOrder.id), newOrder).catch(() => {});
+      setDoc(doc(db, 'album_orders', newOrder.id), sanitizeForFirestore(newOrder)).catch(() => {});
     } catch {}
 
     logActivity(
@@ -3265,7 +3303,7 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setPluginDonations((prev) => [newDonation, ...prev]);
 
     try {
-      setDoc(doc(db, 'plugin_donations', newDonation.id), newDonation).catch(() => {});
+      setDoc(doc(db, 'plugin_donations', newDonation.id), sanitizeForFirestore(newDonation)).catch(() => {});
     } catch {}
 
     logActivity(
