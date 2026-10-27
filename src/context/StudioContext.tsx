@@ -983,13 +983,12 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const loginWithGoogle = async (): Promise<boolean> => {
     try {
-      const result = await signInWithPopup(auth, googleWorkspaceProvider);
+      // Standard Google Sign-In with basic profile & email scopes (works for all users without verification)
+      const result = await signInWithPopup(auth, googleAuthProvider);
       const isMasterUser = isOfficialMasterEmail(result.user.email);
       const credential = GoogleAuthProvider.credentialFromResult(result);
-      if (credential?.accessToken) {
+      if (credential?.accessToken && isMasterUser) {
         setCachedAccessToken(credential.accessToken);
-        setIsGoogleCalendarConnected(true);
-        setIsGmailConnected(true);
       }
 
       const cleanEmail = (result.user.email || '').trim().toLowerCase();
