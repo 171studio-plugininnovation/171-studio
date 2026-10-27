@@ -18,7 +18,8 @@ import { doc, setDoc, onSnapshot, deleteDoc, collection, query, orderBy, getDocs
 import { 
   generateOrderCode, getPayPalPaymentUrl, triggerPluginZipFileDownload,
   dispatchBookingReceivedEmail, dispatchBookingConfirmedEmail, resendEmailViaGmail,
-  getGmailWebComposeUrl, createMailtoLink, getActiveEmailTemplates, interpolateEmailTemplate, getPayPalMeUrl
+  getGmailWebComposeUrl, createMailtoLink, getActiveEmailTemplates, interpolateEmailTemplate, getPayPalMeUrl,
+  dispatchMasterNewBookingNotification, dispatchMasterNewAlbumOrderNotification, dispatchUserRegisteredNotification
 } from '../utils/emailService';
 import { 
   createGoogleCalendarEvent, 
@@ -437,16 +438,23 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
   };
 
+  const [registeredUsersMap, setRegisteredUsersMap] = useState<Record<string, UserAccount>>(() => getSavedRegisteredUsers());
+
   const saveRegisteredUserToMap = (user: UserAccount) => {
+    const key = user.email.trim().toLowerCase();
     try {
       const map = getSavedRegisteredUsers();
-      const key = user.email.trim().toLowerCase();
       map[key] = {
         ...(map[key] || {}),
         ...user,
       };
       localStorage.setItem('171_registered_users_map', JSON.stringify(map));
     } catch {}
+
+    setRegisteredUsersMap((prev) => ({
+      ...prev,
+      [key]: { ...(prev[key] || {}), ...user },
+    }));
 
     // Multi-device persistence: save individual user profile to Firestore
     try {
@@ -469,6 +477,11 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         lifetimeCommercialPluginsFree: user.lifetimeCommercialPluginsFree ?? false,
         updatedAt: new Date().toISOString(),
       }, { merge: true }).catch(() => {});
+    } catch {}
+
+    // Dispatch webhook notification to Master
+    try {
+      dispatchUserRegisteredNotification(user).catch(() => {});
     } catch {}
   };
 
@@ -877,11 +890,12 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     return () => { if (unsubBookings) unsubBookings(); };
   }, [isMaster]);
 
-  // When master logs in: pull ALL registered users from Firestore users collection
+  // When master logs in: pull and listen to ALL registered users from Firestore users collection
   useEffect(() => {
     if (!isMaster) return;
+    let unsubUsers: (() => void) | undefined;
     try {
-      getDocs(collection(db, 'users')).then((snap) => {
+      unsubUsers = onSnapshot(collection(db, 'users'), (snap) => {
         if (!snap.empty) {
           try {
             const firestoreUsersMap: Record<string, UserAccount> = {};
@@ -894,12 +908,14 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
             // Merge into localStorage registered users map
             const existingRaw = localStorage.getItem('171_registered_users_map');
             const existing: Record<string, UserAccount> = existingRaw ? JSON.parse(existingRaw) : {};
-            const merged = { ...firestoreUsersMap, ...existing };
+            const merged = { ...existing, ...firestoreUsersMap };
             localStorage.setItem('171_registered_users_map', JSON.stringify(merged));
+            setRegisteredUsersMap(merged);
           } catch {}
         }
-      }).catch(() => {});
+      }, () => {});
     } catch {}
+    return () => { if (unsubUsers) unsubUsers(); };
   }, [isMaster]);
 
   const logActivity = (action: UserActivity['action'], details: string) => {
@@ -2294,6 +2310,12 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       console.error('Error dispatching booking received email:', e);
     }
 
+    // Dispatch immediate notification to Master Studio (171studiomessina@gmail.com)
+    try {
+      const token = getCachedAccessToken();
+      dispatchMasterNewBookingNotification(newBooking, token).catch(() => {});
+    } catch {}
+
     return newBooking;
   };
 
@@ -2976,6 +2998,12 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       `Nuovo ordine ${newOrder.orderCode} (${newOrder.productTitle}) effettuato da ${newOrder.userName} (${newOrder.userEmail}) - Totale: €${newOrder.totalAmount.toFixed(2)} [In attesa saldo PayPal a ${STUDIO_PAYPAL_EMAIL}]`
     );
 
+    // Dispatch notification to Master and confirmation to customer
+    try {
+      const token = getCachedAccessToken();
+      dispatchMasterNewAlbumOrderNotification(newOrder, token).catch(() => {});
+    } catch {}
+
     return newOrder;
   };
 
@@ -3432,7 +3460,7 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   };
 
   const registeredUsers = useMemo(() => {
-    const map = getSavedRegisteredUsers();
+    const map = { ...getSavedRegisteredUsers(), ...registeredUsersMap };
     const usersList: { email: string; name: string }[] = [];
     const seenEmails = new Set<string>();
 
@@ -3490,7 +3518,7 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     });
 
     return usersList;
-  }, [currentUser, bookings, activities, albumOrders, pluginDonations]);
+  }, [currentUser, bookings, activities, albumOrders, pluginDonations, registeredUsersMap]);
 
   return (
     <StudioContext.Provider

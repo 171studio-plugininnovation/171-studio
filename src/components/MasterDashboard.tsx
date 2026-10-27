@@ -6,7 +6,7 @@ import {
   DollarSign, CreditCard, Send, Copy, AlertCircle, Eye, ChevronDown, ChevronUp,
   Inbox, Archive, Search, RotateCcw, Printer, X, BarChart3, TrendingUp,
   Upload, Download, FolderArchive, FolderOpen, Tag, Gift, Percent, MessageSquare, Star,
-  Sliders, Music, Monitor, Smartphone, Tablet, Truck, Bug, Wrench, Globe, Heart
+  Sliders, Music, Monitor, Smartphone, Tablet, Truck, Bug, Wrench, Globe, Heart, Users
 } from 'lucide-react';
 import { useStudio } from '../context/StudioContext';
 import { PageId } from '../types';
@@ -39,7 +39,8 @@ import {
   getPayPalPaymentUrl, 
   getPayPalMeUrl, 
   triggerPluginZipFileDownload,
-  sendEmailViaWebhook 
+  sendEmailViaWebhook,
+  getGmailWebComposeUrl
 } from '../utils/emailService';
 import { getGoogleCalendarWebUrl } from '../utils/googleCalendarService';
 import { BookingAnalyticsDashboard } from './BookingAnalyticsDashboard';
@@ -70,10 +71,11 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
     openGmailWebCompose, openMailtoCompose, downloadBookingCalendarIcs, openGoogleCalendarWeb
   } = useStudio();
 
-  const [activeTab, setActiveTab] = useState<'preview' | 'cms' | 'pricing' | 'vouchers' | 'calendar' | 'desk' | 'deliveries' | 'album_orders' | 'plugin_bug_reports' | 'plugin_donations' | 'history' | 'analytics' | 'emails' | 'plugins' | 'audit'>('desk');
+  const [activeTab, setActiveTab] = useState<'preview' | 'cms' | 'pricing' | 'vouchers' | 'calendar' | 'desk' | 'deliveries' | 'album_orders' | 'plugin_bug_reports' | 'plugin_donations' | 'history' | 'analytics' | 'emails' | 'plugins' | 'audit' | 'users'>('desk');
   const [previewTabDevice, setPreviewTabDevice] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
   const [previewTabPage, setPreviewTabPage] = useState<PageId>('home');
   const [copiedLocalUrl, setCopiedLocalUrl] = useState(false);
+  const [userSearchQuery, setUserSearchQuery] = useState('');
 
   // Plugin Bug Reports Management State (Master Account)
   const [bugReportFilter, setBugReportFilter] = useState<'all' | 'aperti' | 'in_esame' | 'risolti' | 'critici'>('all');
@@ -770,13 +772,17 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
           </span>
         </div>
 
-        <div className="p-4 rounded-2xl bg-neutral-900/60 border border-blue-500/30 bg-blue-500/5">
-          <span className="text-xs font-mono text-blue-300 uppercase block">Account Registrati</span>
-          <span className="text-3xl font-heading font-black text-blue-400 mt-1 block">
+        <div 
+          onClick={() => setActiveTab('users')}
+          className="p-4 rounded-2xl bg-neutral-900/60 border border-blue-500/30 bg-blue-500/5 cursor-pointer hover:border-blue-400 hover:bg-blue-500/10 transition-all group"
+          title="Clicca per aprire la gestione completa degli utenti registrati"
+        >
+          <span className="text-xs font-mono text-blue-300 uppercase block group-hover:text-blue-200">Account Registrati</span>
+          <span className="text-3xl font-heading font-black text-blue-400 mt-1 block group-hover:scale-105 transition-transform">
             {registeredUsers.length}
           </span>
           <span className="text-[10px] text-blue-300/70 font-mono">
-            Utenti attivi sul sito
+            Utenti attivi • Clicca per vedere la lista
           </span>
         </div>
 
@@ -1056,6 +1062,22 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
         >
           <Activity className="w-4 h-4" />
           <span>Audit Log Eventi</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab('users')}
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-mono uppercase tracking-wider transition-all cursor-pointer ${
+            activeTab === 'users'
+              ? 'bg-blue-600 text-white font-bold shadow-md shadow-blue-600/30'
+              : 'text-neutral-400 hover:text-white hover:bg-neutral-900'
+          }`}
+        >
+          <Users className="w-4 h-4" />
+          <span>Utenti Registrati</span>
+          <span className="ml-1 px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 text-[10px] font-bold">
+            {registeredUsers.length}
+          </span>
         </button>
       </div>
 
@@ -7246,7 +7268,177 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
         </div>
       )}
 
-      {/* DOSSIER MODAL: SCHEDA COMPLETA SESSIONE (STILE STORICO) */}
+      {/* TAB UTENTI REGISTRATI (PANNELLO MASTER) */}
+      {activeTab === 'users' && (
+        <div className="space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-6 rounded-3xl bg-neutral-900 border border-neutral-800">
+            <div>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold">
+                  <Users className="w-5 h-5" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-heading font-black text-white uppercase tracking-wider">
+                    Account e Artisti Registrati
+                  </h2>
+                  <p className="text-xs text-neutral-400 font-mono mt-0.5">
+                    {registeredUsers.length} utenti sincronizzati nel database di 171 Studio
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500" />
+                <input
+                  type="text"
+                  placeholder="Cerca nome o email..."
+                  value={userSearchQuery}
+                  onChange={(e) => setUserSearchQuery(e.target.value)}
+                  className="pl-9 pr-4 py-2 rounded-xl bg-black border border-neutral-800 text-xs font-mono text-white placeholder-neutral-500 focus:border-blue-500 outline-none w-56 sm:w-72"
+                />
+              </div>
+              {userSearchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setUserSearchQuery('')}
+                  className="p-2 rounded-xl bg-neutral-800 text-neutral-400 hover:text-white text-xs font-mono"
+                  title="Pulisci ricerca"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+          </div>
+
+          <div className="rounded-3xl bg-neutral-900 border border-neutral-800 overflow-hidden shadow-2xl">
+            {registeredUsers.length === 0 ? (
+              <div className="p-12 text-center text-neutral-500 font-mono text-sm">
+                Nessun utente registrato al momento. Gli utenti che creano un account appariranno qui automaticamente.
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr className="border-b border-neutral-800 bg-black/40 text-neutral-400 font-mono uppercase text-[10px] tracking-wider">
+                      <th className="p-4">Utente / Artista</th>
+                      <th className="p-4">Email</th>
+                      <th className="p-4 text-center">Prenotazioni</th>
+                      <th className="p-4 text-center">Ordini Album</th>
+                      <th className="p-4 text-center">Voucher Attivi</th>
+                      <th className="p-4 text-right">Azioni Rapide</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-neutral-800/60 font-mono">
+                    {registeredUsers
+                      .filter((u) => {
+                        if (!userSearchQuery) return true;
+                        const q = userSearchQuery.toLowerCase();
+                        return u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q);
+                      })
+                      .map((u) => {
+                        const userEmailClean = u.email.toLowerCase().trim();
+                        const userBookings = bookings.filter((b) => (b.userEmail || '').toLowerCase().trim() === userEmailClean);
+                        const userAlbumOrders = albumOrders.filter((o) => (o.userEmail || '').toLowerCase().trim() === userEmailClean);
+                        const userVouchers = (siteContent.vouchers || []).filter(
+                          (v) => (v.assignedToEmail || '').toLowerCase().trim() === userEmailClean
+                        );
+
+                        return (
+                          <tr key={u.email} className="hover:bg-neutral-800/30 transition-colors">
+                            <td className="p-4">
+                              <div className="flex items-center gap-3">
+                                <div className="w-8 h-8 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400 flex items-center justify-center font-bold text-xs uppercase">
+                                  {u.name.slice(0, 2) || 'UT'}
+                                </div>
+                                <div>
+                                  <span className="font-bold text-white text-sm block">{u.name}</span>
+                                  <span className="text-[10px] text-neutral-500 font-mono">Artista Registrato</span>
+                                </div>
+                              </div>
+                            </td>
+                            <td className="p-4">
+                              <div className="flex items-center gap-2">
+                                <span className="text-neutral-300 font-mono">{u.email}</span>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    navigator.clipboard.writeText(u.email);
+                                    setDeskActionNotice(`Email ${u.email} copiata negli appunti!`);
+                                    setTimeout(() => setDeskActionNotice(null), 3000);
+                                  }}
+                                  className="p-1 rounded text-neutral-500 hover:text-amber-400 transition-colors"
+                                  title="Copia email"
+                                >
+                                  <Copy className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            </td>
+                            <td className="p-4 text-center">
+                              {userBookings.length > 0 ? (
+                                <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[11px] font-bold">
+                                  {userBookings.length} sessioni
+                                </span>
+                              ) : (
+                                <span className="text-neutral-600 text-[11px]">-</span>
+                              )}
+                            </td>
+                            <td className="p-4 text-center">
+                              {userAlbumOrders.length > 0 ? (
+                                <span className="px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30 text-[11px] font-bold">
+                                  {userAlbumOrders.length} ordini
+                                </span>
+                              ) : (
+                                <span className="text-neutral-600 text-[11px]">-</span>
+                              )}
+                            </td>
+                            <td className="p-4 text-center">
+                              {userVouchers.length > 0 ? (
+                                <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[11px] font-bold">
+                                  {userVouchers.map(v => v.code).join(', ')}
+                                </span>
+                              ) : (
+                                <span className="text-neutral-600 text-[11px]">-</span>
+                              )}
+                            </td>
+                            <td className="p-4 text-right">
+                              <div className="flex items-center justify-end gap-2">
+                                <button
+                                  type="button"
+                                  onClick={() => window.open(getGmailWebComposeUrl(u.email, `171 Studio Messina — Contatto per ${u.name}`, `Gentile ${u.name},\n\n`), '_blank')}
+                                  className="px-2.5 py-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-neutral-300 text-[11px] font-mono flex items-center gap-1.5 transition-colors cursor-pointer"
+                                  title="Apri Gmail Web per scrivere a questo utente"
+                                >
+                                  <Mail className="w-3.5 h-3.5 text-amber-400" />
+                                  <span>Email</span>
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setNewVoucherRecipientType('specific');
+                                    setNewVoucherAssignedEmail(u.email);
+                                    setShowAddVoucher(true);
+                                    setActiveTab('vouchers');
+                                  }}
+                                  className="px-2.5 py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-400 text-[11px] font-mono flex items-center gap-1.5 transition-colors cursor-pointer"
+                                  title="Crea voucher riservato per questo utente"
+                                >
+                                  <Tag className="w-3.5 h-3.5" />
+                                  <span>Voucher</span>
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
       {selectedBookingDossier && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in">
           <div className="w-full max-w-2xl bg-neutral-900 border border-amber-500/40 rounded-3xl p-6 sm:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto space-y-6">

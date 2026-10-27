@@ -1,5 +1,7 @@
 import {
   BookingRecord,
+  AlbumOrderRecord,
+  UserAccount,
   EmailLog,
   EmailTemplatesConfig,
   DEFAULT_EMAIL_TEMPLATES,
@@ -92,10 +94,31 @@ export async function sendEmailViaWebhook(
   payload: Record<string, any>
 ): Promise<{ success: boolean; error?: string }> {
   try {
+    const targetEmail = payload.to || payload.recipientEmail || payload.email || payload.recipient || '';
+    const subject = payload.subject || '';
+    const textBody = payload.text || payload.textBody || payload.body || '';
+    const htmlBody = payload.html || payload.htmlBody || '';
+
+    // Multi-platform normalized payload (Make.com Gmail, Zapier, Webhooks, Pipedream)
+    const normalizedPayload = {
+      ...payload,
+      to: targetEmail,
+      recipientEmail: targetEmail,
+      email: targetEmail,
+      recipient: targetEmail,
+      subject,
+      body: textBody || htmlBody,
+      text: textBody,
+      textBody: textBody,
+      html: htmlBody,
+      htmlBody: htmlBody,
+      content: htmlBody || textBody,
+    };
+
     const res = await fetch(webhookUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
+      body: JSON.stringify(normalizedPayload),
     });
     if (res.ok) {
       return { success: true };
@@ -1000,4 +1023,221 @@ export async function resendEmailViaGmail(
   });
 
   return result;
+}
+
+/**
+ * Dispatches an immediate notification to the Master Studio (171studiomessina@gmail.com)
+ * whenever a new booking is registered on the website.
+ */
+export async function dispatchMasterNewBookingNotification(
+  booking: BookingRecord,
+  explicitToken?: string | null
+): Promise<void> {
+  const autoCfg = getEmailAutomationConfig();
+  const orderCode = booking.orderCode || generateOrderCode(booking.id);
+  const subject = `[171 STUDIO] NUOVA PRENOTAZIONE #${orderCode} - ${booking.userName} (${booking.serviceTitle})`;
+
+  const textBody = `
+NUOVA PRENOTAZIONE RICEVUTA SU 171 STUDIO!
+=========================================
+Codice Ordine: #${orderCode}
+Data e Ora: ${new Date().toLocaleString('it-IT')}
+
+DATI CLIENTE:
+- Nome: ${booking.userName}
+- Email: ${booking.userEmail}
+- Telefono: ${booking.userPhone || 'Non specificato'}
+
+DETTAGLI SESSIONE:
+- Servizio: ${booking.serviceTitle}
+- Data Richiesta: ${booking.date}
+- Orario: dalle ${booking.time} alle ${booking.endTime || 'fine sessione'} (${booking.hours}h)
+- Prezzo Stimato: ${booking.estimatedPrice} € ${booking.discountCode ? `(Voucher: ${booking.discountCode} -${booking.discountAmount || 0}€)` : ''}
+- Note Cliente: ${booking.notes || 'Nessuna'}
+
+STATO: In attesa approvazione Master.
+Pannello Gestione: https://171studio-plugininnovation.github.io/171-studio/
+=========================================
+`.trim();
+
+  const htmlBody = `
+<div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; background: #0c0a09; color: #f5f5f4; padding: 24px; border-radius: 12px; border: 1px solid #292524;">
+  <h2 style="color: #f59e0b; margin-top: 0;">Nuova Prenotazione Ricevuta</h2>
+  <table style="width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px;">
+    <tr><td style="padding: 6px; color: #a8a29e; width: 35%;">Codice Ordine:</td><td style="padding: 6px; font-weight: bold; color: #f59e0b;">#${orderCode}</td></tr>
+    <tr><td style="padding: 6px; color: #a8a29e;">Cliente:</td><td style="padding: 6px; font-weight: bold;">${booking.userName}</td></tr>
+    <tr><td style="padding: 6px; color: #a8a29e;">Email:</td><td style="padding: 6px;"><a href="mailto:${booking.userEmail}" style="color: #38bdf8;">${booking.userEmail}</a></td></tr>
+    <tr><td style="padding: 6px; color: #a8a29e;">Telefono:</td><td style="padding: 6px;">${booking.userPhone || 'Non specificato'}</td></tr>
+    <tr><td style="padding: 6px; color: #a8a29e;">Servizio:</td><td style="padding: 6px; font-weight: bold;">${booking.serviceTitle}</td></tr>
+    <tr><td style="padding: 6px; color: #a8a29e;">Data:</td><td style="padding: 6px;">${booking.date} (${booking.time} - ${booking.endTime || ''})</td></tr>
+    <tr><td style="padding: 6px; color: #a8a29e;">Importo Stimato:</td><td style="padding: 6px; font-weight: bold; color: #10b981;">${booking.estimatedPrice} €</td></tr>
+    ${booking.notes ? `<tr><td style="padding: 6px; color: #a8a29e;">Note:</td><td style="padding: 6px;">${booking.notes}</td></tr>` : ''}
+  </table>
+  <div style="margin-top: 20px; text-align: center;">
+    <a href="https://171studio-plugininnovation.github.io/171-studio/" style="background: #f59e0b; color: #000; padding: 12px 24px; text-decoration: none; font-weight: bold; border-radius: 8px; display: inline-block;">Apri Pannello Master</a>
+  </div>
+</div>
+`.trim();
+
+  // 1. Send via Webhook to Make.com / automations
+  if (autoCfg.emailWebhookUrl) {
+    try {
+      await sendEmailViaWebhook(autoCfg.emailWebhookUrl, {
+        eventType: 'MASTER_NEW_BOOKING_NOTIFICATION',
+        orderCode,
+        booking,
+        to: MASTER_EMAIL,
+        recipientEmail: MASTER_EMAIL,
+        email: MASTER_EMAIL,
+        subject,
+        textBody,
+        htmlBody,
+        body: textBody,
+        html: htmlBody,
+      });
+    } catch {}
+  }
+
+  // 2. Send via Gmail API if OAuth token present
+  const token = explicitToken || getCachedAccessToken();
+  if (token) {
+    try {
+      await sendGmailMessage(token, {
+        to: MASTER_EMAIL,
+        from: `171 Studio Notifiche <${MASTER_EMAIL}>`,
+        subject,
+        text: textBody,
+        html: htmlBody,
+      });
+    } catch {}
+  }
+}
+
+/**
+ * Dispatches an immediate notification to the Master Studio (171studiomessina@gmail.com)
+ * and order confirmation to customer when an album order ("The God Cypher") is placed.
+ */
+export async function dispatchMasterNewAlbumOrderNotification(
+  order: AlbumOrderRecord,
+  explicitToken?: string | null
+): Promise<void> {
+  const autoCfg = getEmailAutomationConfig();
+  const subject = `[171 STUDIO] NUOVO ORDINE ALBUM THE GOD CYPHER: #${order.orderCode} - ${order.userName} (€${order.totalAmount.toFixed(2)})`;
+
+  const textBody = `
+NUOVO ORDINE ALBUM "THE GOD CYPHER" RICEVUTO!
+=============================================
+Codice Ordine: #${order.orderCode}
+Data: ${new Date().toLocaleString('it-IT')}
+
+DATI ACQUIRENTE:
+- Nome: ${order.userName}
+- Email: ${order.userEmail}
+- Telefono: ${order.userPhone || 'Non specificato'}
+- Indirizzo Consegna: ${order.shippingAddress || 'Ritiro in Studio'}
+- Città / CAP: ${order.shippingCity || ''} ${order.shippingZip || ''}
+- Metodo Consegna: ${order.shippingMethod === 'pickup' ? 'Ritiro Diretto in Studio a Messina' : order.shippingMethod === 'digital_download' ? 'Download Digitale Diretto' : 'Spedizione Postale Tracciata'}
+
+DETTAGLI ORDINE:
+- Prodotto: ${order.productTitle} (${order.orderType === 'physical' ? 'Formato Fisico' : 'Formato Digitale'})
+- Totale da Saldare: €${order.totalAmount.toFixed(2)}
+- Destinazione Pagamento PayPal: ${STUDIO_PAYPAL_EMAIL}
+
+Pannello Master: https://171studio-plugininnovation.github.io/171-studio/
+=============================================
+`.trim();
+
+  // 1. Send notification to Master via webhook
+  if (autoCfg.emailWebhookUrl) {
+    try {
+      await sendEmailViaWebhook(autoCfg.emailWebhookUrl, {
+        eventType: 'MASTER_NEW_ALBUM_ORDER',
+        orderCode: order.orderCode,
+        order,
+        to: MASTER_EMAIL,
+        recipientEmail: MASTER_EMAIL,
+        email: MASTER_EMAIL,
+        subject,
+        textBody,
+        body: textBody,
+      });
+    } catch {}
+  }
+
+  // 2. Send confirmation to Customer via webhook
+  const clientSubject = `171 Studio — Conferma Ordine Ricevuto #${order.orderCode} (${order.productTitle})`;
+  const clientText = `
+Gentile ${order.userName},
+
+Abbiamo ricevuto il tuo ordine per "${order.productTitle}" (Codice #${order.orderCode}).
+Importo totale: €${order.totalAmount.toFixed(2)}
+
+${order.shippingMethod === 'pickup'
+  ? 'Puoi ritirare la tua copia in studio a Messina dal Lunedì al Sabato 10:00 - 20:00.'
+  : `La spedizione verrà effettuata all'indirizzo: ${order.shippingAddress}, ${order.shippingCity || ''}. Ti invieremo il tracking non appena affidato al corriere.`}
+
+Link per saldare con PayPal protetto:
+${order.paypalPaymentUrl || `https://www.paypal.com/paypalme/vkrealhakiesake/${order.totalAmount.toFixed(2)}`}
+
+Grazie per sostenere la musica indipendente di 171 Studio!
+Igor Rozanov — 171 Studio Messina
+Email: ${MASTER_EMAIL}
+`.trim();
+
+  if (autoCfg.emailWebhookUrl) {
+    try {
+      await sendEmailViaWebhook(autoCfg.emailWebhookUrl, {
+        eventType: 'ALBUM_ORDER_CLIENT_CONFIRMATION',
+        orderCode: order.orderCode,
+        order,
+        to: order.userEmail,
+        recipientEmail: order.userEmail,
+        email: order.userEmail,
+        subject: clientSubject,
+        textBody: clientText,
+        body: clientText,
+      });
+    } catch {}
+  }
+
+  // 3. Send via Gmail API if OAuth token active
+  const token = explicitToken || getCachedAccessToken();
+  if (token) {
+    try {
+      await sendGmailMessage(token, {
+        to: MASTER_EMAIL,
+        from: `171 Studio Notifiche <${MASTER_EMAIL}>`,
+        subject,
+        text: textBody,
+        html: `<div style="font-family:sans-serif;line-height:1.6;color:#222;"><pre style="font-family:inherit;white-space:pre-wrap;">${textBody}</pre></div>`,
+      });
+      await sendGmailMessage(token, {
+        to: order.userEmail,
+        from: `171 Studio Messina <${MASTER_EMAIL}>`,
+        subject: clientSubject,
+        text: clientText,
+        html: `<div style="font-family:sans-serif;line-height:1.6;color:#222;"><pre style="font-family:inherit;white-space:pre-wrap;">${clientText}</pre></div>`,
+      });
+    } catch {}
+  }
+}
+
+/**
+ * Dispatches an event when a new user registers on the site
+ */
+export async function dispatchUserRegisteredNotification(user: UserAccount): Promise<void> {
+  const autoCfg = getEmailAutomationConfig();
+  if (!autoCfg.emailWebhookUrl) return;
+  try {
+    await sendEmailViaWebhook(autoCfg.emailWebhookUrl, {
+      eventType: 'USER_REGISTERED',
+      to: MASTER_EMAIL,
+      recipientEmail: MASTER_EMAIL,
+      email: MASTER_EMAIL,
+      subject: `[171 STUDIO] Nuovo Account Registrato: ${user.name} (${user.email})`,
+      textBody: `Nuovo utente registrato su 171 Studio:\nNome: ${user.name}\nEmail: ${user.email}\nData: ${new Date().toLocaleString('it-IT')}\nRuolo: ${user.role || 'client'}`,
+      body: `Nuovo utente registrato su 171 Studio: ${user.name} (${user.email})`,
+      user,
+    });
+  } catch {}
 }
