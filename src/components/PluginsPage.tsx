@@ -1025,68 +1025,139 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
           </div>
         </div>
 
-        {/* Early Access / Support Card */}
-        <div className="p-8 rounded-3xl bg-gradient-to-br from-neutral-950 via-neutral-900 to-amber-950/30 border border-amber-500/40 backdrop-blur-xl shadow-2xl flex flex-col lg:flex-row items-center justify-between gap-6 text-center lg:text-left">
-          <div className="space-y-2 max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-[10px] font-mono font-bold uppercase tracking-wider">
-              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-              <span>EARLY ACCESS DEVELOPMENT & EARLY SUPPORTER PASS</span>
+        {/* Early Access / Support Card - Optimized for Desktop Full Screen and Mobile */}
+        <div className="rounded-3xl bg-gradient-to-br from-neutral-950 via-neutral-900 to-amber-950/40 border-2 border-amber-500/40 backdrop-blur-xl shadow-2xl p-6 sm:p-8 lg:p-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            
+            {/* Left Column: Context, Benefits & Value Proposition */}
+            <div className="lg:col-span-7 space-y-4 text-left">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-[10px] font-mono font-bold uppercase tracking-wider">
+                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                <span>EARLY ACCESS DEVELOPMENT & EARLY SUPPORTER PASS</span>
+              </div>
+
+              <h4 className="text-2xl sm:text-3xl font-heading font-black text-white leading-tight">
+                Diventa Early Supporter ($20): <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-200">Accesso a Vita</span> a Ogni Futuro Plugin
+              </h4>
+
+              <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed font-sans">
+                La suite di 171 Plugin Innovation è attualmente disponibile in <strong>Early Access di Development</strong>: la community testa sul campo gli algoritmi DSP nelle proprie DAW e ci aiuta a perfezionare ogni processore analogico virtuale. Con un contributo di <strong>20$ (o 20€)</strong> sblocchi il <strong>Lifetime Pass a vita</strong> per tutti i plugin futuri!
+              </p>
+
+              {/* Supporter Key Benefits Checklist */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2 text-xs font-mono text-neutral-300">
+                <div className="flex items-center gap-2">
+                  <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <span>Accesso a vita a tutti i plugin futuri</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Check className="w-4 h-4 text-amber-400 shrink-0" />
+                  <span>Donazioni cumulabili fino alla soglia di 20$</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <span>Aggiornamenti continui e supporto DSP</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Check className="w-4 h-4 text-amber-400 shrink-0" />
+                  <span>Sconti studio e licenze gratis per tester</span>
+                </div>
+              </div>
             </div>
-            <h4 className="text-xl sm:text-2xl font-heading font-black text-white">
-              Diventa Early Supporter ($20): Accesso a Vita a Ogni Futuro Plugin
-            </h4>
-            <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed font-sans">
-              La suite gratuita è in <strong>Early Access di Development</strong> per permettere alla community di testare gli algoritmi DSP nelle DAW e rendere ogni processore <strong>sempre più preciso e potente</strong>. Una donazione di <strong>20$ (o 20€)</strong> ti darà l'accesso a vita a tutti i plugin futuri! Inoltre, gli account che inviano <strong>feedback e bug report verificati con problemi reali</strong> verranno ricompensati con <strong>buoni sconto per lo studio e plugin commerciali gratuiti</strong>.
-            </p>
-          </div>
 
-          <div className="flex flex-col sm:flex-row items-center gap-3 shrink-0 w-full lg:w-auto">
-            {currentUser?.isEarlySupporter ? (
-              <button
-                type="button"
-                onClick={() => onNavigate('il-mio-account')}
-                className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-amber-500 hover:bg-amber-400 text-black font-heading font-black text-xs uppercase tracking-wider transition-all shadow-xl shadow-amber-500/20 flex items-center justify-center gap-2 cursor-pointer"
-              >
-                <Award className="w-4 h-4" />
-                <span>🌟 Sei Early Supporter (Lifetime Pass Attivo)</span>
-              </button>
-            ) : (
-              <>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSelectedDonationAmount(20);
-                    setShowDonationModal(true);
-                  }}
-                  className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-500 to-amber-400 hover:from-amber-300 hover:to-amber-400 text-black font-heading font-black text-xs uppercase tracking-wider transition-all shadow-xl shadow-amber-500/20 flex items-center justify-center gap-2 cursor-pointer"
-                >
-                  <Heart className="w-4 h-4 fill-black" />
-                  <span>Dona 20$ / 20€ • Sblocca Lifetime Pass</span>
-                  <Sparkles className="w-3.5 h-3.5 text-black" />
-                </button>
+            {/* Right Column: Interactive Supporter & Donation Console */}
+            <div className="lg:col-span-5 w-full">
+              <div className="rounded-2xl bg-black/70 border border-amber-500/30 p-6 space-y-4 shadow-xl">
+                {currentUser?.isEarlySupporter ? (
+                  <div className="text-center space-y-3 py-2">
+                    <div className="w-12 h-12 rounded-2xl bg-amber-500/20 border border-amber-500/40 text-amber-400 flex items-center justify-center mx-auto">
+                      <Award className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <span className="font-heading font-black text-white text-base block">
+                        🌟 EARLY SUPPORTER ATTIVO
+                      </span>
+                      <p className="text-xs text-neutral-400 font-mono mt-0.5">
+                        Hai il Lifetime Pass: accesso garantito a vita a tutti i plugin di 171 Studio.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => onNavigate('il-mio-account')}
+                      className="w-full py-3 px-4 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-heading font-black text-xs uppercase tracking-wider transition-all cursor-pointer shadow-lg shadow-amber-500/20"
+                    >
+                      Visualizza Badge in Area Clienti
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    {/* Real-time cumulative progress mini tracker */}
+                    <div className="p-3.5 rounded-xl bg-neutral-900/80 border border-neutral-800 space-y-1.5">
+                      <div className="flex items-center justify-between text-[11px] font-mono">
+                        <span className="text-neutral-400">Progresso Lifetime Pass:</span>
+                        <span className="text-amber-400 font-bold">
+                          €{cumulativeStats.totalDonated.toFixed(2)} / €20.00
+                        </span>
+                      </div>
+                      <div className="w-full h-2 rounded-full bg-black border border-neutral-800 overflow-hidden">
+                        <div
+                          className="h-full bg-gradient-to-r from-amber-500 via-amber-400 to-amber-300 transition-all duration-500"
+                          style={{
+                            width: `${Math.min(100, Math.round((cumulativeStats.totalDonated / 20) * 100))}%`,
+                          }}
+                        />
+                      </div>
+                      <p className="text-[10px] text-neutral-500 font-mono text-right">
+                        {cumulativeStats.remainingForLifetime <= 0
+                          ? 'Traguardo 20$ raggiunto!'
+                          : `Mancano solo €${cumulativeStats.remainingForLifetime.toFixed(2)} per sbloccare tutti i plugin`}
+                      </p>
+                    </div>
 
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSelectedDonationAmount('custom');
-                    setShowDonationModal(true);
-                  }}
-                  className="w-full sm:w-auto px-5 py-3.5 rounded-2xl bg-neutral-900 hover:bg-neutral-800 text-amber-300 border border-amber-500/50 font-heading font-black text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md"
-                >
-                  <Heart className="w-4 h-4 text-amber-400" />
-                  <span>Donazione Libera (Cumulabile)</span>
-                </button>
-              </>
-            )}
+                    {/* Action buttons */}
+                    <div className="space-y-2.5">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSelectedDonationAmount(20);
+                          setShowDonationModal(true);
+                        }}
+                        className="w-full py-3.5 px-5 rounded-xl bg-gradient-to-r from-amber-400 via-amber-500 to-amber-400 hover:from-amber-300 hover:to-amber-400 text-black font-heading font-black text-xs uppercase tracking-wider transition-all shadow-xl shadow-amber-500/20 flex items-center justify-center gap-2 cursor-pointer"
+                      >
+                        <Heart className="w-4 h-4 fill-black" />
+                        <span>Dona 20$ / 20€ • Sblocca Lifetime Pass</span>
+                        <Sparkles className="w-3.5 h-3.5 text-black" />
+                      </button>
 
-            <button
-              type="button"
-              onClick={() => onNavigate('il-mio-account')}
-              className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-neutral-900 hover:bg-neutral-800 text-neutral-300 border border-neutral-700 font-mono font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer"
-            >
-              <Bug className="w-4 h-4 text-red-400" />
-              <span>Invia Feedback Tecnico / Bug</span>
-            </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSelectedDonationAmount('custom');
+                          setShowDonationModal(true);
+                        }}
+                        className="w-full py-3 px-4 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-amber-300 border border-amber-500/40 font-heading font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer"
+                      >
+                        <Heart className="w-3.5 h-3.5 text-amber-400" />
+                        <span>Donazione Libera (Cumulabile)</span>
+                      </button>
+                    </div>
+                  </>
+                )}
+
+                {/* Bug Report / Feedback link */}
+                <div className="pt-2 border-t border-neutral-800/80">
+                  <button
+                    type="button"
+                    onClick={() => onNavigate('il-mio-account')}
+                    className="w-full py-2.5 px-3 rounded-lg bg-neutral-950 hover:bg-neutral-900 text-neutral-400 hover:text-white border border-neutral-800 text-[11px] font-mono flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                  >
+                    <Bug className="w-3.5 h-3.5 text-red-400" />
+                    <span>Invia Feedback Tecnico o Segnala un Bug</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
 
@@ -1095,11 +1166,11 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
       {/* Dedicated Early Supporter Donation & PayPal Verification Modal */}
       {showDonationModal && (
         <div
-          className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-200"
+          className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 animate-in fade-in duration-200"
           onClick={() => setShowDonationModal(false)}
         >
           <div
-            className="relative max-w-xl w-full bg-neutral-950 border-2 border-amber-500/70 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 text-left"
+            className="relative max-w-2xl w-full max-h-[90vh] overflow-y-auto bg-neutral-950 border-2 border-amber-500/70 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 text-left"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between pb-4 border-b border-neutral-800">
@@ -1163,11 +1234,11 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
             </p>
 
             {/* Chips selector */}
-            <div className="space-y-2">
-              <span className="text-[10px] font-mono uppercase text-neutral-400 block">
+            <div className="space-y-2.5">
+              <span className="text-[10px] font-mono uppercase text-neutral-400 block font-semibold">
                 Seleziona importo o scegli Donazione Libera:
               </span>
-              <div className="grid grid-cols-4 gap-2 text-xs font-mono">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs font-mono">
                 {[
                   { label: '20 € (Lifetime)', val: 20 },
                   { label: '10 €', val: 10 },
@@ -1178,10 +1249,10 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
                     key={opt.label}
                     type="button"
                     onClick={() => setSelectedDonationAmount(opt.val)}
-                    className={`py-2 px-1 rounded-xl border font-bold text-center transition-all cursor-pointer ${
+                    className={`py-3 px-2 rounded-xl border font-bold text-center transition-all cursor-pointer ${
                       selectedDonationAmount === opt.val
-                        ? 'bg-amber-500 text-black border-amber-400 shadow-md scale-102'
-                        : 'bg-neutral-900 text-neutral-300 border-neutral-800 hover:border-amber-500/40'
+                        ? 'bg-amber-500 text-black border-amber-400 shadow-lg scale-102 font-extrabold'
+                        : 'bg-neutral-900 text-neutral-300 border-neutral-800 hover:border-amber-500/40 hover:text-white'
                     }`}
                   >
                     {opt.label}
@@ -1191,26 +1262,29 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
 
               {/* Custom Amount Input Field */}
               {selectedDonationAmount === 'custom' && (
-                <div className="p-3 rounded-xl bg-neutral-900 border border-amber-500/50 flex flex-wrap items-center gap-2 animate-in fade-in duration-150">
-                  <span className="text-xs font-mono text-amber-400 font-bold uppercase shrink-0">
-                    Importo Libero (€):
-                  </span>
-                  <input
-                    type="number"
-                    min="1"
-                    step="1"
-                    value={customDonationInput}
-                    onChange={(e) => setCustomDonationInput(e.target.value)}
-                    placeholder="es. 5, 15, 25..."
-                    className="flex-1 min-w-[90px] px-3 py-1.5 rounded-lg bg-black border border-neutral-700 text-white font-mono text-xs focus:border-amber-400 focus:outline-none"
-                  />
-                  <div className="flex gap-1 shrink-0">
-                    {[3, 5, 10, 15, 25].map((presetVal) => (
+                <div className="p-3.5 rounded-2xl bg-neutral-900 border border-amber-500/50 space-y-2 animate-in fade-in duration-150">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-mono text-amber-400 font-bold uppercase shrink-0">
+                      Importo Libero (€):
+                    </span>
+                    <input
+                      type="number"
+                      min="1"
+                      step="1"
+                      value={customDonationInput}
+                      onChange={(e) => setCustomDonationInput(e.target.value)}
+                      placeholder="es. 5, 15, 25..."
+                      className="flex-1 px-3.5 py-2 rounded-xl bg-black border border-neutral-700 text-white font-mono text-xs focus:border-amber-400 focus:outline-none"
+                    />
+                  </div>
+                  <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                    <span className="text-[10px] font-mono text-neutral-400 uppercase">Scorciatoie:</span>
+                    {[3, 5, 10, 15, 25, 50].map((presetVal) => (
                       <button
                         key={presetVal}
                         type="button"
                         onClick={() => setCustomDonationInput(presetVal.toString())}
-                        className="px-2 py-1 rounded bg-black hover:bg-neutral-800 text-[10px] font-mono text-neutral-300 hover:text-amber-400 border border-neutral-700 transition-colors cursor-pointer"
+                        className="px-2.5 py-1 rounded-lg bg-black hover:bg-neutral-800 text-[11px] font-mono text-neutral-300 hover:text-amber-400 border border-neutral-700 transition-colors cursor-pointer"
                       >
                         {presetVal}€
                       </button>

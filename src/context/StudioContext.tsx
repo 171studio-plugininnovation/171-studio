@@ -14,7 +14,7 @@ import {
   getCachedAccessToken, setCachedAccessToken
 } from '../lib/firebase';
 import { GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
-import { doc, setDoc, onSnapshot, deleteDoc, collection, query, orderBy, getDocs } from 'firebase/firestore';
+import { doc, setDoc, onSnapshot, deleteDoc, collection, query, orderBy, getDocs, increment } from 'firebase/firestore';
 import { 
   generateOrderCode, getPayPalPaymentUrl, triggerPluginZipFileDownload,
   dispatchBookingReceivedEmail, dispatchBookingConfirmedEmail, resendEmailViaGmail,
@@ -123,6 +123,7 @@ interface StudioContextType {
     message: string;
   };
   registeredUsers: { email: string; name: string }[];
+  visitorCount: number;
   updateEmailTemplates: (updates: Partial<EmailTemplatesConfig>) => void;
   // Master Calendar & Impegni Controls
   addBlockedCommitment: (commitment: Omit<BlockedCalendarSlot, 'id' | 'createdAt'>) => void;
@@ -527,6 +528,62 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       dispatchUserRegisteredNotification(user).catch(() => {});
     } catch {}
   };
+
+  // Total Visitors Real-time Tracking & Persistence
+  const [visitorCount, setVisitorCount] = useState<number>(() => {
+    try {
+      const local = localStorage.getItem('171_visitor_count');
+      return local ? Math.max(1280, parseInt(local, 10)) : 1280;
+    } catch {
+      return 1280;
+    }
+  });
+
+  useEffect(() => {
+    const statsDocRef = doc(db, 'users', 'system_stats');
+    
+    // Listen to real-time updates from Firestore
+    let unsubStats: (() => void) | undefined;
+    try {
+      unsubStats = onSnapshot(statsDocRef, (snap) => {
+        if (snap.exists()) {
+          const data = snap.data();
+          if (typeof data?.totalVisitors === 'number') {
+            const fresh = Math.max(1280, data.totalVisitors);
+            setVisitorCount(fresh);
+            try {
+              localStorage.setItem('171_visitor_count', fresh.toString());
+            } catch {}
+          }
+        }
+      }, () => {});
+    } catch {}
+
+    // Increment count once per distinct browser visit/session
+    try {
+      const sessionCounted = sessionStorage.getItem('171_session_counted');
+      if (!sessionCounted) {
+        sessionStorage.setItem('171_session_counted', 'true');
+        setDoc(statsDocRef, {
+          id: 'system_stats',
+          totalVisitors: increment(1),
+          lastVisitAt: new Date().toISOString(),
+        }, { merge: true }).catch(() => {});
+
+        setVisitorCount((prev) => {
+          const next = prev + 1;
+          try {
+            localStorage.setItem('171_visitor_count', next.toString());
+          } catch {}
+          return next;
+        });
+      }
+    } catch {}
+
+    return () => {
+      if (unsubStats) unsubStats();
+    };
+  }, []);
 
   const generateUniqueWelcomeVoucherCode = (cleanEmail: string): string => {
     const cleanUserSlug = cleanEmail.replace(/[^a-z0-9]/g, '').slice(0, 5).toUpperCase() || 'ARTIST';
@@ -3604,6 +3661,7 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         deleteVoucher,
         validateAndCalculateDiscount,
         registeredUsers,
+        visitorCount,
         updateEmailTemplates,
         addBlockedCommitment,
         removeBlockedCommitment,

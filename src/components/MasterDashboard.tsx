@@ -68,6 +68,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
     pluginBugReports, updatePluginBugReportStatus, deletePluginBugReport, verifyPluginBugReportAndReward,
     pluginDonations, confirmPluginDonationPayPal, updatePluginDonation, deletePluginDonation,
     registeredUsers,
+    visitorCount,
     openGmailWebCompose, openMailtoCompose, downloadBookingCalendarIcs, openGoogleCalendarWeb
   } = useStudio();
 
@@ -761,7 +762,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
       </div>
 
       {/* KPI Stats Overview */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-4 mb-8">
         <div className="p-4 rounded-2xl bg-neutral-900/60 border border-neutral-800">
           <span className="text-xs font-mono text-neutral-400 uppercase block">Prenotazioni Totali</span>
           <span className="text-3xl font-heading font-black text-amber-400 mt-1 block">
@@ -783,6 +784,16 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
           </span>
           <span className="text-[10px] text-blue-300/70 font-mono">
             Utenti attivi • Clicca per vedere la lista
+          </span>
+        </div>
+
+        <div className="p-4 rounded-2xl bg-neutral-900/60 border border-purple-500/30 bg-purple-500/5">
+          <span className="text-xs font-mono text-purple-300 uppercase block">Visite Totali</span>
+          <span className="text-3xl font-heading font-black text-purple-400 mt-1 block">
+            {visitorCount.toLocaleString('it-IT')}
+          </span>
+          <span className="text-[10px] text-purple-300/70 font-mono">
+            Traffico globale 171studio.it
           </span>
         </div>
 

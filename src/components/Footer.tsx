@@ -1,5 +1,5 @@
 import React from 'react';
-import { Mail, MapPin, ArrowUpRight } from 'lucide-react';
+import { Mail, MapPin, ArrowUpRight, Eye } from 'lucide-react';
 import { PageId } from '../types';
 import { useStudio } from '../context/StudioContext';
 import { getAssetUrl } from '../utils/assetPath';
@@ -10,7 +10,7 @@ interface FooterProps {
 }
 
 export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
-  const { siteContent } = useStudio();
+  const { siteContent, visitorCount } = useStudio();
 
   return (
     <footer className="relative z-10 w-full border-t border-neutral-800/80 bg-neutral-950/90 backdrop-blur-xl mt-auto">
@@ -122,8 +122,19 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
         </div>
 
         {/* Bottom copyright row */}
-        <div className="mt-8 pt-6 border-t border-neutral-800/60 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] font-mono text-neutral-400">
+        <div className="mt-8 pt-6 border-t border-neutral-800/60 flex flex-col md:flex-row items-center justify-between gap-4 text-[11px] font-mono text-neutral-400">
           <p>© {new Date().getFullYear()} 171 Studio. Tutti i diritti riservati.</p>
+
+          {/* Real-time Studio Visitor Counter */}
+          <div className="flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-neutral-900/90 border border-neutral-800 text-neutral-300 shadow-inner">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <Eye className="w-3.5 h-3.5 text-amber-400" />
+            <span className="text-[10px] uppercase tracking-wider text-neutral-400">Visite Totali:</span>
+            <span className="text-xs font-bold font-mono text-white tracking-wide">
+              {visitorCount.toLocaleString('it-IT')}
+            </span>
+          </div>
+
           <div className="flex items-center gap-4">
             <span>STUDIO DI REGISTRAZIONE</span>
             <span>•</span>
