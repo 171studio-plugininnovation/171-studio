@@ -3013,9 +3013,12 @@ Data: ${new Date(file.createdAt).toLocaleString('it-IT')}
                 >
                   <option value="" disabled>Seleziona il plugin...</option>
                   {(siteContent.plugins && siteContent.plugins.length > 0 ? siteContent.plugins : [
+                    { id: 'plugin-realtune', name: '171 RealTune' },
+                    { id: 'plugin-easyvoice', name: '171 EasyVoice' },
                     { id: 'plugin-optocom', name: '171 DriveOptocom' },
                     { id: 'plugin-cleandrive', name: '171 CleanDrive' },
                     { id: 'plugin-cleanreso', name: '171 CleanReso' },
+                    { id: 'plugin-perfectpre', name: '171 PerfectPre' },
                   ]).map((p) => (
                     <option key={p.id} value={p.name}>{p.name}</option>
                   ))}

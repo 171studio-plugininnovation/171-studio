@@ -43,9 +43,12 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
 
   // Expanded technologies state for each plugin (all open by default so user can read everything)
   const [expandedTechPluginId, setExpandedTechPluginId] = useState<Record<string, boolean>>({
+    'plugin-realtune': true,
+    'plugin-easyvoice': true,
     'plugin-optocom': true,
     'plugin-cleandrive': true,
     'plugin-cleanreso': true,
+    'plugin-perfectpre': true,
   });
 
   // Modal for previewing hardware GUI snapshot
