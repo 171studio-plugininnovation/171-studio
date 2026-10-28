@@ -13,3 +13,6 @@ coverage/
 !public/**/*.png
 public/assets/the-god-cypher/downloads/*.zip
 scratch/
+
+public/downloads/plugins/*SuiteCompleta*.zip
+
