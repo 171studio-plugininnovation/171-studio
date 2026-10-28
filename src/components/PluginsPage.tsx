@@ -103,17 +103,6 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
         },
       ];
 
-  const handleDownloadFullSuite = () => {
-    if (!currentUser) {
-      openAuthModal('Accedi o registrati gratuitamente per scaricare l\'intera suite di tutti i 9 plugin di 171 Studio Innovatio.');
-      return;
-    }
-    siteContent.plugins.forEach((plugin, index) => {
-      setTimeout(() => {
-        downloadPlugin(plugin.id);
-      }, index * 600);
-    });
-  };
 
   const handleDownload = (plugin: PluginItem) => {
     if (!currentUser) {
@@ -859,17 +848,10 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
                 Scarica Gratis i Plugin di 171 Studio
               </h3>
               <p className="text-xs sm:text-sm text-neutral-400 font-light mt-1">
-                Tutti i 9 strumenti DSP boutique ufficiali con modellazione fisica, VST3 64-bit, Standalone EXE e tecnologia proprietaria per missaggio e mastering.
+                6 strumenti DSP boutique ufficiali con modellazione fisica, VST3 64-bit, Standalone EXE e tecnologia proprietaria per missaggio e mastering.
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-2 self-start md:self-auto">
-              <button
-                onClick={handleDownloadFullSuite}
-                className="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-bold text-xs uppercase tracking-wider flex items-center gap-2 shadow-lg shadow-amber-500/20 transition-all hover:scale-105 active:scale-95 cursor-pointer"
-              >
-                <Download className="w-3.5 h-3.5" />
-                <span>Scarica Tutta la Suite (9 Plugin in 1-Click)</span>
-              </button>
               <span className="text-[11px] font-mono text-emerald-400 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center gap-1.5">
                 <Check className="w-3.5 h-3.5" />
                 <span>VST3 64-bit + Standalone EXE</span>

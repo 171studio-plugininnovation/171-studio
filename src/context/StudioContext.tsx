@@ -363,68 +363,6 @@ const DEFAULT_PLUGINS: PluginItem[] = [
       "Pieno supporto per VST3 e applicazione Standalone a 64-bit"
     ],
   },
-  {
-    id: 'plugin-meter',
-    name: '171 Meter',
-    badge: 'MASTERING TELEMETRY & PRECISION LOUDNESS METER',
-    status: 'DISPONIBILE',
-    description: 'Monitor di telemetria professionale per missaggio e mastering: True Peak inter-sample (BS.1770-4), LUFS integrati/momentary/short-term, correlazione di fase vettoriale e FFT spettrogramma.',
-    version: 'v1.0.0 Telemetry Edition',
-    downloadCount: 0,
-    downloadUrl: '/downloads/plugins/171_Meter_v1.0.0_Win64.zip',
-    zipFileName: '171_Meter_v1.0.0_Win64.zip',
-    zipFileSize: '5.87 MB',
-    imageUrl: '/assets/plugins/171Meter_GUI.png',
-    formats: ['VST3 (64-bit)', 'Standalone App (.EXE)'],
-    technologies: [
-      "True Peak Metering con oversampling inter-sample a 4x per evitare distorsioni su Spotify e Apple Music",
-      "Loudness Meter conforme a standard EBU R128 e ITU-R BS.1770",
-      "Goniometro e Correlatore di fase vettoriale per verificare la mono-compatibilità del mix",
-      "Analizzatore FFT in tempo reale a 60 FPS con caduta balistica personalizzabile",
-      "Eseguibile Standalone ed estensione VST3 a 64-bit ultra-leggera sulla CPU"
-    ],
-  },
-  {
-    id: 'plugin-serumv',
-    name: '171 SerumV',
-    badge: 'OTT MULTIBAND DYNAMICS & SYNTH COLOR',
-    status: 'DISPONIBILE',
-    description: 'Processore di dinamica e colore armonico multibanda ispirato al sound design moderno: compressione verso l’alto e verso il basso stile OTT, saturatore integrato e visualizzazione del gain reduction in tempo reale.',
-    version: 'v1.0.0 Modern Edition',
-    downloadCount: 0,
-    downloadUrl: '/downloads/plugins/171_SerumV_v1.0.0_Win64.zip',
-    zipFileName: '171_SerumV_v1.0.0_Win64.zip',
-    zipFileSize: '4.23 MB',
-    imageUrl: '/assets/plugins/171SerumV_GUI.png',
-    formats: ['VST3 (64-bit)', 'Standalone App (.EXE)'],
-    technologies: [
-      "Compressione a 3 bande Upward / Downward per portare in primo piano i dettagli più nascosti",
-      "Circuito di saturazione analogica per aggiungere grinta e densità a bassi e sintetizzatori",
-      "Visualizzazione del Gain Reduction multibanda a 60 FPS con rendering vettoriale",
-      "Controllo Depth e Time flessibile per adattarsi sia a singole tracce che al master bus",
-      "Formati Standalone e VST3 a 64-bit"
-    ],
-  },
-  {
-    id: 'plugin-mag4',
-    name: '171 MAG4 Air Saturation',
-    badge: 'AIR BAND EQUALIZER & HARMONIC ENHANCER',
-    status: 'DISPONIBILE',
-    description: 'Fedele ricreazione del celebre equalizzatore Maag EQ4 con shelf Air Band fino a 40 kHz, modellazione armonica analogica, bundle multipiattaforma con versione JSFX per Reaper, web standalone offline e sorgente C++.',
-    version: 'v1.0.0 Special Bundle',
-    downloadCount: 0,
-    downloadUrl: '/downloads/plugins/171_MAG4_v1.0.0_Bundle.zip',
-    zipFileName: '171_MAG4_v1.0.0_Bundle.zip',
-    zipFileSize: '0.02 MB',
-    imageUrl: '/assets/plugins/171MAG4_GUI.png',
-    formats: ['JSFX (Reaper)', 'Web App Offline', 'Factory Presets', 'C++ JUCE Source'],
-    technologies: [
-      "Circuito Air Band leggendario con frequenze selezionabili a 2.5, 5, 10, 20 e 40 kHz",
-      "Curve di equalizzazione a campana a larghezza fissa per Sub, 40 Hz, 160 Hz, 650 Hz e 2.5 kHz",
-      "Saturatore di armoniche pari/dispari per scaldare le alte frequenze senza frizzare",
-      "Bundle completo comprendente JSFX nativo Reaper, GUI web standalone offline e codice sorgente C++"
-    ],
-  }
 ];
 
 const DEFAULT_CONTENT: SiteContent = {
