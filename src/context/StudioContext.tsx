@@ -49,7 +49,7 @@ interface StudioContextType {
   addPlugin: (plugin: Omit<PluginItem, 'id' | 'downloadCount'>) => void;
   updatePlugin: (id: string, updates: Partial<PluginItem>) => void;
   deletePlugin: (id: string) => void;
-  downloadPlugin: (pluginId: string) => boolean;
+  downloadPlugin: (pluginId: string, platform?: 'win' | 'mac') => boolean;
   bookings: BookingRecord[];
   createBooking: (booking: Omit<BookingRecord, 'id' | 'createdAt' | 'status' | 'userId' | 'userEmail' | 'orderCode' | 'paymentStatus'> & {
     userEmail?: string;
@@ -242,8 +242,11 @@ const DEFAULT_PLUGINS: PluginItem[] = [
     downloadUrl: '/downloads/plugins/171_RealTune_v1.0.1_Win64.zip',
     zipFileName: '171_RealTune_v1.0.1_Win64.zip',
     zipFileSize: '21.14 MB',
+    macDownloadUrl: '/downloads/plugins/171_RealTune_v1.0.1_Mac.zip',
+    macZipFileName: '171_RealTune_v1.0.1_Mac.zip',
+    macZipFileSize: '8.05 MB',
     imageUrl: '/assets/plugins/171RealTune_GUI.png',
-    formats: ['VST3 (64-bit)', 'Standalone App (.EXE)'],
+    formats: ['VST3 (Win/Mac)', 'AudioUnit v2 (Logic Pro)', 'Standalone App'],
     technologies: [
       "Architettura Dual-Head Synchronous WSOLA per intonazione vocale istantanea a zero artefatti e zero drift",
       "Tracking continuo con doppia velocità S-curve: correzione naturale su note lunghe e snap fulmineo su cambi veloci",
@@ -266,8 +269,11 @@ const DEFAULT_PLUGINS: PluginItem[] = [
     downloadUrl: '/downloads/plugins/171_EasyVoice_v1.0.1_Win64.zip',
     zipFileName: '171_EasyVoice_v1.0.1_Win64.zip',
     zipFileSize: '35.96 MB',
+    macDownloadUrl: '/downloads/plugins/171_EasyVoice_v1.0.1_Mac.zip',
+    macZipFileName: '171_EasyVoice_v1.0.1_Mac.zip',
+    macZipFileSize: '21.54 MB',
     imageUrl: '/assets/plugins/171EasyVoice_GUI.png',
-    formats: ['VST3 (64-bit)', 'Standalone App (.EXE)'],
+    formats: ['VST3 (Win/Mac)', 'AudioUnit v2 (Logic Pro)', 'Standalone App'],
     technologies: [
       "De-Esser dinamico intelligente con detection spettrale tarata su sibilanti harsh (4 - 9 kHz)",
       "Compressore vocale ibrido Opto/VCA con controllo Punch & Body per voce sempre avanti nel mix",
@@ -288,8 +294,11 @@ const DEFAULT_PLUGINS: PluginItem[] = [
     downloadUrl: '/downloads/plugins/171_DriveOptocom_v1.1.0_Win64.zip',
     zipFileName: '171_DriveOptocom_v1.1.0_Win64.zip',
     zipFileSize: '11.39 MB',
+    macDownloadUrl: '/downloads/plugins/171_DriveOptocom_v1.1.0_Mac.zip',
+    macZipFileName: '171_DriveOptocom_v1.1.0_Mac.zip',
+    macZipFileSize: '87.32 MB',
     imageUrl: '/assets/plugins/171DriveOptocom_GUI.png',
-    formats: ['VST3 (64-bit)', 'Standalone App (.EXE)'],
+    formats: ['VST3 (Win/Mac)', 'AudioUnit v2 (Logic Pro)', 'Standalone App'],
     technologies: [
       "Modellazione fisica della cella elettro-ottica T4B con doppia trappola di decadimento e risposta asimmetrica",
       "Isteresi foto-chimica reale LA-2A con memoria profonda per livellamento vocale setoso",
@@ -310,8 +319,11 @@ const DEFAULT_PLUGINS: PluginItem[] = [
     downloadUrl: '/downloads/plugins/171_CleanDrive_v1.1.0_Win64.zip',
     zipFileName: '171_CleanDrive_v1.1.0_Win64.zip',
     zipFileSize: '7.28 MB',
+    macDownloadUrl: '/downloads/plugins/171_CleanDrive_v1.1.0_Mac.zip',
+    macZipFileName: '171_CleanDrive_v1.1.0_Mac.zip',
+    macZipFileSize: '87.24 MB',
     imageUrl: '/assets/plugins/171CleanDrive_GUI.png',
-    formats: ['VST3 (64-bit)', 'Standalone App (.EXE)'],
+    formats: ['VST3 (Win/Mac)', 'AudioUnit v2 (Logic Pro)', 'Standalone App'],
     technologies: [
       "Separatore di transienti dinamico per processare attacco e corpo in canali paralleli indipendenti",
       "Doppio motore armonico: Tube Saturation valvolare di Classe A e Tape Saturation caldo con compressione del nastro",
@@ -332,8 +344,11 @@ const DEFAULT_PLUGINS: PluginItem[] = [
     downloadUrl: '/downloads/plugins/171_CleanReso_v1.1.0_Win64.zip',
     zipFileName: '171_CleanReso_v1.1.0_Win64.zip',
     zipFileSize: '12.58 MB',
+    macDownloadUrl: '/downloads/plugins/171_CleanReso_v1.1.0_Mac.zip',
+    macZipFileName: '171_CleanReso_v1.1.0_Mac.zip',
+    macZipFileSize: '13.07 MB',
     imageUrl: '/assets/plugins/171CleanReso_GUI.png',
-    formats: ['VST3 (64-bit)', 'Standalone App (.EXE)'],
+    formats: ['VST3 (Win/Mac)', 'AudioUnit v2 (Logic Pro)', 'Standalone App'],
     technologies: [
       "Analizzatore spettrale a 32 bande con filtri State Variable (SVF) Zero-Delay Feedback a 64-bit",
       "Peak-picking adattivo per identificare e attenuare solo le risonanze aspre e i fischi metallici",
@@ -353,8 +368,11 @@ const DEFAULT_PLUGINS: PluginItem[] = [
     downloadUrl: '/downloads/plugins/171_PerfectPre_v1.0.0_Win64.zip',
     zipFileName: '171_PerfectPre_v1.0.0_Win64.zip',
     zipFileSize: '18.96 MB',
+    macDownloadUrl: '/downloads/plugins/171_PerfectPre_v1.0.0_Mac.zip',
+    macZipFileName: '171_PerfectPre_v1.0.0_Mac.zip',
+    macZipFileSize: '7.54 MB',
     imageUrl: '/assets/plugins/PerfectPre_Hardware_GUI.png',
-    formats: ['VST3 (64-bit)', 'Standalone App (.EXE)'],
+    formats: ['VST3 (Win/Mac)', 'AudioUnit v2 (Logic Pro)', 'Standalone App'],
     technologies: [
       "Emulazione del circuito discreto a triodo e trasformatore d'ingresso console analogica",
       "Curve Baxandall musicali per bassi pieni e alti aperti e naturali",
@@ -1953,7 +1971,7 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     logActivity('CMS_EDIT', `Plugin rimosso: ${pluginToDelete?.name || id}`);
   };
 
-  const downloadPlugin = (pluginId: string): boolean => {
+  const downloadPlugin = (pluginId: string, platform: 'win' | 'mac' = 'win'): boolean => {
     if (!currentUser) {
       openAuthModal('Effettua l\'accesso per scaricare gratuitamente i file .ZIP dei plugin di 171 Studio.');
       return false;
@@ -1962,24 +1980,30 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const plugin = siteContent.plugins.find((p) => p.id === pluginId);
     if (plugin) {
       // Trigger actual .ZIP archive download in the browser
-      triggerPluginZipFileDownload(plugin);
+      triggerPluginZipFileDownload(plugin, platform);
 
       updatePlugin(pluginId, { downloadCount: (plugin.downloadCount || 0) + 1 });
+
+      const isMac = platform === 'mac';
+      const targetZipName = isMac
+        ? (plugin.macZipFileName || `${plugin.name.replace(/\s+/g, '_')}_Mac.zip`)
+        : (plugin.zipFileName || `${plugin.name.replace(/\s+/g, '_')}_Win64.zip`);
+      const targetZipSize = isMac ? (plugin.macZipFileSize || '15 MB') : (plugin.zipFileSize || '14.2 MB');
+      const targetDownloadUrl = isMac ? (plugin.macDownloadUrl || `#download-${plugin.id}-mac`) : (plugin.downloadUrl || `#download-${plugin.id}`);
 
       const newDownloadRecord: DownloadedPluginRecord = {
         id: `dl-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
         userId: currentUser.id,
         userEmail: currentUser.email,
         pluginId: plugin.id,
-        pluginName: plugin.name,
+        pluginName: `${plugin.name} (${isMac ? 'macOS' : 'Windows'})`,
         pluginBadge: plugin.badge,
         pluginStatus: plugin.status,
-        zipFileName: plugin.zipFileName || `${plugin.name.replace(/\s+/g, '_')}_Installer.zip`,
-        zipFileSize: plugin.zipFileSize || '14.2 MB',
-        downloadUrl: plugin.downloadUrl || `#download-${plugin.id}`,
+        zipFileName: targetZipName,
+        zipFileSize: targetZipSize,
+        downloadUrl: targetDownloadUrl,
         downloadedAt: new Date().toISOString(),
       };
-
       setDownloadedPlugins((prev) => [newDownloadRecord, ...prev]);
       logActivity(
         'PLUGIN_DOWNLOADED',

@@ -10,6 +10,9 @@ export interface PluginItem {
   zipFileName?: string;
   zipFileSize?: string;
   zipDataUrl?: string;
+  macDownloadUrl?: string;
+  macZipFileName?: string;
+  macZipFileSize?: string;
   version?: string;
   technologies?: string[];
   formats?: string[];

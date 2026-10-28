@@ -243,11 +243,26 @@ export function interpolateEmailTemplate(
  * Generates a real valid .ZIP binary Blob containing the plugin installer files and triggers browser download,
  * or downloads the exact .ZIP archive uploaded by the Master in the CMS.
  */
-export function triggerPluginZipFileDownload(plugin: PluginItem): void {
+export function triggerPluginZipFileDownload(plugin: PluginItem, platform: 'win' | 'mac' = 'win'): void {
+  if (platform === 'mac') {
+    const cleanFileName =
+      plugin.macZipFileName ||
+      `${plugin.name.replace(/[^a-zA-Z0-9_-]/g, '_')}_${(plugin.version || 'v1.0').replace(/[^a-zA-Z0-9._-]/g, '')}_Mac.zip`;
+
+    if (plugin.macDownloadUrl && !plugin.macDownloadUrl.startsWith('#')) {
+      const link = document.createElement('a');
+      link.href = getAssetUrl(plugin.macDownloadUrl);
+      link.download = cleanFileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      return;
+    }
+  }
+
   const cleanFileName =
     plugin.zipFileName ||
     `${plugin.name.replace(/[^a-zA-Z0-9_-]/g, '_')}_${(plugin.version || 'v1.0').replace(/[^a-zA-Z0-9._-]/g, '')}_Win64.zip`;
-
   // 1. If the plugin has a direct download URL pointing to a packaged file (e.g. /downloads/plugins/...), download it directly
   if (plugin.downloadUrl && !plugin.downloadUrl.startsWith('#')) {
     const link = document.createElement('a');
