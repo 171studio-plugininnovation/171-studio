@@ -265,7 +265,7 @@ const DEFAULT_PLUGINS: PluginItem[] = [
     downloadCount: 0,
     downloadUrl: '/downloads/plugins/171_EasyVoice_v1.0.1_Win64.zip',
     zipFileName: '171_EasyVoice_v1.0.1_Win64.zip',
-    zipFileSize: '53.37 MB',
+    zipFileSize: '35.96 MB',
     imageUrl: '/assets/plugins/171EasyVoice_GUI.png',
     formats: ['VST3 (64-bit)', 'Standalone App (.EXE)'],
     technologies: [
