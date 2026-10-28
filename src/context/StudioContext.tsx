@@ -327,7 +327,7 @@ const DEFAULT_PLUGINS: PluginItem[] = [
     badge: 'DYNAMIC RESONANCE SUPPRESSOR & SPECTRAL CLEANER',
     status: 'DISPONIBILE',
     description: 'Soppressore chirurgico di risonanze vocali e acustiche multi-banda: 32 filtri SVF Zero-Delay Feedback (ZDF) attivi in tempo reale con analisi spettrale a 60 FPS e modalità Delta Listening per isolare solo il materiale rimosso.',
-    version: 'v1.0.0 Studio Edition',
+    version: 'v1.1.0 Studio Edition',
     downloadCount: 0,
     downloadUrl: '/downloads/plugins/171_CleanReso_v1.1.0_Win64.zip',
     zipFileName: '171_CleanReso_v1.1.0_Win64.zip',
