@@ -268,7 +268,7 @@ const DEFAULT_PLUGINS: PluginItem[] = [
     downloadCount: 0,
     downloadUrl: '/downloads/plugins/171_EasyVoice_v1.0.1_Win64.zip',
     zipFileName: '171_EasyVoice_v1.0.1_Win64.zip',
-    zipFileSize: '35.96 MB',
+    zipFileSize: '35.94 MB',
     macDownloadUrl: '/downloads/plugins/171_EasyVoice_v1.0.1_Mac.zip',
     macZipFileName: '171_EasyVoice_v1.0.1_Mac.zip',
     macZipFileSize: '21.54 MB',
