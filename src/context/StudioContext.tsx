@@ -381,6 +381,66 @@ const DEFAULT_PLUGINS: PluginItem[] = [
       "Pieno supporto per VST3 e applicazione Standalone a 64-bit"
     ],
   },
+  {
+    id: 'plugin-masterglue',
+    name: '171 MasterGlue',
+    badge: 'ANALOG MASTER BUS CONSOLE & STEREO IMAGER',
+    status: 'IN ARRIVO',
+    description: 'Compressore analogico da master bus a doppia topologia (VCA stile SSL 4000 G & Diode-Bridge stile Neve 33609), stadio trasformatore d\'uscita Marinair LO1166, processore d\'immagine stereo TrueSpace e doppi VU meter galvanometrici balistici IEC 60268-17.',
+    version: 'v1.0.0 Boutique Gold Master (In Arrivo)',
+    downloadCount: 0,
+    imageUrl: '/assets/plugins/171MasterGlue_GUI.png',
+    formats: ['VST3 (64-bit)', 'AudioUnit v2 (macOS)', 'Standalone App'],
+    technologies: [
+      "Doppia Topologia Analogica: switch VCA Punch (SSL 4000 G con Auto-Release) e Diode-Bridge Warmth (Neve 33609 con progressive knee)",
+      "Stadio trasformatore Marinair LO1166 con saturazione ferromagnetica di nucleo, armoniche pari/dispari e DC Blocker a due stadi",
+      "Banca filtri sidechain avanzata con HPF continuo (60 / 90 / 150 Hz) e curva API-Style Thrust (+3 dB/oct tilt)",
+      "Processore d'immagine stereo TrueSpace a fase coerente con Mono-Maker sotto i 120 Hz e correlazione vettoriale",
+      "Compressione parallela istantanea con manopola Dry/Wet New York Style senza sfasamenti di fase",
+      "Doppi VU meter galvanometrici analogici IEC 60268-17 con aghi balistici a spada e illuminazione vintage al tungsteno",
+      "Headroom calibrata a +24 dBu analogico e True-Peak Limiter a 64-bit conforme a ITU-R BS.1770-4"
+    ],
+  },
+  {
+    id: 'plugin-spaceluxe',
+    name: '171 SpaceLuxe',
+    badge: 'BOUTIQUE HYBRID REVERB & DYNAMIC SPACE SCULPTOR',
+    status: 'IN ARRIVO',
+    description: 'Riverbero ibrido algoritmico boutique con serbatoio lossless FDN-16 ad altissima densità, Ducking dinamico con Sidechain Esterno (Multi-Bus VST3), generatore Harmonic Shimmer valvolare a +1 ottava e filtro Mono-Maker State Variable.',
+    version: 'v1.1.0 Boutique Edition (In Arrivo)',
+    downloadCount: 0,
+    imageUrl: '/assets/plugins/171SpaceLuxe_GUI.png',
+    formats: ['VST3 (64-bit multi-bus)', 'AudioUnit v2 (macOS)', 'Standalone App'],
+    technologies: [
+      "Serbatoio riverberante lossless FDN-16 (Feedback Delay Network a 16 delay mutualmente primi con matrice ortogonale Householder)",
+      "Dual Sidechain Ducking Mode: Ducking interno automatico o guidato da bus ausiliario esterno (External Sidechain per voce lead, rullante o cassa)",
+      "Modulo Harmonic Shimmer (+12 semitoni / +1 ottava) con stadio di saturazione valvolare calda e soft clipping analogico",
+      "Mono-Maker State Variable Filter a 12 dB/oct per preservare il punch mono del sub-bass sotto i 180 Hz",
+      "Display 3D Waterfall Spectrogram a 60 FPS per la telemetria continua del decadimento spettrale delle code",
+      "Spia Jewel Lamp EXT SC ciano volumetrica con rilevamento dinamico del bus ausiliario e chassis anodizzato cobalto",
+      "Algoritmo hard real-time con zero allocazioni in memoria nel thread audio e latenza host pari a zero campioni"
+    ],
+  },
+  {
+    id: 'plugin-punchcraft',
+    name: '171 PunchCraft',
+    badge: 'MULTI-BAND TRANSIENT SHAPER & SUB-HARMONIC SCULPTOR',
+    status: 'IN ARRIVO',
+    description: 'Processore dinamico di inviluppo multi-banda a 3 bande indipendenti: Differential Envelope Technology per scolpire attacco e sustain senza soglia rigida, generatore sub-armonico sismico a divisione di frequenza e doppio oscilloscopio CRT telemetrico.',
+    version: 'v1.0.0 Boutique Edition (In Arrivo)',
+    downloadCount: 0,
+    imageUrl: '/assets/plugins/171PunchCraft_GUI.png',
+    formats: ['VST3 (64-bit)', 'AudioUnit v2 (macOS)', 'Standalone App'],
+    technologies: [
+      "Scolpitura dinamica multi-banda a 3 vie (Low / Mid / High) con filtri di crossover Linkwitz-Riley LR-4 a fase lineare",
+      "Differential Envelope Technology (D.E.T.) per il controllo indipendente dell'Attack e del Sustain senza alterazione del True-Peak",
+      "Generatore Sub-Harmonic sismico a divisione di frequenza (f0 / 2) con modulazione d'inviluppo e stadio Drive a trasformatore",
+      "Soft Clipper analogico ad asimmetria calibrata per proteggere le uscite dai picchi transitori più violenti",
+      "Doppio display telemetrico con Oscilloscopio CRT a fosfori ambra per telemetria dell'inviluppo in tempo reale",
+      "Auto-Gain Makeup dinamico e zero sfasamento sulle transizioni veloci con latenza impercettibile",
+      "Pieno supporto per VST3 a 64-bit, macOS AudioUnit e applicazione Standalone per live e testing"
+    ],
+  },
 ];
 
 const DEFAULT_CONTENT: SiteContent = {

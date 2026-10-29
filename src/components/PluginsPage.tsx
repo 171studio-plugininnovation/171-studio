@@ -3,7 +3,7 @@ import {
   ArrowLeft, Cpu, Sparkles, Zap, Flame, Shield, Sliders, Download,
   Check, Mail, Star, Heart, MessageSquare, ExternalLink, FileArchive,
   CheckCircle2, Send, Lock, Bug, ChevronDown, ChevronUp, Eye, X, Layers,
-  Award, Gift
+  Award, Gift, Clock
 } from 'lucide-react';
 import { PageId } from '../types';
 import { useStudio } from '../context/StudioContext';
@@ -50,6 +50,9 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
     'plugin-cleandrive': true,
     'plugin-cleanreso': true,
     'plugin-perfectpre': true,
+    'plugin-masterglue': true,
+    'plugin-spaceluxe': true,
+    'plugin-punchcraft': true,
   });
 
   // Modal for previewing hardware GUI snapshot
@@ -909,10 +912,17 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
                           </span>
                         )}
                       </div>
-                      <span className="shrink-0 text-[10px] font-mono font-bold px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center gap-1">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                        {plugin.status}
-                      </span>
+                      {plugin.status === 'IN ARRIVO' ? (
+                        <span className="shrink-0 text-[10px] font-mono font-bold px-3 py-1 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/30 flex items-center gap-1.5 shadow-sm">
+                          <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+                          <span>IN ARRIVO</span>
+                        </span>
+                      ) : (
+                        <span className="shrink-0 text-[10px] font-mono font-bold px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center gap-1">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                          {plugin.status}
+                        </span>
+                      )}
                     </div>
 
                     {/* Preview Image if available */}
@@ -997,91 +1007,122 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
                       </div>
                     )}
 
-                    {/* Package details banner with Windows & macOS info */}
-                    <div className="space-y-1.5">
-                      <div className="p-2.5 rounded-xl bg-neutral-950 border border-neutral-800 text-[11px] font-mono text-neutral-300 flex items-center justify-between gap-2">
-                        <span className="flex items-center gap-2 truncate" title={zipFileLabel}>
-                          <span className="text-blue-400 font-bold shrink-0 text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 border border-blue-500/20">🪟 WIN</span>
-                          <span className="truncate text-neutral-300">{zipFileLabel}</span>
+                    {/* Package details banner */}
+                    {plugin.status === 'IN ARRIVO' ? (
+                      <div className="p-3 rounded-xl bg-neutral-950/90 border border-amber-500/30 text-[11px] font-mono text-amber-300 flex items-center justify-between gap-2 shadow-inner">
+                        <span className="flex items-center gap-2">
+                          <Clock className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                          <span className="text-neutral-300">Stato: <span className="text-amber-400 font-semibold">Calibrazione DSP & Fine Tuning</span></span>
                         </span>
-                        <span className="text-emerald-400 shrink-0 font-bold px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20 text-[10px]">
-                          {plugin.zipFileSize || 'Win .ZIP'}
+                        <span className="text-amber-400 shrink-0 font-bold px-2 py-0.5 rounded bg-amber-500/15 border border-amber-500/30 text-[10px]">
+                          PROSSIMA USCITA
                         </span>
                       </div>
-
-                      {plugin.macZipFileName && (
+                    ) : (
+                      <div className="space-y-1.5">
                         <div className="p-2.5 rounded-xl bg-neutral-950 border border-neutral-800 text-[11px] font-mono text-neutral-300 flex items-center justify-between gap-2">
-                          <span className="flex items-center gap-2 truncate" title={plugin.macZipFileName}>
-                            <span className="text-amber-400 font-bold shrink-0 text-[10px] px-1.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/20">🍏 MAC</span>
-                            <span className="truncate text-neutral-300">{plugin.macZipFileName}</span>
+                          <span className="flex items-center gap-2 truncate" title={zipFileLabel}>
+                            <span className="text-blue-400 font-bold shrink-0 text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 border border-blue-500/20">🪟 WIN</span>
+                            <span className="truncate text-neutral-300">{zipFileLabel}</span>
                           </span>
-                          <span className="text-cyan-400 shrink-0 font-bold px-2 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/20 text-[10px]">
-                            {plugin.macZipFileSize || 'Mac .ZIP'}
+                          <span className="text-emerald-400 shrink-0 font-bold px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20 text-[10px]">
+                            {plugin.zipFileSize || 'Win .ZIP'}
                           </span>
                         </div>
-                      )}
-                    </div>
+
+                        {plugin.macZipFileName && (
+                          <div className="p-2.5 rounded-xl bg-neutral-950 border border-neutral-800 text-[11px] font-mono text-neutral-300 flex items-center justify-between gap-2">
+                            <span className="flex items-center gap-2 truncate" title={plugin.macZipFileName}>
+                              <span className="text-amber-400 font-bold shrink-0 text-[10px] px-1.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/20">🍏 MAC</span>
+                              <span className="truncate text-neutral-300">{plugin.macZipFileName}</span>
+                            </span>
+                            <span className="text-cyan-400 shrink-0 font-bold px-2 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/20 text-[10px]">
+                              {plugin.macZipFileSize || 'Mac .ZIP'}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
 
                   {/* Card Actions Footer with Dual Windows & macOS Download Buttons */}
                   <div className="pt-4 mt-4 border-t border-neutral-800/80 space-y-3">
-                    <div className="flex items-center justify-between text-[11px] font-mono text-neutral-500">
-                      <span className="flex items-center gap-1.5">
-                        <Download className="w-3.5 h-3.5 text-neutral-400" />
-                        <span>{plugin.downloadCount || 0} download registrati</span>
-                      </span>
-                      <span className="text-emerald-400/80 text-[10px] font-mono">AUv2 • VST3 • Standalone</span>
-                    </div>
+                    {plugin.status === 'IN ARRIVO' ? (
+                      <div className="space-y-2.5">
+                        <div className="flex items-center justify-between text-[11px] font-mono text-neutral-500">
+                          <span className="flex items-center gap-1.5 text-amber-400/90 font-medium">
+                            <Clock className="w-3.5 h-3.5 text-amber-400" />
+                            <span>In arrivo sul catalogo 171 Studio</span>
+                          </span>
+                          <span className="text-amber-400/80 text-[10px] font-mono font-semibold">VST3 • AUv2 • Standalone</span>
+                        </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                      {/* Windows Download Button */}
-                      <button
-                        type="button"
-                        onClick={() => handleDownload(plugin, 'win')}
-                        className={`py-3 px-3 rounded-xl text-[11px] font-mono uppercase tracking-wider font-black transition-all flex items-center justify-center gap-1.5 shadow-md cursor-pointer ${
-                          downloadSuccessId === `${plugin.id}-win`
-                            ? 'bg-emerald-500 text-black shadow-emerald-500/30'
-                            : 'bg-neutral-800 hover:bg-neutral-700 text-neutral-100 hover:text-white border border-neutral-700 hover:border-blue-500/40 hover:scale-[1.01]'
-                        }`}
-                        title={`Scarica versione Windows 64-bit (${plugin.zipFileSize})`}
-                      >
-                        {downloadSuccessId === `${plugin.id}-win` ? (
-                          <>
-                            <Check className="w-3.5 h-3.5" />
-                            <span>Scaricato (Win)</span>
-                          </>
-                        ) : (
-                          <>
-                            <Download className="w-3.5 h-3.5 text-blue-400" />
-                            <span>🪟 Win ({plugin.zipFileSize})</span>
-                          </>
-                        )}
-                      </button>
+                        <div className="w-full py-3.5 px-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 font-mono font-bold text-xs uppercase tracking-widest text-center flex items-center justify-center gap-2 shadow-inner select-none">
+                          <Clock className="w-4 h-4 animate-pulse text-amber-400" />
+                          <span>IN ARRIVO</span>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="flex items-center justify-between text-[11px] font-mono text-neutral-500">
+                          <span className="flex items-center gap-1.5">
+                            <Download className="w-3.5 h-3.5 text-neutral-400" />
+                            <span>{plugin.downloadCount || 0} download registrati</span>
+                          </span>
+                          <span className="text-emerald-400/80 text-[10px] font-mono">AUv2 • VST3 • Standalone</span>
+                        </div>
 
-                      {/* macOS Download Button */}
-                      <button
-                        type="button"
-                        onClick={() => handleDownload(plugin, 'mac')}
-                        className={`py-3 px-3 rounded-xl text-[11px] font-mono uppercase tracking-wider font-black transition-all flex items-center justify-center gap-1.5 shadow-md cursor-pointer ${
-                          downloadSuccessId === `${plugin.id}-mac`
-                            ? 'bg-emerald-500 text-black shadow-emerald-500/30'
-                            : 'bg-amber-500 hover:bg-amber-400 text-black shadow-amber-500/20 hover:scale-[1.01]'
-                        }`}
-                        title={`Scarica versione macOS Universal AU & VST3 (${plugin.macZipFileSize})`}
-                      >
-                        {downloadSuccessId === `${plugin.id}-mac` ? (
-                          <>
-                            <Check className="w-3.5 h-3.5" />
-                            <span>Scaricato (Mac)</span>
-                          </>
-                        ) : (
-                          <>
-                            <Download className="w-3.5 h-3.5" />
-                            <span>🍏 Mac ({plugin.macZipFileSize})</span>
-                          </>
-                        )}
-                      </button>
-                    </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          {/* Windows Download Button */}
+                          <button
+                            type="button"
+                            onClick={() => handleDownload(plugin, 'win')}
+                            className={`py-3 px-3 rounded-xl text-[11px] font-mono uppercase tracking-wider font-black transition-all flex items-center justify-center gap-1.5 shadow-md cursor-pointer ${
+                              downloadSuccessId === `${plugin.id}-win`
+                                ? 'bg-emerald-500 text-black shadow-emerald-500/30'
+                                : 'bg-neutral-800 hover:bg-neutral-700 text-neutral-100 hover:text-white border border-neutral-700 hover:border-blue-500/40 hover:scale-[1.01]'
+                            }`}
+                            title={`Scarica versione Windows 64-bit (${plugin.zipFileSize})`}
+                          >
+                            {downloadSuccessId === `${plugin.id}-win` ? (
+                              <>
+                                <Check className="w-3.5 h-3.5" />
+                                <span>Scaricato (Win)</span>
+                              </>
+                            ) : (
+                              <>
+                                <Download className="w-3.5 h-3.5 text-blue-400" />
+                                <span>🪟 Win ({plugin.zipFileSize})</span>
+                              </>
+                            )}
+                          </button>
+
+                          {/* macOS Download Button */}
+                          <button
+                            type="button"
+                            onClick={() => handleDownload(plugin, 'mac')}
+                            className={`py-3 px-3 rounded-xl text-[11px] font-mono uppercase tracking-wider font-black transition-all flex items-center justify-center gap-1.5 shadow-md cursor-pointer ${
+                              downloadSuccessId === `${plugin.id}-mac`
+                                ? 'bg-emerald-500 text-black shadow-emerald-500/30'
+                                : 'bg-amber-500 hover:bg-amber-400 text-black shadow-amber-500/20 hover:scale-[1.01]'
+                            }`}
+                            title={`Scarica versione macOS Universal AU & VST3 (${plugin.macZipFileSize})`}
+                          >
+                            {downloadSuccessId === `${plugin.id}-mac` ? (
+                              <>
+                                <Check className="w-3.5 h-3.5" />
+                                <span>Scaricato (Mac)</span>
+                              </>
+                            ) : (
+                              <>
+                                <Download className="w-3.5 h-3.5" />
+                                <span>🍏 Mac ({plugin.macZipFileSize})</span>
+                              </>
+                            )}
+                          </button>
+                        </div>
+                      </>
+                    )}
                   </div>
                 </HardwareTiltCard>
               );

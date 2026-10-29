@@ -2,7 +2,7 @@ export interface PluginItem {
   id: string;
   name: string;
   badge: string;
-  status: 'DISPONIBILE' | 'BETA IN TESTING' | 'IN SVILUPPO' | 'PROTOTIPO DSP';
+  status: 'DISPONIBILE' | 'BETA IN TESTING' | 'IN SVILUPPO' | 'PROTOTIPO DSP' | 'IN ARRIVO';
   description: string;
   downloadCount: number;
   imageUrl?: string;

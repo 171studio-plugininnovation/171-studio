@@ -7014,6 +7014,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
                     className="w-full px-3 py-2 rounded-xl bg-neutral-950 border border-neutral-800 text-sm text-white outline-none focus:border-amber-400 font-mono text-xs"
                   >
                     <option value="DISPONIBILE">DISPONIBILE</option>
+                    <option value="IN ARRIVO">IN ARRIVO</option>
                     <option value="BETA IN TESTING">BETA IN TESTING</option>
                     <option value="IN SVILUPPO">IN SVILUPPO</option>
                     <option value="PROTOTIPO DSP">PROTOTIPO DSP</option>
