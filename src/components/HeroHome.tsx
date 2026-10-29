@@ -7,6 +7,7 @@ import { PageId } from '../types';
 import { useStudio } from '../context/StudioContext';
 import { StudioLogoLockup } from './StudioLogoLockup';
 import { getAssetUrl } from '../utils/assetPath';
+import { HardwareTiltCard } from './HardwareTiltCard';
 
 interface HeroHomeProps {
   onNavigate: (page: PageId) => void;
@@ -137,15 +138,13 @@ export const HeroHome: React.FC<HeroHomeProps> = ({ onNavigate }) => {
             const Icon = section.icon;
 
             return (
-              <div
+              <HardwareTiltCard
                 key={section.id}
-                onMouseEnter={() => setHoveredCard(section.id)}
-                onMouseLeave={() => setHoveredCard(null)}
-                className={`relative flex flex-col justify-between p-6 sm:p-8 rounded-3xl bg-neutral-950/80 border transition-all duration-300 backdrop-blur-xl group cursor-pointer ${
-                  section.isPrimary 
-                    ? 'border-amber-500/50 shadow-xl shadow-amber-500/10' 
-                    : 'border-neutral-800/80 hover:border-amber-500/40 shadow-lg'
-                } ${section.borderColor}`}
+                maxTilt={7}
+                glareColor={section.isPrimary ? 'gold' : 'amber'}
+                isSelected={section.isPrimary}
+                showCornerRivets={true}
+                className={`flex flex-col justify-between p-6 sm:p-8 rounded-3xl bg-neutral-950/85 backdrop-blur-xl group cursor-pointer overflow-hidden ${section.borderColor}`}
                 onClick={() => onNavigate(section.id)}
                 role="button"
                 tabIndex={0}
@@ -158,7 +157,7 @@ export const HeroHome: React.FC<HeroHomeProps> = ({ onNavigate }) => {
                 aria-label={`Accedi a ${section.title}`}
               >
                 <div 
-                  className={`absolute inset-0 rounded-3xl bg-gradient-to-b ${section.highlightColor} opacity-50 group-hover:opacity-100 transition-opacity pointer-events-none`} 
+                  className={`absolute inset-0 rounded-3xl bg-gradient-to-b ${section.highlightColor} opacity-40 group-hover:opacity-80 transition-opacity pointer-events-none`} 
                 />
 
                 <div className="relative z-10">
@@ -196,7 +195,7 @@ export const HeroHome: React.FC<HeroHomeProps> = ({ onNavigate }) => {
                     <ArrowRight className="w-4 h-4" />
                   </div>
                 </div>
-              </div>
+              </HardwareTiltCard>
             );
           })}
         </div>

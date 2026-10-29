@@ -10,6 +10,7 @@ import { useStudio } from '../context/StudioContext';
 import { PluginItem, STUDIO_PAYPAL_EMAIL, PluginDonationRecord } from '../types/cms';
 import { getPayPalDonationUrl, getPayPalMeUrl, triggerPluginZipFileDownload } from '../utils/emailService';
 import { getAssetUrl } from '../utils/assetPath';
+import { HardwareTiltCard } from './HardwareTiltCard';
 
 interface PluginsPageProps {
   onNavigate: (page: PageId) => void;
@@ -885,9 +886,12 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
               const hasTechnologies = plugin.technologies && plugin.technologies.length > 0;
 
               return (
-                <div 
+                <HardwareTiltCard 
                   key={plugin.id} 
-                  className="p-6 sm:p-7 rounded-3xl bg-neutral-900/70 border border-neutral-800/90 hover:border-amber-500/40 transition-all duration-300 flex flex-col justify-between group shadow-xl relative overflow-hidden"
+                  maxTilt={6}
+                  glareColor="gold"
+                  showCornerRivets={true}
+                  className="p-6 sm:p-7 rounded-3xl bg-neutral-900/80 backdrop-blur-md flex flex-col justify-between group overflow-hidden"
                 >
                   <div className="space-y-4">
                     {/* Card Header */}
@@ -1079,7 +1083,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
                       </button>
                     </div>
                   </div>
-                </div>
+                </HardwareTiltCard>
               );
             })}
           </div>

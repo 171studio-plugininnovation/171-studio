@@ -12,6 +12,7 @@ import { useStudio } from '../context/StudioContext';
 import { BookingRecord, STUDIO_PAYPAL_EMAIL, VoucherItem } from '../types/cms';
 import { BookingCalendar } from './BookingCalendar';
 import { isRangeOverlapping, getBookingInterval } from '../utils/calendarSlots';
+import { HardwareTiltCard } from './HardwareTiltCard';
 
 interface BookingSessionPageProps {
   onNavigate: (page: PageId) => void;
@@ -617,26 +618,41 @@ export const BookingSessionPage: React.FC<BookingSessionPageProps> = ({ onNaviga
                 {filteredServices.map((srv) => {
                   const isSelected = selectedService === srv.id;
                   return (
-                    <button
+                    <HardwareTiltCard
                       key={srv.id}
-                      type="button"
+                      maxTilt={5}
+                      glareColor="gold"
+                      showCornerRivets={true}
+                      isSelected={isSelected}
                       onClick={() => {
                         setSelectedService(srv.id);
                         if (srv.includesHours && hours < srv.includesHours) {
                           setHours(srv.includesHours);
                         }
                       }}
-                      className={`text-left p-4 rounded-2xl border transition-all text-xs flex flex-col justify-between cursor-pointer ${
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          setSelectedService(srv.id);
+                          if (srv.includesHours && hours < srv.includesHours) {
+                            setHours(srv.includesHours);
+                          }
+                        }
+                      }}
+                      className={`text-left p-4 rounded-2xl transition-all text-xs flex flex-col justify-between cursor-pointer overflow-hidden ${
                         isSelected
-                          ? 'bg-gradient-to-b from-amber-500/20 to-amber-600/5 border-amber-400 shadow-lg shadow-amber-500/10 ring-1 ring-amber-400'
-                          : 'bg-neutral-900/60 border-neutral-800/80 hover:border-neutral-700 hover:bg-neutral-900'
+                          ? 'bg-gradient-to-b from-amber-500/20 to-amber-600/5'
+                          : 'bg-neutral-900/70 hover:bg-neutral-900'
                       }`}
+                      aria-label={`Seleziona ${srv.title}`}
                     >
                       <div className="mb-2">
                         <div className="flex items-start justify-between gap-1 mb-1.5">
                           <span className="font-semibold text-white text-sm">{srv.title}</span>
                           {isSelected && (
-                            <span className="w-4 h-4 rounded-full bg-amber-400 text-black flex items-center justify-center shrink-0">
+                            <span className="w-4 h-4 rounded-full bg-amber-400 text-black flex items-center justify-center shrink-0 shadow-sm shadow-amber-400">
                               <Check className="w-3 h-3 stroke-[3]" />
                             </span>
                           )}
@@ -648,7 +664,7 @@ export const BookingSessionPage: React.FC<BookingSessionPageProps> = ({ onNaviga
                           {srv.description}
                         </p>
                       </div>
-                    </button>
+                    </HardwareTiltCard>
                   );
                 })}
               </div>
