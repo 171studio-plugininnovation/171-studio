@@ -2038,6 +2038,10 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
 
     const plugin = siteContent.plugins.find((p) => p.id === pluginId);
+    if (!plugin || plugin.status === 'IN ARRIVO') {
+      return false;
+    }
+
     if (plugin) {
       // Trigger actual .ZIP archive download in the browser
       triggerPluginZipFileDownload(plugin, platform);

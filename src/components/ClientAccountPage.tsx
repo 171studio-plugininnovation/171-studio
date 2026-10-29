@@ -3019,6 +3019,9 @@ Data: ${new Date(file.createdAt).toLocaleString('it-IT')}
                     { id: 'plugin-cleandrive', name: '171 CleanDrive' },
                     { id: 'plugin-cleanreso', name: '171 CleanReso' },
                     { id: 'plugin-perfectpre', name: '171 PerfectPre' },
+                    { id: 'plugin-masterglue', name: '171 MasterGlue' },
+                    { id: 'plugin-spaceluxe', name: '171 SpaceLuxe' },
+                    { id: 'plugin-punchcraft', name: '171 PunchCraft' },
                   ]).map((p) => (
                     <option key={p.id} value={p.name}>{p.name}</option>
                   ))}

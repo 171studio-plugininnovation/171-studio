@@ -7123,7 +7123,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
                         </span>
                       </span>
                       <span className="text-emerald-400 shrink-0">
-                        {plugin.zipFileSize || '14.2 MB'}
+                        {plugin.zipFileSize || (plugin.status === 'IN ARRIVO' ? 'In Arrivo' : 'N/D')}
                       </span>
                     </div>
 
@@ -7145,14 +7145,23 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
                         />
                       </label>
 
-                      <button
-                        type="button"
-                        onClick={() => triggerPluginZipFileDownload(plugin)}
-                        className="p-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-800 transition-colors cursor-pointer"
-                        title="Scarica e testa il pacchetto .ZIP"
-                      >
-                        <Download className="w-4 h-4" />
-                      </button>
+                      {plugin.downloadUrl || plugin.zipDataUrl ? (
+                        <button
+                          type="button"
+                          onClick={() => triggerPluginZipFileDownload(plugin)}
+                          className="p-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-800 transition-colors cursor-pointer"
+                          title="Scarica e testa il pacchetto .ZIP"
+                        >
+                          <Download className="w-4 h-4" />
+                        </button>
+                      ) : (
+                        <div
+                          className="p-2 rounded-xl bg-neutral-950 text-neutral-600 border border-neutral-800/60 cursor-not-allowed"
+                          title="Download non ancora disponibile (Plugin in arrivo)"
+                        >
+                          <Download className="w-4 h-4 opacity-40" />
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
