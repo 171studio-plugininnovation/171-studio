@@ -3022,6 +3022,7 @@ Data: ${new Date(file.createdAt).toLocaleString('it-IT')}
                     { id: 'plugin-masterglue', name: '171 MasterGlue' },
                     { id: 'plugin-spaceluxe', name: '171 SpaceLuxe' },
                     { id: 'plugin-punchcraft', name: '171 PunchCraft' },
+                    { id: 'plugin-perfectclip', name: '171 PerfectClip' },
                   ]).map((p) => (
                     <option key={p.id} value={p.name}>{p.name}</option>
                   ))}

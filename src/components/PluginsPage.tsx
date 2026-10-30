@@ -53,6 +53,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
     'plugin-masterglue': true,
     'plugin-spaceluxe': true,
     'plugin-punchcraft': true,
+    'plugin-perfectclip': true,
   });
 
   // Modal for previewing hardware GUI snapshot
@@ -863,7 +864,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
                 Scarica Gratis i Plugin di 171 Studio
               </h3>
               <p className="text-xs sm:text-sm text-neutral-400 font-light mt-1">
-                6 strumenti DSP boutique ufficiali con modellazione fisica, VST3 64-bit, Standalone EXE e tecnologia proprietaria per missaggio e mastering.
+                9 strumenti DSP boutique ufficiali attivi per il download gratuito + 1 nuovo plugin in arrivo (sblocco settimanale dal laboratorio DSP di 171 Studio).
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-2 self-start md:self-auto">
@@ -915,7 +916,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
                       {plugin.status === 'IN ARRIVO' ? (
                         <span className="shrink-0 text-[10px] font-mono font-bold px-3 py-1 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/30 flex items-center gap-1.5 shadow-sm">
                           <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-                          <span>IN ARRIVO</span>
+                          <span>IN ARRIVO • SBLOCCO 1 A SETTIMANA</span>
                         </span>
                       ) : (
                         <span className="shrink-0 text-[10px] font-mono font-bold px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center gap-1">
@@ -1012,7 +1013,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
                       <div className="p-3 rounded-xl bg-neutral-950/90 border border-amber-500/30 text-[11px] font-mono text-amber-300 flex items-center justify-between gap-2 shadow-inner">
                         <span className="flex items-center gap-2">
                           <Clock className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                          <span className="text-neutral-300">Stato: <span className="text-amber-400 font-semibold">Calibrazione DSP & Fine Tuning</span></span>
+                          <span className="text-neutral-300">Cadenza Release: <span className="text-amber-400 font-semibold">Sblocco 1 Plugin a Settimana</span></span>
                         </span>
                         <span className="text-amber-400 shrink-0 font-bold px-2 py-0.5 rounded bg-amber-500/15 border border-amber-500/30 text-[10px]">
                           PROSSIMA USCITA
@@ -1030,7 +1031,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
                           </span>
                         </div>
 
-                        {plugin.macZipFileName && (
+                        {plugin.macZipFileName ? (
                           <div className="p-2.5 rounded-xl bg-neutral-950 border border-neutral-800 text-[11px] font-mono text-neutral-300 flex items-center justify-between gap-2">
                             <span className="flex items-center gap-2 truncate" title={plugin.macZipFileName}>
                               <span className="text-amber-400 font-bold shrink-0 text-[10px] px-1.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/20">🍏 MAC</span>
@@ -1038,6 +1039,16 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
                             </span>
                             <span className="text-cyan-400 shrink-0 font-bold px-2 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/20 text-[10px]">
                               {plugin.macZipFileSize || 'Mac .ZIP'}
+                            </span>
+                          </div>
+                        ) : (
+                          <div className="p-2.5 rounded-xl bg-neutral-950/70 border border-neutral-800/80 text-[11px] font-mono text-neutral-400 flex items-center justify-between gap-2">
+                            <span className="flex items-center gap-2">
+                              <span className="text-amber-400/80 font-bold shrink-0 text-[10px] px-1.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/20">🍏 MAC</span>
+                              <span className="text-neutral-400">Release macOS Universal in fase di build</span>
+                            </span>
+                            <span className="text-amber-400/90 shrink-0 font-bold px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/20 text-[10px]">
+                              IN BUILD
                             </span>
                           </div>
                         )}
@@ -1059,7 +1070,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
 
                         <div className="w-full py-3.5 px-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 font-mono font-bold text-xs uppercase tracking-widest text-center flex items-center justify-center gap-2 shadow-inner select-none">
                           <Clock className="w-4 h-4 animate-pulse text-amber-400" />
-                          <span>IN ARRIVO</span>
+                          <span>IN ARRIVO • SBLOCCO 1 A SETTIMANA</span>
                         </div>
                       </div>
                     ) : (
@@ -1097,29 +1108,39 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
                             )}
                           </button>
 
-                          {/* macOS Download Button */}
-                          <button
-                            type="button"
-                            onClick={() => handleDownload(plugin, 'mac')}
-                            className={`py-3 px-3 rounded-xl text-[11px] font-mono uppercase tracking-wider font-black transition-all flex items-center justify-center gap-1.5 shadow-md cursor-pointer ${
-                              downloadSuccessId === `${plugin.id}-mac`
-                                ? 'bg-emerald-500 text-black shadow-emerald-500/30'
-                                : 'bg-amber-500 hover:bg-amber-400 text-black shadow-amber-500/20 hover:scale-[1.01]'
-                            }`}
-                            title={`Scarica versione macOS Universal AU & VST3 (${plugin.macZipFileSize})`}
-                          >
-                            {downloadSuccessId === `${plugin.id}-mac` ? (
-                              <>
-                                <Check className="w-3.5 h-3.5" />
-                                <span>Scaricato (Mac)</span>
-                              </>
-                            ) : (
-                              <>
-                                <Download className="w-3.5 h-3.5" />
-                                <span>🍏 Mac ({plugin.macZipFileSize})</span>
-                              </>
-                            )}
-                          </button>
+                          {/* macOS Download Button or in-build placeholder */}
+                          {plugin.macDownloadUrl ? (
+                            <button
+                              type="button"
+                              onClick={() => handleDownload(plugin, 'mac')}
+                              className={`py-3 px-3 rounded-xl text-[11px] font-mono uppercase tracking-wider font-black transition-all flex items-center justify-center gap-1.5 shadow-md cursor-pointer ${
+                                downloadSuccessId === `${plugin.id}-mac`
+                                  ? 'bg-emerald-500 text-black shadow-emerald-500/30'
+                                  : 'bg-amber-500 hover:bg-amber-400 text-black shadow-amber-500/20 hover:scale-[1.01]'
+                              }`}
+                              title={`Scarica versione macOS Universal AU & VST3 (${plugin.macZipFileSize})`}
+                            >
+                              {downloadSuccessId === `${plugin.id}-mac` ? (
+                                <>
+                                  <Check className="w-3.5 h-3.5" />
+                                  <span>Scaricato (Mac)</span>
+                                </>
+                              ) : (
+                                <>
+                                  <Download className="w-3.5 h-3.5" />
+                                  <span>🍏 Mac ({plugin.macZipFileSize})</span>
+                                </>
+                              )}
+                            </button>
+                          ) : (
+                            <div
+                              className="py-3 px-3 rounded-xl text-[11px] font-mono uppercase tracking-wider font-bold bg-neutral-950/80 text-neutral-400 border border-neutral-800 flex items-center justify-center gap-1.5 shadow-sm select-none"
+                              title="Versione macOS Universal in fase di build e firma notarile"
+                            >
+                              <Clock className="w-3.5 h-3.5 text-amber-400/80" />
+                              <span>🍏 Mac in Build</span>
+                            </div>
+                          )}
                         </div>
                       </>
                     )}
