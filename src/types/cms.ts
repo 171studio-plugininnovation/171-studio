@@ -3,6 +3,8 @@ export interface PluginItem {
   name: string;
   badge: string;
   status: 'DISPONIBILE' | 'BETA IN TESTING' | 'IN SVILUPPO' | 'PROTOTIPO DSP' | 'IN ARRIVO';
+  unlockDate?: string; // ISO 8601 string for weekly countdown unlock
+  unlockWeek?: number; // 1, 2, 3, 4 for release cadence
   description: string;
   downloadCount: number;
   imageUrl?: string;

@@ -382,39 +382,21 @@ const DEFAULT_PLUGINS: PluginItem[] = [
     ],
   },
   {
-    id: 'plugin-masterglue',
-    name: '171 MasterGlue',
-    badge: 'ANALOG MASTER BUS CONSOLE & STEREO IMAGER',
-    status: 'DISPONIBILE',
-    description: 'Compressore analogico da master bus a doppia topologia (VCA stile SSL 4000 G & Diode-Bridge stile Neve 33609), stadio trasformatore d\'uscita Marinair LO1166, processore d\'immagine stereo TrueSpace e doppi VU meter galvanometrici balistici IEC 60268-17.',
-    version: 'v1.0.0 Studio Master Edition',
-    downloadCount: 0,
-    downloadUrl: '/downloads/plugins/171_MasterGlue_v1.0.0_Win64.zip',
-    zipFileName: '171_MasterGlue_v1.0.0_Win64.zip',
-    zipFileSize: '8.37 MB',
-    imageUrl: '/assets/plugins/171MasterGlue_GUI.png',
-    formats: ['VST3 (64-bit)', 'AudioUnit v2 (macOS)', 'Standalone App'],
-    technologies: [
-      "Doppia Topologia Analogica: switch VCA Punch (SSL 4000 G con Auto-Release) e Diode-Bridge Warmth (Neve 33609 con progressive knee)",
-      "Stadio trasformatore Marinair LO1166 con saturazione ferromagnetica di nucleo, armoniche pari/dispari e DC Blocker a due stadi",
-      "Banca filtri sidechain avanzata con HPF continuo (60 / 90 / 150 Hz) e curva API-Style Thrust (+3 dB/oct tilt)",
-      "Processore d'immagine stereo TrueSpace a fase coerente con Mono-Maker sotto i 120 Hz e correlazione vettoriale",
-      "Compressione parallela istantanea con manopola Dry/Wet New York Style senza sfasamenti di fase",
-      "Doppi VU meter galvanometrici analogici IEC 60268-17 con aghi balistici a spada e illuminazione vintage al tungsteno",
-      "Headroom calibrata a +24 dBu analogico e True-Peak Limiter a 64-bit conforme a ITU-R BS.1770-4"
-    ],
-  },
-  {
     id: 'plugin-spaceluxe',
     name: '171 SpaceLuxe',
-    badge: 'BOUTIQUE HYBRID REVERB & DYNAMIC SPACE SCULPTOR',
-    status: 'DISPONIBILE',
+    badge: 'BOUTIQUE HYBRID REVERB & SPACE SCULPTOR',
+    status: 'IN ARRIVO',
+    unlockWeek: 1,
+    unlockDate: '2026-11-06T18:00:00+01:00',
     description: 'Riverbero ibrido algoritmico boutique con serbatoio lossless FDN-16 ad altissima densità, Ducking dinamico con Sidechain Esterno (Multi-Bus VST3), generatore Harmonic Shimmer valvolare a +1 ottava e filtro Mono-Maker State Variable.',
     version: 'v1.1.0 Boutique Spatial Edition',
     downloadCount: 0,
     downloadUrl: '/downloads/plugins/171_SpaceLuxe_v1.1.0_Win64.zip',
     zipFileName: '171_SpaceLuxe_v1.1.0_Win64.zip',
     zipFileSize: '8.52 MB',
+    macDownloadUrl: '/downloads/plugins/171_SpaceLuxe_v1.1.0_Mac.zip',
+    macZipFileName: '171_SpaceLuxe_v1.1.0_Mac.zip',
+    macZipFileSize: '0.73 MB',
     imageUrl: '/assets/plugins/171SpaceLuxe_GUI.png',
     formats: ['VST3 (64-bit multi-bus)', 'AudioUnit v2 (macOS)', 'Standalone App'],
     technologies: [
@@ -428,16 +410,49 @@ const DEFAULT_PLUGINS: PluginItem[] = [
     ],
   },
   {
+    id: 'plugin-masterglue',
+    name: '171 MasterGlue',
+    badge: 'ANALOG MASTER BUS CONSOLE & STEREO IMAGER',
+    status: 'IN ARRIVO',
+    unlockWeek: 2,
+    unlockDate: '2026-11-13T18:00:00+01:00',
+    description: 'Compressore analogico da master bus a doppia topologia (VCA stile SSL 4000 G & Diode-Bridge stile Neve 33609), stadio trasformatore d\'uscita Marinair LO1166, processore d\'immagine stereo TrueSpace e doppi VU meter galvanometrici balistici IEC 60268-17.',
+    version: 'v1.0.0 Studio Master Edition',
+    downloadCount: 0,
+    downloadUrl: '/downloads/plugins/171_MasterGlue_v1.0.0_Win64.zip',
+    zipFileName: '171_MasterGlue_v1.0.0_Win64.zip',
+    zipFileSize: '8.37 MB',
+    macDownloadUrl: '/downloads/plugins/171_MasterGlue_v1.0.0_Mac.zip',
+    macZipFileName: '171_MasterGlue_v1.0.0_Mac.zip',
+    macZipFileSize: '0.52 MB',
+    imageUrl: '/assets/plugins/171MasterGlue_GUI.png',
+    formats: ['VST3 (64-bit)', 'AudioUnit v2 (macOS)', 'Standalone App'],
+    technologies: [
+      "Doppia Topologia Analogica: switch VCA Punch (SSL 4000 G con Auto-Release) e Diode-Bridge Warmth (Neve 33609 con progressive knee)",
+      "Stadio trasformatore Marinair LO1166 con saturazione ferromagnetica di nucleo, armoniche pari/dispari e DC Blocker a due stadi",
+      "Banca filtri sidechain avanzata con HPF continuo (60 / 90 / 150 Hz) e curva API-Style Thrust (+3 dB/oct tilt)",
+      "Processore d'immagine stereo TrueSpace a fase coerente con Mono-Maker sotto i 120 Hz e correlazione vettoriale",
+      "Compressione parallela istantanea con manopola Dry/Wet New York Style senza sfasamenti di fase",
+      "Doppi VU meter galvanometrici analogici IEC 60268-17 con aghi balistici a spada e illuminazione vintage al tungsteno",
+      "Headroom calibrata a +24 dBu analogico e True-Peak Limiter a 64-bit conforme a ITU-R BS.1770-4"
+    ],
+  },
+  {
     id: 'plugin-punchcraft',
     name: '171 PunchCraft',
     badge: 'MULTI-BAND TRANSIENT SHAPER & SUB-HARMONIC SCULPTOR',
-    status: 'DISPONIBILE',
+    status: 'IN ARRIVO',
+    unlockWeek: 3,
+    unlockDate: '2026-11-20T18:00:00+01:00',
     description: 'Processore dinamico di inviluppo multi-banda a 3 bande indipendenti: Differential Envelope Technology per scolpire attacco e sustain senza soglia rigida, generatore sub-armonico sismico a divisione di frequenza e doppio oscilloscopio CRT telemetrico.',
     version: 'v1.0.0 Studio Impact Edition',
     downloadCount: 0,
     downloadUrl: '/downloads/plugins/171_PunchCraft_v1.0.0_Win64.zip',
     zipFileName: '171_PunchCraft_v1.0.0_Win64.zip',
     zipFileSize: '8.42 MB',
+    macDownloadUrl: '/downloads/plugins/171_PunchCraft_v1.0.0_Mac.zip',
+    macZipFileName: '171_PunchCraft_v1.0.0_Mac.zip',
+    macZipFileSize: '0.57 MB',
     imageUrl: '/assets/plugins/171PunchCraft_GUI.png',
     formats: ['VST3 (64-bit)', 'AudioUnit v2 (macOS)', 'Standalone App'],
     technologies: [
@@ -455,9 +470,17 @@ const DEFAULT_PLUGINS: PluginItem[] = [
     name: '171 PerfectClip',
     badge: 'MASTERING ADAA-2 CLIPPER & TRANSDETAIL MATRIX',
     status: 'IN ARRIVO',
+    unlockWeek: 4,
+    unlockDate: '2026-11-27T18:00:00+01:00',
     description: 'Clipper analogico/digitale di riferimento mastering con antiderivate continue ADAA-2 a doppio ordine, matrice brevettata 171 TransDetail™ per la conservazione assoluta dei micro-transienti e dell\'aria sotto spinta estrema (+12 dB), 4 topologie (Precision Hard Clip, Gold ADC 122, Tube Triode, Germanium) e CRT Oscilloscopio telemetrico vettoriale a 60 FPS.',
-    version: 'v1.0.0 Mastering Edition (In Arrivo - Sblocco Settimanale)',
+    version: 'v1.0.0 Mastering Edition',
     downloadCount: 0,
+    downloadUrl: '/downloads/plugins/171_PerfectClip_v1.0.0_Win64.zip',
+    zipFileName: '171_PerfectClip_v1.0.0_Win64.zip',
+    zipFileSize: '8.38 MB',
+    macDownloadUrl: '/downloads/plugins/171_PerfectClip_v1.0.0_Mac.zip',
+    macZipFileName: '171_PerfectClip_v1.0.0_Mac.zip',
+    macZipFileSize: '0.51 MB',
     imageUrl: '/assets/plugins/171PerfectClip_GUI.png',
     formats: ['VST3 (64-bit)', 'AudioUnit v2 (macOS)', 'Standalone App'],
     technologies: [
@@ -2068,7 +2091,13 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
 
     const plugin = siteContent.plugins.find((p) => p.id === pluginId);
-    if (!plugin || plugin.status === 'IN ARRIVO') {
+    if (!plugin) {
+      return false;
+    }
+    const isLocked = plugin.unlockDate
+      ? new Date(plugin.unlockDate).getTime() > Date.now()
+      : plugin.status === 'IN ARRIVO';
+    if (isLocked) {
       return false;
     }
 

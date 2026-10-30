@@ -244,8 +244,11 @@ export function interpolateEmailTemplate(
  * or downloads the exact .ZIP archive uploaded by the Master in the CMS.
  */
 export function triggerPluginZipFileDownload(plugin: PluginItem, platform: 'win' | 'mac' = 'win'): void {
-  // Prohibit downloads strictly for plugins currently marked IN ARRIVO
-  if (plugin.status === 'IN ARRIVO') {
+  // Prohibit downloads strictly for plugins currently locked or marked IN ARRIVO before unlockDate
+  const isLocked = plugin.unlockDate
+    ? new Date(plugin.unlockDate).getTime() > Date.now()
+    : plugin.status === 'IN ARRIVO';
+  if (isLocked) {
     return;
   }
 

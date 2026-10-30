@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   ArrowLeft, Cpu, Sparkles, Zap, Flame, Shield, Sliders, Download,
   Check, Mail, Star, Heart, MessageSquare, ExternalLink, FileArchive,
   CheckCircle2, Send, Lock, Bug, ChevronDown, ChevronUp, Eye, X, Layers,
-  Award, Gift, Clock
+  Award, Gift, Clock, Calendar
 } from 'lucide-react';
 import { PageId } from '../types';
 import { useStudio } from '../context/StudioContext';
@@ -32,6 +32,48 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
 
   const [downloadSuccessId, setDownloadSuccessId] = useState<string | null>(null);
   const [thankYouPlugin, setThankYouPlugin] = useState<PluginItem | null>(null);
+
+  // Live real-time clock ticking every 1000ms for weekly unlock countdowns
+  const [now, setNow] = useState<number>(Date.now());
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setNow(Date.now());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  // Compute countdown remaining time
+  const getCountdown = (targetDateStr?: string) => {
+    if (!targetDateStr) return null;
+    const target = new Date(targetDateStr).getTime();
+    const diff = target - now;
+    if (diff <= 0) {
+      return { isUnlocked: true, days: 0, hours: 0, minutes: 0, seconds: 0, totalDiff: 0 };
+    }
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+    return { isUnlocked: false, days, hours, minutes, seconds, totalDiff: diff };
+  };
+
+  // Format date in Italian format
+  const formatUnlockDate = (dateStr?: string) => {
+    if (!dateStr) return '';
+    try {
+      const d = new Date(dateStr);
+      return d.toLocaleDateString('it-IT', {
+        weekday: 'short',
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+    } catch {
+      return dateStr;
+    }
+  };
 
   // Early Supporter Lifetime Pass & Verified PayPal Donation State
   const [activeDonation, setActiveDonation] = useState<PluginDonationRecord | null>(null);
@@ -864,7 +906,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
                 Scarica Gratis i Plugin di 171 Studio
               </h3>
               <p className="text-xs sm:text-sm text-neutral-400 font-light mt-1">
-                9 strumenti DSP boutique ufficiali attivi per il download gratuito + 1 nuovo plugin in arrivo (sblocco settimanale dal laboratorio DSP di 171 Studio).
+                6 strumenti DSP boutique ufficiali attivi per il download immediato + 4 nuovi plugin nel Programma di Sblocco Settimanale con countdown live.
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-2 self-start md:self-auto">
@@ -881,6 +923,134 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
             </div>
           </div>
 
+          {/* Programma di Sblocco Settimanale Roadmap Banner */}
+          <div className="mb-8 p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-neutral-950 via-neutral-900 to-amber-950/30 border-2 border-amber-500/40 backdrop-blur-xl shadow-2xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
+              <div>
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-[10px] font-mono font-bold uppercase tracking-wider mb-2">
+                  <Clock className="w-3.5 h-3.5 text-amber-400 animate-spin" />
+                  <span>PROGRAMMA UFFICIALE DI SBLOCCO SETTIMANALE • 1 A SETTIMANA</span>
+                </div>
+                <h3 className="text-xl sm:text-2xl lg:text-3xl font-heading font-black text-white tracking-tight">
+                  Roadmap Sblocco Progressivo 171 Studio Innovatio
+                </h3>
+                <p className="text-xs sm:text-sm text-neutral-300 font-light mt-1 max-w-3xl leading-relaxed">
+                  I 4 nuovi plugin vengono sbloccati progressivamente <strong>uno alla settimana</strong> ogni venerdì alle ore 18:00 CET. Allo scadere del countdown in tempo reale si sbloccano automaticamente i download completi sia per <strong>Windows 64-bit</strong> che per <strong>macOS Universal (Apple Silicon & Intel)</strong>.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2 self-start lg:self-auto shrink-0 text-xs font-mono px-3.5 py-2 rounded-2xl bg-black/80 border border-amber-500/40 text-amber-300 shadow-inner">
+                <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
+                <span>Timer Sincronizzato Live a 1s</span>
+              </div>
+            </div>
+
+            {/* 4 Weekly Steps Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {[
+                {
+                  id: 'plugin-spaceluxe',
+                  week: 1,
+                  name: '171 SpaceLuxe',
+                  cat: 'Hybrid Reverb & Shimmer',
+                  dateStr: '2026-11-06T18:00:00+01:00',
+                  targetDateLabel: 'Ven 06 Nov 2026, 18:00',
+                  winSize: '8.52 MB',
+                  macSize: '0.73 MB',
+                },
+                {
+                  id: 'plugin-masterglue',
+                  week: 2,
+                  name: '171 MasterGlue',
+                  cat: 'Analog Bus VCA/Diode Console',
+                  dateStr: '2026-11-13T18:00:00+01:00',
+                  targetDateLabel: 'Ven 13 Nov 2026, 18:00',
+                  winSize: '8.37 MB',
+                  macSize: '0.52 MB',
+                },
+                {
+                  id: 'plugin-punchcraft',
+                  week: 3,
+                  name: '171 PunchCraft',
+                  cat: 'Multi-Band Transient Shaper',
+                  dateStr: '2026-11-20T18:00:00+01:00',
+                  targetDateLabel: 'Ven 20 Nov 2026, 18:00',
+                  winSize: '8.42 MB',
+                  macSize: '0.57 MB',
+                },
+                {
+                  id: 'plugin-perfectclip',
+                  week: 4,
+                  name: '171 PerfectClip',
+                  cat: 'Mastering ADAA-2 Clipper',
+                  dateStr: '2026-11-27T18:00:00+01:00',
+                  targetDateLabel: 'Ven 27 Nov 2026, 18:00',
+                  winSize: '8.38 MB',
+                  macSize: '0.51 MB',
+                },
+              ].map((step) => {
+                const cd = getCountdown(step.dateStr);
+                const isUnlocked = cd?.isUnlocked;
+                return (
+                  <div
+                    key={step.id}
+                    className={`p-4 rounded-2xl border transition-all duration-300 flex flex-col justify-between ${
+                      isUnlocked
+                        ? 'bg-emerald-950/30 border-emerald-500/50 text-emerald-200'
+                        : 'bg-black/70 border-amber-500/30 hover:border-amber-500/60 text-white'
+                    }`}
+                  >
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 uppercase">
+                          SETTIMANA {step.week}
+                        </span>
+                        <span className="text-[10px] font-mono text-neutral-400">
+                          {isUnlocked ? '🟢 SBLOCCATO' : '⏳ COUNTDOWN'}
+                        </span>
+                      </div>
+
+                      <h4 className="font-heading font-black text-base text-white">
+                        {step.name}
+                      </h4>
+                      <p className="text-[11px] text-neutral-400 font-mono mt-0.5 truncate">
+                        {step.cat}
+                      </p>
+                      <p className="text-[10px] text-amber-300/80 font-mono mt-1">
+                        📅 {step.targetDateLabel}
+                      </p>
+                      <div className="flex items-center gap-2 mt-2 text-[10px] font-mono text-neutral-400">
+                        <span>🪟 {step.winSize}</span>
+                        <span>•</span>
+                        <span>🍏 {step.macSize}</span>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 pt-3 border-t border-neutral-800">
+                      {isUnlocked ? (
+                        <div className="text-xs font-mono text-emerald-400 font-bold flex items-center gap-1.5">
+                          <Check className="w-3.5 h-3.5" />
+                          <span>Download Freeware Attivo</span>
+                        </div>
+                      ) : (
+                        <div className="text-center font-mono">
+                          <span className="text-[9.5px] uppercase tracking-wider text-neutral-400 block mb-1">
+                            Tempo al Rilascio:
+                          </span>
+                          <div className="px-2 py-1.5 rounded-lg bg-neutral-900 border border-amber-500/30 text-amber-400 font-black text-xs tabular-nums">
+                            {cd?.days}g {cd?.hours}h {cd?.minutes}m {cd?.seconds}s
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {siteContent.plugins.map((plugin) => {
               const isDownloaded = downloadSuccessId === plugin.id;
@@ -888,6 +1058,8 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
                 plugin.zipFileName || `${plugin.name.replace(/\s+/g, '_')}_Installer.zip`;
               const isTechExpanded = expandedTechPluginId[plugin.id] ?? true;
               const hasTechnologies = plugin.technologies && plugin.technologies.length > 0;
+              const countdown = plugin.unlockDate ? getCountdown(plugin.unlockDate) : null;
+              const isLocked = countdown ? !countdown.isUnlocked : (plugin.status === 'IN ARRIVO');
 
               return (
                 <HardwareTiltCard 
@@ -913,15 +1085,15 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
                           </span>
                         )}
                       </div>
-                      {plugin.status === 'IN ARRIVO' ? (
-                        <span className="shrink-0 text-[10px] font-mono font-bold px-3 py-1 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/30 flex items-center gap-1.5 shadow-sm">
+                      {isLocked ? (
+                        <span className="shrink-0 text-[10px] font-mono font-bold px-3 py-1 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/35 flex items-center gap-1.5 shadow-sm">
                           <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-                          <span>IN ARRIVO • SBLOCCO 1 A SETTIMANA</span>
+                          <span>SETTIMANA {plugin.unlockWeek || 1} • SBLOCCO IN ARRIVO</span>
                         </span>
                       ) : (
-                        <span className="shrink-0 text-[10px] font-mono font-bold px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center gap-1">
+                        <span className="shrink-0 text-[10px] font-mono font-bold px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center gap-1 shadow-sm">
                           <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                          {plugin.status}
+                          {countdown?.isUnlocked ? 'SBLOCCATO • DISPONIBILE' : plugin.status}
                         </span>
                       )}
                     </div>
@@ -1009,15 +1181,25 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
                     )}
 
                     {/* Package details banner */}
-                    {plugin.status === 'IN ARRIVO' ? (
-                      <div className="p-3 rounded-xl bg-neutral-950/90 border border-amber-500/30 text-[11px] font-mono text-amber-300 flex items-center justify-between gap-2 shadow-inner">
-                        <span className="flex items-center gap-2">
-                          <Clock className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                          <span className="text-neutral-300">Cadenza Release: <span className="text-amber-400 font-semibold">Sblocco 1 Plugin a Settimana</span></span>
-                        </span>
-                        <span className="text-amber-400 shrink-0 font-bold px-2 py-0.5 rounded bg-amber-500/15 border border-amber-500/30 text-[10px]">
-                          PROSSIMA USCITA
-                        </span>
+                    {isLocked ? (
+                      <div className="space-y-1.5">
+                        <div className="p-2.5 rounded-xl bg-neutral-950 border border-amber-500/30 text-[11px] font-mono text-neutral-300 flex items-center justify-between gap-2 shadow-inner">
+                          <span className="flex items-center gap-2 truncate">
+                            <span className="text-amber-400 font-bold shrink-0 text-[10px] px-1.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/30">📅 SBLOCCO</span>
+                            <span className="truncate text-amber-200">Settimana {plugin.unlockWeek}: {formatUnlockDate(plugin.unlockDate)}</span>
+                          </span>
+                          <span className="text-amber-400 shrink-0 font-bold px-2 py-0.5 rounded bg-amber-500/15 border border-amber-500/30 text-[10px]">
+                            COUNTDOWN
+                          </span>
+                        </div>
+                        <div className="p-2 rounded-xl bg-neutral-950/80 border border-neutral-800 text-[10.5px] font-mono text-neutral-400 flex items-center justify-between gap-2">
+                          <span className="flex items-center gap-2">
+                            <span className="text-blue-400 font-bold">🪟 Win ({plugin.zipFileSize || '8.5 MB'})</span>
+                            <span className="text-neutral-600">•</span>
+                            <span className="text-amber-400 font-bold">🍏 Mac ({plugin.macZipFileSize || '18 MB'})</span>
+                          </span>
+                          <span className="text-emerald-400/90 font-mono text-[10px]">Pacchetti Pronti</span>
+                        </div>
                       </div>
                     ) : (
                       <div className="space-y-1.5">
@@ -1056,21 +1238,51 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
                     )}
                   </div>
 
-                  {/* Card Actions Footer with Dual Windows & macOS Download Buttons */}
+                  {/* Card Actions Footer with Dual Windows & macOS Download Buttons or Live Countdown */}
                   <div className="pt-4 mt-4 border-t border-neutral-800/80 space-y-3">
-                    {plugin.status === 'IN ARRIVO' ? (
+                    {isLocked ? (
                       <div className="space-y-2.5">
-                        <div className="flex items-center justify-between text-[11px] font-mono text-neutral-500">
-                          <span className="flex items-center gap-1.5 text-amber-400/90 font-medium">
-                            <Clock className="w-3.5 h-3.5 text-amber-400" />
-                            <span>In arrivo sul catalogo 171 Studio</span>
+                        <div className="flex items-center justify-between text-[11px] font-mono">
+                          <span className="flex items-center gap-1.5 text-amber-400 font-bold">
+                            <Clock className="w-3.5 h-3.5 text-amber-400 animate-spin" />
+                            <span>COUNTDOWN SBLOCCO SETTIMANALE</span>
                           </span>
-                          <span className="text-amber-400/80 text-[10px] font-mono font-semibold">VST3 • AUv2 • Standalone</span>
+                          <span className="text-neutral-400 text-[10px]">
+                            {formatUnlockDate(plugin.unlockDate)}
+                          </span>
                         </div>
 
-                        <div className="w-full py-3.5 px-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 font-mono font-bold text-xs uppercase tracking-widest text-center flex items-center justify-center gap-2 shadow-inner select-none">
-                          <Clock className="w-4 h-4 animate-pulse text-amber-400" />
-                          <span>IN ARRIVO • SBLOCCO 1 A SETTIMANA</span>
+                        {/* 4 Segmented Digital LED Boxes */}
+                        <div className="grid grid-cols-4 gap-1.5 text-center font-mono">
+                          <div className="p-2 rounded-xl bg-black/90 border border-amber-500/40 shadow-inner">
+                            <span className="block text-lg sm:text-xl font-black text-amber-400 tabular-nums">
+                              {String(countdown?.days ?? 0).padStart(2, '0')}
+                            </span>
+                            <span className="text-[9px] uppercase tracking-wider text-neutral-400">GIORNI</span>
+                          </div>
+                          <div className="p-2 rounded-xl bg-black/90 border border-amber-500/40 shadow-inner">
+                            <span className="block text-lg sm:text-xl font-black text-amber-400 tabular-nums">
+                              {String(countdown?.hours ?? 0).padStart(2, '0')}
+                            </span>
+                            <span className="text-[9px] uppercase tracking-wider text-neutral-400">ORE</span>
+                          </div>
+                          <div className="p-2 rounded-xl bg-black/90 border border-amber-500/40 shadow-inner">
+                            <span className="block text-lg sm:text-xl font-black text-amber-400 tabular-nums">
+                              {String(countdown?.minutes ?? 0).padStart(2, '0')}
+                            </span>
+                            <span className="text-[9px] uppercase tracking-wider text-neutral-400">MIN</span>
+                          </div>
+                          <div className="p-2 rounded-xl bg-black/90 border border-amber-500/40 shadow-inner">
+                            <span className="block text-lg sm:text-xl font-black text-amber-300 tabular-nums animate-pulse">
+                              {String(countdown?.seconds ?? 0).padStart(2, '0')}
+                            </span>
+                            <span className="text-[9px] uppercase tracking-wider text-neutral-400">SEC</span>
+                          </div>
+                        </div>
+
+                        <div className="py-2.5 px-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 font-mono text-[10.5px] text-center flex items-center justify-center gap-1.5 shadow-inner select-none">
+                          <Lock className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                          <span>Sblocco automatico download al termine del timer</span>
                         </div>
                       </div>
                     ) : (
