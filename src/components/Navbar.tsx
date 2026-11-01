@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Menu, X, Shield, Radio, User, LogOut, LogIn, ChevronDown, ChevronsDown, ChevronUp, Sparkles } from 'lucide-react';
+import { Menu, X, Shield, Radio, User, LogOut, LogIn, ChevronDown, ChevronsDown, ChevronUp, Sparkles, Eye } from 'lucide-react';
 import { PageId } from '../types';
 import { AudioVisualizer } from './AudioVisualizer';
 import { useStudio } from '../context/StudioContext';
@@ -16,7 +16,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onNavigate,
   onOpenMasterDashboard 
 }) => {
-  const { currentUser, isMaster, logout, openAuthModal, siteContent } = useStudio();
+  const { currentUser, isMaster, logout, openAuthModal, siteContent, visitorCount } = useStudio();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isIslandOpen, setIsIslandOpen] = useState(false);
   const islandTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -101,6 +101,16 @@ export const Navbar: React.FC<NavbarProps> = ({
             <span className="hidden md:inline text-neutral-400">
               {siteContent.contactAddress}
             </span>
+
+            {/* Real-time Live Visitor Counter Pill */}
+            <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-neutral-900/90 border border-neutral-800 text-neutral-300 shadow-inner ml-1 sm:ml-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <Eye className="w-3 h-3 text-amber-400" />
+              <span className="text-[10px] uppercase text-neutral-400 hidden sm:inline">Visite Live:</span>
+              <span className="text-[10.5px] font-bold font-mono text-white tracking-wide">
+                {visitorCount.toLocaleString('it-IT')}
+              </span>
+            </div>
           </div>
 
           <div className="flex items-center gap-4">

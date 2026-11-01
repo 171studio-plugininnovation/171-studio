@@ -587,7 +587,13 @@ export const isIgnoredUserEmail = (email?: string | null): boolean => {
     clean.includes('visitatore') ||
     clean.includes('anonymous') ||
     clean.includes('undefined') ||
-    clean.includes('null')
+    clean.includes('null') ||
+    clean.includes('seigay.com') ||
+    clean.includes('christomerda') ||
+    clean.includes('tempmail') ||
+    clean.includes('throwaway') ||
+    clean.includes('guerrillamail') ||
+    clean.includes('mailinator')
   );
 };
 

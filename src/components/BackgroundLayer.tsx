@@ -1,5 +1,6 @@
 import React from 'react';
 import { getAssetUrl } from '../utils/assetPath';
+import { InteractiveDelaunayMesh } from './InteractiveDelaunayMesh';
 
 interface BackgroundLayerProps {
   currentPage: string;
@@ -21,6 +22,16 @@ export const BackgroundLayer: React.FC<BackgroundLayerProps> = ({ currentPage })
             ? 'brightness(0.85) contrast(1.05)' 
             : 'brightness(0.6) contrast(1.1) blur(1px)',
         }}
+      />
+
+      {/* Dynamic Triangulation Geometric Mesh with Audio-Reactive Lattice */}
+      <InteractiveDelaunayMesh
+        mode="background"
+        density="normal"
+        faceOpacity={0.035}
+        wireframeOpacity={0.22}
+        showNodes={true}
+        className="absolute inset-0 z-0"
       />
 
       {/* Atmospheric Overlays for studio aesthetic & contrast */}
