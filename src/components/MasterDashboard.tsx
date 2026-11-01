@@ -762,14 +762,14 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
       </div>
 
       {/* KPI Stats Overview */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-4 mb-8">
+      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4 mb-8">
         <div className="p-4 rounded-2xl bg-neutral-900/60 border border-neutral-800">
           <span className="text-xs font-mono text-neutral-400 uppercase block">Prenotazioni Totali</span>
           <span className="text-3xl font-heading font-black text-amber-400 mt-1 block">
             {bookings.length}
           </span>
           <span className="text-[10px] text-emerald-400 font-mono">
-            {bookings.filter(b => b.status === 'in_attesa').length} in attesa di approvazione
+            {bookings.filter(b => b.status === 'in_attesa').length} in attesa
           </span>
         </div>
 
@@ -783,7 +783,21 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
             {registeredUsers.length}
           </span>
           <span className="text-[10px] text-blue-300/70 font-mono">
-            Utenti attivi • Clicca per vedere la lista
+            Utenti autentici
+          </span>
+        </div>
+
+        <div 
+          onClick={() => setActiveTab('plugins')}
+          className="p-4 rounded-2xl bg-neutral-900/60 border border-emerald-500/30 bg-emerald-500/5 cursor-pointer hover:border-emerald-400 hover:bg-emerald-500/10 transition-all group"
+          title="Clicca per aprire la gestione dei plugin e visualizzare i download"
+        >
+          <span className="text-xs font-mono text-emerald-300 uppercase block group-hover:text-emerald-200">Download Plugin</span>
+          <span className="text-3xl font-heading font-black text-emerald-400 mt-1 block group-hover:scale-105 transition-transform">
+            {siteContent.plugins.reduce((sum, p) => sum + (p.downloadCount || 0), 0)}
+          </span>
+          <span className="text-[10px] text-emerald-300/70 font-mono">
+            .ZIP scaricati
           </span>
         </div>
 
@@ -793,7 +807,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
             {visitorCount.toLocaleString('it-IT')}
           </span>
           <span className="text-[10px] text-purple-300/70 font-mono">
-            Traffico globale 171studio.it
+            Traffico globale
           </span>
         </div>
 
@@ -810,20 +824,28 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
           <span className="text-xs font-mono text-white mt-1 block truncate font-bold" title={siteContent.paypalEmail || STUDIO_PAYPAL_EMAIL}>
             {siteContent.paypalEmail || STUDIO_PAYPAL_EMAIL}
           </span>
-          <span className="text-[10px] text-amber-400 font-mono">Pronto per pagamenti</span>
+          <span className="text-[10px] text-amber-400 font-mono">Pronto pagamenti</span>
         </div>
 
-        <div className="p-4 rounded-2xl bg-neutral-900/60 border border-neutral-800">
-          <span className="text-xs font-mono text-neutral-400 uppercase block">Plugin Catalogo</span>
-          <span className="text-3xl font-heading font-black text-white mt-1 block">
+        <div 
+          onClick={() => setActiveTab('plugins')}
+          className="p-4 rounded-2xl bg-neutral-900/60 border border-neutral-800 cursor-pointer hover:border-amber-400 transition-all group"
+          title="Suite Innovatio: 6 disponibili + 4 con sblocco settimanale"
+        >
+          <span className="text-xs font-mono text-neutral-400 uppercase block group-hover:text-amber-300">Plugin Catalogo</span>
+          <span className="text-3xl font-heading font-black text-white mt-1 block group-hover:scale-105 transition-transform">
             {siteContent.plugins.length}
           </span>
-          <span className="text-[10px] text-amber-400 font-mono">Suite Innovatio</span>
+          <span className="text-[10px] text-amber-400 font-mono">Suite Innovatio (10)</span>
         </div>
 
-        <div className="p-4 rounded-2xl bg-neutral-900/60 border border-neutral-800 col-span-2 sm:col-span-1">
-          <span className="text-xs font-mono text-neutral-400 uppercase block">Audit Log Live</span>
-          <span className="text-3xl font-heading font-black text-white mt-1 block">
+        <div 
+          onClick={() => setActiveTab('audit')}
+          className="p-4 rounded-2xl bg-neutral-900/60 border border-neutral-800 cursor-pointer hover:border-emerald-400 transition-all group"
+          title="Clicca per visualizzare l'Audit Log completo delle attività"
+        >
+          <span className="text-xs font-mono text-neutral-400 uppercase block group-hover:text-emerald-300">Audit Log Live</span>
+          <span className="text-3xl font-heading font-black text-white mt-1 block group-hover:scale-105 transition-transform">
             {activities.length}
           </span>
           <span className="text-[10px] text-emerald-400 font-mono">Attività Tracciate</span>
@@ -6938,7 +6960,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
                 <span>Suite 171 Plugin Innovatio & Caricamento Cartelle .ZIP</span>
               </h3>
               <p className="text-xs text-neutral-400 font-mono mt-1">
-                Carica le cartelle <strong className="text-amber-300">.ZIP</strong> dei plugin per il download gratuito dei clienti. Dopo ogni download si aprirà automaticamente la pagina di ringraziamento, feedback e donazione libera PayPal.
+                Catalogo Suite Innovatio: 10 Plugin Ufficiali • <strong className="text-emerald-400 font-bold">{siteContent.plugins.reduce((sum, p) => sum + (p.downloadCount || 0), 0)} Download Totali</strong> verificati. Dopo ogni download si apre la pagina di ringraziamento e feedback donazione.
               </p>
             </div>
 

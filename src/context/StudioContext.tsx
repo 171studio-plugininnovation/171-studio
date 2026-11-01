@@ -877,17 +877,12 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         const effectiveYoutube = (!parsed.youtubePlaylistId || parsed.youtubePlaylistId === 'PLMC9KNkIncKtPzgY-5rmhvj7fax8fdxoj')
           ? 'PLXK7O-W_io4CCKTgd_kyDOh_jgFYmMyfj'
           : parsed.youtubePlaylistId;
-        const officialIds = new Set(DEFAULT_PLUGINS.map((p) => p.id));
-        const hasLegacyPlugins =
-          !parsed.plugins ||
-          parsed.plugins.some((p: any) => p.id === 'plugin-1' || p.id === 'plugin-2' || !officialIds.has(p.id)) ||
-          parsed.plugins.length !== DEFAULT_PLUGINS.length;
-        const effectivePlugins = (hasLegacyPlugins || !parsed.plugins?.length)
-          ? DEFAULT_PLUGINS
-          : DEFAULT_PLUGINS.map((dp) => {
-              const userCopy = parsed.plugins.find((p: any) => p.id === dp.id);
-              return userCopy ? { ...dp, downloadCount: userCopy.downloadCount || 0 } : dp;
-            });
+        const effectivePlugins = DEFAULT_PLUGINS.map((dp) => {
+          const userCopy = parsed.plugins?.find((p: any) => p.id === dp.id);
+          return userCopy
+            ? { ...dp, ...userCopy, downloadCount: Math.max(userCopy.downloadCount || 0, dp.downloadCount || 0) }
+            : dp;
+        });
         return {
           ...DEFAULT_CONTENT,
           ...parsed,
@@ -1137,17 +1132,12 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         if (snapshot.exists()) {
           const data = snapshot.data() as Partial<SiteContent>;
           setSiteContent((prev) => {
-            const officialIds = new Set(DEFAULT_PLUGINS.map((p) => p.id));
-            const hasLegacyPlugins =
-              !data.plugins ||
-              data.plugins.some((p: any) => p.id === 'plugin-1' || p.id === 'plugin-2' || !officialIds.has(p.id)) ||
-              data.plugins.length !== DEFAULT_PLUGINS.length;
-            const officialPlugins = (hasLegacyPlugins || !data.plugins?.length)
-              ? DEFAULT_PLUGINS
-              : DEFAULT_PLUGINS.map((dp) => {
-                  const userCopy = data.plugins!.find((p: any) => p.id === dp.id);
-                  return userCopy ? { ...dp, downloadCount: userCopy.downloadCount || 0 } : dp;
-                });
+            const officialPlugins = DEFAULT_PLUGINS.map((dp) => {
+              const userCopy = data.plugins?.find((p: any) => p.id === dp.id);
+              return userCopy
+                ? { ...dp, ...userCopy, downloadCount: Math.max(userCopy.downloadCount || 0, dp.downloadCount || 0) }
+                : dp;
+            });
             return {
               ...prev,
               ...data,
@@ -1229,6 +1219,7 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     let unsubAlbumOrders: (() => void) | undefined;
     let unsubDonations: (() => void) | undefined;
     let unsubUsers: (() => void) | undefined;
+    let unsubActivities: (() => void) | undefined;
 
     try {
       unsubBookings = onSnapshot(collection(db, 'bookings'), (snap) => {
@@ -1293,13 +1284,49 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       }, () => {});
     } catch {}
 
+    try {
+      unsubActivities = onSnapshot(collection(db, 'activities'), (snap) => {
+        if (!snap.empty) {
+          const remote: UserActivity[] = snap.docs.map((d) => d.data() as UserActivity);
+          setActivities((prev) => {
+            const remoteIds = new Set(remote.map((a) => a.id));
+            const localOnly = prev.filter((a) => !remoteIds.has(a.id));
+            const combined = [...remote, ...localOnly];
+            return combined.sort((a, b) => (b.timestamp || '').localeCompare(a.timestamp || ''));
+          });
+        }
+      }, () => {});
+    } catch {}
+
     return () => {
       if (unsubBookings) unsubBookings();
       if (unsubAlbumOrders) unsubAlbumOrders();
       if (unsubDonations) unsubDonations();
       if (unsubUsers) unsubUsers();
+      if (unsubActivities) unsubActivities();
     };
   }, []);
+
+  // Reconcile and dynamically preserve plugin downloads with activity logs
+  useEffect(() => {
+    if (activities.length > 0) {
+      setSiteContent((prev) => {
+        let changed = false;
+        const updatedPlugins = prev.plugins.map((plugin) => {
+          const fromActivities = activities.filter(
+            (a) => a.action === 'PLUGIN_DOWNLOADED' && a.details && a.details.includes(plugin.name)
+          ).length;
+          const reconciledCount = Math.max(plugin.downloadCount || 0, fromActivities);
+          if (reconciledCount !== (plugin.downloadCount || 0)) {
+            changed = true;
+            return { ...plugin, downloadCount: reconciledCount };
+          }
+          return plugin;
+        });
+        return changed ? { ...prev, plugins: updatedPlugins } : prev;
+      });
+    }
+  }, [activities]);
 
   const logActivity = (action: UserActivity['action'], details: string) => {
     const newAct: UserActivity = {
