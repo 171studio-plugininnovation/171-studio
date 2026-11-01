@@ -8,7 +8,7 @@ import { PageId } from '../types';
 import { 
   SERVICE_OPTIONS, ServiceType, getDynamicServiceOptions, calculateEstimatedPrice, formatDurationLabel, calculateEndTime 
 } from '../utils/pricing';
-import { useStudio } from '../context/StudioContext';
+import { useStudio, isDisposableOrSpamEmail } from '../context/StudioContext';
 import { BookingRecord, STUDIO_PAYPAL_EMAIL, VoucherItem } from '../types/cms';
 import { BookingCalendar } from './BookingCalendar';
 import { isRangeOverlapping, getBookingInterval } from '../utils/calendarSlots';
@@ -193,6 +193,11 @@ export const BookingSessionPage: React.FC<BookingSessionPageProps> = ({ onNaviga
 
     if (!nome.trim() || !email.trim() || !telefono.trim() || !dataPreferita || !oraPreferita) {
       setFormError('Compila tutti i campi obbligatori contrassegnati con * (Nome, Email, Telefono) e seleziona data e orario.');
+      return;
+    }
+
+    if (isDisposableOrSpamEmail(email.trim())) {
+      setFormError('L\'indirizzo email inserito appartiene a un dominio temporaneo o non è valido. Per favore inserisci una tua email reale (es. Gmail, Outlook, iCloud) per garantire la ricezione della ricevuta e della conferma di sessione.');
       return;
     }
 

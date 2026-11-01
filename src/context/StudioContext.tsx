@@ -14,7 +14,7 @@ import {
   getCachedAccessToken, setCachedAccessToken
 } from '../lib/firebase';
 import { GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
-import { doc, setDoc, onSnapshot, deleteDoc, collection, query, orderBy, getDocs, increment } from 'firebase/firestore';
+import { doc, setDoc, onSnapshot, deleteDoc, collection, query, orderBy, getDocs, getDoc, increment } from 'firebase/firestore';
 import { 
   generateOrderCode, getPayPalPaymentUrl, triggerPluginZipFileDownload,
   dispatchBookingReceivedEmail, dispatchBookingConfirmedEmail, resendEmailViaGmail,
@@ -574,6 +574,54 @@ export const isOfficialMasterEmail = (email?: string | null): boolean => {
 };
 
 /**
+ * Detects disposable, burner, or offensive email domains and troll addresses.
+ */
+export const isDisposableOrSpamEmail = (email?: string | null): boolean => {
+  if (!email || !email.includes('@')) return false;
+  const clean = email.toLowerCase().trim();
+  const parts = clean.split('@');
+  if (parts.length < 2) return false;
+  const domain = parts[1];
+
+  const disposableDomains = [
+    'seigay.com',
+    'tempmail.com',
+    'temp-mail.org',
+    'guerrillamail.com',
+    'guerrillamail.net',
+    'guerrillamail.org',
+    'mailinator.com',
+    'yopmail.com',
+    'yopmail.fr',
+    '10minutemail.com',
+    'throwawaymail.com',
+    'dispostable.com',
+    'trashmail.com',
+    'sharklasers.com',
+    'getairmail.com',
+    'mohmal.com',
+    'fakemailgenerator.com',
+  ];
+
+  if (disposableDomains.some((d) => domain === d || domain.endsWith('.' + d))) {
+    return true;
+  }
+
+  // Offensive or troll string heuristics
+  if (
+    clean.includes('christomerda') ||
+    clean.includes('seigay') ||
+    clean.includes('porco') ||
+    clean.includes('troia') ||
+    clean.includes('vaffanculo')
+  ) {
+    return true;
+  }
+
+  return false;
+};
+
+/**
  * Checks if an email is not an actual registered customer/artist account.
  * Filters out studio master emails, anonymous visitor placeholders, and invalid entries.
  */
@@ -588,12 +636,7 @@ export const isIgnoredUserEmail = (email?: string | null): boolean => {
     clean.includes('anonymous') ||
     clean.includes('undefined') ||
     clean.includes('null') ||
-    clean.includes('seigay.com') ||
-    clean.includes('christomerda') ||
-    clean.includes('tempmail') ||
-    clean.includes('throwaway') ||
-    clean.includes('guerrillamail') ||
-    clean.includes('mailinator')
+    isDisposableOrSpamEmail(clean)
   );
 };
 
@@ -1040,17 +1083,41 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (fbUser: FirebaseUser | null) => {
       if (fbUser) {
+        const cleanEmail = (fbUser.email || '').toLowerCase().trim();
         const isMasterUser = 
-          fbUser.email?.toLowerCase().trim() === MASTER_EMAIL.toLowerCase().trim() ||
-          fbUser.email?.toLowerCase().trim() === '171studio@gmail.com';
-        const user: UserAccount = {
+          cleanEmail === MASTER_EMAIL.toLowerCase().trim() ||
+          cleanEmail === '171studio@gmail.com' ||
+          cleanEmail === 'vkrealhakiesake@gmail.com';
+        
+        const savedMap = getSavedRegisteredUsers();
+        const cachedUser = cleanEmail ? savedMap[cleanEmail] : undefined;
+
+        const hydratedUser: UserAccount = {
           id: fbUser.uid,
           email: fbUser.email || '',
-          name: fbUser.displayName || (isMasterUser ? '171 Master Studio' : (fbUser.email?.split('@')[0] || 'Utente')),
-          role: isMasterUser ? 'master' : 'client',
-          createdAt: new Date().toISOString(),
+          name: fbUser.displayName || cachedUser?.name || (isMasterUser ? '171 Master Studio' : (cleanEmail.split('@')[0] || 'Utente')),
+          role: isMasterUser ? 'master' : (cachedUser?.role || 'client'),
+          createdAt: cachedUser?.createdAt || new Date().toISOString(),
+          welcomeDiscountCode: cachedUser?.welcomeDiscountCode,
+          welcomeDiscountUsed: cachedUser?.welcomeDiscountUsed ?? false,
+          isEarlySupporter: cachedUser?.isEarlySupporter ?? false,
+          earlySupporterUnlockedAt: cachedUser?.earlySupporterUnlockedAt || undefined,
+          earlySupporterTxId: cachedUser?.earlySupporterTxId || undefined,
+          earlySupporterAmount: cachedUser?.earlySupporterAmount ?? undefined,
+          isVerifiedBugHunter: cachedUser?.isVerifiedBugHunter ?? false,
+          verifiedBugHunterUnlockedAt: cachedUser?.verifiedBugHunterUnlockedAt || undefined,
+          lifetimeCommercialPluginsFree: cachedUser?.lifetimeCommercialPluginsFree ?? false,
         };
-        setCurrentUser(user);
+        setCurrentUser(hydratedUser);
+
+        // Fetch latest Firestore profile to ensure immediate synchronization of vouchers and badges
+        getDoc(doc(db, 'users', fbUser.uid)).then((snap) => {
+          if (snap.exists()) {
+            const data = snap.data() as UserAccount;
+            setCurrentUser((prev) => prev ? { ...prev, ...data } : data);
+            saveRegisteredUserToMap(data);
+          }
+        }).catch(() => {});
       } else {
         setCachedAccessToken(null);
         setIsGoogleCalendarConnected(false);
@@ -2506,24 +2573,29 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     if (!activeUser) {
       const email = (bookingData.userEmail || '').trim().toLowerCase();
       const name = (bookingData.userName || '').trim() || (email ? email.split('@')[0] : 'Artista 171 Studio');
-      if (email) {
-        const isMasterUser = isOfficialMasterEmail(email);
-        activeUser = {
-          id: `usr-${Date.now()}`,
-          email,
-          name,
-          role: isMasterUser ? 'master' : 'client',
-          createdAt: new Date().toISOString(),
-        };
-        setCurrentUser(activeUser);
-        logActivity('REGISTER', `Nuovo account artista registrato via booking: ${name} (${email})`);
-        
+      if (!email) {
+        openAuthModal('È richiesto un indirizzo email per confermare la prenotazione.');
+        throw new Error('Inserisci un\'email valida per completare la prenotazione');
+      }
+      if (isDisposableOrSpamEmail(email)) {
+        throw new Error('L\'indirizzo email inserito appartiene a un dominio temporaneo o non è valido. Per favore inserisci un\'email reale per ricevere la conferma della prenotazione.');
+      }
+      
+      const isMasterUser = isOfficialMasterEmail(email);
+      activeUser = {
+        id: `usr-${Date.now()}`,
+        email,
+        name,
+        role: isMasterUser ? 'master' : 'client',
+        createdAt: new Date().toISOString(),
+      };
+      setCurrentUser(activeUser);
+      logActivity('REGISTER', `Nuovo account artista registrato via booking: ${name} (${email})`);
+      
+      if (!isIgnoredUserEmail(email)) {
         try {
           setDoc(doc(db, 'users', activeUser.id), activeUser).catch(() => {});
         } catch {}
-      } else {
-        openAuthModal('È richiesto un indirizzo email per confermare la prenotazione.');
-        throw new Error('Inserisci un\'email valida per completare la prenotazione');
       }
     }
 

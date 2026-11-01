@@ -10,6 +10,7 @@ import { AlbumOrderRecord } from '../types/cms';
 import { useStudio } from '../context/StudioContext';
 import { ALBUM_MP3_DOWNLOAD_URL, ALBUM_MASTER_DOWNLOAD_URL } from '../utils/albumDownloads';
 import { getAssetUrl } from '../utils/assetPath';
+import { HardwareTiltCard } from './HardwareTiltCard';
 
 interface TheGodCypherPageProps {
   onNavigate: (page: PageId) => void;
@@ -358,10 +359,10 @@ export const TheGodCypherPage: React.FC<TheGodCypherPageProps> = ({ onNavigate }
                 <button
                   type="button"
                   onClick={() => setActiveCover('front')}
-                  className={`px-4 py-2.5 rounded-xl text-xs font-['Cinzel_Decorative',serif] uppercase tracking-wider transition-all cursor-pointer ${
+                  className={`min-h-[44px] px-4 py-2.5 rounded-xl text-xs font-['Cinzel_Decorative',serif] uppercase tracking-wider transition-all flex items-center justify-center cursor-pointer ${
                     activeCover === 'front'
                       ? 'bg-red-700 text-white font-bold shadow-lg shadow-red-900/50 border border-red-500'
-                      : 'bg-black/80 text-[#fdf6e2]/70 hover:text-white border border-neutral-800'
+                      : 'bg-black/80 text-[#fdf6e2]/80 hover:text-white border border-neutral-800'
                   }`}
                 >
                   Fronte
@@ -369,10 +370,10 @@ export const TheGodCypherPage: React.FC<TheGodCypherPageProps> = ({ onNavigate }
                 <button
                   type="button"
                   onClick={() => setActiveCover('back')}
-                  className={`px-4 py-2.5 rounded-xl text-xs font-['Cinzel_Decorative',serif] uppercase tracking-wider transition-all cursor-pointer ${
+                  className={`min-h-[44px] px-4 py-2.5 rounded-xl text-xs font-['Cinzel_Decorative',serif] uppercase tracking-wider transition-all flex items-center justify-center cursor-pointer ${
                     activeCover === 'back'
                       ? 'bg-red-700 text-white font-bold shadow-lg shadow-red-900/50 border border-red-500'
-                      : 'bg-black/80 text-[#fdf6e2]/70 hover:text-white border border-neutral-800'
+                      : 'bg-black/80 text-[#fdf6e2]/80 hover:text-white border border-neutral-800'
                   }`}
                 >
                   Retro & Tracklist
@@ -380,10 +381,10 @@ export const TheGodCypherPage: React.FC<TheGodCypherPageProps> = ({ onNavigate }
                 <button
                   type="button"
                   onClick={() => setActiveCover('locandina')}
-                  className={`px-4 py-2.5 rounded-xl text-xs font-['Cinzel_Decorative',serif] uppercase tracking-wider transition-all cursor-pointer ${
+                  className={`min-h-[44px] px-4 py-2.5 rounded-xl text-xs font-['Cinzel_Decorative',serif] uppercase tracking-wider transition-all flex items-center justify-center cursor-pointer ${
                     activeCover === 'locandina'
                       ? 'bg-red-700 text-white font-bold shadow-lg shadow-red-900/50 border border-red-500'
-                      : 'bg-black/80 text-[#fdf6e2]/70 hover:text-white border border-neutral-800'
+                      : 'bg-black/80 text-[#fdf6e2]/80 hover:text-white border border-neutral-800'
                   }`}
                 >
                   Locandina Poster
@@ -391,8 +392,8 @@ export const TheGodCypherPage: React.FC<TheGodCypherPageProps> = ({ onNavigate }
                 <button
                   type="button"
                   onClick={() => setIsCoverZoomOpen(true)}
-                  className="px-3.5 py-2.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-red-400 border border-neutral-800 hover:border-red-600/50 text-xs font-mono flex items-center gap-1.5 transition-colors cursor-pointer"
-                  title="Apri a schermo intero"
+                  className="min-h-[44px] px-3.5 py-2.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-red-400 border border-neutral-800 hover:border-red-600/50 text-xs font-mono flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                  title="Ingrandisci Copertina in Alta Risoluzione"
                 >
                   <Eye className="w-3.5 h-3.5" />
                   <span>Ingrandisci</span>
@@ -419,28 +420,51 @@ export const TheGodCypherPage: React.FC<TheGodCypherPageProps> = ({ onNavigate }
                   Un progetto collettivo dove i migliori liricisti e rapper si sfidano in una cypher senza sconti su sonorità boom-bap, trap e west coast con attitudine cinematografica.
                 </p>
 
-                {/* Pricing summary buttons - 3 options with €4.99 in the middle */}
+                {/* Pricing summary buttons - 3 hardware options with €4.99 in the middle */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 mb-6">
-                  <button
-                    type="button"
+                  <HardwareTiltCard
+                    maxTilt={7}
+                    glareColor="ruby"
+                    showCornerRivets={true}
                     onClick={() => openOrderModal('physical')}
-                    className="p-3.5 rounded-2xl bg-gradient-to-br from-red-900/80 to-red-950 border border-red-600/60 hover:border-red-500 text-left transition-all hover:scale-[1.02] cursor-pointer shadow-lg group"
+                    className="p-3.5 rounded-2xl bg-gradient-to-br from-red-900/80 to-red-950 border border-red-600/60 hover:border-red-500 text-left cursor-pointer shadow-lg group"
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        openOrderModal('physical');
+                      }
+                    }}
+                    aria-label="Ordina CD Deluxe Pack"
                   >
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-[9px] font-['Cinzel_Decorative',serif] uppercase text-red-300 font-bold truncate">CD DELUXE</span>
                       <ShoppingBag className="w-3.5 h-3.5 text-red-400 group-hover:scale-110 transition-transform" />
                     </div>
                     <div className="text-xl font-serif font-black text-white">€9.99</div>
-                    <div className="text-[10px] text-[#fdf6e2]/70 font-mono mt-0.5 truncate">
+                    <div className="text-[10px] text-[#fdf6e2]/80 font-mono mt-0.5 truncate">
                       Copia Fisica + Booklet
                     </div>
-                  </button>
+                  </HardwareTiltCard>
 
-                  {/* €4.99 IN MEZZO */}
-                  <button
-                    type="button"
+                  {/* €4.99 IN MEZZO (MASTER PACK) */}
+                  <HardwareTiltCard
+                    maxTilt={7}
+                    glareColor="gold"
+                    isSelected={true}
+                    showCornerRivets={true}
                     onClick={() => openOrderModal('digital_master')}
-                    className="p-3.5 rounded-2xl bg-[#1c0f0f] border-2 border-amber-500/80 hover:border-amber-400 text-left transition-all hover:scale-[1.02] cursor-pointer shadow-xl shadow-amber-950/40 group relative"
+                    className="p-3.5 rounded-2xl bg-[#1c0f0f] border-2 border-amber-500/80 hover:border-amber-400 text-left cursor-pointer shadow-xl shadow-amber-950/40 group relative"
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        openOrderModal('digital_master');
+                      }
+                    }}
+                    aria-label="Ordina Master Pack"
                   >
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-[9px] font-['Cinzel_Decorative',serif] uppercase text-amber-300 font-bold truncate">MASTER PACK</span>
@@ -450,22 +474,34 @@ export const TheGodCypherPage: React.FC<TheGodCypherPageProps> = ({ onNavigate }
                     <div className="text-[10px] text-amber-200/90 font-mono mt-0.5 truncate">
                       WAV + MP3 + Grafiche
                     </div>
-                  </button>
+                  </HardwareTiltCard>
 
-                  <button
-                    type="button"
+                  {/* SOLO MP3 */}
+                  <HardwareTiltCard
+                    maxTilt={7}
+                    glareColor="amber"
+                    showCornerRivets={true}
                     onClick={() => openOrderModal('digital_mp3')}
-                    className="p-3.5 rounded-2xl bg-[#140b0b] border border-[#fdf6e2]/25 hover:border-white text-left transition-all hover:scale-[1.02] cursor-pointer shadow-lg group"
+                    className="p-3.5 rounded-2xl bg-[#140b0b] border border-[#fdf6e2]/30 hover:border-white text-left cursor-pointer shadow-lg group"
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        openOrderModal('digital_mp3');
+                      }
+                    }}
+                    aria-label="Ordina Solo MP3"
                   >
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-[9px] font-['Cinzel_Decorative',serif] uppercase text-[#fdf6e2]/70 font-bold truncate">SOLO MP3</span>
+                      <span className="text-[9px] font-['Cinzel_Decorative',serif] uppercase text-[#fdf6e2]/80 font-bold truncate">SOLO MP3</span>
                       <Music className="w-3.5 h-3.5 text-[#fdf6e2] group-hover:scale-110 transition-transform" />
                     </div>
                     <div className="text-xl font-serif font-black text-white">€2.99</div>
-                    <div className="text-[10px] text-[#fdf6e2]/70 font-mono mt-0.5 truncate">
+                    <div className="text-[10px] text-[#fdf6e2]/80 font-mono mt-0.5 truncate">
                       14 Tracce Audio MP3
                     </div>
-                  </button>
+                  </HardwareTiltCard>
                 </div>
 
                 {/* Direct quick action */}
@@ -760,10 +796,22 @@ export const TheGodCypherPage: React.FC<TheGodCypherPageProps> = ({ onNavigate }
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-4 sm:gap-6">
             {FAMIGLIA_MEMBERS.map((member) => (
-              <div
+              <HardwareTiltCard
                 key={member.id}
+                maxTilt={6}
+                glareColor="ruby"
+                showCornerRivets={true}
                 onClick={() => setZoomedCard(member)}
-                className="group p-3 sm:p-4 rounded-3xl bg-[#0b0505] border-2 border-red-950 hover:border-red-600 transition-all hover:scale-[1.03] shadow-xl flex flex-col items-center text-center relative overflow-hidden cursor-pointer"
+                className="group p-3 sm:p-4 rounded-3xl bg-[#0b0505] border-2 border-red-950 hover:border-red-600 shadow-xl flex flex-col items-center text-center relative overflow-hidden cursor-pointer"
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setZoomedCard(member);
+                  }
+                }}
+                aria-label={`Visualizza opera di ${member.title}`}
               >
                 {/* 1400x1400 Artwork (18.jpg to 33.jpg) */}
                 <div className="w-full aspect-square rounded-2xl overflow-hidden bg-black border border-neutral-900 mb-3 shadow-inner relative group-hover:border-red-600/60 transition-colors">
@@ -794,10 +842,10 @@ export const TheGodCypherPage: React.FC<TheGodCypherPageProps> = ({ onNavigate }
                   OPERA #{member.imageNum}
                 </span>
 
-                <p className="text-[11px] font-['Playfair_Display',serif] italic text-[#fdf6e2]/65 mt-1 line-clamp-1 w-full">
+                <p className="text-[11px] font-['Playfair_Display',serif] italic text-[#fdf6e2]/75 mt-1 line-clamp-1 w-full">
                   {member.subtitle}
                 </p>
-              </div>
+              </HardwareTiltCard>
             ))}
           </div>
         </section>
@@ -893,7 +941,12 @@ export const TheGodCypherPage: React.FC<TheGodCypherPageProps> = ({ onNavigate }
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-6xl mx-auto items-stretch">
             
             {/* OPTION 1: CD FISICO DELUXE PACK (€9.99) */}
-            <div className="p-7 sm:p-8 rounded-3xl bg-[#0d0606] border-2 border-red-700/80 shadow-2xl flex flex-col justify-between relative overflow-hidden">
+            <HardwareTiltCard
+              maxTilt={5}
+              glareColor="ruby"
+              showCornerRivets={true}
+              className="p-7 sm:p-8 rounded-3xl bg-[#0d0606] border-2 border-red-700/80 shadow-2xl flex flex-col justify-between relative overflow-hidden"
+            >
               <div className="absolute top-0 right-0 px-4 py-1.5 bg-red-700 text-white font-['Cinzel_Decorative',serif] font-bold text-[10px] uppercase tracking-widest rounded-bl-2xl">
                 EDIZIONE LIMITATA
               </div>
@@ -907,7 +960,7 @@ export const TheGodCypherPage: React.FC<TheGodCypherPageProps> = ({ onNavigate }
                 </h4>
                 <div className="flex items-baseline gap-2 mb-6">
                   <span className="text-4xl font-serif font-black text-white">€9.99</span>
-                  <span className="text-xs font-mono text-[#fdf6e2]/60">IVA inclusa</span>
+                  <span className="text-xs font-mono text-[#fdf6e2]/80">IVA inclusa</span>
                 </div>
 
                 <div className="space-y-3 border-t border-red-950/80 pt-6 mb-8 text-sm">
@@ -945,10 +998,16 @@ export const TheGodCypherPage: React.FC<TheGodCypherPageProps> = ({ onNavigate }
               >
                 Ordina Copia Fisica (€9.99)
               </button>
-            </div>
+            </HardwareTiltCard>
 
             {/* OPTION 2 (IN MEZZO): DIGITAL DOWNLOAD PREMIUM WAVE (€4.99) */}
-            <div className="p-7 sm:p-8 rounded-3xl bg-[#130707] border-2 border-amber-500/80 shadow-[0_0_50px_rgba(245,158,11,0.22)] flex flex-col justify-between relative overflow-hidden lg:-translate-y-2 z-10">
+            <HardwareTiltCard
+              maxTilt={5}
+              glareColor="gold"
+              isSelected={true}
+              showCornerRivets={true}
+              className="p-7 sm:p-8 rounded-3xl bg-[#130707] border-2 border-amber-500/80 shadow-[0_0_50px_rgba(245,158,11,0.22)] flex flex-col justify-between relative overflow-hidden lg:-translate-y-2 z-10"
+            >
               <div className="absolute top-0 right-0 px-4 py-1.5 bg-gradient-to-r from-amber-500 to-amber-400 text-black font-['Cinzel_Decorative',serif] font-black text-[10px] uppercase tracking-widest rounded-bl-2xl shadow-lg">
                 BEST SELLER • PIÙ SCELTO
               </div>
@@ -1003,10 +1062,15 @@ export const TheGodCypherPage: React.FC<TheGodCypherPageProps> = ({ onNavigate }
               >
                 Scarica Edizione Premium WAVE (€4.99)
               </button>
-            </div>
+            </HardwareTiltCard>
 
             {/* OPTION 3: ESSENTIAL MP3 PACK (€2.99) */}
-            <div className="p-7 sm:p-8 rounded-3xl bg-[#080505] border border-neutral-800 hover:border-neutral-700 shadow-2xl flex flex-col justify-between relative overflow-hidden">
+            <HardwareTiltCard
+              maxTilt={5}
+              glareColor="amber"
+              showCornerRivets={true}
+              className="p-7 sm:p-8 rounded-3xl bg-[#080505] border border-neutral-800 hover:border-neutral-700 shadow-2xl flex flex-col justify-between relative overflow-hidden"
+            >
               <div className="absolute top-0 right-0 px-4 py-1.5 bg-neutral-800 text-neutral-300 font-['Cinzel_Decorative',serif] font-bold text-[10px] uppercase tracking-widest rounded-bl-2xl">
                 SOLO FILE MP3
               </div>
@@ -1020,7 +1084,7 @@ export const TheGodCypherPage: React.FC<TheGodCypherPageProps> = ({ onNavigate }
                 </h4>
                 <div className="flex items-baseline gap-2 mb-6">
                   <span className="text-4xl font-serif font-black text-white">€2.99</span>
-                  <span className="text-xs font-mono text-[#fdf6e2]/60">Download diretto</span>
+                  <span className="text-xs font-mono text-[#fdf6e2]/80">Download diretto</span>
                 </div>
 
                 <div className="space-y-3 border-t border-neutral-900 pt-6 mb-8 text-sm">
@@ -1057,7 +1121,7 @@ export const TheGodCypherPage: React.FC<TheGodCypherPageProps> = ({ onNavigate }
               >
                 Scarica Edizione MP3 (€2.99)
               </button>
-            </div>
+            </HardwareTiltCard>
 
           </div>
         </section>

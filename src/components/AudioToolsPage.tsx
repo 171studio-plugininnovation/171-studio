@@ -11,6 +11,7 @@ import {
   PITCH_CLASSES, PITCH_NAMES_IT
 } from '../utils/audioAnalysis';
 import { useStudio } from '../context/StudioContext';
+import { HardwareTiltCard } from './HardwareTiltCard';
 
 interface AudioToolsPageProps {
   onNavigate: (page: PageId) => void;
@@ -628,8 +629,11 @@ Prenotazioni & Mix: https://171studio.it
         {/* Left Column: Upload & Controls (7 Cols) */}
         <div className="lg:col-span-7 space-y-6">
           
-          {/* File Upload Dropzone */}
-          <div
+          {/* File Upload Dropzone (Hardware Rack Chassis) */}
+          <HardwareTiltCard
+            maxTilt={4}
+            glareColor="amber"
+            showCornerRivets={true}
             onClick={() => {
               if (!currentUser) {
                 openAuthModal('Devi essere registrato per caricare e analizzare brani con il Key & BPM Finder.');
@@ -648,10 +652,10 @@ Prenotazioni & Mix: https://171studio.it
                 handleFileUpload(e.dataTransfer.files[0]);
               }
             }}
-            className={`relative p-8 rounded-3xl border-2 border-dashed transition-all duration-300 text-center flex flex-col items-center justify-center min-h-[220px] backdrop-blur-xl cursor-pointer ${
+            className={`relative p-8 rounded-3xl border-2 transition-all duration-300 text-center flex flex-col items-center justify-center min-h-[220px] backdrop-blur-xl cursor-pointer ${
               isDragging 
                 ? 'border-amber-400 bg-amber-500/10 scale-[1.01]' 
-                : 'border-neutral-800 hover:border-amber-500/50 bg-neutral-900/60'
+                : 'border-neutral-800 hover:border-amber-500/50 bg-neutral-900/80 shadow-2xl'
             }`}
           >
             {currentUser && (
@@ -671,14 +675,14 @@ Prenotazioni & Mix: https://171studio.it
             <h3 className="text-base sm:text-lg font-heading font-bold text-white mb-1">
               Trascina qui il tuo file MP3 o WAV
             </h3>
-            <p className="text-xs text-neutral-400 font-mono mb-4">
+            <p className="text-xs text-neutral-300 font-mono mb-4">
               oppure clicca per esplorare dal tuo dispositivo (nessun limite di durata, elaborazione locale sicura)
             </p>
 
-            <span className="px-3 py-1 rounded-full bg-neutral-950 border border-neutral-800 text-[11px] font-mono text-neutral-400">
+            <span className="px-3 py-1 rounded-full bg-neutral-950 border border-neutral-800 text-[11px] font-mono text-neutral-300">
               Formati supportati: MP3, WAV, AIFF, FLAC, M4A
             </span>
-          </div>
+          </HardwareTiltCard>
 
           {/* Quick Demo Track Buttons */}
           <div className="p-5 rounded-2xl bg-neutral-900/40 border border-neutral-800 space-y-3">
