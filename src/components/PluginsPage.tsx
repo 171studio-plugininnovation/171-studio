@@ -1193,7 +1193,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {siteContent.plugins
               .filter((plugin) => {
                 if (categoryFilter === 'all') return true;
@@ -1207,175 +1207,160 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
                 const isLocked = countdown ? !countdown.isUnlocked : (plugin.status === 'IN ARRIVO');
 
                 return (
-                  <HardwareTiltCard 
+                  <div 
                     key={plugin.id} 
                     id={plugin.id}
-                    maxTilt={4}
-                    glareColor="gold"
-                    showCornerRivets={false}
-                    className="p-4 sm:p-5 rounded-2xl sm:rounded-3xl bg-neutral-900/85 border border-neutral-800/90 hover:border-amber-500/40 backdrop-blur-md flex flex-col justify-between group overflow-hidden transition-all duration-300 shadow-xl scroll-mt-24"
+                    className="p-5 rounded-3xl bg-neutral-900/90 border border-neutral-800 hover:border-amber-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-amber-500/10 flex flex-col justify-between relative overflow-hidden group scroll-mt-24"
                   >
-                    <div className="space-y-3">
-                      {/* Card Header: Category & Release/Status Badge */}
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="text-[10px] font-mono font-bold text-amber-400 tracking-wider uppercase truncate">
-                          {plugin.badge}
+                    {/* Corner Ribbon for New Release or Roadmap Week (like Waves Black Friday ribbon) */}
+                    {plugin.isNewRelease ? (
+                      <div className="absolute top-0 right-0 overflow-hidden w-28 h-28 pointer-events-none z-10">
+                        <div className="bg-gradient-to-r from-red-600 to-amber-600 text-white text-[9px] font-mono font-black text-center py-1 w-36 absolute top-4 -right-10 rotate-45 shadow-md uppercase tracking-wider">
+                          Nuova Patch
+                        </div>
+                      </div>
+                    ) : isLocked ? (
+                      <div className="absolute top-0 right-0 overflow-hidden w-28 h-28 pointer-events-none z-10">
+                        <div className="bg-neutral-800 text-amber-300 border border-amber-500/30 text-[8.5px] font-mono font-bold text-center py-1 w-36 absolute top-4 -right-10 rotate-45 shadow-md uppercase tracking-wider">
+                          Settimana {plugin.unlockWeek || 1}
+                        </div>
+                      </div>
+                    ) : null}
+
+                    <div>
+                      {/* Top Wishlist Heart & Category Badge */}
+                      <div className="flex items-center justify-between mb-2.5">
+                        <button
+                          type="button"
+                          onClick={() => handleSelectPlugin(plugin.id)}
+                          className="w-7 h-7 rounded-full bg-neutral-800/80 hover:bg-neutral-700 text-neutral-400 hover:text-amber-400 flex items-center justify-center transition-colors cursor-pointer"
+                          title="Visualizza scheda completa"
+                          aria-label="Dettagli plugin"
+                        >
+                          <Heart className="w-3.5 h-3.5" />
+                        </button>
+                        <span className="text-[10px] font-mono font-bold text-neutral-400 uppercase tracking-wider pr-10">
+                          {plugin.badge.split(' ')[0]} DSP
                         </span>
-                        {isLocked ? (
-                          <span className="shrink-0 text-[9.5px] font-mono font-bold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/35 flex items-center gap-1">
-                            <Clock className="w-3 h-3 text-amber-400 animate-spin" />
-                            <span>Settimana {plugin.unlockWeek || 1}</span>
+                      </div>
+
+                      {/* Small Centered Miniature Plugin Image Box (Waves-Style) */}
+                      <div 
+                        onClick={() => handleSelectPlugin(plugin.id)}
+                        className="h-36 sm:h-40 w-full flex items-center justify-center p-3 bg-neutral-950/80 rounded-2xl border border-neutral-800/80 group-hover:border-amber-500/40 transition-colors cursor-pointer relative"
+                        title={`Apri ${plugin.name}`}
+                      >
+                        {plugin.imageUrl ? (
+                          <img 
+                            src={getAssetUrl(plugin.imageUrl)} 
+                            alt={`${plugin.name} Miniature`} 
+                            className="max-h-28 sm:max-h-32 max-w-full object-contain filter drop-shadow-[0_6px_14px_rgba(0,0,0,0.85)] group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                          />
+                        ) : (
+                          <Cpu className="w-12 h-12 text-amber-400/40" />
+                        )}
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (plugin.imageUrl) setPreviewModalImage(plugin.imageUrl);
+                          }}
+                          className="absolute bottom-2 right-2 p-1.5 rounded-lg bg-black/80 hover:bg-black text-amber-400 border border-amber-500/30 text-[10px] font-mono backdrop-blur-md transition-all cursor-pointer shadow-lg"
+                          title="Ingrandisci anteprima GUI"
+                        >
+                          <Eye className="w-3 h-3" />
+                        </button>
+                      </div>
+
+                      {/* "New" or Status Tag (like blue "New" tag in Waves screenshot) */}
+                      <div className="flex items-center gap-2 mt-3 min-h-[1.5rem]">
+                        {plugin.isNewRelease ? (
+                          <span className="inline-block px-2 py-0.5 rounded bg-blue-600 text-white font-mono font-black text-[10px] uppercase tracking-wider">
+                            New Release
+                          </span>
+                        ) : isLocked ? (
+                          <span className="inline-block px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 font-mono font-bold text-[10px] uppercase tracking-wider">
+                            In Arrivo
                           </span>
                         ) : (
-                          <span className="shrink-0 text-[9.5px] font-mono font-black px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center gap-1">
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                            <span>{plugin.isNewRelease ? '🔥 Release 2 Nov' : '🟢 Disponibile'}</span>
+                          <span className="inline-block px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 font-mono font-bold text-[10px] uppercase tracking-wider">
+                            Disponibile
+                          </span>
+                        )}
+                        {plugin.version && (
+                          <span className="text-[10.5px] font-mono text-neutral-400 font-semibold truncate">
+                            {plugin.version.split(' ')[0]}
                           </span>
                         )}
                       </div>
 
-                      {/* Plugin Hardware GUI Image */}
-                      {plugin.imageUrl && (
-                        <div 
-                          onClick={() => handleSelectPlugin(plugin.id)}
-                          className="relative rounded-xl overflow-hidden border border-neutral-800 group-hover:border-amber-500/40 bg-neutral-950 aspect-[16/9] flex items-center justify-center transition-all duration-300 cursor-pointer shadow-inner"
-                        >
-                          <img 
-                            src={getAssetUrl(plugin.imageUrl)} 
-                            alt={`${plugin.name} GUI Snapshot`} 
-                            className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
-                            loading="lazy"
-                          />
-                          {plugin.version && (
-                            <div className="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-black/80 backdrop-blur-md border border-neutral-800 text-[9.5px] font-mono text-neutral-300 pointer-events-none">
-                              {plugin.version.split(' ')[0]}
-                            </div>
-                          )}
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setPreviewModalImage(plugin.imageUrl || null);
-                            }}
-                            className="absolute bottom-2 right-2 p-1.5 rounded-lg bg-black/80 hover:bg-black text-amber-400 border border-amber-500/30 text-[10px] font-mono backdrop-blur-md transition-all cursor-pointer shadow-lg"
-                            title="Ingrandisci anteprima GUI"
-                            aria-label="Ingrandisci anteprima GUI"
-                          >
-                            <Eye className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                      )}
+                      {/* Plugin Title */}
+                      <h4 
+                        onClick={() => handleSelectPlugin(plugin.id)}
+                        className="font-heading font-black text-lg sm:text-xl text-white group-hover:text-amber-400 transition-colors cursor-pointer mt-1 truncate"
+                        title={`Apri ${plugin.name}`}
+                      >
+                        {plugin.name}
+                      </h4>
 
-                      {/* Title & Version */}
-                      <div>
-                        <div className="flex items-center justify-between gap-2">
-                          <h4 
-                            onClick={() => handleSelectPlugin(plugin.id)}
-                            className="font-heading font-black text-lg sm:text-xl text-white group-hover:text-amber-400 transition-colors cursor-pointer truncate"
-                            title={`Apri pagina dedicata di ${plugin.name}`}
-                          >
-                            {plugin.name}
-                          </h4>
-                          {plugin.version && (
-                            <span className="shrink-0 text-[10px] font-mono text-neutral-400 font-semibold px-2 py-0.5 rounded bg-black/60 border border-neutral-800">
-                              {plugin.version.includes('v') ? plugin.version.match(/v\d+\.\d+(\.\d+)?/)?.[0] || plugin.version : plugin.version}
-                            </span>
-                          )}
-                        </div>
+                      {/* Short Description (1-2 lines, legible) */}
+                      <p className="text-xs text-neutral-400 font-light leading-relaxed line-clamp-2 mt-1 min-h-[2rem]">
+                        {plugin.description}
+                      </p>
 
-                        {/* Short Description (2-3 lines max, clean, legible) */}
-                        <p className="text-xs text-neutral-300 font-light leading-relaxed line-clamp-2 sm:line-clamp-3 mt-1.5 min-h-[2.5rem]">
-                          {plugin.description}
-                        </p>
+                      {/* Rating Stars (Waves-Style: 5.0 ★★★★★) */}
+                      <div className="flex items-center gap-1.5 mt-2">
+                        <span className="text-xs font-mono font-bold text-white">5.0</span>
+                        <div className="flex items-center text-amber-400 text-xs">
+                          ★★★★★
+                        </div>
+                        <span className="text-[10.5px] font-mono text-neutral-500">
+                          ({plugin.downloadCount > 0 ? `${plugin.downloadCount} dl` : '171 DSP'})
+                        </span>
+                      </div>
+
+                      {/* Price / Freeware Display (Waves-Style: €99 GRATIS • 100% FREE) */}
+                      <div className="mt-2.5 pt-2.5 border-t border-neutral-800/80 flex items-center justify-between">
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-xs text-neutral-500 line-through">€99</span>
+                          <span className="text-base font-black text-white font-mono">GRATIS</span>
+                          <span className="text-[9px] font-mono font-black px-1.5 py-0.5 rounded bg-red-600 text-white uppercase tracking-wider">
+                            100% FREE
+                          </span>
+                        </div>
+                        {plugin.isNewRelease && (
+                          <span className="text-[9.5px] font-mono font-bold text-amber-400 flex items-center gap-1">
+                            <Sparkles className="w-3 h-3 text-amber-400" />
+                            <span>Patch 2 Nov</span>
+                          </span>
+                        )}
                       </div>
                     </div>
 
-                    {/* Actions Section: Pagina Plugin Button + Direct Download Buttons */}
-                    <div className="pt-3 mt-3 border-t border-neutral-800/80 space-y-2">
-                      {/* Primary Button: Pagina Plugin Dedicata */}
+                    {/* Prominent Action Button: "Scarica il Plugin" -> navigates to single plugin page */}
+                    <div className="mt-4 pt-1">
                       <button
                         type="button"
                         onClick={() => handleSelectPlugin(plugin.id)}
-                        className="w-full py-2.5 px-3 rounded-xl bg-neutral-950 hover:bg-amber-500/10 border border-amber-500/40 hover:border-amber-400 text-amber-300 hover:text-amber-200 font-mono text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-sm group/btn"
+                        className="w-full py-2.5 px-4 rounded-full bg-white hover:bg-amber-400 text-black font-heading font-black text-xs sm:text-sm uppercase tracking-wider transition-all duration-200 cursor-pointer shadow-md hover:shadow-lg flex items-center justify-center gap-2 group/btn"
+                        title={`Apri la pagina di download per ${plugin.name}`}
                       >
-                        <span>Pagina Plugin & Dettagli</span>
-                        <ArrowRight className="w-3.5 h-3.5 text-amber-400 group-hover/btn:translate-x-1 transition-transform" />
+                        <Download className="w-4 h-4 text-black group-hover:translate-y-0.5 transition-transform" />
+                        <span>Scarica il Plugin</span>
                       </button>
 
-                      {/* Direct Downloads: Win & Mac */}
-                      {isLocked ? (
-                        <div className="p-2.5 rounded-xl bg-black/70 border border-amber-500/25 text-center font-mono">
-                          <div className="flex items-center justify-center gap-1.5 text-[11px] text-amber-400 font-bold">
-                            <Clock className="w-3 h-3 animate-spin text-amber-400" />
-                            <span>Sblocco tra {countdown?.days}g {countdown?.hours}h {countdown?.minutes}m {countdown?.seconds}s</span>
-                          </div>
-                          <p className="text-[9.5px] text-neutral-400 mt-0.5">
-                            Download Windows & Mac pronti • Sblocco automatico
-                          </p>
-                        </div>
-                      ) : (
-                        <div className="grid grid-cols-2 gap-2">
-                          {/* Windows Download Button */}
-                          <button
-                            type="button"
-                            onClick={() => handleDownload(plugin, 'win')}
-                            className={`py-2 px-2.5 rounded-xl text-[10.5px] font-mono font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm cursor-pointer truncate ${
-                              downloadSuccessId === `${plugin.id}-win`
-                                ? 'bg-emerald-500 text-black'
-                                : 'bg-neutral-800 hover:bg-neutral-700 text-neutral-100 hover:text-white border border-neutral-700 hover:border-blue-400/50'
-                            }`}
-                            title={`Scarica pacchetto Windows 64-bit (${plugin.zipFileSize || 'Win .ZIP'})`}
-                          >
-                            {downloadSuccessId === `${plugin.id}-win` ? (
-                              <>
-                                <Check className="w-3 h-3 shrink-0" />
-                                <span className="truncate">Scaricato (Win)</span>
-                              </>
-                            ) : (
-                              <>
-                                <Download className="w-3 h-3 text-blue-400 shrink-0" />
-                                <span className="truncate">🪟 Win {plugin.zipFileSize ? `(${plugin.zipFileSize})` : ''}</span>
-                              </>
-                            )}
-                          </button>
-
-                          {/* Mac Download Button */}
-                          {plugin.macDownloadUrl ? (
-                            <button
-                              type="button"
-                              onClick={() => handleDownload(plugin, 'mac')}
-                              className={`py-2 px-2.5 rounded-xl text-[10.5px] font-mono font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm cursor-pointer truncate ${
-                                downloadSuccessId === `${plugin.id}-mac`
-                                  ? 'bg-emerald-500 text-black'
-                                  : 'bg-amber-500 hover:bg-amber-400 text-black shadow-amber-500/10'
-                              }`}
-                              title={`Scarica pacchetto macOS Universal (${plugin.macZipFileSize || 'Mac .ZIP'})`}
-                            >
-                              {downloadSuccessId === `${plugin.id}-mac` ? (
-                                <>
-                                  <Check className="w-3 h-3 shrink-0" />
-                                  <span className="truncate">Scaricato (Mac)</span>
-                                </>
-                              ) : (
-                                <>
-                                  <Download className="w-3 h-3 text-black shrink-0" />
-                                  <span className="truncate">🍏 Mac {plugin.macZipFileSize ? `(${plugin.macZipFileSize})` : ''}</span>
-                                </>
-                              )}
-                            </button>
-                          ) : (
-                            <div
-                              className="py-2 px-2 rounded-xl text-[10px] font-mono font-medium bg-neutral-950 text-neutral-400 border border-neutral-800 flex items-center justify-center gap-1 select-none truncate"
-                              title="Versione macOS Universal in fase di compilazione"
-                            >
-                              <Clock className="w-3 h-3 text-amber-500/70 shrink-0" />
-                              <span className="truncate">🍏 Mac in Build</span>
-                            </div>
-                          )}
-                        </div>
-                      )}
+                      <p className="text-[10px] font-mono text-center text-neutral-400 mt-2 truncate">
+                        {isLocked ? (
+                          <span className="text-amber-400 font-bold">
+                            ⏳ Sblocco tra {countdown?.days}g {countdown?.hours}h {countdown?.minutes}m
+                          </span>
+                        ) : (
+                          <>Disponibile per <span className="text-neutral-300 font-semibold">Windows 64-bit</span> & <span className="text-neutral-300 font-semibold">macOS Universal</span></>
+                        )}
+                      </p>
                     </div>
-                  </HardwareTiltCard>
+                  </div>
                 );
               })}
           </div>
