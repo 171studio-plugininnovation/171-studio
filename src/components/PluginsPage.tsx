@@ -3,7 +3,7 @@ import {
   ArrowLeft, Cpu, Sparkles, Zap, Flame, Shield, Sliders, Download,
   Check, Mail, Star, Heart, MessageSquare, ExternalLink, FileArchive,
   CheckCircle2, Send, Lock, Bug, ChevronDown, ChevronUp, Eye, X, Layers,
-  Award, Gift, Clock, Calendar
+  Award, Gift, Clock, Calendar, ArrowRight, Filter
 } from 'lucide-react';
 import { PageId } from '../types';
 import { useStudio } from '../context/StudioContext';
@@ -136,6 +136,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
 
   // Modal for previewing hardware GUI snapshot
   const [previewModalImage, setPreviewModalImage] = useState<string | null>(null);
+  const [categoryFilter, setCategoryFilter] = useState<'all' | 'vocal' | 'dynamics' | 'spatial'>('all');
 
   // Feedback form state on the post-download page
   const [rating, setRating] = useState<number>(5);
@@ -839,7 +840,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
   }
 
   return (
-    <div className="relative z-10 w-full min-h-[calc(100vh-5rem)] flex flex-col justify-between pt-28 pb-16 px-4 sm:px-8 max-w-5xl mx-auto">
+    <div className="relative z-10 w-full min-h-[calc(100vh-5rem)] flex flex-col justify-between pt-24 sm:pt-28 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       
       {/* Top Header / Breadcrumbs */}
       <div className="flex items-center justify-between gap-4 mb-8">
@@ -859,7 +860,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
       </div>
 
       {/* Main Content */}
-      <div className="flex flex-col gap-10">
+      <div className="flex flex-col gap-6 sm:gap-8">
         
         {/* Title & Introduction */}
         <div className="text-center max-w-3xl mx-auto">
@@ -868,17 +869,17 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
             <span>{siteContent.pluginIntroBadge || 'SOFTWARE DSP & INGEGNERIA AUDIO • 100% FREEWARE'}</span>
           </div>
 
-          <h1 className="font-heading font-black text-4xl sm:text-6xl md:text-7xl text-white tracking-tight mb-4">
+          <h1 className="font-heading font-black text-3xl sm:text-5xl md:text-6xl text-white tracking-tight mb-3">
             {siteContent.pluginIntroTitle || '171 Plugin Innovatio'}
           </h1>
 
-          <p className="text-lg sm:text-xl text-neutral-300 font-light leading-relaxed">
+          <p className="text-sm sm:text-base md:text-lg text-neutral-300 font-light leading-relaxed">
             {siteContent.pluginIntroSubtitle || "I nostri plugin audio di nuova generazione: strumenti digitali proprietari gratuiti concepiti e calibrati all'interno di 171 Studio per offrire una qualità da studio professionale direttamente nella tua DAW."}
           </p>
         </div>
 
         {/* Cos'è 171 Plugin Innovatio */}
-        <div className="p-8 sm:p-10 rounded-3xl bg-neutral-950/80 border border-amber-500/30 backdrop-blur-xl shadow-2xl relative overflow-hidden">
+        <div className="p-5 sm:p-7 rounded-2xl sm:rounded-3xl bg-neutral-950/80 border border-amber-500/30 backdrop-blur-xl shadow-2xl relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/5 rounded-full blur-3xl pointer-events-none" />
 
           <div className="flex items-center gap-3 mb-4">
@@ -909,13 +910,13 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
             </h3>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             {dynamicBenefits.map((item, idx) => {
               const Icon = benefitIcons[idx % benefitIcons.length];
               return (
                 <div
                   key={item.id || idx}
-                  className="p-6 sm:p-8 rounded-3xl bg-neutral-950/80 border border-neutral-800/80 hover:border-amber-500/40 backdrop-blur-xl transition-all duration-300 group shadow-lg"
+                  className="p-4 sm:p-6 rounded-2xl bg-neutral-950/80 border border-neutral-800/80 hover:border-amber-500/40 backdrop-blur-xl transition-all duration-300 group shadow-lg"
                 >
                   <div className="flex items-center justify-between mb-4">
                     <div className="w-12 h-12 rounded-2xl bg-neutral-900 border border-amber-500/30 flex items-center justify-center text-amber-400 group-hover:scale-110 group-hover:bg-amber-500 group-hover:text-black transition-all">
@@ -940,7 +941,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
         </div>
 
         {/* Plugin Suite Catalog with Free .ZIP Download */}
-        <div className="p-6 sm:p-10 rounded-3xl bg-neutral-950/85 border border-amber-500/30 backdrop-blur-xl shadow-2xl relative">
+        <div className="p-4 sm:p-8 rounded-2xl sm:rounded-3xl bg-neutral-950/85 border border-amber-500/30 backdrop-blur-xl shadow-2xl relative">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 pb-6 border-b border-neutral-800">
             <div>
               <div className="flex items-center gap-2 mb-1.5">
@@ -978,7 +979,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
           </div>
 
           {/* Programma di Sblocco Settimanale Roadmap Banner */}
-          <div className="mb-8 p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-neutral-950 via-neutral-900 to-amber-950/30 border-2 border-amber-500/40 backdrop-blur-xl shadow-2xl relative overflow-hidden">
+          <div className="mb-6 sm:mb-8 p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-gradient-to-br from-neutral-950 via-neutral-900 to-amber-950/30 border border-amber-500/40 backdrop-blur-xl shadow-2xl relative overflow-hidden">
             <div className="absolute top-0 right-0 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
 
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
@@ -1002,7 +1003,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
             </div>
 
             {/* 4 Weekly Steps Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
               {[
                 {
                   id: 'plugin-spaceluxe',
@@ -1155,448 +1156,228 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            {siteContent.plugins.map((plugin) => {
-              const isDownloaded = downloadSuccessId === plugin.id;
-              const zipFileLabel =
-                plugin.zipFileName || `${plugin.name.replace(/\s+/g, '_')}_Installer.zip`;
-              const isTechExpanded = expandedTechPluginId[plugin.id] ?? true;
-              const isChangelogExpanded = expandedChangelogPluginId[plugin.id] ?? false;
-              const hasTechnologies = plugin.technologies && plugin.technologies.length > 0;
-              const hasChangelog = plugin.changelog && plugin.changelog.length > 0;
-              const countdown = plugin.unlockDate ? getCountdown(plugin.unlockDate) : null;
-              const isLocked = countdown ? !countdown.isUnlocked : (plugin.status === 'IN ARRIVO');
+          {/* Quick Category Filter Bar */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-neutral-800/80">
+            <div className="flex items-center gap-2">
+              <Filter className="w-4 h-4 text-amber-400 shrink-0" />
+              <span className="text-xs font-mono uppercase tracking-wider text-neutral-400 font-semibold">
+                Filtra Plugin per Categoria:
+              </span>
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              {[
+                { id: 'all', label: 'Tutti i Plugin', count: siteContent.plugins.length },
+                { id: 'vocal', label: 'Voci & Intonazione', count: siteContent.plugins.filter(p => ['plugin-realtune', 'plugin-easyvoice'].includes(p.id)).length },
+                { id: 'dynamics', label: 'Dinamica & Mix', count: siteContent.plugins.filter(p => ['plugin-optocom', 'plugin-cleandrive', 'plugin-masterglue', 'plugin-punchcraft'].includes(p.id)).length },
+                { id: 'spatial', label: 'Riverberi & Colore', count: siteContent.plugins.filter(p => ['plugin-cleanreso', 'plugin-perfectpre', 'plugin-spaceluxe', 'plugin-perfectclip'].includes(p.id)).length },
+              ].map((tab) => {
+                const isActive = categoryFilter === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => setCategoryFilter(tab.id as any)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all cursor-pointer flex items-center gap-1.5 ${
+                      isActive
+                        ? 'bg-amber-500 text-black font-bold shadow-md shadow-amber-500/20'
+                        : 'bg-neutral-900/90 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-800'
+                    }`}
+                  >
+                    <span>{tab.label}</span>
+                    <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${isActive ? 'bg-black/25 text-black' : 'bg-neutral-800 text-neutral-400'}`}>
+                      {tab.count}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
 
-              return (
-                <HardwareTiltCard 
-                  key={plugin.id} 
-                  id={plugin.id}
-                  maxTilt={6}
-                  glareColor="gold"
-                  showCornerRivets={true}
-                  className="p-6 sm:p-7 rounded-3xl bg-neutral-900/80 backdrop-blur-md flex flex-col justify-between group overflow-hidden scroll-mt-24"
-                >
-                  <div className="space-y-4">
-                    {/* Card Header */}
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <div className="flex items-center gap-2 flex-wrap mb-1">
-                          <span className="text-[10px] font-mono font-bold text-amber-400 tracking-wider uppercase">
-                            {plugin.badge}
-                          </span>
-                          {plugin.isNewRelease && (
-                            <span className="text-[9.5px] font-mono font-black px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-500/25 to-red-500/25 text-amber-300 border border-amber-500/60 flex items-center gap-1 shadow-sm animate-pulse">
-                              <Flame className="w-3 h-3 text-amber-400" />
-                              <span>{plugin.newReleaseTag || 'NUOVA RELEASE 2 NOV'}</span>
-                            </span>
-                          )}
-                        </div>
-                        <h4 
-                          onClick={() => handleSelectPlugin(plugin.id)}
-                          className="font-heading font-black text-2xl text-white group-hover:text-amber-400 transition-colors cursor-pointer"
-                          title={`Apri pagina dedicata di ${plugin.name}`}
-                        >
-                          {plugin.name}
-                        </h4>
-                        {plugin.version && (
-                          <div className="flex items-center gap-2 mt-1">
-                            <span className="text-[11px] font-mono text-neutral-300 font-semibold px-2 py-0.5 rounded-md bg-neutral-950 border border-neutral-800">
-                              {plugin.version}
-                            </span>
-                            {plugin.isNewRelease && (
-                              <span className="text-[10px] font-mono text-emerald-400 flex items-center gap-1 font-bold">
-                                <Sparkles className="w-3 h-3 text-emerald-400" />
-                                <span>Release Attiva</span>
-                              </span>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                      {isLocked ? (
-                        <span className="shrink-0 text-[10px] font-mono font-bold px-3 py-1 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/35 flex items-center gap-1.5 shadow-sm">
-                          <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-                          <span>SETTIMANA {plugin.unlockWeek || 1} • SBLOCCO IN ARRIVO</span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+            {siteContent.plugins
+              .filter((plugin) => {
+                if (categoryFilter === 'all') return true;
+                if (categoryFilter === 'vocal') return ['plugin-realtune', 'plugin-easyvoice'].includes(plugin.id);
+                if (categoryFilter === 'dynamics') return ['plugin-optocom', 'plugin-cleandrive', 'plugin-masterglue', 'plugin-punchcraft'].includes(plugin.id);
+                if (categoryFilter === 'spatial') return ['plugin-cleanreso', 'plugin-perfectpre', 'plugin-spaceluxe', 'plugin-perfectclip'].includes(plugin.id);
+                return true;
+              })
+              .map((plugin) => {
+                const countdown = plugin.unlockDate ? getCountdown(plugin.unlockDate) : null;
+                const isLocked = countdown ? !countdown.isUnlocked : (plugin.status === 'IN ARRIVO');
+
+                return (
+                  <HardwareTiltCard 
+                    key={plugin.id} 
+                    id={plugin.id}
+                    maxTilt={4}
+                    glareColor="gold"
+                    showCornerRivets={false}
+                    className="p-4 sm:p-5 rounded-2xl sm:rounded-3xl bg-neutral-900/85 border border-neutral-800/90 hover:border-amber-500/40 backdrop-blur-md flex flex-col justify-between group overflow-hidden transition-all duration-300 shadow-xl scroll-mt-24"
+                  >
+                    <div className="space-y-3">
+                      {/* Card Header: Category & Release/Status Badge */}
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-[10px] font-mono font-bold text-amber-400 tracking-wider uppercase truncate">
+                          {plugin.badge}
                         </span>
-                      ) : (
-                        <span className="shrink-0 text-[10px] font-mono font-bold px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center gap-1 shadow-sm">
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                          {countdown?.isUnlocked ? 'SBLOCCATO • DISPONIBILE' : plugin.status}
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Preview Image if available */}
-                    {plugin.imageUrl && (
-                      <div className="relative rounded-2xl overflow-hidden border border-neutral-800 hover:border-amber-500/50 group/img bg-neutral-950 aspect-[1024/571] flex items-center justify-center transition-all duration-300 shadow-inner">
-                        <img 
-                          src={getAssetUrl(plugin.imageUrl)} 
-                          alt={`${plugin.name} GUI Snapshot`} 
-                          className="w-full h-full object-cover object-center group-hover/img:scale-105 transition-transform duration-500 cursor-pointer"
-                          onClick={() => setPreviewModalImage(plugin.imageUrl || null)}
-                        />
-                        <div className="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-md bg-black/75 backdrop-blur-md border border-neutral-700/80 text-[10px] font-mono text-neutral-300 flex items-center gap-1.5 pointer-events-none">
-                          <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-                          <span>GUI Fotorealistica</span>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => setPreviewModalImage(plugin.imageUrl || null)}
-                          className="absolute bottom-2.5 right-2.5 px-3 py-1.5 rounded-xl bg-black/85 hover:bg-black text-amber-400 hover:text-amber-300 border border-amber-500/40 text-[11px] font-mono flex items-center gap-1.5 backdrop-blur-md transition-all cursor-pointer shadow-lg"
-                        >
-                          <Eye className="w-3.5 h-3.5" />
-                          <span>Ingrandisci GUI Hardware</span>
-                        </button>
-                      </div>
-                    )}
-
-                    {/* Formats Tags */}
-                    <div className="flex flex-wrap items-center gap-2 pt-1">
-                      {(plugin.formats || ['VST3 (64-bit)', 'Standalone App (.EXE)']).map((fmt, i) => (
-                        <span 
-                          key={i} 
-                          className="text-[10px] font-mono px-2.5 py-1 rounded-lg bg-neutral-950/80 border border-neutral-800 text-neutral-300"
-                        >
-                          {fmt}
-                        </span>
-                      ))}
-                    </div>
-
-                    {/* Short Description */}
-                    <div className="p-4 rounded-2xl bg-neutral-950/70 border border-neutral-800/80 space-y-1.5">
-                      <span className="text-[10px] font-mono text-neutral-400 uppercase tracking-widest block font-semibold">
-                        Descrizione Breve:
-                      </span>
-                      <p className="text-xs sm:text-sm text-neutral-200 font-light leading-relaxed">
-                        {plugin.description}
-                      </p>
-                    </div>
-
-                    {/* Technologies & DSP Architecture Section */}
-                    {hasTechnologies && (
-                      <div className="rounded-2xl bg-neutral-950/90 border border-amber-500/20 overflow-hidden">
-                        <button
-                          type="button"
-                          onClick={() => setExpandedTechPluginId(prev => ({ ...prev, [plugin.id]: !isTechExpanded }))}
-                          className="w-full px-4 py-3 bg-neutral-900/60 hover:bg-neutral-900 flex items-center justify-between text-left transition-colors cursor-pointer"
-                        >
-                          <div className="flex items-center gap-2">
-                            <Cpu className="w-4 h-4 text-amber-400" />
-                            <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-amber-300">
-                              Tecnologie & Architettura DSP ({plugin.technologies?.length})
-                            </span>
-                          </div>
-                          {isTechExpanded ? (
-                            <ChevronUp className="w-4 h-4 text-neutral-400" />
-                          ) : (
-                            <ChevronDown className="w-4 h-4 text-neutral-400" />
-                          )}
-                        </button>
-
-                        {isTechExpanded && (
-                          <div className="p-4 space-y-2.5 text-xs text-neutral-300 border-t border-neutral-800/80 animate-in fade-in duration-200">
-                            {plugin.technologies?.map((tech, techIdx) => (
-                              <div key={techIdx} className="flex items-start gap-2.5">
-                                <span className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-1.5 shrink-0" />
-                                <span className="leading-relaxed font-light text-[11.5px] text-neutral-200">
-                                  {tech}
-                                </span>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    )}
-
-                    {/* Changelog: Nuove Funzioni & Fix Accordion */}
-                    {hasChangelog && (
-                      <div className="rounded-2xl bg-neutral-950/95 border border-amber-500/30 overflow-hidden shadow-inner">
-                        <button
-                          type="button"
-                          onClick={() => setExpandedChangelogPluginId(prev => ({ ...prev, [plugin.id]: !isChangelogExpanded }))}
-                          className="w-full px-4 py-3 bg-neutral-900/80 hover:bg-neutral-900 flex items-center justify-between text-left transition-colors cursor-pointer group/chlog"
-                        >
-                          <div className="flex items-center gap-2">
-                            <Sparkles className="w-4 h-4 text-amber-400 group-hover/chlog:rotate-12 transition-transform" />
-                            <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-amber-300">
-                              Nuove Funzioni & Fix ({plugin.changelog?.[0]?.version || plugin.version})
-                            </span>
-                            {plugin.isNewRelease && (
-                              <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40">
-                                2 NOV
-                              </span>
-                            )}
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <span className="text-[10px] font-mono text-neutral-400 hidden sm:inline">
-                              {isChangelogExpanded ? 'Nascondi' : 'Mostra Dettagli'}
-                            </span>
-                            {isChangelogExpanded ? (
-                              <ChevronUp className="w-4 h-4 text-amber-400" />
-                            ) : (
-                              <ChevronDown className="w-4 h-4 text-neutral-400 group-hover/chlog:text-white" />
-                            )}
-                          </div>
-                        </button>
-
-                        {isChangelogExpanded && (
-                          <div className="p-4 space-y-3.5 text-xs border-t border-neutral-800 animate-in fade-in duration-200 bg-black/60">
-                            {plugin.changelog?.map((logItem, logIdx) => (
-                              <div key={logIdx} className="space-y-3">
-                                <div className="flex items-center justify-between pb-2 border-b border-neutral-800/80">
-                                  <span className="font-heading font-bold text-amber-300 text-xs">
-                                    {logItem.title}
-                                  </span>
-                                  <span className="text-[10px] font-mono text-neutral-400">
-                                    {logItem.date}
-                                  </span>
-                                </div>
-
-                                {/* Features block */}
-                                {logItem.features && logItem.features.length > 0 && (
-                                  <div className="space-y-1.5">
-                                    <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-cyan-400 flex items-center gap-1.5">
-                                      <Zap className="w-3 h-3 text-cyan-400" />
-                                      <span>Nuove Funzioni & Ottimizzazioni:</span>
-                                    </span>
-                                    <div className="space-y-1.5 pl-1">
-                                      {logItem.features.map((feat, fIdx) => (
-                                        <div key={fIdx} className="flex items-start gap-2">
-                                          <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 mt-1.5 shrink-0" />
-                                          <span className="text-[11px] font-light text-neutral-200 leading-relaxed">
-                                            {feat}
-                                          </span>
-                                        </div>
-                                      ))}
-                                    </div>
-                                  </div>
-                                )}
-
-                                {/* Fixes block */}
-                                {logItem.fixes && logItem.fixes.length > 0 && (
-                                  <div className="space-y-1.5 pt-2 border-t border-neutral-900">
-                                    <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
-                                      <CheckCircle2 className="w-3 h-3 text-emerald-400" />
-                                      <span>Bug Fix & Risoluzioni DSP:</span>
-                                    </span>
-                                    <div className="space-y-1.5 pl-1">
-                                      {logItem.fixes.map((fx, fxIdx) => (
-                                        <div key={fxIdx} className="flex items-start gap-2">
-                                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mt-1.5 shrink-0" />
-                                          <span className="text-[11px] font-light text-neutral-300 leading-relaxed">
-                                            {fx}
-                                          </span>
-                                        </div>
-                                      ))}
-                                    </div>
-                                  </div>
-                                )}
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    )}
-
-                    {/* Package details banner */}
-                    {isLocked ? (
-                      <div className="space-y-1.5">
-                        <div className="p-2.5 rounded-xl bg-neutral-950 border border-amber-500/30 text-[11px] font-mono text-neutral-300 flex items-center justify-between gap-2 shadow-inner">
-                          <span className="flex items-center gap-2 truncate">
-                            <span className="text-amber-400 font-bold shrink-0 text-[10px] px-1.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/30">📅 SBLOCCO</span>
-                            <span className="truncate text-amber-200">Settimana {plugin.unlockWeek}: {formatUnlockDate(plugin.unlockDate)}</span>
+                        {isLocked ? (
+                          <span className="shrink-0 text-[9.5px] font-mono font-bold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/35 flex items-center gap-1">
+                            <Clock className="w-3 h-3 text-amber-400 animate-spin" />
+                            <span>Settimana {plugin.unlockWeek || 1}</span>
                           </span>
-                          <span className="text-amber-400 shrink-0 font-bold px-2 py-0.5 rounded bg-amber-500/15 border border-amber-500/30 text-[10px]">
-                            COUNTDOWN
-                          </span>
-                        </div>
-                        <div className="p-2 rounded-xl bg-neutral-950/80 border border-neutral-800 text-[10.5px] font-mono text-neutral-400 flex items-center justify-between gap-2">
-                          <span className="flex items-center gap-2">
-                            <span className="text-blue-400 font-bold">🪟 Win ({plugin.zipFileSize || '8.5 MB'})</span>
-                            <span className="text-neutral-600">•</span>
-                            <span className="text-amber-400 font-bold">🍏 Mac ({plugin.macZipFileSize || '18 MB'})</span>
-                          </span>
-                          <span className="text-emerald-400/90 font-mono text-[10px]">Pacchetti Pronti</span>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="space-y-1.5">
-                        <div className="p-2.5 rounded-xl bg-neutral-950 border border-neutral-800 text-[11px] font-mono text-neutral-300 flex items-center justify-between gap-2">
-                          <span className="flex items-center gap-2 truncate" title={zipFileLabel}>
-                            <span className="text-blue-400 font-bold shrink-0 text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 border border-blue-500/20">🪟 WIN</span>
-                            <span className="truncate text-neutral-300">{zipFileLabel}</span>
-                          </span>
-                          <span className="text-emerald-400 shrink-0 font-bold px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20 text-[10px]">
-                            {plugin.zipFileSize || 'Win .ZIP'}
-                          </span>
-                        </div>
-
-                        {plugin.macZipFileName ? (
-                          <div className="p-2.5 rounded-xl bg-neutral-950 border border-neutral-800 text-[11px] font-mono text-neutral-300 flex items-center justify-between gap-2">
-                            <span className="flex items-center gap-2 truncate" title={plugin.macZipFileName}>
-                              <span className="text-amber-400 font-bold shrink-0 text-[10px] px-1.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/20">🍏 MAC</span>
-                              <span className="truncate text-neutral-300">{plugin.macZipFileName}</span>
-                            </span>
-                            <span className="text-cyan-400 shrink-0 font-bold px-2 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/20 text-[10px]">
-                              {plugin.macZipFileSize || 'Mac .ZIP'}
-                            </span>
-                          </div>
                         ) : (
-                          <div className="p-2.5 rounded-xl bg-neutral-950/70 border border-neutral-800/80 text-[11px] font-mono text-neutral-400 flex items-center justify-between gap-2">
-                            <span className="flex items-center gap-2">
-                              <span className="text-amber-400/80 font-bold shrink-0 text-[10px] px-1.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/20">🍏 MAC</span>
-                              <span className="text-neutral-400">Release macOS Universal in fase di build</span>
-                            </span>
-                            <span className="text-amber-400/90 shrink-0 font-bold px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/20 text-[10px]">
-                              IN BUILD
-                            </span>
-                          </div>
+                          <span className="shrink-0 text-[9.5px] font-mono font-black px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center gap-1">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                            <span>{plugin.isNewRelease ? '🔥 Release 2 Nov' : '🟢 Disponibile'}</span>
+                          </span>
                         )}
                       </div>
-                    )}
-                  </div>
 
-                  {/* Card Actions Footer with Dual Windows & macOS Download Buttons or Live Countdown */}
-                  <div className="pt-4 mt-4 border-t border-neutral-800/80 space-y-3">
-                    {isLocked ? (
-                      <div className="space-y-2.5">
-                        <div className="flex items-center justify-between text-[11px] font-mono">
-                          <span className="flex items-center gap-1.5 text-amber-400 font-bold">
-                            <Clock className="w-3.5 h-3.5 text-amber-400 animate-spin" />
-                            <span>COUNTDOWN SBLOCCO SETTIMANALE</span>
-                          </span>
-                          <span className="text-neutral-400 text-[10px]">
-                            {formatUnlockDate(plugin.unlockDate)}
-                          </span>
-                        </div>
-
-                        {/* 4 Segmented Digital LED Boxes */}
-                        <div className="grid grid-cols-4 gap-1.5 text-center font-mono">
-                          <div className="p-2 rounded-xl bg-black/90 border border-amber-500/40 shadow-inner">
-                            <span className="block text-lg sm:text-xl font-black text-amber-400 tabular-nums">
-                              {String(countdown?.days ?? 0).padStart(2, '0')}
-                            </span>
-                            <span className="text-[9px] uppercase tracking-wider text-neutral-400">GIORNI</span>
-                          </div>
-                          <div className="p-2 rounded-xl bg-black/90 border border-amber-500/40 shadow-inner">
-                            <span className="block text-lg sm:text-xl font-black text-amber-400 tabular-nums">
-                              {String(countdown?.hours ?? 0).padStart(2, '0')}
-                            </span>
-                            <span className="text-[9px] uppercase tracking-wider text-neutral-400">ORE</span>
-                          </div>
-                          <div className="p-2 rounded-xl bg-black/90 border border-amber-500/40 shadow-inner">
-                            <span className="block text-lg sm:text-xl font-black text-amber-400 tabular-nums">
-                              {String(countdown?.minutes ?? 0).padStart(2, '0')}
-                            </span>
-                            <span className="text-[9px] uppercase tracking-wider text-neutral-400">MIN</span>
-                          </div>
-                          <div className="p-2 rounded-xl bg-black/90 border border-amber-500/40 shadow-inner">
-                            <span className="block text-lg sm:text-xl font-black text-amber-300 tabular-nums animate-pulse">
-                              {String(countdown?.seconds ?? 0).padStart(2, '0')}
-                            </span>
-                            <span className="text-[9px] uppercase tracking-wider text-neutral-400">SEC</span>
-                          </div>
-                        </div>
-
-                        <div className="py-2.5 px-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 font-mono text-[10.5px] text-center flex items-center justify-center gap-1.5 shadow-inner select-none">
-                          <Lock className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                          <span>Sblocco automatico download al termine del timer</span>
-                        </div>
-
-                        <button
-                          type="button"
+                      {/* Plugin Hardware GUI Image */}
+                      {plugin.imageUrl && (
+                        <div 
                           onClick={() => handleSelectPlugin(plugin.id)}
-                          className="w-full py-2.5 px-3 rounded-xl bg-neutral-950 hover:bg-neutral-800 border border-amber-500/30 hover:border-amber-400 text-amber-300 hover:text-white font-mono text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm group/btn"
+                          className="relative rounded-xl overflow-hidden border border-neutral-800 group-hover:border-amber-500/40 bg-neutral-950 aspect-[16/9] flex items-center justify-center transition-all duration-300 cursor-pointer shadow-inner"
                         >
-                          <Eye className="w-3.5 h-3.5 text-amber-400 group-hover/btn:scale-110 transition-transform" />
-                          <span>Apri Pagina Dedicata Plugin</span>
-                          <span className="text-amber-400 group-hover/btn:translate-x-1 transition-transform">→</span>
-                        </button>
-                      </div>
-                    ) : (
-                      <>
-                        <div className="flex items-center justify-between text-[11px] font-mono text-neutral-500">
-                          <span className="flex items-center gap-1.5">
-                            <Download className="w-3.5 h-3.5 text-neutral-400" />
-                            <span>{plugin.downloadCount || 0} download registrati</span>
-                          </span>
-                          <span className="text-emerald-400/80 text-[10px] font-mono">AUv2 • VST3 • Standalone</span>
+                          <img 
+                            src={getAssetUrl(plugin.imageUrl)} 
+                            alt={`${plugin.name} GUI Snapshot`} 
+                            className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                            loading="lazy"
+                          />
+                          {plugin.version && (
+                            <div className="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-black/80 backdrop-blur-md border border-neutral-800 text-[9.5px] font-mono text-neutral-300 pointer-events-none">
+                              {plugin.version.split(' ')[0]}
+                            </div>
+                          )}
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setPreviewModalImage(plugin.imageUrl || null);
+                            }}
+                            className="absolute bottom-2 right-2 p-1.5 rounded-lg bg-black/80 hover:bg-black text-amber-400 border border-amber-500/30 text-[10px] font-mono backdrop-blur-md transition-all cursor-pointer shadow-lg"
+                            title="Ingrandisci anteprima GUI"
+                            aria-label="Ingrandisci anteprima GUI"
+                          >
+                            <Eye className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      )}
+
+                      {/* Title & Version */}
+                      <div>
+                        <div className="flex items-center justify-between gap-2">
+                          <h4 
+                            onClick={() => handleSelectPlugin(plugin.id)}
+                            className="font-heading font-black text-lg sm:text-xl text-white group-hover:text-amber-400 transition-colors cursor-pointer truncate"
+                            title={`Apri pagina dedicata di ${plugin.name}`}
+                          >
+                            {plugin.name}
+                          </h4>
+                          {plugin.version && (
+                            <span className="shrink-0 text-[10px] font-mono text-neutral-400 font-semibold px-2 py-0.5 rounded bg-black/60 border border-neutral-800">
+                              {plugin.version.includes('v') ? plugin.version.match(/v\d+\.\d+(\.\d+)?/)?.[0] || plugin.version : plugin.version}
+                            </span>
+                          )}
                         </div>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        {/* Short Description (2-3 lines max, clean, legible) */}
+                        <p className="text-xs text-neutral-300 font-light leading-relaxed line-clamp-2 sm:line-clamp-3 mt-1.5 min-h-[2.5rem]">
+                          {plugin.description}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Actions Section: Pagina Plugin Button + Direct Download Buttons */}
+                    <div className="pt-3 mt-3 border-t border-neutral-800/80 space-y-2">
+                      {/* Primary Button: Pagina Plugin Dedicata */}
+                      <button
+                        type="button"
+                        onClick={() => handleSelectPlugin(plugin.id)}
+                        className="w-full py-2.5 px-3 rounded-xl bg-neutral-950 hover:bg-amber-500/10 border border-amber-500/40 hover:border-amber-400 text-amber-300 hover:text-amber-200 font-mono text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-sm group/btn"
+                      >
+                        <span>Pagina Plugin & Dettagli</span>
+                        <ArrowRight className="w-3.5 h-3.5 text-amber-400 group-hover/btn:translate-x-1 transition-transform" />
+                      </button>
+
+                      {/* Direct Downloads: Win & Mac */}
+                      {isLocked ? (
+                        <div className="p-2.5 rounded-xl bg-black/70 border border-amber-500/25 text-center font-mono">
+                          <div className="flex items-center justify-center gap-1.5 text-[11px] text-amber-400 font-bold">
+                            <Clock className="w-3 h-3 animate-spin text-amber-400" />
+                            <span>Sblocco tra {countdown?.days}g {countdown?.hours}h {countdown?.minutes}m {countdown?.seconds}s</span>
+                          </div>
+                          <p className="text-[9.5px] text-neutral-400 mt-0.5">
+                            Download Windows & Mac pronti • Sblocco automatico
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="grid grid-cols-2 gap-2">
                           {/* Windows Download Button */}
                           <button
                             type="button"
                             onClick={() => handleDownload(plugin, 'win')}
-                            className={`py-3 px-3 rounded-xl text-[11px] font-mono uppercase tracking-wider font-black transition-all flex items-center justify-center gap-1.5 shadow-md cursor-pointer ${
+                            className={`py-2 px-2.5 rounded-xl text-[10.5px] font-mono font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm cursor-pointer truncate ${
                               downloadSuccessId === `${plugin.id}-win`
-                                ? 'bg-emerald-500 text-black shadow-emerald-500/30'
-                                : 'bg-neutral-800 hover:bg-neutral-700 text-neutral-100 hover:text-white border border-neutral-700 hover:border-blue-500/40 hover:scale-[1.01]'
+                                ? 'bg-emerald-500 text-black'
+                                : 'bg-neutral-800 hover:bg-neutral-700 text-neutral-100 hover:text-white border border-neutral-700 hover:border-blue-400/50'
                             }`}
-                            title={`Scarica versione Windows 64-bit (${plugin.zipFileSize})`}
+                            title={`Scarica pacchetto Windows 64-bit (${plugin.zipFileSize || 'Win .ZIP'})`}
                           >
                             {downloadSuccessId === `${plugin.id}-win` ? (
                               <>
-                                <Check className="w-3.5 h-3.5" />
-                                <span>Scaricato (Win)</span>
+                                <Check className="w-3 h-3 shrink-0" />
+                                <span className="truncate">Scaricato (Win)</span>
                               </>
                             ) : (
                               <>
-                                <Download className="w-3.5 h-3.5 text-blue-400" />
-                                <span>🪟 Win ({plugin.zipFileSize})</span>
+                                <Download className="w-3 h-3 text-blue-400 shrink-0" />
+                                <span className="truncate">🪟 Win {plugin.zipFileSize ? `(${plugin.zipFileSize})` : ''}</span>
                               </>
                             )}
                           </button>
 
-                          {/* macOS Download Button or in-build placeholder */}
+                          {/* Mac Download Button */}
                           {plugin.macDownloadUrl ? (
                             <button
                               type="button"
                               onClick={() => handleDownload(plugin, 'mac')}
-                              className={`py-3 px-3 rounded-xl text-[11px] font-mono uppercase tracking-wider font-black transition-all flex items-center justify-center gap-1.5 shadow-md cursor-pointer ${
+                              className={`py-2 px-2.5 rounded-xl text-[10.5px] font-mono font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm cursor-pointer truncate ${
                                 downloadSuccessId === `${plugin.id}-mac`
-                                  ? 'bg-emerald-500 text-black shadow-emerald-500/30'
-                                  : 'bg-amber-500 hover:bg-amber-400 text-black shadow-amber-500/20 hover:scale-[1.01]'
+                                  ? 'bg-emerald-500 text-black'
+                                  : 'bg-amber-500 hover:bg-amber-400 text-black shadow-amber-500/10'
                               }`}
-                              title={`Scarica versione macOS Universal AU & VST3 (${plugin.macZipFileSize})`}
+                              title={`Scarica pacchetto macOS Universal (${plugin.macZipFileSize || 'Mac .ZIP'})`}
                             >
                               {downloadSuccessId === `${plugin.id}-mac` ? (
                                 <>
-                                  <Check className="w-3.5 h-3.5" />
-                                  <span>Scaricato (Mac)</span>
+                                  <Check className="w-3 h-3 shrink-0" />
+                                  <span className="truncate">Scaricato (Mac)</span>
                                 </>
                               ) : (
                                 <>
-                                  <Download className="w-3.5 h-3.5" />
-                                  <span>🍏 Mac ({plugin.macZipFileSize})</span>
+                                  <Download className="w-3 h-3 text-black shrink-0" />
+                                  <span className="truncate">🍏 Mac {plugin.macZipFileSize ? `(${plugin.macZipFileSize})` : ''}</span>
                                 </>
                               )}
                             </button>
                           ) : (
                             <div
-                              className="py-3 px-3 rounded-xl text-[11px] font-mono uppercase tracking-wider font-bold bg-neutral-950/80 text-neutral-400 border border-neutral-800 flex items-center justify-center gap-1.5 shadow-sm select-none"
-                              title="Versione macOS Universal in fase di build e firma notarile"
+                              className="py-2 px-2 rounded-xl text-[10px] font-mono font-medium bg-neutral-950 text-neutral-400 border border-neutral-800 flex items-center justify-center gap-1 select-none truncate"
+                              title="Versione macOS Universal in fase di compilazione"
                             >
-                              <Clock className="w-3.5 h-3.5 text-amber-400/80" />
-                              <span>🍏 Mac in Build</span>
+                              <Clock className="w-3 h-3 text-amber-500/70 shrink-0" />
+                              <span className="truncate">🍏 Mac in Build</span>
                             </div>
                           )}
                         </div>
-
-                        <button
-                          type="button"
-                          onClick={() => handleSelectPlugin(plugin.id)}
-                          className="w-full py-2.5 px-3 rounded-xl bg-neutral-950 hover:bg-neutral-800 border border-neutral-800 hover:border-amber-500/50 text-amber-300 hover:text-white font-mono text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm group/btn"
-                        >
-                          <Eye className="w-3.5 h-3.5 text-amber-400 group-hover/btn:scale-110 transition-transform" />
-                          <span>Apri Pagina Dedicata Plugin</span>
-                          <span className="text-amber-400 group-hover/btn:translate-x-1 transition-transform">→</span>
-                        </button>
-                      </>
-                    )}
-                  </div>
-                </HardwareTiltCard>
-              );
-            })}
+                      )}
+                    </div>
+                  </HardwareTiltCard>
+                );
+              })}
           </div>
         </div>
 
