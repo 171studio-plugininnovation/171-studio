@@ -238,16 +238,36 @@ const DEFAULT_PLUGINS: PluginItem[] = [
     badge: 'ZERO-LATENCY PITCH CORRECTION & VOCAL TRANSFORMER',
     status: 'DISPONIBILE',
     description: 'Motore di intonazione vocale real-time a 60 FPS con architettura Dual-Head Synchronous WSOLA, tracking S-curve a due velocità continuo, manopola Cue Mix boutique, selettore preset analogico, matrice note a 3 stati e zero drift di fase.',
-    version: 'v1.0.1 Studio Innovatio Edition',
+    version: 'v1.0.1 Patch 1 (2 Nov 2026)',
+    isNewRelease: true,
+    newReleaseTag: '✨ NUOVA PATCH 2 NOV',
     downloadCount: 0,
     downloadUrl: '/downloads/plugins/171_RealTune_v1.0.1_Win64.zip',
     zipFileName: '171_RealTune_v1.0.1_Win64.zip',
-    zipFileSize: '21.22 MB',
+    zipFileSize: '19.18 MB',
     macDownloadUrl: '/downloads/plugins/171_RealTune_v1.0.1_Mac.zip',
     macZipFileName: '171_RealTune_v1.0.1_Mac.zip',
     macZipFileSize: '8.05 MB',
     imageUrl: '/assets/plugins/171RealTune_GUI.png',
-    formats: ['VST3 (Win/Mac)', 'AudioUnit v2 (Logic Pro)', 'Standalone App'],
+    formats: ['VST3 (Win/Mac 64-bit)', 'AudioUnit v2 (macOS)', 'Standalone App (.EXE)'],
+    changelog: [
+      {
+        version: 'v1.0.1 Patch 1',
+        date: '02/11/2026',
+        title: 'Tracking Ibrido MPM+DPLL & Nuova Manopola Cue Mix Boutique',
+        features: [
+          'Nuova Manopola CUE MIX boutique CMF ad altissima precisione con readout percentuale luminescente',
+          'Tracking continuo con doppia velocità S-curve: correzione naturale su note lunghe e snap fulmineo su cambi veloci',
+          'Rilevamento fondamentale ibrido MPM + DPLL per tracking continuo con precisione sub-millisecondo',
+          'Sintesi sincrona TD-PSOLA ancorata al GCI per correzione naturale priva di comb-filtering e sfasamenti'
+        ],
+        fixes: [
+          'Selettore Preset riallineato con spaziatura millimetrica tra le lampade spia a gioiello Ruby Bypass e Green Pitch Lock',
+          'Deadband tollerante (<0.07 cent) per eliminare micro-vibrazioni indesiderate sul vibrato naturale',
+          'Ottimizzazione ScopedDenormalDisabler FTZ/DAZ x86_64 con zero allocazioni heap in thread audio'
+        ]
+      }
+    ],
     technologies: [
       "Architettura Dual-Head Synchronous WSOLA per intonazione vocale istantanea a zero artefatti e zero drift",
       "Tracking continuo con doppia velocità S-curve: correzione naturale su note lunghe e snap fulmineo su cambi veloci",
@@ -262,19 +282,41 @@ const DEFAULT_PLUGINS: PluginItem[] = [
   {
     id: 'plugin-easyvoice',
     name: '171 EasyVoice',
-    badge: 'ALL-IN-ONE VOCAL CHANNEL STRIP',
+    badge: 'ALL-IN-ONE VOCAL CHANNEL STRIP DEFINITIVA',
     status: 'DISPONIBILE',
-    description: 'Channel strip vocale definitivo concepito per dare alle voci lo standard discografico in pochi secondi: De-Esser intelligente, Compressore Ottico/VCA, Equalizzatore Air/Baxandall e Limiter con telemetria a 60 FPS.',
-    version: 'v1.0.1 Master Edition',
+    description: 'Channel strip vocale definitivo per lo standard discografico istantaneo: De-Esser intelligente, Dinamiche Seriali Dual-Stage (1176 FET + LA-2A Opto), Equalizzatore SSL 4000 G-Series 242, 8 Preamp analogici differenziati e telemetria a 60 FPS.',
+    version: 'v1.0.1 Patch 2 (2 Nov 2026)',
+    isNewRelease: true,
+    newReleaseTag: '🔥 NUOVA RELEASE 2 NOV',
     downloadCount: 0,
     downloadUrl: '/downloads/plugins/171_EasyVoice_v1.0.1_Win64.zip',
     zipFileName: '171_EasyVoice_v1.0.1_Win64.zip',
-    zipFileSize: '35.94 MB',
+    zipFileSize: '35.00 MB',
     macDownloadUrl: '/downloads/plugins/171_EasyVoice_v1.0.1_Mac.zip',
     macZipFileName: '171_EasyVoice_v1.0.1_Mac.zip',
     macZipFileSize: '21.54 MB',
     imageUrl: '/assets/plugins/171EasyVoice_GUI.png',
-    formats: ['VST3 (Win/Mac)', 'AudioUnit v2 (Logic Pro)', 'Standalone App'],
+    formats: ['VST3 (Win/Mac 64-bit)', 'AudioUnit v2 (macOS)', 'Standalone App (.EXE)'],
+    changelog: [
+      {
+        version: 'v1.0.1 Patch 2',
+        date: '02/11/2026',
+        title: 'Fix Chattering Riverbero, Routing Dinamico 1176+LA2A & 8 Preamp Analogici',
+        features: [
+          '8 Modelli di Preamp & Distorsione Analogica differenziati: Neve 5116 Class-A, SSL 4000G VCA, EMI TG12345, Avalon VT-737 Tube, Culture Vulture Pentode, Black Box HG-2, Studer A800, Decapitator Germanium',
+          'Dinamiche Seriali Dual-Stage simultanee con switch routing hardware integrato: OPTO>EQ>FET commutabile in FET>EQ>OPTO',
+          'SSL 4000 G-Series 242 EQ con Proportional-Q su LF Bell e decramping Andy Simper su HF',
+          'Modellazione stili 1176 Blackface (Rev E) e Blue Stripe (Rev A) con modalità All-Buttons In'
+        ],
+        fixes: [
+          'Fix VocalNoiseExpander: Pre-Open Reset State (canale a 0 dB garantito sul campione 0, zero click sul transiente)',
+          'Curva Downward Expander Soft-Knee quadratica C1-continua (4 dB knee, 3.5:1 ratio): eliminato qualsiasi stacco o chattering su code di riverbero',
+          'Sidechain High-Pass 80 Hz ZDF a 2 poli: zero attenuazione spurie su consonanti (5-10 kHz)',
+          'Risolto il clipping a -14 dBFS dell\'1176 FET; ricalibrato a gain unitario a -18 dBFS',
+          'Corretta dicitura potenziometro: "HF / FLAT" per il filtro emphasis trimmer R37'
+        ]
+      }
+    ],
     technologies: [
       "De-Esser dinamico intelligente con detection spettrale tarata su sibilanti harsh (4 - 9 kHz)",
       "Compressore vocale ibrido Opto/VCA con controllo Punch & Body per voce sempre avanti nel mix",
@@ -290,16 +332,35 @@ const DEFAULT_PLUGINS: PluginItem[] = [
     badge: 'OPTICAL COMPRESSOR & ANALOG TUBE DRIVE',
     status: 'DISPONIBILE',
     description: 'Compressore optoelettronico boutique con saturazione valvolare tri-band, modellazione fisica della cella elettro-ottica T4B (LA-2A) con isteresi fotochimica a doppia trappola, galvanometro analogico VU/GR con ago a spada e oscilloscopio CRT telemetrico.',
-    version: 'v1.1.0 Boutique Modern Edition',
+    version: 'v1.1.0 Patch (2 Nov 2026)',
+    isNewRelease: true,
+    newReleaseTag: '✨ NUOVA PATCH 2 NOV',
     downloadCount: 0,
     downloadUrl: '/downloads/plugins/171_DriveOptocom_v1.1.0_Win64.zip',
     zipFileName: '171_DriveOptocom_v1.1.0_Win64.zip',
-    zipFileSize: '12.05 MB',
+    zipFileSize: '10.98 MB',
     macDownloadUrl: '/downloads/plugins/171_DriveOptocom_v1.0.0_Mac.zip',
     macZipFileName: '171_DriveOptocom_v1.0.0_Mac.zip',
     macZipFileSize: '87.32 MB',
     imageUrl: '/assets/plugins/171DriveOptocom_GUI.png',
-    formats: ['VST3 (Win/Mac)', 'AudioUnit v2 (Logic Pro)', 'Standalone App'],
+    formats: ['VST3 (Win/Mac 64-bit)', 'AudioUnit v2 (macOS)', 'Standalone App (.EXE)'],
+    changelog: [
+      {
+        version: 'v1.1.0 Patch',
+        date: '02/11/2026',
+        title: 'Perfezionamento Fotochimico Cella T4B & Tri-Band Linkwitz-Riley LR4',
+        features: [
+          'Tri-Band Tube Saturator con crossover Linkwitz-Riley LR-4 e compensazione allpass a fase piatta',
+          'Armoniche Distressor UAD selezionabili (Dist 2 calore valvolare a triodo, Dist 3 compressione simmetrica da nastro)',
+          'Doppio Display: Galvanometro analogico VU/GR ad ago balistico + CRT Oscilloscopio telemetrico'
+        ],
+        fixes: [
+          'Modellazione T4B perfezionata con doppia trappola di decadimento e risposta asimmetrica anti-pumping',
+          'DC Blocker ZDF a due stadi integrato per eliminare qualsiasi offset di corrente continua',
+          'Implementazione ScopedDenormalDisabler FTZ/DAZ x86_64 per massima efficienza CPU'
+        ]
+      }
+    ],
     technologies: [
       "Modellazione fisica della cella elettro-ottica T4B con doppia trappola di decadimento e risposta asimmetrica",
       "Isteresi foto-chimica reale LA-2A con memoria profonda per livellamento vocale setoso",
@@ -315,16 +376,34 @@ const DEFAULT_PLUGINS: PluginItem[] = [
     badge: 'TRANSIENT-AWARE DUAL SATURATOR & ADAA-2 CLIPPER',
     status: 'DISPONIBILE',
     description: 'Saturatore analogico boutique a doppio canale con separazione intelligente dei transienti, clipper ADAA-2 a 64-bit anti-aliasing, saturazione valvolare e a nastro, stadio Warmth & Tilt EQ Baxandall e oscilloscopio CRT a fosfori dorati a 60 FPS.',
-    version: 'v1.0.0 Studio Edition',
+    version: 'v1.0.0 Patch 1 (2 Nov 2026)',
+    isNewRelease: true,
+    newReleaseTag: '✨ NUOVA PATCH 2 NOV',
     downloadCount: 0,
     downloadUrl: '/downloads/plugins/171_CleanDrive_v1.0.0_Win64.zip',
     zipFileName: '171_CleanDrive_v1.0.0_Win64.zip',
-    zipFileSize: '7.29 MB',
+    zipFileSize: '6.64 MB',
     macDownloadUrl: '/downloads/plugins/171_CleanDrive_v1.0.0_Mac.zip',
     macZipFileName: '171_CleanDrive_v1.0.0_Mac.zip',
     macZipFileSize: '87.24 MB',
     imageUrl: '/assets/plugins/171CleanDrive_GUI.png',
-    formats: ['VST3 (Win/Mac)', 'AudioUnit v2 (Logic Pro)', 'Standalone App'],
+    formats: ['VST3 (Win/Mac 64-bit)', 'AudioUnit v2 (macOS)', 'Standalone App (.EXE)'],
+    changelog: [
+      {
+        version: 'v1.0.0 Patch 1',
+        date: '02/11/2026',
+        title: 'Splitter Transienti Parallelo & Ottimizzazione ADAA-2 Antialiasing',
+        features: [
+          'Separatore di transienti dinamico per processare attacco e corpo in canali paralleli indipendenti',
+          'Doppio motore armonico: Tube Saturation valvolare di Classe A e Tape Saturation caldo con compressione del nastro',
+          'ADAA-2 (Antiderivative Antialiasing 2° ordine) a 64-bit per saturazione pura priva di fold-back aliasing'
+        ],
+        fixes: [
+          'Ricalibrazione soglie True-Peak a -0.10 dBTP conforme allo standard ITU-R BS.1770-4',
+          'Guardia hardware FTZ/DAZ per eliminare numeri denormali su code a volume infinitesimale'
+        ]
+      }
+    ],
     technologies: [
       "Separatore di transienti dinamico per processare attacco e corpo in canali paralleli indipendenti",
       "Doppio motore armonico: Tube Saturation valvolare di Classe A e Tape Saturation caldo con compressione del nastro",
@@ -340,16 +419,34 @@ const DEFAULT_PLUGINS: PluginItem[] = [
     badge: 'DYNAMIC RESONANCE SUPPRESSOR & SPECTRAL CLEANER',
     status: 'DISPONIBILE',
     description: 'Soppressore chirurgico di risonanze vocali e acustiche multi-banda: 32 filtri SVF Zero-Delay Feedback (ZDF) attivi in tempo reale con analisi spettrale a 60 FPS e modalità Delta Listening per isolare solo il materiale rimosso.',
-    version: 'v1.0.0 Studio Edition',
+    version: 'v1.0.0 Patch 1 (2 Nov 2026)',
+    isNewRelease: true,
+    newReleaseTag: '✨ NUOVA PATCH 2 NOV',
     downloadCount: 0,
     downloadUrl: '/downloads/plugins/171_CleanReso_v1.0.0_Win64.zip',
     zipFileName: '171_CleanReso_v1.0.0_Win64.zip',
-    zipFileSize: '12.60 MB',
+    zipFileSize: '11.65 MB',
     macDownloadUrl: '/downloads/plugins/171_CleanReso_v1.0.0_Mac.zip',
     macZipFileName: '171_CleanReso_v1.0.0_Mac.zip',
     macZipFileSize: '13.07 MB',
     imageUrl: '/assets/plugins/171CleanReso_GUI.png',
-    formats: ['VST3 (Win/Mac)', 'AudioUnit v2 (Logic Pro)', 'Standalone App'],
+    formats: ['VST3 (Win/Mac 64-bit)', 'AudioUnit v2 (macOS)', 'Standalone App (.EXE)'],
+    changelog: [
+      {
+        version: 'v1.0.0 Patch 1',
+        date: '02/11/2026',
+        title: '32 Filtri SVF ZDF a 64-bit & Modalità Delta Listening',
+        features: [
+          'Banca a 32 filtri State Variable Zero-Delay Feedback a 64-bit in parallelo con peak-picking adattivo',
+          'Modalità Delta Listening per ascolto isolato delle sole frequenze e risonanze aspre rimosse',
+          'Modulo Mäag EQ4 Air Band e saturazione Neve Silk Red Class-A vellutata'
+        ],
+        fixes: [
+          'Ottimizzazione del display FFT a 60 FPS con riduzione overhead CPU del 25%',
+          'Risoluzione dei micro-shift di fase sul percorso di ascolto dry'
+        ]
+      }
+    ],
     technologies: [
       "Analizzatore spettrale a 32 bande con filtri State Variable (SVF) Zero-Delay Feedback a 64-bit",
       "Peak-picking adattivo per identificare e attenuare solo le risonanze aspre e i fischi metallici",
@@ -364,16 +461,34 @@ const DEFAULT_PLUGINS: PluginItem[] = [
     badge: 'BOUTIQUE CONSOLE & TUBE PREAMP EMULATION',
     status: 'DISPONIBILE',
     description: 'Preamplificatore valvolare/analogico a modellazione armonica profonda con curve di equalizzazione Baxandall, circuito Air Band fino a 40 kHz e texture vintage Neve, API e Avalon.',
-    version: 'v1.0.0 Console Edition',
+    version: 'v1.0.0 Patch 1 (2 Nov 2026)',
+    isNewRelease: true,
+    newReleaseTag: '✨ NUOVA PATCH 2 NOV',
     downloadCount: 0,
     downloadUrl: '/downloads/plugins/171_PerfectPre_v1.0.0_Win64.zip',
     zipFileName: '171_PerfectPre_v1.0.0_Win64.zip',
-    zipFileSize: '19.44 MB',
+    zipFileSize: '18.55 MB',
     macDownloadUrl: '/downloads/plugins/171_PerfectPre_v1.0.0_Mac.zip',
     macZipFileName: '171_PerfectPre_v1.0.0_Mac.zip',
     macZipFileSize: '7.54 MB',
     imageUrl: '/assets/plugins/PerfectPre_Hardware_GUI.png',
-    formats: ['VST3 (Win/Mac)', 'AudioUnit v2 (Logic Pro)', 'Standalone App'],
+    formats: ['VST3 (Win/Mac 64-bit)', 'AudioUnit v2 (macOS)', 'Standalone App (.EXE)'],
+    changelog: [
+      {
+        version: 'v1.0.0 Patch 1',
+        date: '02/11/2026',
+        title: 'Tolleranze TMT 72 Canali & 4 Topologie Console Analogiche',
+        features: [
+          '4 Caratteri Preamp: British Neve LO1166, American Tube 12AX7, Vintage Germanium OC44 e Clean Studio',
+          'Emulazione nastro Studer A800 con isteresi a 15/30 ips',
+          'Tolleranze TMT (Tolerance Modeling Technology) a 72 canali console indipendenti'
+        ],
+        fixes: [
+          'Fisica balistica del VU meter analogico ricalibrata con lampada al tungsteno e overshoot IEC 60268-17',
+          'Zero allocazioni heap e piena stabilità a 96 kHz e 192 kHz'
+        ]
+      }
+    ],
     technologies: [
       "Emulazione del circuito discreto a triodo e trasformatore d'ingresso console analogica",
       "Curve Baxandall musicali per bassi pieni e alti aperti e naturali",
@@ -386,20 +501,38 @@ const DEFAULT_PLUGINS: PluginItem[] = [
     id: 'plugin-spaceluxe',
     name: '171 SpaceLuxe',
     badge: 'BOUTIQUE HYBRID REVERB & SPACE SCULPTOR',
-    status: 'IN ARRIVO',
-    unlockWeek: 1,
-    unlockDate: '2026-11-06T18:00:00+01:00',
+    status: 'DISPONIBILE',
     description: 'Riverbero ibrido algoritmico boutique con serbatoio lossless FDN-16 ad altissima densità, Ducking dinamico con Sidechain Esterno (Multi-Bus VST3), generatore Harmonic Shimmer valvolare a +1 ottava e filtro Mono-Maker State Variable.',
-    version: 'v1.1.0 Boutique Spatial Edition',
+    version: 'v1.1.0 Patch (2 Nov 2026)',
+    isNewRelease: true,
+    newReleaseTag: '🔥 NUOVA RELEASE 2 NOV',
     downloadCount: 0,
     downloadUrl: '/downloads/plugins/171_SpaceLuxe_v1.1.0_Win64.zip',
     zipFileName: '171_SpaceLuxe_v1.1.0_Win64.zip',
-    zipFileSize: '8.52 MB',
+    zipFileSize: '8.45 MB',
     macDownloadUrl: '/downloads/plugins/171_SpaceLuxe_v1.1.0_Mac.zip',
     macZipFileName: '171_SpaceLuxe_v1.1.0_Mac.zip',
     macZipFileSize: '0.73 MB',
     imageUrl: '/assets/plugins/171SpaceLuxe_GUI.png',
-    formats: ['VST3 (64-bit multi-bus)', 'AudioUnit v2 (macOS)', 'Standalone App'],
+    formats: ['VST3 (64-bit multi-bus)', 'AudioUnit v2 (macOS)', 'Standalone App (.EXE)'],
+    changelog: [
+      {
+        version: 'v1.1.0 Patch',
+        date: '02/11/2026',
+        title: 'Fix Glitch Tail Reverb, Rimodulazione GUI & FDN-16 Lossless',
+        features: [
+          'Smart Ducking dinamico vocale con presence lift automatico e Tail Bloom swell indipendente',
+          'Modulo Harmonic Shimmer (+12 semitoni / +1 ottava) con saturazione valvolare calda',
+          'Filtro Mono-Maker State Variable a 12 dB/oct per preservare il punch mono sotto i 180 Hz',
+          'Display 3D Waterfall Spectrogram a 60 FPS con telemetria continua del decadimento'
+        ],
+        fixes: [
+          'Risolti glitch, fischio e fuzz sui decadimenti prolungati tramite interpolatori allpass anti-denormal nel serbatoio FDN-16',
+          'Rimodulazione definitiva del layout GUI: eliminati tutti gli accavallamenti tra display CRT, fader e controlli',
+          'Guardia hardware ScopedDenormalDisabler (FTZ/DAZ x86_64) attiva e zero heap allocations nel thread audio'
+        ]
+      }
+    ],
     technologies: [
       "Serbatoio riverberante lossless FDN-16 (Feedback Delay Network a 16 delay mutualmente primi con matrice ortogonale Householder)",
       "Dual Sidechain Ducking Mode: Ducking interno automatico o guidato da bus ausiliario esterno (External Sidechain per voce lead, rullante o cassa)",
@@ -415,19 +548,36 @@ const DEFAULT_PLUGINS: PluginItem[] = [
     name: '171 MasterGlue',
     badge: 'ANALOG MASTER BUS CONSOLE & STEREO IMAGER',
     status: 'IN ARRIVO',
-    unlockWeek: 2,
-    unlockDate: '2026-11-13T18:00:00+01:00',
+    unlockWeek: 1,
+    unlockDate: '2026-11-06T18:00:00+01:00',
     description: 'Compressore analogico da master bus a doppia topologia (VCA stile SSL 4000 G & Diode-Bridge stile Neve 33609), stadio trasformatore d\'uscita Marinair LO1166, processore d\'immagine stereo TrueSpace e doppi VU meter galvanometrici balistici IEC 60268-17.',
     version: 'v1.0.0 Studio Master Edition',
+    isNewRelease: false,
+    newReleaseTag: 'PROSSIMO SBLOCCO SETT. 1',
     downloadCount: 0,
     downloadUrl: '/downloads/plugins/171_MasterGlue_v1.0.0_Win64.zip',
     zipFileName: '171_MasterGlue_v1.0.0_Win64.zip',
-    zipFileSize: '8.37 MB',
+    zipFileSize: '8.36 MB',
     macDownloadUrl: '/downloads/plugins/171_MasterGlue_v1.0.0_Mac.zip',
     macZipFileName: '171_MasterGlue_v1.0.0_Mac.zip',
     macZipFileSize: '0.52 MB',
     imageUrl: '/assets/plugins/171MasterGlue_GUI.png',
-    formats: ['VST3 (64-bit)', 'AudioUnit v2 (macOS)', 'Standalone App'],
+    formats: ['VST3 (64-bit)', 'AudioUnit v2 (macOS)', 'Standalone App (.EXE)'],
+    changelog: [
+      {
+        version: 'v1.0.0',
+        date: '02/11/2026',
+        title: 'Doppia Topologia VCA/Diode-Bridge & Trasformatore Marinair LO1166',
+        features: [
+          'Doppia Topologia Analogica: switch VCA Punch (SSL 4000 G) e Diode-Bridge Warmth (Neve 33609)',
+          'Stadio trasformatore Marinair LO1166 con saturazione ferromagnetica di nucleo (Iron, Nickel, Steel)',
+          'Processore d\'immagine stereo TrueSpace con Mono-Maker sotto i 120 Hz'
+        ],
+        fixes: [
+          'Compilazione certificata Windows 64-bit Standalone e VST3 con ScopedDenormalDisabler'
+        ]
+      }
+    ],
     technologies: [
       "Doppia Topologia Analogica: switch VCA Punch (SSL 4000 G con Auto-Release) e Diode-Bridge Warmth (Neve 33609 con progressive knee)",
       "Stadio trasformatore Marinair LO1166 con saturazione ferromagnetica di nucleo, armoniche pari/dispari e DC Blocker a due stadi",
@@ -443,10 +593,12 @@ const DEFAULT_PLUGINS: PluginItem[] = [
     name: '171 PunchCraft',
     badge: 'MULTI-BAND TRANSIENT SHAPER & SUB-HARMONIC SCULPTOR',
     status: 'IN ARRIVO',
-    unlockWeek: 3,
-    unlockDate: '2026-11-20T18:00:00+01:00',
+    unlockWeek: 2,
+    unlockDate: '2026-11-13T18:00:00+01:00',
     description: 'Processore dinamico di inviluppo multi-banda a 3 bande indipendenti: Differential Envelope Technology per scolpire attacco e sustain senza soglia rigida, generatore sub-armonico sismico a divisione di frequenza e doppio oscilloscopio CRT telemetrico.',
     version: 'v1.0.0 Studio Impact Edition',
+    isNewRelease: false,
+    newReleaseTag: 'SBLOCCO SETT. 2',
     downloadCount: 0,
     downloadUrl: '/downloads/plugins/171_PunchCraft_v1.0.0_Win64.zip',
     zipFileName: '171_PunchCraft_v1.0.0_Win64.zip',
@@ -455,7 +607,22 @@ const DEFAULT_PLUGINS: PluginItem[] = [
     macZipFileName: '171_PunchCraft_v1.0.0_Mac.zip',
     macZipFileSize: '0.57 MB',
     imageUrl: '/assets/plugins/171PunchCraft_GUI.png',
-    formats: ['VST3 (64-bit)', 'AudioUnit v2 (macOS)', 'Standalone App'],
+    formats: ['VST3 (64-bit)', 'AudioUnit v2 (macOS)', 'Standalone App (.EXE)'],
+    changelog: [
+      {
+        version: 'v1.0.0',
+        date: '02/11/2026',
+        title: 'Scolpitura Dinamica Multi-Banda D.E.T. & Sub-Harmonic Sismico',
+        features: [
+          'Differential Envelope Technology (D.E.T.) a 3 bande Linkwitz-Riley LR-4',
+          'Generatore Sub-Harmonic a divisione di frequenza con stadio Drive a trasformatore',
+          'Doppio oscilloscopio CRT a fosfori ambra per analisi real-time'
+        ],
+        fixes: [
+          'Compilazione certificata con guardie denormali e True-Peak Limiter a 64-bit'
+        ]
+      }
+    ],
     technologies: [
       "Scolpitura dinamica multi-banda a 3 vie (Low / Mid / High) con filtri di crossover Linkwitz-Riley LR-4 a fase lineare",
       "Differential Envelope Technology (D.E.T.) per il controllo indipendente dell'Attack e del Sustain senza alterazione del True-Peak",
@@ -471,19 +638,36 @@ const DEFAULT_PLUGINS: PluginItem[] = [
     name: '171 PerfectClip',
     badge: 'MASTERING ADAA-2 CLIPPER & TRANSDETAIL MATRIX',
     status: 'IN ARRIVO',
-    unlockWeek: 4,
-    unlockDate: '2026-11-27T18:00:00+01:00',
+    unlockWeek: 3,
+    unlockDate: '2026-11-20T18:00:00+01:00',
     description: 'Clipper analogico/digitale di riferimento mastering con antiderivate continue ADAA-2 a doppio ordine, matrice brevettata 171 TransDetail™ per la conservazione assoluta dei micro-transienti e dell\'aria sotto spinta estrema (+12 dB), 4 topologie (Precision Hard Clip, Gold ADC 122, Tube Triode, Germanium) e CRT Oscilloscopio telemetrico vettoriale a 60 FPS.',
     version: 'v1.0.0 Mastering Edition',
+    isNewRelease: false,
+    newReleaseTag: 'SBLOCCO SETT. 3',
     downloadCount: 0,
     downloadUrl: '/downloads/plugins/171_PerfectClip_v1.0.0_Win64.zip',
     zipFileName: '171_PerfectClip_v1.0.0_Win64.zip',
-    zipFileSize: '8.38 MB',
+    zipFileSize: '8.42 MB',
     macDownloadUrl: '/downloads/plugins/171_PerfectClip_v1.0.0_Mac.zip',
     macZipFileName: '171_PerfectClip_v1.0.0_Mac.zip',
     macZipFileSize: '0.51 MB',
     imageUrl: '/assets/plugins/171PerfectClip_GUI.png',
-    formats: ['VST3 (64-bit)', 'AudioUnit v2 (macOS)', 'Standalone App'],
+    formats: ['VST3 (64-bit)', 'AudioUnit v2 (macOS)', 'Standalone App (.EXE)'],
+    changelog: [
+      {
+        version: 'v1.0.0',
+        date: '02/11/2026',
+        title: 'Clipper ADAA-2 a 64-bit & Matrice TransDetail™',
+        features: [
+          'Motore ADAA-2 analitico a doppio ordine per Hard-Clipping a 64-bit con zero foldback aliasing',
+          'Matrice 171 TransDetail™: preservazione micro-transienti fino a +12 dB di spinta',
+          '4 topologie: Digital Hard Clip, Gold ADC 122, Tube Triode e Germanium Diode'
+        ],
+        fixes: [
+          'Delta Audition Mode a fase rigorosamente allineata per ascoltare le creste clippate'
+        ]
+      }
+    ],
     technologies: [
       "Motore ADAA-2 analitico a doppio ordine per Hard-Clipping a 64-bit e zero foldback aliasing",
       "Matrice 171 TransDetail™: scomposizione ortogonale portante/dettaglio per preservare micro-transienti e aria sotto spinta estrema (+12 dB)",
@@ -921,7 +1105,12 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         const effectivePlugins = DEFAULT_PLUGINS.map((dp) => {
           const userCopy = parsed.plugins?.find((p: any) => p.id === dp.id);
           return userCopy
-            ? { ...dp, ...userCopy, downloadCount: Math.max(userCopy.downloadCount || 0, dp.downloadCount || 0) }
+            ? {
+                ...userCopy,
+                ...dp,
+                downloadCount: Math.max(userCopy.downloadCount || 0, dp.downloadCount || 0),
+                status: dp.status === 'DISPONIBILE' ? 'DISPONIBILE' : (userCopy.status || dp.status),
+              }
             : dp;
         });
         return {
@@ -1173,7 +1362,12 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
             const officialPlugins = DEFAULT_PLUGINS.map((dp) => {
               const userCopy = data.plugins?.find((p: any) => p.id === dp.id);
               return userCopy
-                ? { ...dp, ...userCopy, downloadCount: Math.max(userCopy.downloadCount || 0, dp.downloadCount || 0) }
+                ? {
+                    ...userCopy,
+                    ...dp,
+                    downloadCount: Math.max(userCopy.downloadCount || 0, dp.downloadCount || 0),
+                    status: dp.status === 'DISPONIBILE' ? 'DISPONIBILE' : (userCopy.status || dp.status),
+                  }
                 : dp;
             });
             return {

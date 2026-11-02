@@ -1,3 +1,11 @@
+export interface PluginChangelogItem {
+  version: string;
+  date: string;
+  title: string;
+  features?: string[];
+  fixes?: string[];
+}
+
 export interface PluginItem {
   id: string;
   name: string;
@@ -16,6 +24,9 @@ export interface PluginItem {
   macZipFileName?: string;
   macZipFileSize?: string;
   version?: string;
+  isNewRelease?: boolean;
+  newReleaseTag?: string; // e.g. "🔥 NUOVA RELEASE 2 NOV"
+  changelog?: PluginChangelogItem[];
   technologies?: string[];
   formats?: string[];
   highlights?: string[];
