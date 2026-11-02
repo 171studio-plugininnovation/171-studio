@@ -7,8 +7,9 @@ import { getAssetUrl } from '../utils/assetPath';
 
 interface NavbarProps {
   currentPage: PageId;
-  onNavigate: (page: PageId) => void;
+  onNavigate: (page: PageId, pluginId?: string | null) => void;
   onOpenMasterDashboard?: () => void;
+  selectedPluginId?: string | null;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({ 
@@ -21,6 +22,29 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [isIslandOpen, setIsIslandOpen] = useState(false);
   const islandTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const islandContainerRef = useRef<HTMLDivElement | null>(null);
+
+  // Waves Audio Style Mega-Menu Dropdown State
+  const [isPluginsMegaMenuOpen, setIsPluginsMegaMenuOpen] = useState(false);
+  const [mobilePluginsExpanded, setMobilePluginsExpanded] = useState(false);
+  const pluginsMenuTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const pluginsMenuContainerRef = useRef<HTMLDivElement | null>(null);
+
+  const handlePluginsMenuEnter = () => {
+    if (pluginsMenuTimeoutRef.current) {
+      clearTimeout(pluginsMenuTimeoutRef.current);
+      pluginsMenuTimeoutRef.current = null;
+    }
+    setIsPluginsMegaMenuOpen(true);
+  };
+
+  const handlePluginsMenuLeave = () => {
+    if (pluginsMenuTimeoutRef.current) {
+      clearTimeout(pluginsMenuTimeoutRef.current);
+    }
+    pluginsMenuTimeoutRef.current = setTimeout(() => {
+      setIsPluginsMegaMenuOpen(false);
+    }, 280);
+  };
 
   interface NavItemDef {
     id: PageId;
@@ -73,6 +97,9 @@ export const Navbar: React.FC<NavbarProps> = ({
       if (islandContainerRef.current && !islandContainerRef.current.contains(e.target as Node)) {
         setIsIslandOpen(false);
       }
+      if (pluginsMenuContainerRef.current && !pluginsMenuContainerRef.current.contains(e.target as Node)) {
+        setIsPluginsMegaMenuOpen(false);
+      }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
@@ -81,9 +108,11 @@ export const Navbar: React.FC<NavbarProps> = ({
     };
   }, []);
 
-  const handleNavClick = (id: PageId) => {
-    onNavigate(id);
+  const handleNavClick = (id: PageId, pluginId?: string | null) => {
+    onNavigate(id, pluginId);
     setMobileMenuOpen(false);
+    setIsIslandOpen(false);
+    setIsPluginsMegaMenuOpen(false);
   };
 
   return (
@@ -275,9 +304,15 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <button
                       key={item.id}
                       type="button"
+                      onMouseEnter={item.id === 'plugin-innovation' ? handlePluginsMenuEnter : undefined}
                       onClick={() => {
-                        handleNavClick(item.id);
-                        setIsIslandOpen(false);
+                        if (item.id === 'plugin-innovation') {
+                          setIsPluginsMegaMenuOpen(!isPluginsMegaMenuOpen);
+                        } else {
+                          handleNavClick(item.id);
+                          setIsIslandOpen(false);
+                          setIsPluginsMegaMenuOpen(false);
+                        }
                       }}
                       className={`relative px-3 py-1.5 rounded-2xl text-[11px] font-medium tracking-wide transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 cursor-pointer flex items-center justify-center ${
                         isActive
@@ -302,6 +337,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                       ) : (
                         <div className="flex items-center gap-1">
                           <span>{item.label}</span>
+                          {item.id === 'plugin-innovation' && (
+                            <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${isPluginsMegaMenuOpen ? 'rotate-180 text-amber-300' : 'text-neutral-400'}`} />
+                          )}
                           {item.badge && (
                             <span className={`ml-1 px-1.5 py-0.2 text-[8px] rounded-full font-mono font-bold ${
                               isActive 
@@ -373,6 +411,246 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         </div>
 
+        {/* Waves Audio Style Plugins Mega-Menu Dropdown */}
+        {isPluginsMegaMenuOpen && (
+          <div 
+            ref={pluginsMenuContainerRef}
+            onMouseEnter={handlePluginsMenuEnter}
+            onMouseLeave={handlePluginsMenuLeave}
+            className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-[95vw] max-w-6xl bg-neutral-950/98 border-2 border-amber-500/50 rounded-3xl p-6 sm:p-8 shadow-[0_30px_70px_rgba(0,0,0,0.98),0_0_35px_rgba(245,158,11,0.25)] backdrop-blur-3xl animate-in zoom-in-95 duration-200 z-50 text-white"
+            role="menu"
+          >
+            {/* Top Header of Mega-Menu */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-5 mb-6 border-b border-neutral-800">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse" />
+                  <span className="font-heading font-black text-sm uppercase tracking-widest text-amber-400">
+                    171 Plugin Innovation • Suite Audio DSP
+                  </span>
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/40">
+                    VST3 & Standalone 64-bit
+                  </span>
+                </div>
+                <p className="text-xs text-neutral-400 font-mono">
+                  Seleziona un plugin per aprire la sua pagina dedicata con scheda tecnica, download diretto e changelog:
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => handleNavClick('plugin-innovation', null)}
+                className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-heading font-black text-xs uppercase tracking-wider flex items-center gap-2 shadow-md shadow-amber-500/20 transition-all cursor-pointer"
+              >
+                <span>Vedi Tutti i 10 Plugin (Catalogo)</span>
+                <span>→</span>
+              </button>
+            </div>
+
+            {/* 3 Categories Grid (Waves Style) */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* Column 1: Voci, Intonazione & Spazio */}
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 text-xs font-mono font-bold text-amber-400 uppercase tracking-wider pb-2 border-b border-neutral-800">
+                  <span>🎤 Voci, Intonazione & Spazio</span>
+                </div>
+                <div className="space-y-2">
+                  {/* 171 EasyVoice */}
+                  <div 
+                    onClick={() => handleNavClick('plugin-innovation', 'plugin-easyvoice')}
+                    className="p-3.5 rounded-2xl bg-neutral-900/80 hover:bg-neutral-800/90 border border-neutral-800 hover:border-amber-500/60 transition-all cursor-pointer group flex items-start justify-between gap-3"
+                  >
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-heading font-bold text-sm text-white group-hover:text-amber-400 transition-colors">171 EasyVoice</span>
+                        <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-amber-500/25 text-amber-300 border border-amber-500/50">🔥 NUOVA 2 NOV</span>
+                      </div>
+                      <p className="text-[11px] text-neutral-400 font-light mt-0.5">All-in-One Vocal Channel Strip Definitiva (1176+LA2A, 8 Preamp)</p>
+                      <span className="text-[10px] font-mono text-emerald-400 font-semibold mt-1 inline-block">v1.0.1 Patch 2 • Win (35 MB)</span>
+                    </div>
+                    <span className="text-neutral-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all text-sm mt-1">→</span>
+                  </div>
+
+                  {/* 171 RealTune */}
+                  <div 
+                    onClick={() => handleNavClick('plugin-innovation', 'plugin-realtune')}
+                    className="p-3.5 rounded-2xl bg-neutral-900/80 hover:bg-neutral-800/90 border border-neutral-800 hover:border-amber-500/60 transition-all cursor-pointer group flex items-start justify-between gap-3"
+                  >
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-heading font-bold text-sm text-white group-hover:text-amber-400 transition-colors">171 RealTune</span>
+                        <span className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-blue-500/20 text-blue-300 border border-blue-500/40">✨ PATCH 2 NOV</span>
+                      </div>
+                      <p className="text-[11px] text-neutral-400 font-light mt-0.5">Pitch Correction real-time a latenza zero, WSOLA & Cue Mix CMF</p>
+                      <span className="text-[10px] font-mono text-emerald-400 font-semibold mt-1 inline-block">v1.0.1 Patch 1 • Win (19 MB)</span>
+                    </div>
+                    <span className="text-neutral-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all text-sm mt-1">→</span>
+                  </div>
+
+                  {/* 171 SpaceLuxe */}
+                  <div 
+                    onClick={() => handleNavClick('plugin-innovation', 'plugin-spaceluxe')}
+                    className="p-3.5 rounded-2xl bg-neutral-900/80 hover:bg-neutral-800/90 border border-neutral-800 hover:border-amber-500/60 transition-all cursor-pointer group flex items-start justify-between gap-3"
+                  >
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-heading font-bold text-sm text-white group-hover:text-amber-400 transition-colors">171 SpaceLuxe</span>
+                        <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-amber-500/25 text-amber-300 border border-amber-500/50">🔥 SBLOCCATO ORA</span>
+                      </div>
+                      <p className="text-[11px] text-neutral-400 font-light mt-0.5">Riverbero Ibrido Boutique FDN-16 lossless, Shimmer & Smart Ducking</p>
+                      <span className="text-[10px] font-mono text-emerald-400 font-semibold mt-1 inline-block">v1.1.0 Patch • Win (8.45 MB)</span>
+                    </div>
+                    <span className="text-neutral-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all text-sm mt-1">→</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Column 2: Dinamiche & Preamp Analogici */}
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 text-xs font-mono font-bold text-amber-400 uppercase tracking-wider pb-2 border-b border-neutral-800">
+                  <span>🎛️ Dinamiche & Preamp Analogici</span>
+                </div>
+                <div className="space-y-2">
+                  {/* 171 DriveOptocom */}
+                  <div 
+                    onClick={() => handleNavClick('plugin-innovation', 'plugin-optocom')}
+                    className="p-3.5 rounded-2xl bg-neutral-900/80 hover:bg-neutral-800/90 border border-neutral-800 hover:border-amber-500/60 transition-all cursor-pointer group flex items-start justify-between gap-3"
+                  >
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-heading font-bold text-sm text-white group-hover:text-amber-400 transition-colors">171 DriveOptocom</span>
+                        <span className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">DISPONIBILE</span>
+                      </div>
+                      <p className="text-[11px] text-neutral-400 font-light mt-0.5">Compressore ottico T4B con memoria fotochimica e Tri-Band Drive</p>
+                      <span className="text-[10px] font-mono text-neutral-400 mt-1 inline-block">v1.1.0 Patch • Win (10.98 MB)</span>
+                    </div>
+                    <span className="text-neutral-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all text-sm mt-1">→</span>
+                  </div>
+
+                  {/* 171 CleanDrive */}
+                  <div 
+                    onClick={() => handleNavClick('plugin-innovation', 'plugin-cleandrive')}
+                    className="p-3.5 rounded-2xl bg-neutral-900/80 hover:bg-neutral-800/90 border border-neutral-800 hover:border-amber-500/60 transition-all cursor-pointer group flex items-start justify-between gap-3"
+                  >
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-heading font-bold text-sm text-white group-hover:text-amber-400 transition-colors">171 CleanDrive</span>
+                        <span className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">DISPONIBILE</span>
+                      </div>
+                      <p className="text-[11px] text-neutral-400 font-light mt-0.5">Separatore dinamico transienti parallelo e Clipper ADAA-2 a 64-bit</p>
+                      <span className="text-[10px] font-mono text-neutral-400 mt-1 inline-block">v1.0.0 Patch 1 • Win (6.64 MB)</span>
+                    </div>
+                    <span className="text-neutral-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all text-sm mt-1">→</span>
+                  </div>
+
+                  {/* 171 PerfectPre */}
+                  <div 
+                    onClick={() => handleNavClick('plugin-innovation', 'plugin-perfectpre')}
+                    className="p-3.5 rounded-2xl bg-neutral-900/80 hover:bg-neutral-800/90 border border-neutral-800 hover:border-amber-500/60 transition-all cursor-pointer group flex items-start justify-between gap-3"
+                  >
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-heading font-bold text-sm text-white group-hover:text-amber-400 transition-colors">171 PerfectPre</span>
+                        <span className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">DISPONIBILE</span>
+                      </div>
+                      <p className="text-[11px] text-neutral-400 font-light mt-0.5">4 Topologie preamp console, tolleranze TMT 72 canali & nastro Studer</p>
+                      <span className="text-[10px] font-mono text-neutral-400 mt-1 inline-block">v1.0.0 Patch 1 • Win (18.55 MB)</span>
+                    </div>
+                    <span className="text-neutral-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all text-sm mt-1">→</span>
+                  </div>
+
+                  {/* 171 MasterGlue */}
+                  <div 
+                    onClick={() => handleNavClick('plugin-innovation', 'plugin-masterglue')}
+                    className="p-3.5 rounded-2xl bg-neutral-900/80 hover:bg-neutral-800/90 border border-neutral-800 hover:border-amber-500/60 transition-all cursor-pointer group flex items-start justify-between gap-3"
+                  >
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-heading font-bold text-sm text-white group-hover:text-amber-400 transition-colors">171 MasterGlue</span>
+                        <span className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40">⏳ SBLOCCO SETT. 1</span>
+                      </div>
+                      <p className="text-[11px] text-neutral-400 font-light mt-0.5">Compressore bus master VCA (SSL 4000) & Diode-Bridge (Neve 33609)</p>
+                      <span className="text-[10px] font-mono text-neutral-400 mt-1 inline-block">v1.0.0 • Win (8.36 MB)</span>
+                    </div>
+                    <span className="text-neutral-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all text-sm mt-1">→</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Column 3: Spettro, Transienti & Mastering */}
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 text-xs font-mono font-bold text-amber-400 uppercase tracking-wider pb-2 border-b border-neutral-800">
+                  <span>💎 Spettro, Transienti & Mastering</span>
+                </div>
+                <div className="space-y-2">
+                  {/* 171 CleanReso */}
+                  <div 
+                    onClick={() => handleNavClick('plugin-innovation', 'plugin-cleanreso')}
+                    className="p-3.5 rounded-2xl bg-neutral-900/80 hover:bg-neutral-800/90 border border-neutral-800 hover:border-amber-500/60 transition-all cursor-pointer group flex items-start justify-between gap-3"
+                  >
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-heading font-bold text-sm text-white group-hover:text-amber-400 transition-colors">171 CleanReso</span>
+                        <span className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">DISPONIBILE</span>
+                      </div>
+                      <p className="text-[11px] text-neutral-400 font-light mt-0.5">32 Filtri SVF Zero-Delay Feedback dinamici con ascolto Delta</p>
+                      <span className="text-[10px] font-mono text-neutral-400 mt-1 inline-block">v1.0.0 Patch 1 • Win (11.65 MB)</span>
+                    </div>
+                    <span className="text-neutral-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all text-sm mt-1">→</span>
+                  </div>
+
+                  {/* 171 PunchCraft */}
+                  <div 
+                    onClick={() => handleNavClick('plugin-innovation', 'plugin-punchcraft')}
+                    className="p-3.5 rounded-2xl bg-neutral-900/80 hover:bg-neutral-800/90 border border-neutral-800 hover:border-amber-500/60 transition-all cursor-pointer group flex items-start justify-between gap-3"
+                  >
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-heading font-bold text-sm text-white group-hover:text-amber-400 transition-colors">171 PunchCraft</span>
+                        <span className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40">⏳ SBLOCCO SETT. 2</span>
+                      </div>
+                      <p className="text-[11px] text-neutral-400 font-light mt-0.5">Multi-Band Transient Shaper D.E.T. e sub-armonico sismico</p>
+                      <span className="text-[10px] font-mono text-neutral-400 mt-1 inline-block">v1.0.0 • Win (8.42 MB)</span>
+                    </div>
+                    <span className="text-neutral-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all text-sm mt-1">→</span>
+                  </div>
+
+                  {/* 171 PerfectClip */}
+                  <div 
+                    onClick={() => handleNavClick('plugin-innovation', 'plugin-perfectclip')}
+                    className="p-3.5 rounded-2xl bg-neutral-900/80 hover:bg-neutral-800/90 border border-neutral-800 hover:border-amber-500/60 transition-all cursor-pointer group flex items-start justify-between gap-3"
+                  >
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-heading font-bold text-sm text-white group-hover:text-amber-400 transition-colors">171 PerfectClip</span>
+                        <span className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40">⏳ SBLOCCO SETT. 3</span>
+                      </div>
+                      <p className="text-[11px] text-neutral-400 font-light mt-0.5">Mastering ADAA-2 Clipper a 64-bit con matrice brevettata TransDetail™</p>
+                      <span className="text-[10px] font-mono text-neutral-400 mt-1 inline-block">v1.0.0 • Win (8.42 MB)</span>
+                    </div>
+                    <span className="text-neutral-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all text-sm mt-1">→</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Bottom Spec Footer */}
+            <div className="mt-6 pt-4 border-t border-neutral-800/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] font-mono text-neutral-400">
+              <span className="flex items-center gap-2">
+                <Shield className="w-3.5 h-3.5 text-emerald-400" />
+                <span>Tutti i plugin implementano ScopedDenormalDisabler FTZ/DAZ x86_64 e zero allocazioni heap in thread audio.</span>
+              </span>
+              <button
+                type="button"
+                onClick={() => handleNavClick('plugin-innovation', null)}
+                className="text-amber-400 hover:text-amber-300 font-bold underline cursor-pointer"
+              >
+                Apri Pagina Catalogo Completo →
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Mobile Dropdown Menu */}
         {mobileMenuOpen && (
           <div 
@@ -384,8 +662,8 @@ export const Navbar: React.FC<NavbarProps> = ({
               const hasLines = item.lines && item.lines.length > 0;
 
               return (
+                <React.Fragment key={item.id}>
                 <button
-                  key={item.id}
                   type="button"
                   onClick={() => handleNavClick(item.id)}
                   className={`flex items-center justify-between px-4 py-3 rounded-xl text-left text-sm font-medium transition-all ${
@@ -407,6 +685,17 @@ export const Navbar: React.FC<NavbarProps> = ({
                     ) : (
                       <div className="flex items-center gap-2">
                         <span>{item.label}</span>
+                        {item.id === 'plugin-innovation' && (
+                          <span 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setMobilePluginsExpanded(!mobilePluginsExpanded);
+                            }}
+                            className="p-1 text-amber-400"
+                          >
+                            <ChevronDown className={`w-3.5 h-3.5 transition-transform ${mobilePluginsExpanded ? 'rotate-180' : ''}`} />
+                          </span>
+                        )}
                         {item.badge && (
                           <span className="px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[9px] font-mono">
                             {item.badge}
@@ -417,6 +706,43 @@ export const Navbar: React.FC<NavbarProps> = ({
                   </div>
                   {isActive && <span className="text-xs text-amber-400 font-mono">ATTIVO</span>}
                 </button>
+
+                {/* Mobile sub-items for 171 Plugin Innovation */}
+                {item.id === 'plugin-innovation' && mobilePluginsExpanded && (
+                  <div className="pl-4 pr-2 py-2 space-y-1.5 bg-neutral-950/80 rounded-xl border border-amber-500/30 my-1 animate-in fade-in duration-200">
+                    <button
+                      type="button"
+                      onClick={() => handleNavClick('plugin-innovation', null)}
+                      className="w-full text-left py-1.5 px-2 text-xs font-mono font-bold text-amber-400 flex items-center justify-between"
+                    >
+                      <span>📂 Catalogo Completo (Tutti i Plugin)</span>
+                      <span>→</span>
+                    </button>
+                    {[
+                      { id: 'plugin-easyvoice', name: '171 EasyVoice', tag: '🔥 NUOVA' },
+                      { id: 'plugin-realtune', name: '171 RealTune', tag: '✨ PATCH' },
+                      { id: 'plugin-spaceluxe', name: '171 SpaceLuxe', tag: '🔥 SBLOCCATO' },
+                      { id: 'plugin-optocom', name: '171 DriveOptocom', tag: 'DISP' },
+                      { id: 'plugin-cleandrive', name: '171 CleanDrive', tag: 'DISP' },
+                      { id: 'plugin-cleanreso', name: '171 CleanReso', tag: 'DISP' },
+                      { id: 'plugin-perfectpre', name: '171 PerfectPre', tag: 'DISP' },
+                      { id: 'plugin-masterglue', name: '171 MasterGlue', tag: 'SETT 1' },
+                      { id: 'plugin-punchcraft', name: '171 PunchCraft', tag: 'SETT 2' },
+                      { id: 'plugin-perfectclip', name: '171 PerfectClip', tag: 'SETT 3' },
+                    ].map((subp) => (
+                      <button
+                        key={subp.id}
+                        type="button"
+                        onClick={() => handleNavClick('plugin-innovation', subp.id)}
+                        className="w-full text-left py-1.5 px-2 text-xs font-mono text-neutral-300 hover:text-amber-300 flex items-center justify-between rounded hover:bg-neutral-900"
+                      >
+                        <span>{subp.name}</span>
+                        <span className="text-[9px] px-1 py-0.2 rounded bg-neutral-900 border border-neutral-700 text-neutral-400 font-bold">{subp.tag}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+                </React.Fragment>
               );
             })}
 

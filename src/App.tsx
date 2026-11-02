@@ -22,21 +22,35 @@ import { MasterDashboard } from './components/MasterDashboard';
 
 function MainApp() {
   const [currentPage, setCurrentPage] = useState<PageId>('home');
+  const [selectedPluginId, setSelectedPluginId] = useState<string | null>(null);
   const [isMasterDashboardOpen, setIsMasterDashboardOpen] = useState(false);
   const { isMaster } = useStudio();
 
-  // Sync with URL hash for browser history & direct links
+  // Sync with URL hash for browser history & direct links (including Waves-style dedicated plugin pages)
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.replace('#', '');
       if (hash === 'master-dashboard' && isMaster) {
         setIsMasterDashboardOpen(true);
+      } else if (hash.startsWith('plugin/')) {
+        const pId = hash.replace('plugin/', '');
+        setIsMasterDashboardOpen(false);
+        setCurrentPage('plugin-innovation');
+        setSelectedPluginId(pId);
+      } else if (hash.startsWith('plugin-') && hash !== 'plugin-innovation') {
+        setIsMasterDashboardOpen(false);
+        setCurrentPage('plugin-innovation');
+        setSelectedPluginId(hash);
       } else if (isValidPageId(hash)) {
         setIsMasterDashboardOpen(false);
         setCurrentPage(hash);
+        if (hash !== 'plugin-innovation') {
+          setSelectedPluginId(null);
+        }
       } else if (!hash) {
         setIsMasterDashboardOpen(false);
         setCurrentPage('home');
+        setSelectedPluginId(null);
       }
     };
 
@@ -45,10 +59,16 @@ function MainApp() {
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, [isMaster]);
 
-  const navigateTo = (page: PageId) => {
+  const navigateTo = (page: PageId, pluginId?: string | null) => {
     setIsMasterDashboardOpen(false);
     setCurrentPage(page);
-    window.location.hash = page === 'home' ? '' : page;
+    if (page === 'plugin-innovation' && pluginId) {
+      setSelectedPluginId(pluginId);
+      window.location.hash = `plugin/${pluginId}`;
+    } else {
+      setSelectedPluginId(null);
+      window.location.hash = page === 'home' ? '' : page;
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -78,7 +98,21 @@ function MainApp() {
       case 'chi-siamo':
         return <AboutPage onNavigate={navigateTo} />;
       case 'plugin-innovation':
-        return <PluginsPage onNavigate={navigateTo} />;
+        return (
+          <PluginsPage 
+            onNavigate={navigateTo} 
+            selectedPluginId={selectedPluginId}
+            onSelectPlugin={(id) => {
+              setSelectedPluginId(id);
+              if (id) {
+                window.location.hash = `plugin/${id}`;
+              } else {
+                window.location.hash = 'plugin-innovation';
+              }
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
+        );
       case 'strumenti-online':
         return <AudioToolsPage onNavigate={navigateTo} />;
       case 'il-mio-account':
@@ -98,6 +132,7 @@ function MainApp() {
         currentPage={currentPage} 
         onNavigate={navigateTo}
         onOpenMasterDashboard={openMasterDashboard}
+        selectedPluginId={selectedPluginId}
       />
 
       {/* Dynamic Page Views or Master Dashboard */}

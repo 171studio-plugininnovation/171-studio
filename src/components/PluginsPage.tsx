@@ -11,12 +11,35 @@ import { PluginItem, STUDIO_PAYPAL_EMAIL, PluginDonationRecord } from '../types/
 import { getPayPalDonationUrl, getPayPalMeUrl, triggerPluginZipFileDownload } from '../utils/emailService';
 import { getAssetUrl } from '../utils/assetPath';
 import { HardwareTiltCard } from './HardwareTiltCard';
+import { PluginDetailPage } from './PluginDetailPage';
 
 interface PluginsPageProps {
-  onNavigate: (page: PageId) => void;
+  onNavigate: (page: PageId, pluginId?: string | null) => void;
+  selectedPluginId?: string | null;
+  onSelectPlugin?: (id: string | null) => void;
 }
 
-export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
+export const PluginsPage: React.FC<PluginsPageProps> = ({ 
+  onNavigate,
+  selectedPluginId,
+  onSelectPlugin
+}) => {
+  const [localSelectedPluginId, setLocalSelectedPluginId] = useState<string | null>(null);
+  const activePluginId = selectedPluginId !== undefined ? selectedPluginId : localSelectedPluginId;
+
+  const handleSelectPlugin = (id: string | null) => {
+    if (onSelectPlugin) {
+      onSelectPlugin(id);
+    } else {
+      setLocalSelectedPluginId(id);
+      if (id) {
+        window.location.hash = `plugin/${id}`;
+      } else {
+        window.location.hash = 'plugin-innovation';
+      }
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
   const {
     siteContent,
     downloadPlugin,
@@ -127,6 +150,17 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
   // Cumulative donations tracking for the active user / email
   const targetEmailForDonation = (currentUser?.email || donorEmailInput || '').trim().toLowerCase();
   const cumulativeStats = getUserCumulativeDonations(targetEmailForDonation);
+
+  if (activePluginId) {
+    return (
+      <PluginDetailPage
+        pluginId={activePluginId}
+        onBack={() => handleSelectPlugin(null)}
+        onSelectPlugin={handleSelectPlugin}
+        onNavigate={onNavigate}
+      />
+    );
+  }
 
   const getEffectiveDonationAmount = (): number => {
     if (selectedDonationAmount === 'custom') {
@@ -1157,7 +1191,11 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
                             </span>
                           )}
                         </div>
-                        <h4 className="font-heading font-black text-2xl text-white group-hover:text-amber-400 transition-colors">
+                        <h4 
+                          onClick={() => handleSelectPlugin(plugin.id)}
+                          className="font-heading font-black text-2xl text-white group-hover:text-amber-400 transition-colors cursor-pointer"
+                          title={`Apri pagina dedicata di ${plugin.name}`}
+                        >
                           {plugin.name}
                         </h4>
                         {plugin.version && (
@@ -1463,6 +1501,16 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
                           <Lock className="w-3.5 h-3.5 text-amber-400 shrink-0" />
                           <span>Sblocco automatico download al termine del timer</span>
                         </div>
+
+                        <button
+                          type="button"
+                          onClick={() => handleSelectPlugin(plugin.id)}
+                          className="w-full py-2.5 px-3 rounded-xl bg-neutral-950 hover:bg-neutral-800 border border-amber-500/30 hover:border-amber-400 text-amber-300 hover:text-white font-mono text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm group/btn"
+                        >
+                          <Eye className="w-3.5 h-3.5 text-amber-400 group-hover/btn:scale-110 transition-transform" />
+                          <span>Apri Pagina Dedicata Plugin</span>
+                          <span className="text-amber-400 group-hover/btn:translate-x-1 transition-transform">→</span>
+                        </button>
                       </div>
                     ) : (
                       <>
@@ -1533,6 +1581,16 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
                             </div>
                           )}
                         </div>
+
+                        <button
+                          type="button"
+                          onClick={() => handleSelectPlugin(plugin.id)}
+                          className="w-full py-2.5 px-3 rounded-xl bg-neutral-950 hover:bg-neutral-800 border border-neutral-800 hover:border-amber-500/50 text-amber-300 hover:text-white font-mono text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm group/btn"
+                        >
+                          <Eye className="w-3.5 h-3.5 text-amber-400 group-hover/btn:scale-110 transition-transform" />
+                          <span>Apri Pagina Dedicata Plugin</span>
+                          <span className="text-amber-400 group-hover/btn:translate-x-1 transition-transform">→</span>
+                        </button>
                       </>
                     )}
                   </div>
