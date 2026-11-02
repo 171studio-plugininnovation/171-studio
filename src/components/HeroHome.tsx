@@ -111,9 +111,9 @@ export const HeroHome: React.FC<HeroHomeProps> = ({ onNavigate }) => {
           {dynamicSpecs.map((spec, idx) => {
             const Icon = specIcons[idx % specIcons.length];
             return (
-              <div key={spec.id || idx} className="flex flex-col items-center p-2 rounded-xl bg-neutral-900/40 border border-neutral-800/50">
+              <div key={spec.id || idx} className="flex flex-col items-center p-2.5 rounded-xl bg-neutral-900/40 border border-neutral-800/60 hover:border-amber-500/30 hover:bg-neutral-900/70 transition-all duration-200">
                 <Icon className="w-4 h-4 text-amber-400 mb-1" />
-                <span className="text-xs text-neutral-400 font-mono uppercase">{spec.label}</span>
+                <span className="text-xs text-neutral-400 font-mono uppercase tracking-wider">{spec.label}</span>
                 <span className="text-sm font-semibold text-neutral-200">{spec.title}</span>
               </div>
             );
@@ -274,10 +274,10 @@ export const HeroHome: React.FC<HeroHomeProps> = ({ onNavigate }) => {
             <button
               type="button"
               onClick={() => setActivePlayerTab('both')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-mono uppercase tracking-wider transition-all ${
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-mono uppercase tracking-wider transition-all duration-200 cursor-pointer active:scale-[0.98] ${
                 activePlayerTab === 'both'
-                  ? 'bg-amber-500 text-black font-bold shadow'
-                  : 'text-neutral-400 hover:text-white'
+                  ? 'bg-amber-500 text-black font-bold shadow-md shadow-amber-500/20'
+                  : 'text-neutral-400 hover:text-white hover:bg-neutral-800/60'
               }`}
             >
               Tutti
@@ -285,10 +285,10 @@ export const HeroHome: React.FC<HeroHomeProps> = ({ onNavigate }) => {
             <button
               type="button"
               onClick={() => setActivePlayerTab('spotify')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono uppercase tracking-wider transition-all ${
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-mono uppercase tracking-wider transition-all duration-200 cursor-pointer active:scale-[0.98] ${
                 activePlayerTab === 'spotify'
-                  ? 'bg-emerald-500 text-black font-bold shadow'
-                  : 'text-neutral-400 hover:text-white'
+                  ? 'bg-emerald-500 text-black font-bold shadow-md shadow-emerald-500/20'
+                  : 'text-neutral-400 hover:text-white hover:bg-neutral-800/60'
               }`}
             >
               <Disc className="w-3.5 h-3.5" />
@@ -297,10 +297,10 @@ export const HeroHome: React.FC<HeroHomeProps> = ({ onNavigate }) => {
             <button
               type="button"
               onClick={() => setActivePlayerTab('youtube')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono uppercase tracking-wider transition-all ${
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-mono uppercase tracking-wider transition-all duration-200 cursor-pointer active:scale-[0.98] ${
                 activePlayerTab === 'youtube'
-                  ? 'bg-red-600 text-white font-bold shadow'
-                  : 'text-neutral-400 hover:text-white'
+                  ? 'bg-red-600 text-white font-bold shadow-md shadow-red-600/20'
+                  : 'text-neutral-400 hover:text-white hover:bg-neutral-800/60'
               }`}
             >
               <Youtube className="w-3.5 h-3.5" />

@@ -3,6 +3,10 @@
 @theme {
   --font-display: 'Space Grotesk', sans-serif;
   --font-sans: 'Plus Jakarta Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-cinzel: 'Cinzel', serif;
+  --font-cinzel-decorative: 'Cinzel Decorative', serif;
+
   --color-gold-300: #fde68a;
   --color-gold-400: #fbbf24;
   --color-gold-500: #d97706;
@@ -16,6 +20,10 @@
   
   h1, h2, h3, h4, .font-heading {
     font-family: var(--font-display);
+  }
+
+  code, kbd, samp, pre, .font-mono {
+    font-family: var(--font-mono);
   }
 }
 
@@ -38,7 +46,30 @@
   box-shadow: 0 0 45px -8px rgba(245, 158, 11, 0.35);
 }
 
+.rec-pulse {
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.6);
+}
+
 /* Subtle vinyl background overlay */
 .bg-vignette {
   background: radial-gradient(circle at center, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.65) 60%, rgba(5, 5, 5, 0.95) 100%);
+}
+
+/* Custom sleek studio scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #262626;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #d97706;
 }

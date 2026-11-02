@@ -2,8 +2,8 @@ import React from 'react';
 import { ArrowLeft, Sparkles, Target, Compass, Heart, Radio, Mic2, Cpu, ChevronRight, Award } from 'lucide-react';
 import { PageId } from '../types';
 import { useStudio } from '../context/StudioContext';
-
 import { DEFAULT_PAGE_VALUES } from '../types/cms';
+import { StudioButton } from './ui';
 
 interface AboutPageProps {
   onNavigate: (page: PageId) => void;
@@ -25,7 +25,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
         <button
           type="button"
           onClick={() => onNavigate('home')}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-neutral-900/80 border border-neutral-800 text-neutral-300 hover:text-white hover:border-amber-500/40 text-xs font-mono uppercase tracking-wider transition-all duration-200 backdrop-blur-md group focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-neutral-900/80 border border-neutral-800 text-neutral-300 hover:text-white hover:border-amber-500/40 text-xs font-mono uppercase tracking-wider transition-all duration-200 backdrop-blur-md group focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 cursor-pointer"
           aria-label="Torna alla Frontpage"
         >
           <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform" />
@@ -130,20 +130,22 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
           </div>
 
           <div className="flex items-center gap-3">
-            <button
+            <StudioButton
               type="button"
+              variant="primary"
+              size="md"
               onClick={() => onNavigate('prenota-sessione')}
-              className="px-5 py-2.5 rounded-full bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs uppercase tracking-wider transition-all shadow-md shadow-amber-500/20"
             >
               Prenota Sessione
-            </button>
-            <button
+            </StudioButton>
+            <StudioButton
               type="button"
+              variant="rack"
+              size="md"
               onClick={() => onNavigate('plugin-innovation')}
-              className="px-5 py-2.5 rounded-full bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-700 text-xs uppercase tracking-wider transition-all"
             >
               I Nostri Plugin
-            </button>
+            </StudioButton>
           </div>
         </div>
 

@@ -13,6 +13,7 @@ import { BookingRecord, STUDIO_PAYPAL_EMAIL, VoucherItem } from '../types/cms';
 import { BookingCalendar } from './BookingCalendar';
 import { isRangeOverlapping, getBookingInterval } from '../utils/calendarSlots';
 import { HardwareTiltCard } from './HardwareTiltCard';
+import { StudioInput, StudioButton } from './ui';
 
 interface BookingSessionPageProps {
   onNavigate: (page: PageId) => void;
@@ -942,75 +943,54 @@ export const BookingSessionPage: React.FC<BookingSessionPageProps> = ({ onNaviga
                 )}
 
                 {/* Nome & Cognome / Nome d'Arte (Single flexible input so no user gets blocked) */}
-                <div>
-                  <label htmlFor="field-nome" className="block text-xs font-mono uppercase tracking-wider text-neutral-300 mb-1.5">
-                    Nome Completo o Nome d'Arte *
-                  </label>
-                  <div className="relative">
-                    <User className="w-4 h-4 text-neutral-500 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                    <input
-                      id="field-nome"
-                      type="text"
-                      required
-                      placeholder="Es. Marco Rossi oppure Kid Yugi"
-                      value={nome}
-                      onChange={(e) => {
-                        setNome(e.target.value);
-                        setFormError('');
-                      }}
-                      className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-neutral-900/90 border border-neutral-800 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-sm text-white placeholder-neutral-600 outline-none transition-colors"
-                    />
-                  </div>
-                </div>
+                <StudioInput
+                  id="field-nome"
+                  label="Nome Completo o Nome d'Arte *"
+                  type="text"
+                  required
+                  placeholder="Es. Marco Rossi oppure Kid Yugi"
+                  value={nome}
+                  onChange={(e) => {
+                    setNome(e.target.value);
+                    setFormError('');
+                  }}
+                  leftIcon={<User className="w-4 h-4" />}
+                />
 
                 {/* Email & Telefono */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label htmlFor="field-email" className="block text-xs font-mono uppercase tracking-wider text-neutral-300 mb-1.5">
-                      Indirizzo Email *
-                    </label>
-                    <div className="relative">
-                      <Mail className="w-4 h-4 text-neutral-500 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                      <input
-                        id="field-email"
-                        type="email"
-                        required
-                        placeholder="artista@esempio.it"
-                        value={email}
-                        onChange={(e) => {
-                          setEmail(e.target.value);
-                          setFormError('');
-                        }}
-                        className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-neutral-900/90 border border-neutral-800 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-sm text-white placeholder-neutral-600 outline-none transition-colors"
-                      />
-                    </div>
-                  </div>
+                  <StudioInput
+                    id="field-email"
+                    label="Indirizzo Email *"
+                    type="email"
+                    required
+                    placeholder="artista@esempio.it"
+                    value={email}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      setFormError('');
+                    }}
+                    leftIcon={<Mail className="w-4 h-4" />}
+                  />
 
-                  <div>
-                    <label htmlFor="field-telefono" className="block text-xs font-mono uppercase tracking-wider text-neutral-300 mb-1.5">
-                      Numero di Telefono *
-                    </label>
-                    <div className="relative">
-                      <Phone className="w-4 h-4 text-neutral-500 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                      <input
-                        id="field-telefono"
-                        type="tel"
-                        required
-                        placeholder="+39 3XX XXXXXXX"
-                        value={telefono}
-                        onChange={(e) => {
-                          setTelefono(e.target.value);
-                          setFormError('');
-                        }}
-                        className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-neutral-900/90 border border-neutral-800 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-sm text-white placeholder-neutral-600 outline-none transition-colors"
-                      />
-                    </div>
-                  </div>
+                  <StudioInput
+                    id="field-telefono"
+                    label="Numero di Telefono *"
+                    type="tel"
+                    required
+                    placeholder="+39 3XX XXXXXXX"
+                    value={telefono}
+                    onChange={(e) => {
+                      setTelefono(e.target.value);
+                      setFormError('');
+                    }}
+                    leftIcon={<Phone className="w-4 h-4" />}
+                  />
                 </div>
 
                 {/* Note Aggiuntive */}
-                <div>
-                  <label htmlFor="field-note" className="block text-xs font-mono uppercase tracking-wider text-neutral-300 mb-1.5">
+                <div className="space-y-1.5 text-left">
+                  <label htmlFor="field-note" className="block text-xs font-mono uppercase tracking-wider text-neutral-300">
                     Note Aggiuntive & Dettagli del Progetto
                   </label>
                   <textarea
@@ -1019,19 +999,21 @@ export const BookingSessionPage: React.FC<BookingSessionPageProps> = ({ onNaviga
                     placeholder={siteContent.bookingNotesPlaceholder || "Descrivi il genere musicale, se porti una base tua, link provini/demo o esigenze particolari..."}
                     value={note}
                     onChange={(e) => setNote(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl bg-neutral-900/90 border border-neutral-800 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-sm text-white placeholder-neutral-600 outline-none transition-colors resize-none"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-neutral-950/90 border border-neutral-800 focus:border-amber-400/90 focus:ring-1 focus:ring-amber-400/80 focus:shadow-[0_0_18px_rgba(245,158,11,0.2)] text-sm text-white placeholder-neutral-600 outline-none transition-all resize-none shadow-inner"
                   />
                 </div>
 
                 {/* Submit Button */}
-                <button
+                <StudioButton
                   type="submit"
-                  disabled={isSubmitting}
-                  className="w-full mt-2 py-4 rounded-xl bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-500 hover:from-amber-300 hover:to-amber-400 text-black font-black text-sm uppercase tracking-wider transition-all duration-300 shadow-xl shadow-amber-500/25 flex items-center justify-center gap-2 group cursor-pointer disabled:opacity-50"
+                  variant="primary"
+                  size="lg"
+                  isLoading={isSubmitting}
+                  className="w-full mt-2"
                 >
                   <span>Conferma & Invia Richiesta di Prenotazione</span>
-                  <Send className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </button>
+                  <Send className="w-4 h-4 ml-1" />
+                </StudioButton>
 
               </div>
 
