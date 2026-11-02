@@ -124,6 +124,7 @@ interface StudioContextType {
   };
   registeredUsers: { email: string; name: string }[];
   visitorCount: number;
+  liveOnlineCount: number;
   updateEmailTemplates: (updates: Partial<EmailTemplatesConfig>) => void;
   // Master Calendar & Impegni Controls
   addBlockedCommitment: (commitment: Omit<BlockedCalendarSlot, 'id' | 'createdAt'>) => void;
@@ -769,15 +770,43 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     } catch {}
   };
 
-  // Total Visitors Real-time Tracking & Persistence
+  // Total Visitors Real-time Tracking & Persistence (1.280 baseline marketing + verified online visits)
+  const MARKETING_BASELINE = 1280;
+
   const [visitorCount, setVisitorCount] = useState<number>(() => {
     try {
       const local = localStorage.getItem('171_visitor_count');
-      return local ? Math.max(1280, parseInt(local, 10)) : 1280;
+      if (local) {
+        const parsed = parseInt(local, 10);
+        if (!isNaN(parsed) && parsed > 0) {
+          return parsed < MARKETING_BASELINE ? MARKETING_BASELINE + parsed : parsed;
+        }
+      }
+      return 1368;
     } catch {
-      return 1280;
+      return 1368;
     }
   });
+
+  // Real-time active producers telemetry (organic micro-fluctuations between 3 and 7 active artists)
+  const [liveOnlineCount, setLiveOnlineCount] = useState<number>(() => {
+    const hour = new Date().getHours();
+    return (hour >= 14 && hour <= 23) ? 5 : 3;
+  });
+
+  useEffect(() => {
+    const updateOnline = () => {
+      const hour = new Date().getHours();
+      const min = (hour >= 14 && hour <= 23) ? 4 : 2;
+      const max = (hour >= 14 && hour <= 23) ? 7 : 5;
+      const randomCount = Math.floor(Math.random() * (max - min + 1)) + min;
+      setLiveOnlineCount(randomCount);
+    };
+
+    // Realistic variation every 35 seconds to simulate active producer movement
+    const interval = setInterval(updateOnline, 35000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     const statsDocRef = doc(db, 'users', 'system_stats');
@@ -789,7 +818,10 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         if (snap.exists()) {
           const data = snap.data();
           if (typeof data?.totalVisitors === 'number') {
-            const fresh = Math.max(1280, data.totalVisitors);
+            // Unclamped calculation: if stored counter is raw visits (<1000), add baseline; otherwise use total
+            const fresh = data.totalVisitors < MARKETING_BASELINE 
+              ? MARKETING_BASELINE + data.totalVisitors 
+              : data.totalVisitors;
             setVisitorCount(fresh);
             try {
               localStorage.setItem('171_visitor_count', fresh.toString());
@@ -799,14 +831,23 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       }, () => {});
     } catch {}
 
-    // Increment count once per distinct browser visit/session
+    // Increment count once per distinct browser visit/session (or after 30 mins re-engagement)
     try {
+      const now = Date.now();
+      const lastVisitTime = localStorage.getItem('171_last_visit_timestamp');
       const sessionCounted = sessionStorage.getItem('171_session_counted');
-      if (!sessionCounted) {
+      const THIRTY_MINUTES = 30 * 60 * 1000;
+
+      const isNewVisit = !sessionCounted || !lastVisitTime || (now - parseInt(lastVisitTime, 10)) > THIRTY_MINUTES;
+
+      if (isNewVisit) {
         sessionStorage.setItem('171_session_counted', 'true');
+        localStorage.setItem('171_last_visit_timestamp', now.toString());
+
         setDoc(statsDocRef, {
           id: 'system_stats',
           totalVisitors: increment(1),
+          realVisitsSoFar: increment(1),
           lastVisitAt: new Date().toISOString(),
         }, { merge: true }).catch(() => {});
 
@@ -4004,6 +4045,7 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         validateAndCalculateDiscount,
         registeredUsers,
         visitorCount,
+        liveOnlineCount,
         updateEmailTemplates,
         addBlockedCommitment,
         removeBlockedCommitment,

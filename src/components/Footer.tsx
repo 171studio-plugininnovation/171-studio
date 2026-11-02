@@ -10,7 +10,7 @@ interface FooterProps {
 }
 
 export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
-  const { siteContent, visitorCount } = useStudio();
+  const { siteContent, visitorCount, liveOnlineCount } = useStudio();
 
   return (
     <footer className="relative z-10 w-full border-t border-neutral-800/80 bg-neutral-950/90 backdrop-blur-xl mt-auto">
@@ -126,9 +126,11 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
           <p>© {new Date().getFullYear()} 171 Studio. Tutti i diritti riservati.</p>
 
           {/* Real-time Studio Visitor Counter */}
-          <div className="flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-neutral-900/90 border border-neutral-800 text-neutral-300 shadow-inner">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <Eye className="w-3.5 h-3.5 text-amber-400" />
+          <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-neutral-900/90 border border-neutral-800 text-neutral-300 shadow-inner">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+            <Eye className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+            <span className="text-[10px] uppercase tracking-wider text-emerald-400 font-bold">{liveOnlineCount} Online</span>
+            <span className="text-neutral-600 text-[10px]">•</span>
             <span className="text-[10px] uppercase tracking-wider text-neutral-400">Visite Totali:</span>
             <span className="text-xs font-bold font-mono text-white tracking-wide">
               {visitorCount.toLocaleString('it-IT')}

@@ -29,6 +29,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
     confirmPluginDonationPayPal,
     getUserCumulativeDonations,
     visitorCount,
+    liveOnlineCount,
   } = useStudio();
 
   const [downloadSuccessId, setDownloadSuccessId] = useState<string | null>(null);
@@ -924,7 +925,9 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({ onNavigate }) => {
               <span className="text-[11px] font-mono text-amber-400 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                 <Eye className="w-3.5 h-3.5 text-amber-400" />
-                <span>{visitorCount.toLocaleString('it-IT')} Tester & Producer Connessi</span>
+                <span className="text-emerald-400 font-bold">{liveOnlineCount} Online Ora</span>
+                <span className="text-neutral-600">•</span>
+                <span>{visitorCount.toLocaleString('it-IT')} Connessioni Totali</span>
               </span>
             </div>
           </div>

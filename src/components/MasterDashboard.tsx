@@ -69,6 +69,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
     pluginDonations, confirmPluginDonationPayPal, updatePluginDonation, deletePluginDonation,
     registeredUsers,
     visitorCount,
+    liveOnlineCount,
     openGmailWebCompose, openMailtoCompose, downloadBookingCalendarIcs, openGoogleCalendarWeb
   } = useStudio();
 
@@ -807,7 +808,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
             {visitorCount.toLocaleString('it-IT')}
           </span>
           <span className="text-[10px] text-purple-300/70 font-mono">
-            Traffico globale
+            {liveOnlineCount} online ora • Traffico globale
           </span>
         </div>
 

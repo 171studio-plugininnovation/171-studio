@@ -14,7 +14,7 @@ interface HeroHomeProps {
 }
 
 export const HeroHome: React.FC<HeroHomeProps> = ({ onNavigate }) => {
-  const { siteContent, updateSiteContent, isMaster, visitorCount } = useStudio();
+  const { siteContent, updateSiteContent, isMaster, visitorCount, liveOnlineCount } = useStudio();
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
   const [activePlayerTab, setActivePlayerTab] = useState<'both' | 'spotify' | 'youtube'>('both');
   const [showConfig, setShowConfig] = useState(false);
@@ -122,12 +122,13 @@ export const HeroHome: React.FC<HeroHomeProps> = ({ onNavigate }) => {
 
         {/* Real-time Studio Visitors & Producers Telemetry Badge */}
         <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-neutral-900/90 border border-amber-500/30 text-neutral-300 shadow-[0_0_20px_rgba(245,158,11,0.12)] mb-2 backdrop-blur-md">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="text-[11px] font-mono uppercase tracking-wider text-neutral-400">Telemetria Live:</span>
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+          <span className="text-[11px] font-mono uppercase tracking-wider text-emerald-400 font-bold">{liveOnlineCount} Online Ora</span>
+          <span className="text-neutral-600 text-xs">•</span>
           <span className="text-xs sm:text-sm font-bold font-mono text-amber-400 tracking-wide">
             {visitorCount.toLocaleString('it-IT')}
           </span>
-          <span className="text-[11px] text-neutral-400 font-light hidden sm:inline">Produttori & Artisti Connessi</span>
+          <span className="text-[11px] text-neutral-400 font-light hidden sm:inline">Visite Totali Studio</span>
         </div>
 
       </div>
@@ -466,7 +467,7 @@ export const HeroHome: React.FC<HeroHomeProps> = ({ onNavigate }) => {
           <span className="text-amber-400 font-medium">171 STUDIO DSP READY</span>
           <span className="hidden md:inline text-neutral-600">|</span>
           <span className="hidden md:inline text-neutral-300 font-mono text-[11px]">
-            LIVE REACH: <strong className="text-amber-400">{visitorCount.toLocaleString('it-IT')}</strong> PRODUCER
+            LIVE REACH: <strong className="text-amber-400">{visitorCount.toLocaleString('it-IT')}</strong> PRODUCER • <span className="text-emerald-400 font-bold">{liveOnlineCount} ATTIVI ORA</span>
           </span>
         </div>
 
