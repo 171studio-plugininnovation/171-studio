@@ -566,12 +566,12 @@ const DEFAULT_CONTENT: SiteContent = {
 
 /**
  * Strictly determines if an email belongs to the 171 Studio Master Account.
- * Only 171studiomessina@gmail.com (or 171studio@gmail.com) can ever be Master.
+ * Strictly and exclusively 171studiomessina@gmail.com can ever be Master.
  */
 export const isOfficialMasterEmail = (email?: string | null): boolean => {
   if (!email) return false;
   const clean = email.toLowerCase().trim();
-  return clean === MASTER_EMAIL.toLowerCase().trim() || clean === '171studio@gmail.com' || clean === 'vkrealhakiesake@gmail.com';
+  return clean === MASTER_EMAIL.toLowerCase().trim();
 };
 
 /**
@@ -1120,10 +1120,7 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const unsubscribe = onAuthStateChanged(auth, (fbUser: FirebaseUser | null) => {
       if (fbUser) {
         const cleanEmail = (fbUser.email || '').toLowerCase().trim();
-        const isMasterUser = 
-          cleanEmail === MASTER_EMAIL.toLowerCase().trim() ||
-          cleanEmail === '171studio@gmail.com' ||
-          cleanEmail === 'vkrealhakiesake@gmail.com';
+        const isMasterUser = isOfficialMasterEmail(cleanEmail);
         
         const savedMap = getSavedRegisteredUsers();
         const cachedUser = cleanEmail ? savedMap[cleanEmail] : undefined;

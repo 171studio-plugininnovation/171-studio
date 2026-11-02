@@ -144,11 +144,11 @@ assert(validRes.updatedOrder?.paymentStatus === 'saldato', 'Download is now UNLO
 // -------------------------------------------------------------
 console.log('\n--- TEST 4: Master Credentials Verification ---');
 const MASTER_PASSWORD = 'Loredana.656511';
-const OFFICIAL_MASTER_EMAILS = ['171studiomessina@gmail.com', 'vkrealhakiesake@gmail.com'];
+const OFFICIAL_MASTER_EMAILS = ['171studiomessina@gmail.com'];
 
 assert(MASTER_PASSWORD === 'Loredana.656511', 'Master password confirmed as Loredana.656511');
-assert(OFFICIAL_MASTER_EMAILS.includes('vkrealhakiesake@gmail.com'), 'vkrealhakiesake@gmail.com is an authorized master');
-assert(OFFICIAL_MASTER_EMAILS.includes('171studiomessina@gmail.com'), '171studiomessina@gmail.com is an authorized master');
+
+assert(OFFICIAL_MASTER_EMAILS.includes('171studiomessina@gmail.com'), '171studiomessina@gmail.com is the sole authorized master');
 
 console.log('\n================================================================');
 console.log(`RISULTATO AUDIT: ${testsPassed} PASSATI, ${testsFailed} FALLITI`);

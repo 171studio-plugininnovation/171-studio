@@ -4,9 +4,7 @@ service cloud.firestore {
     
     function isMaster() {
       return request.auth != null && (
-        request.auth.token.email.lower() == '171studiomessina@gmail.com' ||
-        request.auth.token.email.lower() == '171studio@gmail.com' ||
-        request.auth.token.email.lower() == 'vkrealhakiesake@gmail.com'
+        request.auth.token.email.lower() == '171studiomessina@gmail.com'
       );
     }
 

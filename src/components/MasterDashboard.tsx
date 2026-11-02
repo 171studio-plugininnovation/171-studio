@@ -78,6 +78,47 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
   const [previewTabPage, setPreviewTabPage] = useState<PageId>('home');
   const [copiedLocalUrl, setCopiedLocalUrl] = useState(false);
   const [userSearchQuery, setUserSearchQuery] = useState('');
+  const [tabCategory, setTabCategory] = useState<'all' | 'studio' | 'products' | 'cms' | 'admin'>('all');
+  const [tabSearchFilter, setTabSearchFilter] = useState('');
+
+  const handleExportDatabaseBackup = () => {
+    const backupData = {
+      exportedAt: new Date().toISOString(),
+      masterAccount: MASTER_EMAIL,
+      siteVersion: '171 Studio v2.0 Production',
+      metrics: {
+        totalVisitors: visitorCount,
+        liveOnline: liveOnlineCount,
+        registeredUsersCount: registeredUsers.length,
+        bookingsCount: bookings.length,
+        albumOrdersCount: albumOrders.length,
+        activitiesCount: activities.length,
+        pluginsCount: siteContent.plugins.length,
+      },
+      registeredUsers,
+      bookings,
+      albumOrders,
+      clientFiles,
+      activities,
+      emailLogs,
+      pluginDonations,
+      pluginBugReports,
+      siteContent,
+    };
+
+    const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `171_STUDIO_BACKUP_${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    setDeskActionNotice(`Backup completo del database scaricato con successo! (${new Date().toLocaleTimeString('it-IT')})`);
+    setTimeout(() => setDeskActionNotice(null), 5000);
+  };
 
   // Plugin Bug Reports Management State (Master Account)
   const [bugReportFilter, setBugReportFilter] = useState<'all' | 'aperti' | 'in_esame' | 'risolti' | 'critici'>('all');
@@ -648,24 +689,38 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
           </div>
           <div>
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-[10px] font-mono tracking-widest px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/40 font-bold uppercase">
-                MASTER STUDIO BUILDER & CMS
+              <span className="text-[10px] font-mono tracking-widest px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/40 font-bold uppercase flex items-center gap-1">
+                <Shield className="w-3 h-3 text-amber-400" />
+                <span>SUPER ADMIN ESCLUSIVO</span>
               </span>
-              <span className="text-xs font-mono text-emerald-400 flex items-center gap-1">
+              <span className="text-xs font-mono text-emerald-400 flex items-center gap-1 font-bold">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                Accesso Verificato: {currentUser?.email || MASTER_EMAIL}
+                {MASTER_EMAIL}
+              </span>
+              <span className="text-[10px] font-mono text-neutral-400 border border-neutral-800 px-2 py-0.5 rounded-full bg-neutral-950 hidden md:inline">
+                Regole di Sicurezza Firestore Blindate
               </span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-heading font-black text-white mt-1">
-              Pannello di Amministrazione 171 Studio
+              Pannello di Controllo Master 171 Studio
             </h1>
             <p className="text-xs text-neutral-400 font-mono mt-0.5">
-              Gestione completa contenuti, tariffe, prenotazioni, invio email automatiche e pagamenti PayPal ({siteContent.paypalEmail || STUDIO_PAYPAL_EMAIL})
+              Gestione centralizzata: Prenotazioni fonico, Suite Plugin, Ordini The God Cypher, Automazione Gmail e PayPal Studio ({siteContent.paypalEmail || STUDIO_PAYPAL_EMAIL})
             </p>
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3 self-end sm:self-auto">
+        <div className="flex flex-wrap items-center gap-2.5 self-end sm:self-auto">
+          <button
+            type="button"
+            onClick={handleExportDatabaseBackup}
+            className="px-3.5 py-2.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-amber-300 border border-amber-500/30 text-xs font-mono uppercase tracking-wider flex items-center gap-2 transition-all cursor-pointer shadow-md hover:border-amber-400 hover:scale-[1.02]"
+            title="Scarica un backup completo del database Firestore in formato JSON"
+          >
+            <Download className="w-4 h-4 text-amber-400" />
+            <span>Backup JSON</span>
+          </button>
+
           <button
             type="button"
             onClick={() => setActiveTab('preview')}
@@ -853,266 +908,357 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
         </div>
       </div>
 
-      {/* Main Tabs Navigation */}
-      <div className="flex flex-wrap items-center gap-2 border-b border-neutral-800 pb-3 mb-8">
-        <button
-          type="button"
-          onClick={() => setActiveTab('preview')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-mono uppercase tracking-wider transition-all cursor-pointer ${
-            activeTab === 'preview'
-              ? 'bg-emerald-500 text-black font-bold shadow-md shadow-emerald-500/20'
-              : 'text-emerald-400 hover:text-white hover:bg-neutral-900 border border-emerald-500/30'
-          }`}
-        >
-          <Eye className="w-4 h-4" />
-          <span>Anteprima Live Sito</span>
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('cms')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-mono uppercase tracking-wider transition-all ${
-            activeTab === 'cms'
-              ? 'bg-amber-500 text-black font-bold shadow-md shadow-amber-500/20'
-              : 'text-neutral-400 hover:text-white hover:bg-neutral-900'
-          }`}
-        >
-          <Edit3 className="w-4 h-4" />
-          <span>Contenuti & Testi (CMS)</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('pricing')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-mono uppercase tracking-wider transition-all cursor-pointer ${
-            activeTab === 'pricing'
-              ? 'bg-amber-500 text-black font-bold shadow-md shadow-amber-500/20'
-              : 'text-neutral-400 hover:text-white hover:bg-neutral-900'
-          }`}
-        >
-          <DollarSign className="w-4 h-4" />
-          <span>Tariffe & PayPal Builder</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('vouchers')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-mono uppercase tracking-wider transition-all cursor-pointer ${
-            activeTab === 'vouchers'
-              ? 'bg-amber-500 text-black font-bold shadow-md shadow-amber-500/20'
-              : 'text-neutral-400 hover:text-white hover:bg-neutral-900'
-          }`}
-        >
-          <Tag className="w-4 h-4" />
-          <span>Voucher & Sconto 5%</span>
-          <span className="ml-1 px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-mono">
-            {(siteContent.vouchers || []).filter(v => v.active).length}
+      {/* Master Action Center / Quick Alerts Bar */}
+      <div className="mb-6 p-4 rounded-2xl bg-neutral-900/80 border border-neutral-800 flex flex-wrap items-center justify-between gap-3 text-xs font-mono shadow-lg">
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-amber-400 uppercase tracking-wider text-[11px] font-bold flex items-center gap-1.5 mr-1">
+            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+            <span>Centro Notifiche Master:</span>
           </span>
-        </button>
 
-        <button
-          type="button"
-          onClick={() => setActiveTab('calendar')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-mono uppercase tracking-wider transition-all cursor-pointer ${
-            activeTab === 'calendar'
-              ? 'bg-amber-500 text-black font-bold shadow-md shadow-amber-500/20'
-              : 'text-neutral-400 hover:text-white hover:bg-neutral-900'
-          }`}
-        >
-          <Calendar className="w-4 h-4" />
-          <span>Orari & Impegni Calendario</span>
-          {siteContent.calendarSettings?.blockedCommitments && siteContent.calendarSettings.blockedCommitments.length > 0 && (
-            <span className="ml-1 px-1.5 py-0.2 rounded-full bg-red-500/30 text-red-300 text-[10px] font-bold">
-              {siteContent.calendarSettings.blockedCommitments.length}
-            </span>
-          )}
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('desk')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-mono uppercase tracking-wider transition-all cursor-pointer ${
-            activeTab === 'desk'
-              ? 'bg-amber-500 text-black font-bold shadow-md shadow-amber-500/20'
-              : 'text-neutral-400 hover:text-white hover:bg-neutral-900'
-          }`}
-        >
-          <Inbox className="w-4 h-4" />
-          <span>Desk Prenotazioni</span>
           {pendingBookings.length > 0 ? (
-            <span className="ml-1 px-2 py-0.5 rounded-full bg-amber-400 text-black text-[10px] font-bold animate-pulse">
-              {pendingBookings.length} nuove
-            </span>
+            <button
+              type="button"
+              onClick={() => setActiveTab('desk')}
+              className="px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30 transition-all flex items-center gap-1.5 cursor-pointer animate-pulse font-bold"
+            >
+              <AlertCircle className="w-3.5 h-3.5 text-amber-400" />
+              <span>{pendingBookings.length} Prenotazione in Sospeso</span>
+            </button>
           ) : (
-            <span className="ml-1 px-1.5 py-0.2 rounded-full bg-neutral-800 text-neutral-500 text-[10px]">
-              0
+            <span className="px-2.5 py-1 rounded-lg bg-neutral-950 text-neutral-400 border border-neutral-800 flex items-center gap-1.5 text-[11px]">
+              <Check className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Zero prenotazioni pendenti</span>
             </span>
           )}
-        </button>
 
-        <button
-          type="button"
-          onClick={() => setActiveTab('deliveries')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-mono uppercase tracking-wider transition-all cursor-pointer ${
-            activeTab === 'deliveries'
-              ? 'bg-amber-500 text-black font-bold shadow-md shadow-amber-500/20'
-              : 'text-neutral-400 hover:text-white hover:bg-neutral-900'
-          }`}
-        >
-          <FolderOpen className="w-4 h-4" />
-          <span>Consegna File Drive</span>
+          {albumOrders.filter(o => o.status === 'in_attesa_pagamento').length > 0 ? (
+            <button
+              type="button"
+              onClick={() => setActiveTab('album_orders')}
+              className="px-2.5 py-1 rounded-lg bg-red-950/70 text-red-300 border border-red-700/60 hover:bg-red-900/60 transition-all flex items-center gap-1.5 cursor-pointer font-bold animate-pulse"
+            >
+              <Disc className="w-3.5 h-3.5 text-red-400" />
+              <span>{albumOrders.filter(o => o.status === 'in_attesa_pagamento').length} Ordine TGC da Convalidare</span>
+            </button>
+          ) : null}
+
           {clientFiles.filter(f => f.isDriveDelivery && f.deliveryStatus !== 'download_confermato').length > 0 ? (
-            <span className="ml-1 px-2 py-0.5 rounded-full bg-blue-500 text-white text-[10px] font-bold animate-pulse">
-              {clientFiles.filter(f => f.isDriveDelivery && f.deliveryStatus !== 'download_confermato').length} in attesa
-            </span>
-          ) : (
-            <span className="ml-1 px-1.5 py-0.2 rounded-full bg-neutral-800 text-neutral-400 text-[10px]">
-              {clientFiles.filter(f => f.isDriveDelivery).length}
-            </span>
-          )}
-        </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab('deliveries')}
+              className="px-2.5 py-1 rounded-lg bg-blue-950/70 text-blue-300 border border-blue-700/50 hover:bg-blue-900/50 transition-all flex items-center gap-1.5 cursor-pointer text-[11px]"
+            >
+              <FolderOpen className="w-3.5 h-3.5 text-blue-400" />
+              <span>{clientFiles.filter(f => f.isDriveDelivery && f.deliveryStatus !== 'download_confermato').length} Stems Drive In Attesa</span>
+            </button>
+          ) : null}
 
-        <button
-          type="button"
-          onClick={() => setActiveTab('album_orders')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-mono uppercase tracking-wider transition-all cursor-pointer ${
-            activeTab === 'album_orders'
-              ? 'bg-red-700 text-white font-bold shadow-md shadow-red-900/50'
-              : 'text-neutral-400 hover:text-white hover:bg-neutral-900'
-          }`}
-        >
-          <Disc className="w-4 h-4 text-red-500" />
-          <span>Ordini "The God Cypher"</span>
-          {albumOrders.length > 0 && (
-            <span className="ml-1 px-2 py-0.5 rounded-full bg-red-950 text-red-300 border border-red-700/60 text-[10px] font-bold">
-              {albumOrders.length}
-            </span>
-          )}
-        </button>
+          {pluginBugReports.filter(b => b.status !== 'risolto').length > 0 ? (
+            <button
+              type="button"
+              onClick={() => setActiveTab('plugin_bug_reports')}
+              className="px-2.5 py-1 rounded-lg bg-red-950/70 text-red-300 border border-red-700/50 hover:bg-red-900/50 transition-all flex items-center gap-1.5 cursor-pointer text-[11px]"
+            >
+              <Bug className="w-3.5 h-3.5 text-red-400" />
+              <span>{pluginBugReports.filter(b => b.status !== 'risolto').length} Bug Segnalati</span>
+            </button>
+          ) : null}
+        </div>
 
-        <button
-          type="button"
-          onClick={() => setActiveTab('history')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-mono uppercase tracking-wider transition-all cursor-pointer ${
-            activeTab === 'history'
-              ? 'bg-amber-500 text-black font-bold shadow-md shadow-amber-500/20'
-              : 'text-neutral-400 hover:text-white hover:bg-neutral-900'
-          }`}
-        >
-          <Archive className="w-4 h-4" />
-          <span>Storico & Archivio</span>
-          <span className="ml-1 px-2 py-0.5 rounded-full bg-neutral-800 text-neutral-300 text-[10px] font-mono">
-            {historicalBookings.length}
+        <div className="flex items-center gap-3 text-[11px] text-neutral-400">
+          <span className="flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="text-emerald-400 font-bold">Firestore Live Connesso</span>
           </span>
-        </button>
+          <span className="text-neutral-600 hidden sm:inline">•</span>
+          <span className="text-neutral-400 hidden sm:inline">{registeredUsers.length} Clienti • {siteContent.plugins.length} Plugin</span>
+        </div>
+      </div>
 
-        <button
-          type="button"
-          onClick={() => setActiveTab('analytics')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-mono uppercase tracking-wider transition-all cursor-pointer ${
-            activeTab === 'analytics'
-              ? 'bg-amber-500 text-black font-bold shadow-md shadow-amber-500/20'
-              : 'text-neutral-400 hover:text-white hover:bg-neutral-900'
-          }`}
-        >
-          <BarChart3 className="w-4 h-4" />
-          <span>Analytics & Trend</span>
-        </button>
+      {/* Categorized Tabs Navigation Controls */}
+      <div className="space-y-3 mb-8 border-b border-neutral-800 pb-4">
+        {/* Category Filter Pills & Instant Tab Search */}
+        <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center gap-1.5">
+            <button
+              type="button"
+              onClick={() => setTabCategory('all')}
+              className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all cursor-pointer ${
+                tabCategory === 'all'
+                  ? 'bg-amber-500 text-black font-extrabold shadow-sm'
+                  : 'bg-neutral-900/90 text-neutral-400 hover:text-white border border-neutral-800 hover:border-neutral-700'
+              }`}
+            >
+              🌟 Tutte le Schede (16)
+            </button>
+            <button
+              type="button"
+              onClick={() => setTabCategory('studio')}
+              className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all cursor-pointer ${
+                tabCategory === 'studio'
+                  ? 'bg-amber-500 text-black font-extrabold shadow-sm'
+                  : 'bg-neutral-900/90 text-neutral-400 hover:text-white border border-neutral-800 hover:border-neutral-700'
+              }`}
+            >
+              🎛️ Studio Core (3)
+            </button>
+            <button
+              type="button"
+              onClick={() => setTabCategory('products')}
+              className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all cursor-pointer ${
+                tabCategory === 'products'
+                  ? 'bg-amber-500 text-black font-extrabold shadow-sm'
+                  : 'bg-neutral-900/90 text-neutral-400 hover:text-white border border-neutral-800 hover:border-neutral-700'
+              }`}
+            >
+              🎵 Prodotti & Vendite (4)
+            </button>
+            <button
+              type="button"
+              onClick={() => setTabCategory('cms')}
+              className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all cursor-pointer ${
+                tabCategory === 'cms'
+                  ? 'bg-amber-500 text-black font-extrabold shadow-sm'
+                  : 'bg-neutral-900/90 text-neutral-400 hover:text-white border border-neutral-800 hover:border-neutral-700'
+              }`}
+            >
+              ✉️ CMS & Comunicazione (3)
+            </button>
+            <button
+              type="button"
+              onClick={() => setTabCategory('admin')}
+              className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all cursor-pointer ${
+                tabCategory === 'admin'
+                  ? 'bg-amber-500 text-black font-extrabold shadow-sm'
+                  : 'bg-neutral-900/90 text-neutral-400 hover:text-white border border-neutral-800 hover:border-neutral-700'
+              }`}
+            >
+              🛡️ Gestione & Sicurezza (6)
+            </button>
+          </div>
 
-        <button
-          type="button"
-          onClick={() => setActiveTab('emails')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-mono uppercase tracking-wider transition-all ${
-            activeTab === 'emails'
-              ? 'bg-amber-500 text-black font-bold shadow-md shadow-amber-500/20'
-              : 'text-neutral-400 hover:text-white hover:bg-neutral-900'
-          }`}
-        >
-          <Mail className="w-4 h-4" />
-          <span>Registro Email Automatiche</span>
-          <span className="ml-1 px-1.5 py-0.2 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-mono">
-            {emailLogs.length}
-          </span>
-        </button>
+          {/* Quick Search inside Tabs */}
+          <div className="relative min-w-[240px]">
+            <Search className="w-3.5 h-3.5 text-neutral-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <input
+              type="text"
+              placeholder="Filtra schede per nome o funzione..."
+              value={tabSearchFilter}
+              onChange={(e) => setTabSearchFilter(e.target.value)}
+              className="w-full pl-8 pr-7 py-1.5 rounded-xl bg-neutral-950 border border-neutral-800 text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-amber-400 font-mono transition-all"
+            />
+            {tabSearchFilter && (
+              <button
+                type="button"
+                onClick={() => setTabSearchFilter('')}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-white cursor-pointer"
+              >
+                <X className="w-3 h-3" />
+              </button>
+            )}
+          </div>
+        </div>
 
-        <button
-          type="button"
-          onClick={() => setActiveTab('plugins')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-mono uppercase tracking-wider transition-all ${
-            activeTab === 'plugins'
-              ? 'bg-amber-500 text-black font-bold shadow-md shadow-amber-500/20'
-              : 'text-neutral-400 hover:text-white hover:bg-neutral-900'
-          }`}
-        >
-          <Cpu className="w-4 h-4" />
-          <span>171 Plugin Innovatio</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('plugin_bug_reports')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-mono uppercase tracking-wider transition-all cursor-pointer ${
-            activeTab === 'plugin_bug_reports'
-              ? 'bg-red-700 text-white font-bold shadow-md shadow-red-900/50'
-              : 'text-neutral-400 hover:text-white hover:bg-neutral-900'
-          }`}
-        >
-          <Bug className="w-4 h-4 text-red-400" />
-          <span>Plugin Bug Reports</span>
-          {pluginBugReports.filter((b) => b.status !== 'risolto').length > 0 && (
-            <span className="ml-1 px-2 py-0.5 rounded-full bg-red-950 text-red-300 border border-red-700/60 text-[10px] font-bold animate-pulse">
-              {pluginBugReports.filter((b) => b.status !== 'risolto').length}
-            </span>
-          )}
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('plugin_donations')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-mono uppercase tracking-wider transition-all cursor-pointer ${
-            activeTab === 'plugin_donations'
-              ? 'bg-amber-500 text-black font-bold shadow-md shadow-amber-500/30'
-              : 'text-neutral-400 hover:text-white hover:bg-neutral-900'
-          }`}
-        >
-          <Heart className="w-4 h-4 text-amber-400 fill-amber-400" />
-          <span>Donazioni & Supporter</span>
-          {pluginDonations.length > 0 && (
-            <span className="ml-1 px-2 py-0.5 rounded-full bg-neutral-900 text-amber-300 border border-amber-500/40 text-[10px] font-bold">
-              {pluginDonations.length}
-            </span>
-          )}
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('audit')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-mono uppercase tracking-wider transition-all ${
-            activeTab === 'audit'
-              ? 'bg-amber-500 text-black font-bold shadow-md shadow-amber-500/20'
-              : 'text-neutral-400 hover:text-white hover:bg-neutral-900'
-          }`}
-        >
-          <Activity className="w-4 h-4" />
-          <span>Audit Log Eventi</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('users')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-mono uppercase tracking-wider transition-all cursor-pointer ${
-            activeTab === 'users'
-              ? 'bg-blue-600 text-white font-bold shadow-md shadow-blue-600/30'
-              : 'text-neutral-400 hover:text-white hover:bg-neutral-900'
-          }`}
-        >
-          <Users className="w-4 h-4" />
-          <span>Utenti Registrati</span>
-          <span className="ml-1 px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 text-[10px] font-bold">
-            {registeredUsers.length}
-          </span>
-        </button>
+        {/* Tab Buttons Grid / Flex */}
+        <div className="flex flex-wrap items-center gap-2 pt-2">
+          {[
+            {
+              id: 'desk',
+              label: 'Desk Prenotazioni',
+              category: 'studio',
+              icon: Inbox,
+              badge: pendingBookings.length > 0 ? `${pendingBookings.length} nuove` : '0',
+              badgeClass: pendingBookings.length > 0 ? 'bg-amber-400 text-black font-bold animate-pulse' : 'bg-neutral-800 text-neutral-500',
+              description: 'Gestione prenotazioni fonico e approvazione date'
+            },
+            {
+              id: 'calendar',
+              label: 'Orari & Impegni Calendario',
+              category: 'studio',
+              icon: Calendar,
+              badge: siteContent.calendarSettings?.blockedCommitments?.length ? `${siteContent.calendarSettings.blockedCommitments.length}` : undefined,
+              badgeClass: 'bg-red-500/30 text-red-300 font-bold',
+              description: 'Blocco fasce orarie e giorni off studio'
+            },
+            {
+              id: 'deliveries',
+              label: 'Consegna File Drive',
+              category: 'studio',
+              icon: FolderOpen,
+              badge: clientFiles.filter(f => f.isDriveDelivery && f.deliveryStatus !== 'download_confermato').length > 0
+                ? `${clientFiles.filter(f => f.isDriveDelivery && f.deliveryStatus !== 'download_confermato').length} in attesa`
+                : `${clientFiles.filter(f => f.isDriveDelivery).length}`,
+              badgeClass: clientFiles.filter(f => f.isDriveDelivery && f.deliveryStatus !== 'download_confermato').length > 0
+                ? 'bg-blue-500 text-white font-bold animate-pulse'
+                : 'bg-neutral-800 text-neutral-400',
+              description: 'Stems e Master WAV caricati su Google Drive'
+            },
+            {
+              id: 'plugins',
+              label: '171 Plugin Innovatio',
+              category: 'products',
+              icon: Cpu,
+              badge: `${siteContent.plugins.length} (${siteContent.plugins.reduce((acc, p) => acc + (p.downloadCount || 0), 0)} dl)`,
+              badgeClass: 'bg-emerald-500/20 text-emerald-300 font-mono font-bold',
+              description: 'Suite 10 plugin, pacchetti ZIP Win/Mac e roadmap'
+            },
+            {
+              id: 'album_orders',
+              label: 'Ordini "The God Cypher"',
+              category: 'products',
+              icon: Disc,
+              badge: albumOrders.length > 0 ? `${albumOrders.length}` : '0',
+              badgeClass: albumOrders.filter(o => o.status === 'in_attesa_pagamento').length > 0
+                ? 'bg-red-700 text-white font-bold animate-pulse'
+                : 'bg-neutral-800 text-neutral-300',
+              description: 'Ordini fisici e digitali del disco TGC'
+            },
+            {
+              id: 'pricing',
+              label: 'Tariffe & PayPal Builder',
+              category: 'products',
+              icon: DollarSign,
+              badge: undefined,
+              badgeClass: '',
+              description: 'Listino orario, pacchetti e opzioni aggiuntive'
+            },
+            {
+              id: 'vouchers',
+              label: 'Voucher & Codici Sconto',
+              category: 'products',
+              icon: Tag,
+              badge: `${(siteContent.vouchers || []).filter(v => v.active).length} attivi`,
+              badgeClass: 'bg-amber-500/20 text-amber-300 font-mono',
+              description: 'Codici promozionali 5%, 10% e benvenuto'
+            },
+            {
+              id: 'preview',
+              label: 'Anteprima Live Sito',
+              category: 'cms',
+              icon: Eye,
+              badge: 'LIVE',
+              badgeClass: 'bg-emerald-500 text-black font-extrabold',
+              description: 'Visualizza il sito in modalità Desktop, Tablet e Mobile'
+            },
+            {
+              id: 'cms',
+              label: 'Contenuti & Testi (CMS)',
+              category: 'cms',
+              icon: Edit3,
+              badge: undefined,
+              badgeClass: '',
+              description: 'Modifica testi, playlist Spotify/YouTube e banner'
+            },
+            {
+              id: 'emails',
+              label: 'Registro Email Automatiche',
+              category: 'cms',
+              icon: Mail,
+              badge: `${emailLogs.length}`,
+              badgeClass: 'bg-emerald-500/20 text-emerald-300 font-mono',
+              description: 'Template e log delle email inviate da Gmail'
+            },
+            {
+              id: 'users',
+              label: 'Utenti Registrati',
+              category: 'admin',
+              icon: Users,
+              badge: `${registeredUsers.length}`,
+              badgeClass: 'bg-blue-500/20 text-blue-300 font-bold',
+              description: 'Profili clienti, voucher personali e ruoli'
+            },
+            {
+              id: 'audit',
+              label: 'Audit Log Eventi',
+              category: 'admin',
+              icon: Activity,
+              badge: `${activities.length}`,
+              badgeClass: 'bg-neutral-800 text-emerald-400 font-mono',
+              description: 'Registro cronologico di tutte le azioni su 171studio.it'
+            },
+            {
+              id: 'analytics',
+              label: 'Analytics & Trend',
+              category: 'admin',
+              icon: BarChart3,
+              badge: undefined,
+              badgeClass: '',
+              description: 'Metriche di conversione, fasce orarie e servizi più richiesti'
+            },
+            {
+              id: 'plugin_bug_reports',
+              label: 'Plugin Bug Reports',
+              category: 'admin',
+              icon: Bug,
+              badge: pluginBugReports.filter((b) => b.status !== 'risolto').length > 0 
+                ? `${pluginBugReports.filter((b) => b.status !== 'risolto').length}` 
+                : undefined,
+              badgeClass: 'bg-red-950 text-red-300 border border-red-700/60 font-bold animate-pulse',
+              description: 'Segnalazioni anomalie dai beta tester dei plugin'
+            },
+            {
+              id: 'plugin_donations',
+              label: 'Donazioni & Supporter',
+              category: 'admin',
+              icon: Heart,
+              badge: pluginDonations.length > 0 ? `${pluginDonations.length}` : undefined,
+              badgeClass: 'bg-neutral-900 text-amber-300 border border-amber-500/40 font-bold',
+              description: 'Donazioni PayPal e pass Early Supporter'
+            },
+            {
+              id: 'history',
+              label: 'Storico & Archivio',
+              category: 'admin',
+              icon: Archive,
+              badge: `${historicalBookings.length}`,
+              badgeClass: 'bg-neutral-800 text-neutral-300 font-mono',
+              description: 'Archivio prenotazioni completate o annullate'
+            },
+          ]
+            .filter((tab) => {
+              const matchesCategory = tabCategory === 'all' || tab.category === tabCategory;
+              const matchesSearch = !tabSearchFilter.trim() || 
+                tab.label.toLowerCase().includes(tabSearchFilter.toLowerCase().trim()) ||
+                tab.description.toLowerCase().includes(tabSearchFilter.toLowerCase().trim()) ||
+                tab.id.toLowerCase().includes(tabSearchFilter.toLowerCase().trim());
+              return matchesCategory && matchesSearch;
+            })
+            .map((tab) => {
+              const IconComponent = tab.icon;
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setActiveTab(tab.id as any)}
+                  title={tab.description}
+                  className={`flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-mono uppercase tracking-wider transition-all cursor-pointer border ${
+                    isActive
+                      ? tab.id === 'preview'
+                        ? 'bg-emerald-500 text-black font-black border-emerald-400 shadow-md shadow-emerald-500/20'
+                        : tab.id === 'album_orders' || tab.id === 'plugin_bug_reports'
+                        ? 'bg-red-700 text-white font-black border-red-500 shadow-md shadow-red-900/50'
+                        : tab.id === 'users'
+                        ? 'bg-blue-600 text-white font-black border-blue-400 shadow-md shadow-blue-600/30'
+                        : 'bg-amber-500 text-black font-black border-amber-400 shadow-md shadow-amber-500/20'
+                      : 'text-neutral-400 hover:text-white bg-neutral-900/70 hover:bg-neutral-800 border-neutral-800 hover:border-neutral-700'
+                  }`}
+                >
+                  <IconComponent className={`w-3.5 h-3.5 ${isActive ? (tab.id === 'preview' || tab.id === 'desk' || tab.id === 'pricing' ? 'text-black' : 'text-white') : 'text-neutral-400'}`} />
+                  <span>{tab.label}</span>
+                  {tab.badge && (
+                    <span className={`px-1.5 py-0.2 rounded-full text-[10px] ${tab.badgeClass}`}>
+                      {tab.badge}
+                    </span>
+                  )}
+                  {tab.id === 'preview' && (
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse ml-0.5" />
+                  )}
+                </button>
+              );
+            })}
+        </div>
       </div>
 
       {/* Desk and Calendar Action Feedback Banners */}
