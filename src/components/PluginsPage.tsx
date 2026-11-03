@@ -1331,24 +1331,6 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
                           ({plugin.downloadCount > 0 ? `${plugin.downloadCount} dl` : '171 DSP'})
                         </span>
                       </div>
-
-                      {/* Price / Freeware Display (Waves-Style: €99 GRATIS • 100% FREE) */}
-                      <div className="mt-2.5 pt-2.5 border-t border-neutral-800/80 flex items-center justify-between">
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-[9.5px] font-mono font-black px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 uppercase tracking-wider">
-                            100% FREEWARE
-                          </span>
-                          <span className="text-[10px] font-mono text-neutral-400">
-                            Download Gratuito
-                          </span>
-                        </div>
-                        {plugin.isNewRelease && (
-                          <span className="text-[9.5px] font-mono font-bold text-amber-400 flex items-center gap-1">
-                            <Sparkles className="w-3 h-3 text-amber-400" />
-                            <span>Patch 2 Nov</span>
-                          </span>
-                        )}
-                      </div>
                     </div>
 
                     {/* Prominent Action Button: "Scarica il Plugin" -> navigates to single plugin page */}
