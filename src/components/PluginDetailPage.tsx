@@ -11,7 +11,6 @@ import { PluginItem, STUDIO_PAYPAL_EMAIL, PluginDonationRecord } from '../types/
 import { getPayPalDonationUrl, getPayPalMeUrl, triggerPluginZipFileDownload } from '../utils/emailService';
 import { getAssetUrl } from '../utils/assetPath';
 import { HardwareTiltCard } from './HardwareTiltCard';
-import { ProAudioDemoPlayer } from './ProAudioDemoPlayer';
 
 interface PluginDetailPageProps {
   pluginId: string;
@@ -369,14 +368,16 @@ export const PluginDetailPage: React.FC<PluginDetailPageProps> = ({
               </div>
             </div>
 
-            {/* Embedded Pro Audio A/B Demo Player (UAD / Plugin Alliance signature feature) */}
-            <div className="pt-3">
-              <ProAudioDemoPlayer
-                pluginId={plugin.id}
-                pluginName={plugin.name}
-                category={plugin.badge}
-                compact={false}
-              />
+            {/* DSP Architecture telemetry banner */}
+            <div className="mt-3 p-3.5 rounded-2xl bg-neutral-950/80 border border-neutral-800/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs font-mono text-neutral-400">
+              <span className="flex items-center gap-2">
+                <Radio className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                <span>Architettura DSP: <strong className="text-white">{plugin.badge}</strong></span>
+              </span>
+              <span className="text-emerald-400 font-semibold text-[11px] flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <span>Audio Engine 64-bit • 0 ms</span>
+              </span>
             </div>
           </div>
         </div>

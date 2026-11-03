@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { 
   Download, Eye, Heart, Flame, Sparkles, Cpu, Clock, Check, 
-  ExternalLink, Volume2, Shield, Layers, Radio, Star
+  ExternalLink, Shield, Layers, Radio, Star
 } from 'lucide-react';
 import { PluginItem } from '../types/cms';
 import { getAssetUrl } from '../utils/assetPath';
-import { ProAudioDemoPlayer } from './ProAudioDemoPlayer';
 
 export interface RackPluginCardProps {
   plugin: PluginItem;
@@ -92,7 +91,6 @@ export const RackPluginCard: React.FC<RackPluginCardProps> = ({
   reviewCount = 0,
   averageRating = null,
 }) => {
-  const [showDemoPlayer, setShowDemoPlayer] = useState(false);
   const specs = TOPOLOGY_MAP[plugin.id] || {
     topology: 'ANALOG MODELED DSP PROCESSOR',
     tube: 'Discrete Studio Engineering',
@@ -284,31 +282,11 @@ export const RackPluginCard: React.FC<RackPluginCardProps> = ({
             </div>
           )}
 
-          <button
-            type="button"
-            onClick={() => setShowDemoPlayer(!showDemoPlayer)}
-            className={`px-2 py-1 rounded-lg text-[10px] font-mono font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
-              showDemoPlayer
-                ? 'bg-amber-500 text-black shadow-md shadow-amber-500/20'
-                : 'bg-neutral-900 hover:bg-neutral-800 text-amber-400 border border-amber-500/30'
-            }`}
-          >
-            <Volume2 className="w-3 h-3" />
-            <span>{showDemoPlayer ? 'Chiudi Demo' : 'Ascolta A/B'}</span>
-          </button>
-        </div>
-
-        {/* Inline Audio Preview Player (Expandable) */}
-        {showDemoPlayer && (
-          <div className="pt-2 animate-in fade-in duration-200">
-            <ProAudioDemoPlayer
-              pluginId={plugin.id}
-              pluginName={plugin.name}
-              category={plugin.badge}
-              compact={true}
-            />
+          <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-neutral-900 border border-neutral-800 text-[9.5px] font-mono text-neutral-400">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+            <span>64-bit Audio DSP</span>
           </div>
-        )}
+        </div>
       </div>
 
       {/* Bottom Action Section: Primary Download CTA & Secondary Specs CTA */}

@@ -158,6 +158,39 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
   const targetEmailForDonation = (currentUser?.email || donorEmailInput || '').trim().toLowerCase();
   const cumulativeStats = getUserCumulativeDonations(targetEmailForDonation);
 
+  // Memoized filtered and sorted plugin catalog
+  const filteredPlugins = useMemo(() => {
+    return siteContent.plugins
+      .filter((plugin) => {
+        // Search query match
+        if (searchQuery.trim()) {
+          const q = searchQuery.toLowerCase();
+          const matchName = plugin.name.toLowerCase().includes(q);
+          const matchDesc = plugin.description.toLowerCase().includes(q);
+          const matchBadge = plugin.badge.toLowerCase().includes(q);
+          const matchTech = plugin.technologies?.some((t) => t.toLowerCase().includes(q));
+          if (!matchName && !matchDesc && !matchBadge && !matchTech) return false;
+        }
+
+        // Category match
+        if (categoryFilter === 'all') return true;
+        if (categoryFilter === 'favorites') return isPluginFavorite(plugin.id);
+        if (categoryFilter === 'vocal') return ['plugin-realtune', 'plugin-easyvoice'].includes(plugin.id);
+        if (categoryFilter === 'dynamics') return ['plugin-optocom', 'plugin-masterglue', 'plugin-punchcraft', 'plugin-perfectclip'].includes(plugin.id);
+        if (categoryFilter === 'saturation') return ['plugin-cleandrive', 'plugin-perfectpre'].includes(plugin.id);
+        if (categoryFilter === 'spatial') return ['plugin-cleanreso', 'plugin-spaceluxe'].includes(plugin.id);
+        return true;
+      })
+      .sort((a, b) => {
+        if (sortBy === 'downloads') return (b.downloadCount || 0) - (a.downloadCount || 0);
+        if (sortBy === 'name') return a.name.localeCompare(b.name);
+        // featured: new releases first
+        if (a.isNewRelease && !b.isNewRelease) return -1;
+        if (!a.isNewRelease && b.isNewRelease) return 1;
+        return 0;
+      });
+  }, [siteContent.plugins, searchQuery, categoryFilter, favoritePluginIds, sortBy, isPluginFavorite]);
+
   if (activePluginId) {
     return (
       <PluginDetailPage
@@ -1166,25 +1199,31 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
           <div className="mb-8 p-5 sm:p-6 rounded-3xl bg-neutral-900/90 border border-neutral-800/90 shadow-2xl backdrop-blur-2xl space-y-5">
             {/* Top row: Search Bar + Live Counter + Sort Options */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-              {/* Search input */}
-              <div className="relative flex-1 w-full md:max-w-md">
-                <Search className="w-4 h-4 text-amber-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Cerca plugin per nome o tecnologia (es. Opto, Tube, Vocal)..."
-                  className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-black/80 border border-neutral-700/80 hover:border-amber-500/50 focus:border-amber-400 text-xs font-mono text-white placeholder-neutral-500 outline-none transition-all shadow-inner"
-                />
-                {searchQuery && (
-                  <button
-                    type="button"
-                    onClick={() => setSearchQuery('')}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-white text-xs font-mono cursor-pointer"
-                  >
-                    <X className="w-3.5 h-3.5" />
-                  </button>
-                )}
+              {/* Search input + Live Results Counter */}
+              <div className="flex items-center gap-2.5 w-full md:w-auto flex-1 max-w-lg">
+                <div className="relative flex-1">
+                  <Search className="w-4 h-4 text-amber-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Cerca plugin per nome o tecnologia (es. Opto, Tube, Vocal)..."
+                    className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-black/80 border border-neutral-700/80 hover:border-amber-500/50 focus:border-amber-400 text-xs font-mono text-white placeholder-neutral-500 outline-none transition-all shadow-inner"
+                  />
+                  {searchQuery && (
+                    <button
+                      type="button"
+                      onClick={() => setSearchQuery('')}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-white text-xs font-mono cursor-pointer"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
+                <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-black/80 border border-neutral-800 text-[11px] font-mono text-neutral-400 shrink-0 shadow-inner">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+                  <span>{filteredPlugins.length} / {siteContent.plugins.length} DSP</span>
+                </span>
               </div>
 
               {/* Sorting and Pro Telemetry */}
@@ -1267,91 +1306,55 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
           </div>
 
           {/* Plugin Grid using Realistic Rackmount Cards */}
-          {(() => {
-            const filteredPlugins = siteContent.plugins
-              .filter((plugin) => {
-                // Search query match
-                if (searchQuery.trim()) {
-                  const q = searchQuery.toLowerCase();
-                  const matchName = plugin.name.toLowerCase().includes(q);
-                  const matchDesc = plugin.description.toLowerCase().includes(q);
-                  const matchBadge = plugin.badge.toLowerCase().includes(q);
-                  const matchTech = plugin.technologies?.some(t => t.toLowerCase().includes(q));
-                  if (!matchName && !matchDesc && !matchBadge && !matchTech) return false;
-                }
-
-                // Category match
-                if (categoryFilter === 'all') return true;
-                if (categoryFilter === 'favorites') return isPluginFavorite(plugin.id);
-                if (categoryFilter === 'vocal') return ['plugin-realtune', 'plugin-easyvoice'].includes(plugin.id);
-                if (categoryFilter === 'dynamics') return ['plugin-optocom', 'plugin-masterglue', 'plugin-punchcraft', 'plugin-perfectclip'].includes(plugin.id);
-                if (categoryFilter === 'saturation') return ['plugin-cleandrive', 'plugin-perfectpre'].includes(plugin.id);
-                if (categoryFilter === 'spatial') return ['plugin-cleanreso', 'plugin-spaceluxe'].includes(plugin.id);
-                return true;
-              })
-              .sort((a, b) => {
-                if (sortBy === 'downloads') return (b.downloadCount || 0) - (a.downloadCount || 0);
-                if (sortBy === 'name') return a.name.localeCompare(b.name);
-                // featured: new releases first
-                if (a.isNewRelease && !b.isNewRelease) return -1;
-                if (!a.isNewRelease && b.isNewRelease) return 1;
-                return 0;
-              });
-
-            if (filteredPlugins.length === 0) {
-              return (
-                <div className="py-16 text-center space-y-4 p-8 rounded-3xl bg-neutral-900/60 border border-neutral-800">
-                  <div className="w-12 h-12 rounded-full bg-neutral-800 border border-neutral-700 flex items-center justify-center mx-auto text-amber-400">
-                    <Search className="w-6 h-6" />
-                  </div>
-                  <h4 className="font-heading font-black text-xl text-white">Nessun plugin trovato</h4>
-                  <p className="text-sm text-neutral-400 font-mono">
-                    Nessun processore corrisponde alla ricerca &laquo;{searchQuery}&raquo; nella categoria selezionata.
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => { setSearchQuery(''); setCategoryFilter('all'); }}
-                    className="px-4 py-2 rounded-xl bg-amber-500 text-black font-heading font-bold text-xs uppercase cursor-pointer"
-                  >
-                    Resetta Filtri
-                  </button>
-                </div>
-              );
-            }
-
-            return (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
-                {filteredPlugins.map((plugin) => {
-                  const countdown = plugin.unlockDate ? getCountdown(plugin.unlockDate) : null;
-                  const isLocked = countdown ? !countdown.isUnlocked : (plugin.status === 'IN ARRIVO');
-
-                  // Real reviews calculation from actual feedback store
-                  const feedbacksForPlugin = pluginFeedbacks.filter(
-                    (f) => f.pluginId === plugin.id || f.pluginName === plugin.name
-                  );
-                  const reviewCount = feedbacksForPlugin.length;
-                  const averageRating = reviewCount > 0
-                    ? Math.round((feedbacksForPlugin.reduce((acc, curr) => acc + (curr.rating || 5), 0) / reviewCount) * 10) / 10
-                    : null;
-
-                  return (
-                    <RackPluginCard
-                      key={plugin.id}
-                      plugin={plugin}
-                      countdown={countdown}
-                      isLocked={isLocked}
-                      isFavorite={isPluginFavorite(plugin.id)}
-                      onToggleFavorite={toggleFavoritePlugin}
-                      onSelectPlugin={handleSelectPlugin}
-                      onOpenPreviewModal={(url) => setPreviewModalImage(url)}
-                      reviewCount={reviewCount}
-                      averageRating={averageRating}
-                    />
-                  );
-                })}
+          {filteredPlugins.length === 0 ? (
+            <div className="py-16 text-center space-y-4 p-8 rounded-3xl bg-neutral-900/60 border border-neutral-800">
+              <div className="w-12 h-12 rounded-full bg-neutral-800 border border-neutral-700 flex items-center justify-center mx-auto text-amber-400">
+                <Search className="w-6 h-6" />
               </div>
-            );
-          })()}
+              <h4 className="font-heading font-black text-xl text-white">Nessun plugin trovato</h4>
+              <p className="text-sm text-neutral-400 font-mono">
+                Nessun processore corrisponde alla ricerca &laquo;{searchQuery}&raquo; nella categoria selezionata.
+              </p>
+              <button
+                type="button"
+                onClick={() => { setSearchQuery(''); setCategoryFilter('all'); }}
+                className="px-4 py-2 rounded-xl bg-amber-500 text-black font-heading font-bold text-xs uppercase cursor-pointer"
+              >
+                Resetta Filtri
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
+              {filteredPlugins.map((plugin) => {
+                const countdown = plugin.unlockDate ? getCountdown(plugin.unlockDate) : null;
+                const isLocked = countdown ? !countdown.isUnlocked : (plugin.status === 'IN ARRIVO');
+
+                // Real reviews calculation from actual feedback store
+                const feedbacksForPlugin = pluginFeedbacks.filter(
+                  (f) => f.pluginId === plugin.id || f.pluginName === plugin.name
+                );
+                const reviewCount = feedbacksForPlugin.length;
+                const averageRating = reviewCount > 0
+                  ? Math.round((feedbacksForPlugin.reduce((acc, curr) => acc + (curr.rating || 5), 0) / reviewCount) * 10) / 10
+                  : null;
+
+                return (
+                  <RackPluginCard
+                    key={plugin.id}
+                    plugin={plugin}
+                    countdown={countdown}
+                    isLocked={isLocked}
+                    isFavorite={isPluginFavorite(plugin.id)}
+                    onToggleFavorite={toggleFavoritePlugin}
+                    onSelectPlugin={handleSelectPlugin}
+                    onOpenPreviewModal={(url) => setPreviewModalImage(url)}
+                    reviewCount={reviewCount}
+                    averageRating={averageRating}
+                  />
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {/* Early Access / Support Card - Optimized for Desktop Full Screen and Mobile */}
