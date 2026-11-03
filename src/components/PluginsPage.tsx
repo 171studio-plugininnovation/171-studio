@@ -53,6 +53,9 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
     getUserCumulativeDonations,
     visitorCount,
     liveOnlineCount,
+    favoritePluginIds,
+    toggleFavoritePlugin,
+    isPluginFavorite,
   } = useStudio();
 
   const [downloadSuccessId, setDownloadSuccessId] = useState<string | null>(null);
@@ -136,7 +139,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
 
   // Modal for previewing hardware GUI snapshot
   const [previewModalImage, setPreviewModalImage] = useState<string | null>(null);
-  const [categoryFilter, setCategoryFilter] = useState<'all' | 'vocal' | 'dynamics' | 'spatial'>('all');
+  const [categoryFilter, setCategoryFilter] = useState<'all' | 'vocal' | 'dynamics' | 'spatial' | 'favorites'>('all');
 
   // Feedback form state on the post-download page
   const [rating, setRating] = useState<number>(5);
@@ -1020,9 +1023,9 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
                   week: 2,
                   name: '171 MasterGlue',
                   cat: 'Analog Bus VCA/Diode Console',
-                  dateStr: '2026-11-06T18:00:00+01:00',
-                  targetDateLabel: 'Ven 06 Nov 2026, 18:00',
-                  winSize: '8.36 MB',
+                  dateStr: '2026-11-03T18:00:00+01:00',
+                  targetDateLabel: '3 Nov 2026 • SBLOCCATO ORA',
+                  winSize: '8.88 MB',
                   macSize: '0.52 MB',
                 },
                 {
@@ -1129,7 +1132,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
                 </div>
 
                 <h3 className="font-heading font-black text-2xl sm:text-3xl text-white tracking-tight">
-                  Aggiornamento Ufficiale Suite: Nuove Funzioni, Fix DSP & SpaceLuxe Sbloccato
+                  Aggiornamento Ufficiale Suite 3 Novembre: EasyVoice v1.0.2, RealTune, MasterGlue & PerfectPre v1.0.1
                 </h3>
 
                 <p className="text-sm text-neutral-300 font-light leading-relaxed">
@@ -1167,6 +1170,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
             <div className="flex flex-wrap items-center gap-2">
               {[
                 { id: 'all', label: 'Tutti i Plugin', count: siteContent.plugins.length },
+                { id: 'favorites', label: '❤️ Preferiti', count: favoritePluginIds.length },
                 { id: 'vocal', label: 'Voci & Intonazione', count: siteContent.plugins.filter(p => ['plugin-realtune', 'plugin-easyvoice'].includes(p.id)).length },
                 { id: 'dynamics', label: 'Dinamica & Mix', count: siteContent.plugins.filter(p => ['plugin-optocom', 'plugin-cleandrive', 'plugin-masterglue', 'plugin-punchcraft'].includes(p.id)).length },
                 { id: 'spatial', label: 'Riverberi & Colore', count: siteContent.plugins.filter(p => ['plugin-cleanreso', 'plugin-perfectpre', 'plugin-spaceluxe', 'plugin-perfectclip'].includes(p.id)).length },
@@ -1197,6 +1201,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
             {siteContent.plugins
               .filter((plugin) => {
                 if (categoryFilter === 'all') return true;
+                if (categoryFilter === 'favorites') return isPluginFavorite(plugin.id);
                 if (categoryFilter === 'vocal') return ['plugin-realtune', 'plugin-easyvoice'].includes(plugin.id);
                 if (categoryFilter === 'dynamics') return ['plugin-optocom', 'plugin-cleandrive', 'plugin-masterglue', 'plugin-punchcraft'].includes(plugin.id);
                 if (categoryFilter === 'spatial') return ['plugin-cleanreso', 'plugin-perfectpre', 'plugin-spaceluxe', 'plugin-perfectclip'].includes(plugin.id);
@@ -1232,12 +1237,19 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
                       <div className="flex items-center justify-between mb-2.5">
                         <button
                           type="button"
-                          onClick={() => handleSelectPlugin(plugin.id)}
-                          className="w-7 h-7 rounded-full bg-neutral-800/80 hover:bg-neutral-700 text-neutral-400 hover:text-amber-400 flex items-center justify-center transition-colors cursor-pointer"
-                          title="Visualizza scheda completa"
-                          aria-label="Dettagli plugin"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleFavoritePlugin(plugin.id);
+                          }}
+                          className={`w-8 h-8 rounded-full border flex items-center justify-center transition-all cursor-pointer ${
+                            isPluginFavorite(plugin.id)
+                              ? 'bg-red-500/20 border-red-500/50 text-red-400 shadow-md shadow-red-500/20'
+                              : 'bg-neutral-800/80 hover:bg-neutral-700 border-neutral-700/80 text-neutral-400 hover:text-red-400'
+                          }`}
+                          title={isPluginFavorite(plugin.id) ? "Rimuovi dai tuoi preferiti" : "Salva nei tuoi preferiti"}
+                          aria-label="Salva nei preferiti"
                         >
-                          <Heart className="w-3.5 h-3.5" />
+                          <Heart className={`w-3.5 h-3.5 transition-transform ${isPluginFavorite(plugin.id) ? 'fill-red-500 text-red-500 scale-110' : ''}`} />
                         </button>
                         <span className="text-[10px] font-mono font-bold text-neutral-400 uppercase tracking-wider pr-10">
                           {plugin.badge.split(' ')[0]} DSP
@@ -1322,11 +1334,12 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
 
                       {/* Price / Freeware Display (Waves-Style: €99 GRATIS • 100% FREE) */}
                       <div className="mt-2.5 pt-2.5 border-t border-neutral-800/80 flex items-center justify-between">
-                        <div className="flex items-baseline gap-2">
-                          <span className="text-xs text-neutral-500 line-through">€99</span>
-                          <span className="text-base font-black text-white font-mono">GRATIS</span>
-                          <span className="text-[9px] font-mono font-black px-1.5 py-0.5 rounded bg-red-600 text-white uppercase tracking-wider">
-                            100% FREE
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[9.5px] font-mono font-black px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 uppercase tracking-wider">
+                            100% FREEWARE
+                          </span>
+                          <span className="text-[10px] font-mono text-neutral-400">
+                            Download Gratuito
                           </span>
                         </div>
                         {plugin.isNewRelease && (

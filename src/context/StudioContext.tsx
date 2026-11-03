@@ -79,6 +79,10 @@ interface StudioContextType {
   triggerTestBookingAndConfirmationEmail: (recipientEmail?: string) => Promise<{ booking: BookingRecord; receiptEmail: EmailLog; confirmationEmail: EmailLog }>;
   restoreBookingToDesk: (id: string) => void;
   deleteBookingPermanently: (id: string) => void;
+  // Favorites Management (Wishlist)
+  favoritePluginIds: string[];
+  toggleFavoritePlugin: (pluginId: string) => void;
+  isPluginFavorite: (pluginId: string) => boolean;
   // Client Account ("Il Mio Account") & Key/BPM Finder Tracking
   clientFiles: ClientFileItem[];
   downloadedPlugins: DownloadedPluginRecord[];
@@ -238,13 +242,13 @@ const DEFAULT_PLUGINS: PluginItem[] = [
     badge: 'ZERO-LATENCY PITCH CORRECTION & VOCAL TRANSFORMER',
     status: 'DISPONIBILE',
     description: 'Motore di intonazione vocale real-time a 60 FPS con architettura Dual-Head Synchronous WSOLA, tracking S-curve a due velocità continuo, manopola Cue Mix boutique, selettore preset analogico, matrice note a 3 stati e zero drift di fase.',
-    version: 'v1.0.1 Patch 1 (2 Nov 2026)',
+    version: 'v1.0.1 Patch 2 (3 Nov 2026)',
     isNewRelease: true,
-    newReleaseTag: '✨ NUOVA PATCH 2 NOV',
+    newReleaseTag: '✨ NUOVA PATCH v1.0.1',
     downloadCount: 0,
     downloadUrl: '/downloads/plugins/171_RealTune_v1.0.1_Win64.zip',
     zipFileName: '171_RealTune_v1.0.1_Win64.zip',
-    zipFileSize: '19.18 MB',
+    zipFileSize: '20.83 MB',
     macDownloadUrl: '/downloads/plugins/171_RealTune_v1.0.1_Mac.zip',
     macZipFileName: '171_RealTune_v1.0.1_Mac.zip',
     macZipFileSize: '8.05 MB',
@@ -285,13 +289,13 @@ const DEFAULT_PLUGINS: PluginItem[] = [
     badge: 'ALL-IN-ONE VOCAL CHANNEL STRIP DEFINITIVA',
     status: 'DISPONIBILE',
     description: 'Channel strip vocale definitivo per lo standard discografico istantaneo: De-Esser intelligente, Dinamiche Seriali Dual-Stage (1176 FET + LA-2A Opto), Equalizzatore SSL 4000 G-Series 242, 8 Preamp analogici differenziati e telemetria a 60 FPS.',
-    version: 'v1.0.1 Patch 2 (2 Nov 2026)',
+    version: 'v1.0.2 Patch 3 (3 Nov 2026)',
     isNewRelease: true,
-    newReleaseTag: '🔥 NUOVA RELEASE 2 NOV',
+    newReleaseTag: '🔥 NUOVA RELEASE v1.0.2',
     downloadCount: 0,
-    downloadUrl: '/downloads/plugins/171_EasyVoice_v1.0.1_Win64.zip',
-    zipFileName: '171_EasyVoice_v1.0.1_Win64.zip',
-    zipFileSize: '35.00 MB',
+    downloadUrl: '/downloads/plugins/171_EasyVoice_v1.0.2_Win64.zip',
+    zipFileName: '171_EasyVoice_v1.0.2_Win64.zip',
+    zipFileSize: '36.88 MB',
     macDownloadUrl: '/downloads/plugins/171_EasyVoice_v1.0.1_Mac.zip',
     macZipFileName: '171_EasyVoice_v1.0.1_Mac.zip',
     macZipFileSize: '21.54 MB',
@@ -461,13 +465,13 @@ const DEFAULT_PLUGINS: PluginItem[] = [
     badge: 'BOUTIQUE CONSOLE & TUBE PREAMP EMULATION',
     status: 'DISPONIBILE',
     description: 'Preamplificatore valvolare/analogico a modellazione armonica profonda con curve di equalizzazione Baxandall, circuito Air Band fino a 40 kHz e texture vintage Neve, API e Avalon.',
-    version: 'v1.0.0 Patch 1 (2 Nov 2026)',
+    version: 'v1.0.1 (3 Nov 2026)',
     isNewRelease: true,
-    newReleaseTag: '✨ NUOVA PATCH 2 NOV',
+    newReleaseTag: '🔥 NUOVA RELEASE v1.0.1',
     downloadCount: 0,
-    downloadUrl: '/downloads/plugins/171_PerfectPre_v1.0.0_Win64.zip',
-    zipFileName: '171_PerfectPre_v1.0.0_Win64.zip',
-    zipFileSize: '18.55 MB',
+    downloadUrl: '/downloads/plugins/171_PerfectPre_v1.0.1_Win64.zip',
+    zipFileName: '171_PerfectPre_v1.0.1_Win64.zip',
+    zipFileSize: '39.34 MB',
     macDownloadUrl: '/downloads/plugins/171_PerfectPre_v1.0.0_Mac.zip',
     macZipFileName: '171_PerfectPre_v1.0.0_Mac.zip',
     macZipFileSize: '7.54 MB',
@@ -509,7 +513,7 @@ const DEFAULT_PLUGINS: PluginItem[] = [
     downloadCount: 0,
     downloadUrl: '/downloads/plugins/171_SpaceLuxe_v1.1.0_Win64.zip',
     zipFileName: '171_SpaceLuxe_v1.1.0_Win64.zip',
-    zipFileSize: '8.45 MB',
+    zipFileSize: '8.86 MB',
     macDownloadUrl: '/downloads/plugins/171_SpaceLuxe_v1.1.0_Mac.zip',
     macZipFileName: '171_SpaceLuxe_v1.1.0_Mac.zip',
     macZipFileSize: '0.73 MB',
@@ -547,17 +551,17 @@ const DEFAULT_PLUGINS: PluginItem[] = [
     id: 'plugin-masterglue',
     name: '171 MasterGlue',
     badge: 'ANALOG MASTER BUS CONSOLE & STEREO IMAGER',
-    status: 'IN ARRIVO',
+    status: 'DISPONIBILE',
     unlockWeek: 1,
     unlockDate: '2026-11-06T18:00:00+01:00',
     description: 'Compressore analogico da master bus a doppia topologia (VCA stile SSL 4000 G & Diode-Bridge stile Neve 33609), stadio trasformatore d\'uscita Marinair LO1166, processore d\'immagine stereo TrueSpace e doppi VU meter galvanometrici balistici IEC 60268-17.',
-    version: 'v1.0.0 Studio Master Edition',
-    isNewRelease: false,
-    newReleaseTag: 'PROSSIMO SBLOCCO SETT. 1',
+    version: 'v1.0.1 Studio Master Edition (3 Nov 2026)',
+    isNewRelease: true,
+    newReleaseTag: '🔥 NUOVA RELEASE v1.0.1',
     downloadCount: 0,
-    downloadUrl: '/downloads/plugins/171_MasterGlue_v1.0.0_Win64.zip',
-    zipFileName: '171_MasterGlue_v1.0.0_Win64.zip',
-    zipFileSize: '8.36 MB',
+    downloadUrl: '/downloads/plugins/171_MasterGlue_v1.0.1_Win64.zip',
+    zipFileName: '171_MasterGlue_v1.0.1_Win64.zip',
+    zipFileSize: '8.88 MB',
     macDownloadUrl: '/downloads/plugins/171_MasterGlue_v1.0.0_Mac.zip',
     macZipFileName: '171_MasterGlue_v1.0.0_Mac.zip',
     macZipFileSize: '0.52 MB',
@@ -1301,6 +1305,32 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   // Active Google Drive Download Confirmation Modal & Receipt state
   const [activeDownloadReceipt, setActiveDownloadReceipt] = useState<DownloadReceiptData | null>(null);
+
+  // Persistent Favorites (Wishlist) state stored in localStorage
+  const [favoritePluginIds, setFavoritePluginIds] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem('171studio_favorite_plugins');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  const toggleFavoritePlugin = (pluginId: string) => {
+    setFavoritePluginIds((prev) => {
+      const exists = prev.includes(pluginId);
+      const updated = exists ? prev.filter((id) => id !== pluginId) : [...prev, pluginId];
+      try {
+        localStorage.setItem('171studio_favorite_plugins', JSON.stringify(updated));
+      } catch (e) {
+        console.error('Failed to save favorites to localStorage', e);
+      }
+      return updated;
+    });
+  };
+
+  const isPluginFavorite = (pluginId: string) => favoritePluginIds.includes(pluginId);
+
   const closeDownloadReceipt = () => setActiveDownloadReceipt(null);
   const openDownloadReceiptModal = (receipt: DownloadReceiptData) => setActiveDownloadReceipt(receipt);
 
@@ -4271,6 +4301,10 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         updatePluginDonation,
         deletePluginDonation,
         getUserCumulativeDonations,
+        // Favorites
+        favoritePluginIds,
+        toggleFavoritePlugin,
+        isPluginFavorite,
       }}
     >
       {children}

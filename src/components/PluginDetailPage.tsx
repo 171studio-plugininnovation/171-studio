@@ -38,6 +38,9 @@ export const PluginDetailPage: React.FC<PluginDetailPageProps> = ({
     getUserCumulativeDonations,
     visitorCount,
     liveOnlineCount,
+    favoritePluginIds,
+    toggleFavoritePlugin,
+    isPluginFavorite,
   } = useStudio();
 
   const plugin = siteContent.plugins.find((p) => p.id === pluginId) || siteContent.plugins[0];

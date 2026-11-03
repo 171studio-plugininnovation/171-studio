@@ -307,7 +307,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                       onMouseEnter={item.id === 'plugin-innovation' ? handlePluginsMenuEnter : undefined}
                       onClick={() => {
                         if (item.id === 'plugin-innovation') {
-                          setIsPluginsMegaMenuOpen(!isPluginsMegaMenuOpen);
+                          handleNavClick('plugin-innovation', null);
+                          setIsIslandOpen(false);
+                          setIsPluginsMegaMenuOpen(false);
                         } else {
                           handleNavClick(item.id);
                           setIsIslandOpen(false);
