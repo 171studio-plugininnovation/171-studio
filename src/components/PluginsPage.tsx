@@ -993,7 +993,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
                 Scarica Gratis i Plugin di 171 Studio
               </h3>
               <p className="text-xs sm:text-sm text-neutral-400 font-light mt-1">
-                6 strumenti DSP boutique ufficiali attivi per il download immediato + 4 nuovi plugin nel Programma di Sblocco Settimanale con countdown live.
+                Tutti gli 11 strumenti DSP boutique ufficiali unificati alla Patch 2.0.0 (Data 4.11) attivi per il download immediato in formato VST3 e Standalone 64-bit.
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-2 self-start md:self-auto">
@@ -1031,7 +1031,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
                   Roadmap Sblocco Progressivo 171 Studio Innovatio
                 </h3>
                 <p className="text-xs sm:text-sm text-neutral-300 font-light mt-1 max-w-3xl leading-relaxed">
-                  I 4 nuovi plugin vengono sbloccati progressivamente <strong>uno alla settimana</strong> ogni venerdì alle ore 18:00 CET. Allo scadere del countdown in tempo reale si sbloccano automaticamente i download completi sia per <strong>Windows 64-bit</strong> che per <strong>macOS Universal (Apple Silicon & Intel)</strong>.
+                  Con il rilascio della <strong>Patch 2.0.0 (Data 4.11)</strong>, l'intera serie avanzata (171 SpaceLuxe, 171 MasterGlue, 171 PunchCraft, 171 PerfectClip e il nuovo 171 VocalCraft) è ora <strong>completamente sbloccata e disponibile al download immediato</strong> per Windows 64-bit sia VST3 che Standalone.
                 </p>
               </div>
 
@@ -1049,8 +1049,8 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
                   week: 1,
                   name: '171 SpaceLuxe',
                   cat: 'Hybrid Reverb & Shimmer',
-                  dateStr: '2026-11-02T16:00:00+01:00',
-                  targetDateLabel: '2 Nov 2026 • SBLOCCATO ORA',
+                  dateStr: '2026-11-04T00:00:00+01:00',
+                  targetDateLabel: '4 Nov 2026 • SBLOCCATO CON PATCH 2.0.0',
                   winSize: '8.45 MB',
                   macSize: '0.73 MB',
                 },
@@ -1059,8 +1059,8 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
                   week: 2,
                   name: '171 MasterGlue',
                   cat: 'Analog Bus VCA/Diode Console',
-                  dateStr: '2026-11-03T18:00:00+01:00',
-                  targetDateLabel: '3 Nov 2026 • SBLOCCATO ORA',
+                  dateStr: '2026-11-04T00:00:00+01:00',
+                  targetDateLabel: '4 Nov 2026 • SBLOCCATO CON PATCH 2.0.0',
                   winSize: '8.88 MB',
                   macSize: '0.52 MB',
                 },
@@ -1069,8 +1069,8 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
                   week: 3,
                   name: '171 PunchCraft',
                   cat: 'Multi-Band Transient Shaper',
-                  dateStr: '2026-11-13T18:00:00+01:00',
-                  targetDateLabel: 'Ven 13 Nov 2026, 18:00',
+                  dateStr: '2026-11-04T00:00:00+01:00',
+                  targetDateLabel: '4 Nov 2026 • SBLOCCATO CON PATCH 2.0.0',
                   winSize: '8.42 MB',
                   macSize: '0.57 MB',
                 },
@@ -1079,8 +1079,8 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
                   week: 4,
                   name: '171 PerfectClip',
                   cat: 'Mastering ADAA-2 Clipper',
-                  dateStr: '2026-11-20T18:00:00+01:00',
-                  targetDateLabel: 'Ven 20 Nov 2026, 18:00',
+                  dateStr: '2026-11-04T00:00:00+01:00',
+                  targetDateLabel: '4 Nov 2026 • SBLOCCATO CON PATCH 2.0.0',
                   winSize: '8.42 MB',
                   macSize: '0.51 MB',
                 },
@@ -1145,52 +1145,87 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
             </div>
           </div>
 
-          {/* Top Announcement Banner: Nuova Release 2 Novembre 2026 */}
-          <div className="mb-8 relative overflow-hidden rounded-3xl bg-gradient-to-br from-neutral-900/95 via-black/90 to-amber-950/40 border border-amber-500/40 p-6 sm:p-8 shadow-2xl backdrop-blur-xl">
-            <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+          {/* Official Announcement Card: Nuova Patch 2.0.0 (Data 4.11 / 4 Novembre 2026) */}
+          <div className="mb-8 relative overflow-hidden rounded-3xl bg-gradient-to-br from-neutral-900/98 via-neutral-950/95 to-amber-950/45 border-2 border-amber-500/60 p-6 sm:p-8 shadow-[0_0_50px_rgba(245,158,11,0.22)] backdrop-blur-2xl">
+            <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/15 rounded-full blur-3xl pointer-events-none" />
             <div className="absolute -bottom-10 -left-10 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
 
             <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-              <div className="space-y-3 max-w-4xl">
+              <div className="space-y-3.5 max-w-4xl">
                 <div className="flex flex-wrap items-center gap-2.5">
-                  <span className="text-[10px] font-mono font-black px-3 py-1 rounded-full bg-gradient-to-r from-amber-500/25 to-red-500/25 text-amber-300 border border-amber-500/50 flex items-center gap-1.5 shadow-sm animate-pulse">
-                    <Flame className="w-3.5 h-3.5 text-amber-400" />
-                    <span>NUOVA RELEASE 2 NOVEMBRE 2026 DISPONIBILE</span>
+                  <span className="text-[10.5px] font-mono font-black px-3.5 py-1 rounded-full bg-gradient-to-r from-amber-500/30 to-red-500/30 text-amber-300 border border-amber-500/60 flex items-center gap-1.5 shadow-sm animate-pulse">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                    <span>✨ ANNUNCIO UFFICIALE: RILASCIO PATCH 2.0.0 (DATA 4.11)</span>
                   </span>
-                  <span className="text-[10px] font-mono px-3 py-1 rounded-full bg-blue-500/15 text-blue-300 border border-blue-500/30 flex items-center gap-1.5">
+                  <span className="text-[10px] font-mono px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/40 flex items-center gap-1.5">
                     <Cpu className="w-3.5 h-3.5 text-blue-400" />
-                    <span>DSP ANTI-DENORMAL FTZ/DAZ ZERO-LATENCY</span>
+                    <span>MOTORE DSP CORE dsp171 RICOSTRUITO IN C++20</span>
                   </span>
-                  <span className="text-[10px] font-mono px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 flex items-center gap-1.5">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                    <span>WINDOWS 64-BIT VST3 & STANDALONE</span>
+                  <span className="text-[10px] font-mono px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 flex items-center gap-1.5">
+                    <Shield className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>ANTI-DENORMAL -144 dBFS & BS.1770 TRUE-PEAK ISP GUARD</span>
                   </span>
                 </div>
 
-                <h3 className="font-heading font-black text-2xl sm:text-3xl text-white tracking-tight">
-                  Aggiornamento Ufficiale Suite 3 Novembre: EasyVoice v1.0.2, RealTune, MasterGlue & PerfectPre v1.0.1
+                <h3 className="font-heading font-black text-2xl sm:text-3xl md:text-4xl text-white tracking-tight">
+                  Nuova Patch 2.0.0 (Data 4.11): Tutta la Suite Unificata al Nuovo Standard Industriale DSP
                 </h3>
 
-                <p className="text-sm text-neutral-300 font-light leading-relaxed">
-                  Abbiamo caricato e certificato le nuove release Windows per l'intera suite 171PluginInnovation. In evidenza su <strong className="text-amber-400 font-semibold">171 EasyVoice v1.0.1 Patch 2</strong> (eliminato il chattering dell'expander vocale su code lunghe, introdotte dinamiche seriali 1176+LA2A e 8 preamp analogici), <strong className="text-amber-400 font-semibold">171 SpaceLuxe v1.1.0</strong> (sbloccato ora con fix allpass tail glitch e nuova GUI), e fix DSP su <strong className="text-amber-400 font-semibold">171 RealTune</strong>, <strong className="text-amber-400 font-semibold">171 DriveOptocom</strong>, <strong className="text-amber-400 font-semibold">CleanDrive</strong>, <strong className="text-amber-400 font-semibold">CleanReso</strong> e <strong className="text-amber-400 font-semibold">PerfectPre</strong>.
+                <p className="text-sm sm:text-base text-neutral-200 font-light leading-relaxed">
+                  Annunciamo ufficialmente il rilascio della <strong>Patch 2.0.0 (Data 4.11 / 4 Novembre 2026)</strong>: da questo numero in poi contiamo tutte le future release della suite 171 Studio Innovatio. L'intero motore DSP Core <code className="text-amber-400 bg-black/60 px-1.5 py-0.5 rounded text-xs">dsp171</code> è stato ricostruito e validato da un comitato indipendente di esperti matematici e psicoacustici:
                 </p>
 
-                <div className="flex flex-wrap items-center gap-4 pt-2 text-xs font-mono text-neutral-400">
-                  <div className="flex items-center gap-1.5 text-amber-300">
-                    <Sparkles className="w-4 h-4 text-amber-400" />
-                    <span>Consulta i box interattivi «Nuove Funzioni & Fix» su ogni plugin</span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1 text-xs font-mono text-neutral-300">
+                  <div className="flex items-start gap-2 p-2.5 rounded-xl bg-black/50 border border-neutral-800">
+                    <span className="text-amber-400 font-bold">✔</span>
+                    <span><strong>True-Peak Parabolico BS.1770:</strong> Risoluzione analitica del vertice per eliminare fino a +3.88 dB di ISP sottostimati.</span>
                   </div>
+                  <div className="flex items-start gap-2 p-2.5 rounded-xl bg-black/50 border border-neutral-800">
+                    <span className="text-amber-400 font-bold">✔</span>
+                    <span><strong>Zero CPU Spikes:</strong> Protezione anti-denormale continua C0 a -144 dBFS su tutti gli stati IIR, filtri e riverberi.</span>
+                  </div>
+                  <div className="flex items-start gap-2 p-2.5 rounded-xl bg-black/50 border border-neutral-800">
+                    <span className="text-amber-400 font-bold">✔</span>
+                    <span><strong>Saturazione Monotona Classe-A:</strong> Asintoti rigorosamente continui con azzeramento di foldback aliasing.</span>
+                  </div>
+                  <div className="flex items-start gap-2 p-2.5 rounded-xl bg-black/50 border border-neutral-800">
+                    <span className="text-amber-400 font-bold">✔</span>
+                    <span><strong>Consigli & Spiegazioni in Italiano:</strong> Guide pratiche di missaggio integrate direttamente nei tooltip di ogni comando.</span>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-3 pt-2 text-xs font-mono text-neutral-400">
+                  <span className="text-emerald-400 font-bold flex items-center gap-1.5">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                    <span>Tutti gli 11 Plugin Ufficiali Aggiornati alla Patch 2.0.0</span>
+                  </span>
+                  <span className="text-neutral-600">•</span>
+                  <span>Formati VST3 (64-bit) & Standalone .EXE inclusi</span>
                 </div>
               </div>
 
-              <div className="shrink-0 flex flex-col sm:flex-row lg:flex-col gap-3 w-full lg:w-auto">
+              {/* Master Suite Download CTA Box */}
+              <div className="shrink-0 flex flex-col gap-3 w-full lg:w-auto p-4 sm:p-5 rounded-2xl bg-black/80 border border-amber-500/40 text-center">
+                <span className="text-[10px] font-mono uppercase tracking-widest text-amber-400 font-bold">
+                  MASTER SUITE COMPLETA v2.0.0
+                </span>
+                <span className="text-xl font-heading font-black text-white">
+                  Tutti gli 11 Plugin
+                </span>
+                <span className="text-[11px] font-mono text-neutral-400">
+                  Archivio Unico .ZIP (151 MB)
+                </span>
                 <a
-                  href="#plugin-easyvoice"
-                  className="px-5 py-3 rounded-2xl bg-amber-500 hover:bg-amber-400 text-black font-heading font-black text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 transition-all cursor-pointer"
+                  href={getAssetUrl('/downloads/plugins/171_Studio_Innovatio_SuiteCompleta_v2.0.0_Win64.zip')}
+                  download="171_Studio_Innovatio_SuiteCompleta_v2.0.0_Win64.zip"
+                  className="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-black font-heading font-black text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2.5 shadow-xl shadow-amber-500/30 transition-all cursor-pointer transform hover:scale-[1.02]"
                 >
-                  <Download className="w-4 h-4" />
-                  <span>Scarica Patch 2 Nov</span>
+                  <Download className="w-4 h-4 text-black" />
+                  <span>Scarica Suite Completa (.ZIP)</span>
                 </a>
+                <span className="text-[9.5px] font-mono text-neutral-400">
+                  Oppure scarica i plugin singoli qui sotto ⬇
+                </span>
               </div>
             </div>
           </div>

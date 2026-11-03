@@ -121,7 +121,7 @@ export const HeroHome: React.FC<HeroHomeProps> = ({ onNavigate }) => {
         </div>
 
         {/* Real-time Studio Visitors & Producers Telemetry Badge */}
-        <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-neutral-900/90 border border-amber-500/30 text-neutral-300 shadow-[0_0_20px_rgba(245,158,11,0.12)] mb-2 backdrop-blur-md">
+        <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-neutral-900/90 border border-amber-500/30 text-neutral-300 shadow-[0_0_20px_rgba(245,158,11,0.12)] mb-4 backdrop-blur-md">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
           <span className="text-[11px] font-mono uppercase tracking-wider text-emerald-400 font-bold">{liveOnlineCount} Online Ora</span>
           <span className="text-neutral-600 text-xs">•</span>
@@ -129,6 +129,39 @@ export const HeroHome: React.FC<HeroHomeProps> = ({ onNavigate }) => {
             {visitorCount.toLocaleString('it-IT')}
           </span>
           <span className="text-[11px] text-neutral-400 font-light hidden sm:inline">Visite Totali Studio</span>
+        </div>
+
+        {/* Patch 2.0.0 Official Release Telemetry Alert Banner */}
+        <div 
+          onClick={() => onNavigate('plugin-innovation')}
+          className="w-full max-w-4xl p-4 sm:p-5 rounded-2xl sm:rounded-3xl bg-gradient-to-r from-amber-500/20 via-neutral-900/95 to-amber-900/25 border border-amber-500/50 hover:border-amber-400 backdrop-blur-xl shadow-[0_0_35px_rgba(245,158,11,0.25)] flex flex-col sm:flex-row items-center justify-between gap-4 cursor-pointer group transition-all duration-300 mb-2"
+        >
+          <div className="flex items-center gap-3.5 text-left">
+            <div className="w-11 h-11 rounded-2xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 group-hover:scale-110 group-hover:bg-amber-500 group-hover:text-black transition-all shrink-0">
+              <Sparkles className="w-6 h-6 animate-pulse" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2 mb-0.5">
+                <span className="text-[10px] font-mono uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-bold border border-amber-500/40">
+                  ✨ NUOVA PATCH 2.0.0 • DATA 4.11
+                </span>
+                <span className="text-[10px] font-mono text-emerald-400 flex items-center gap-1 font-bold">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                  ONLINE ORA
+                </span>
+              </div>
+              <h3 className="text-base sm:text-lg font-heading font-black text-white group-hover:text-amber-400 transition-colors">
+                Tutta la Suite 171 Aggiornata alla Patch 2.0.0 con Motore DSP Ricostruito
+              </h3>
+              <p className="text-xs text-neutral-300 font-light line-clamp-1 sm:line-clamp-none">
+                Risoluzione analitica ISP True-Peak, protezione anti-denormale a -144 dBFS e 11 plugin scaricabili singolarmente o in Master Suite completa .ZIP.
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 shrink-0 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-heading font-black text-xs uppercase tracking-wider transition-all shadow-md shadow-amber-500/30">
+            <span>Scarica Patch 2.0.0</span>
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+          </div>
         </div>
 
       </div>

@@ -242,19 +242,35 @@ const DEFAULT_PLUGINS: PluginItem[] = [
     badge: 'ZERO-LATENCY PITCH CORRECTION & VOCAL TRANSFORMER',
     status: 'DISPONIBILE',
     description: 'Motore di intonazione vocale real-time a 60 FPS con architettura Dual-Head Synchronous WSOLA, tracking S-curve a due velocità continuo, manopola Cue Mix boutique, selettore preset analogico, matrice note a 3 stati e zero drift di fase.',
-    version: 'v1.0.1 Patch 2 (3 Nov 2026)',
+    version: 'v2.0.0 (4 Nov 2026)',
     isNewRelease: true,
-    newReleaseTag: '✨ NUOVA PATCH v1.0.1',
+    newReleaseTag: '✨ PATCH 2.0.0 (4.11)',
     downloadCount: 0,
-    downloadUrl: '/downloads/plugins/171_RealTune_v1.0.1_Win64.zip',
-    zipFileName: '171_RealTune_v1.0.1_Win64.zip',
-    zipFileSize: '20.83 MB',
+    downloadUrl: '/downloads/plugins/171_RealTune_v2.0.0_Win64.zip',
+    zipFileName: '171_RealTune_v2.0.0_Win64.zip',
+    zipFileSize: '19.19 MB',
     macDownloadUrl: '/downloads/plugins/171_RealTune_v1.0.1_Mac.zip',
     macZipFileName: '171_RealTune_v1.0.1_Mac.zip',
     macZipFileSize: '8.05 MB',
     imageUrl: '/assets/plugins/171RealTune_GUI.png',
     formats: ['VST3 (Win/Mac 64-bit)', 'AudioUnit v2 (macOS)', 'Standalone App (.EXE)'],
     changelog: [
+      {
+        version: 'v2.0.0 Patch 4.11',
+        date: '04/11/2026',
+        title: 'Ricostruzione Motore DSP Core dsp171, ISP Parabolico & Standard 2.0.0 Unificato',
+        features: [
+          'Rilascio ufficiale unificato della Patch 2.0.0 (conteggio versioni da 2.0.0 in avanti)',
+          'Motore DSP Core dsp171 interamente ricompilato in C++20 con ottimizzazioni SIMD x86_64 e zero heap allocations nel thread audio',
+          'Risoluzione analitica esatta del vertice parabolico True-Peak ITU-R BS.1770 (azzerata qualsiasi sottostima degli inter-sample peaks)',
+          'Protezione totale anti-denormale a livello campionario (< -144 dBFS) su tutti gli stati IIR e allpass per azzeramento sovraccarichi CPU',
+          'Spiegazioni interattive e consigli pratici di studio in lingua italiana integrati per ciascun parametro'
+        ],
+        fixes: [
+          'Compilazione Release VST3 e Standalone 64-bit verificata con audit severo matematico e psicoacustico',
+          'Sincronizzazione bit-exact e zero-drift su intonazione continua'
+        ]
+      },
       {
         version: 'v1.0.1 Patch 1',
         date: '02/11/2026',
@@ -284,24 +300,83 @@ const DEFAULT_PLUGINS: PluginItem[] = [
     ],
   },
   {
+    id: 'plugin-vocalcraft',
+    name: '171 VocalCraft',
+    badge: 'INTELLIGENT PRE-MIX VOCAL PROCESSOR & STYLE ADAPTIVE COMPRESSOR',
+    status: 'DISPONIBILE',
+    description: 'Processore vocale intelligente con Smart Gain-Staging automatico a -18 dBFS, Linearizzatore Spettrale Adattivo anti-risonanza, Rilevatore Fonetico di Consonanti AI, Compressore Dinamico Multi-Stile (Hip-Hop, Modern Pop, Trap, R&B) con Auto-Makeup percettivo e GUI boutique a 60 FPS con doppio oscilloscopio.',
+    version: 'v2.0.0 (4 Nov 2026)',
+    isNewRelease: true,
+    newReleaseTag: '✨ PATCH 2.0.0 (4.11)',
+    downloadCount: 0,
+    downloadUrl: '/downloads/plugins/171_VocalCraft_v2.0.0_Win64.zip',
+    zipFileName: '171_VocalCraft_v2.0.0_Win64.zip',
+    zipFileSize: '8.48 MB',
+    imageUrl: '/assets/plugins/171VocalCraft_GUI.png',
+    formats: ['VST3 (Win 64-bit)', 'Standalone App (.EXE)'],
+    changelog: [
+      {
+        version: 'v2.0.0 Patch 4.11',
+        date: '04/11/2026',
+        title: 'Ricostruzione Motore DSP Core dsp171, ISP Parabolico & Standard 2.0.0 Unificato',
+        features: [
+          'Rilascio ufficiale unificato della Patch 2.0.0 su tutta la suite 171 Studio Innovatio',
+          'Smart Gain-Staging automatico all\'ingresso a -18 dBFS con envelope calibrata RMS/Peak',
+          'Linearizzatore Spettrale Adattivo a 32 bande con neutralizzazione dinamica delle risonanze aspre',
+          'Rilevatore Fonetico di Consonanti AI per preservazione dizione e consonanti veloci in Hip-Hop/Rap',
+          'Compressore dinamico multi-stile con curve auto-adattive e makeup gain equal loudness',
+          'Motore DSP Core dsp171 ricompilato con standard C++20 e zero heap allocations nel thread audio'
+        ],
+        fixes: [
+          'Protezione totale anti-denormale FTZ/DAZ x86_64 e True-Peak Limiter ITU-R BS.1770-4 a vertice analitico',
+          'Display vettoriale a 60 FPS con doppio oscilloscopio spettrale e inviluppo delle consonanti'
+        ]
+      }
+    ],
+    technologies: [
+      "Smart Gain-Staging automatico all'ingresso calibrato a -18 dBFS nominale",
+      "Linearizzatore Spettrale Adattivo continuo per eliminazione asprezze vocali senza perdita di corpo",
+      "Rilevatore Fonetico di Consonanti per punch e intelligibilità massima della voce nel mix",
+      "Compressore Stile-Adattivo (Hip-Hop, Pop, Trap, R&B) con singola macro e auto-makeup gain percettivo",
+      "Doppio CRT Oscilloscopio spettrale e vettoriale a 60 FPS per telemetria dinamica continua",
+      "Finitura boutique hardware con manopole zigrinate in ottone e alluminio e True-Peak Limiter BS.1770-4"
+    ],
+  },
+  {
     id: 'plugin-easyvoice',
     name: '171 EasyVoice',
     badge: 'ALL-IN-ONE VOCAL CHANNEL STRIP DEFINITIVA',
     status: 'DISPONIBILE',
     description: 'Channel strip vocale definitivo per lo standard discografico istantaneo: De-Esser intelligente, Dinamiche Seriali Dual-Stage (1176 FET + LA-2A Opto), Equalizzatore SSL 4000 G-Series 242, 8 Preamp analogici differenziati e telemetria a 60 FPS.',
-    version: 'v1.0.2 Patch 3 (3 Nov 2026)',
+    version: 'v2.0.0 (4 Nov 2026)',
     isNewRelease: true,
-    newReleaseTag: '🔥 NUOVA RELEASE v1.0.2',
+    newReleaseTag: '✨ PATCH 2.0.0 (4.11)',
     downloadCount: 0,
-    downloadUrl: '/downloads/plugins/171_EasyVoice_v1.0.2_Win64.zip',
-    zipFileName: '171_EasyVoice_v1.0.2_Win64.zip',
-    zipFileSize: '36.88 MB',
+    downloadUrl: '/downloads/plugins/171_EasyVoice_v2.0.0_Win64.zip',
+    zipFileName: '171_EasyVoice_v2.0.0_Win64.zip',
+    zipFileSize: '35.19 MB',
     macDownloadUrl: '/downloads/plugins/171_EasyVoice_v1.0.1_Mac.zip',
     macZipFileName: '171_EasyVoice_v1.0.1_Mac.zip',
     macZipFileSize: '21.54 MB',
     imageUrl: '/assets/plugins/171EasyVoice_GUI.png',
     formats: ['VST3 (Win/Mac 64-bit)', 'AudioUnit v2 (macOS)', 'Standalone App (.EXE)'],
     changelog: [
+      {
+        version: 'v2.0.0 Patch 4.11',
+        date: '04/11/2026',
+        title: 'Ricostruzione Motore DSP Core dsp171, ISP Parabolico & Standard 2.0.0 Unificato',
+        features: [
+          'Rilascio ufficiale unificato della Patch 2.0.0 (conteggio versioni da 2.0.0 in avanti)',
+          'Motore DSP Core dsp171 interamente ricompilato in C++20 con ottimizzazioni SIMD x86_64 e zero heap allocations nel thread audio',
+          'Risoluzione analitica esatta del vertice parabolico True-Peak ITU-R BS.1770 (azzerata qualsiasi sottostima degli inter-sample peaks)',
+          'Protezione totale anti-denormale a livello campionario (< -144 dBFS) su tutti gli stati IIR e allpass per azzeramento sovraccarichi CPU',
+          'Spiegazioni interattive e consigli pratici di studio in lingua italiana integrati per ciascun parametro'
+        ],
+        fixes: [
+          'Compilazione Release VST3 e Standalone 64-bit verificata con audit severo matematico e psicoacustico',
+          'Calibrazione perfetta di unity gain su de-esser, compressore seriale ed equalizzatore'
+        ]
+      },
       {
         version: 'v1.0.1 Patch 2',
         date: '02/11/2026',
@@ -336,19 +411,35 @@ const DEFAULT_PLUGINS: PluginItem[] = [
     badge: 'OPTICAL COMPRESSOR & ANALOG TUBE DRIVE',
     status: 'DISPONIBILE',
     description: 'Compressore optoelettronico boutique con saturazione valvolare tri-band, modellazione fisica della cella elettro-ottica T4B (LA-2A) con isteresi fotochimica a doppia trappola, galvanometro analogico VU/GR con ago a spada e oscilloscopio CRT telemetrico.',
-    version: 'v1.1.0 Patch (2 Nov 2026)',
+    version: 'v2.0.0 (4 Nov 2026)',
     isNewRelease: true,
-    newReleaseTag: '✨ NUOVA PATCH 2 NOV',
+    newReleaseTag: '✨ PATCH 2.0.0 (4.11)',
     downloadCount: 0,
-    downloadUrl: '/downloads/plugins/171_DriveOptocom_v1.1.0_Win64.zip',
-    zipFileName: '171_DriveOptocom_v1.1.0_Win64.zip',
-    zipFileSize: '10.98 MB',
+    downloadUrl: '/downloads/plugins/171_DriveOptocom_v2.0.0_Win64.zip',
+    zipFileName: '171_DriveOptocom_v2.0.0_Win64.zip',
+    zipFileSize: '10.99 MB',
     macDownloadUrl: '/downloads/plugins/171_DriveOptocom_v1.0.0_Mac.zip',
     macZipFileName: '171_DriveOptocom_v1.0.0_Mac.zip',
     macZipFileSize: '87.32 MB',
     imageUrl: '/assets/plugins/171DriveOptocom_GUI.png',
     formats: ['VST3 (Win/Mac 64-bit)', 'AudioUnit v2 (macOS)', 'Standalone App (.EXE)'],
     changelog: [
+      {
+        version: 'v2.0.0 Patch 4.11',
+        date: '04/11/2026',
+        title: 'Ricostruzione Motore DSP Core dsp171, ISP Parabolico & Standard 2.0.0 Unificato',
+        features: [
+          'Rilascio ufficiale unificato della Patch 2.0.0 (conteggio versioni da 2.0.0 in avanti)',
+          'Saturatore tri-band a trasferimento Classe-A asintotico strettamente monotono con azzeramento distorsioni di ordine spurio',
+          'Modello fotocellulare T4B raffinato con isteresi fotochimica a doppio polo esatto',
+          'Motore DSP Core dsp171 ricompilato con standard C++20 e zero heap allocations nel thread audio',
+          'Spiegazioni interattive e consigli pratici di studio in lingua italiana integrati per ciascun parametro'
+        ],
+        fixes: [
+          'Risoluzione analitica del vertice parabolico ISP BS.1770 per azzeramento assoluto di clip inter-sample',
+          'Protezione totale anti-denormale a livello campionario (< -144 dBFS) su tutti gli stati IIR'
+        ]
+      },
       {
         version: 'v1.1.0 Patch',
         date: '02/11/2026',
@@ -380,19 +471,34 @@ const DEFAULT_PLUGINS: PluginItem[] = [
     badge: 'TRANSIENT-AWARE DUAL SATURATOR & ADAA-2 CLIPPER',
     status: 'DISPONIBILE',
     description: 'Saturatore analogico boutique a doppio canale con separazione intelligente dei transienti, clipper ADAA-2 a 64-bit anti-aliasing, saturazione valvolare e a nastro, stadio Warmth & Tilt EQ Baxandall e oscilloscopio CRT a fosfori dorati a 60 FPS.',
-    version: 'v1.0.0 Patch 1 (2 Nov 2026)',
+    version: 'v2.0.0 (4 Nov 2026)',
     isNewRelease: true,
-    newReleaseTag: '✨ NUOVA PATCH 2 NOV',
+    newReleaseTag: '✨ PATCH 2.0.0 (4.11)',
     downloadCount: 0,
-    downloadUrl: '/downloads/plugins/171_CleanDrive_v1.0.0_Win64.zip',
-    zipFileName: '171_CleanDrive_v1.0.0_Win64.zip',
-    zipFileSize: '6.64 MB',
+    downloadUrl: '/downloads/plugins/171_CleanDrive_v2.0.0_Win64.zip',
+    zipFileName: '171_CleanDrive_v2.0.0_Win64.zip',
+    zipFileSize: '6.65 MB',
     macDownloadUrl: '/downloads/plugins/171_CleanDrive_v1.0.0_Mac.zip',
     macZipFileName: '171_CleanDrive_v1.0.0_Mac.zip',
     macZipFileSize: '87.24 MB',
     imageUrl: '/assets/plugins/171CleanDrive_GUI.png',
     formats: ['VST3 (Win/Mac 64-bit)', 'AudioUnit v2 (macOS)', 'Standalone App (.EXE)'],
     changelog: [
+      {
+        version: 'v2.0.0 Patch 4.11',
+        date: '04/11/2026',
+        title: 'Ricostruzione Motore DSP Core dsp171, ISP Parabolico & Standard 2.0.0 Unificato',
+        features: [
+          'Rilascio ufficiale unificato della Patch 2.0.0 (conteggio versioni da 2.0.0 in avanti)',
+          'Saturazione tape & tube modellata con curve analitiche rigorosamente monotone Classe-A',
+          'Motore DSP Core dsp171 ricompilato con standard C++20 e zero heap allocations nel thread audio',
+          'Spiegazioni interattive e consigli pratici di studio in lingua italiana integrati per ciascun parametro'
+        ],
+        fixes: [
+          'ADAA-2 a 64-bit anti-aliasing potenziato con protezione denormale su tutti gli integratori',
+          'True-Peak BS.1770 risolto con stima analitica esatta del picco parabolico inter-sample'
+        ]
+      },
       {
         version: 'v1.0.0 Patch 1',
         date: '02/11/2026',
@@ -423,19 +529,34 @@ const DEFAULT_PLUGINS: PluginItem[] = [
     badge: 'DYNAMIC RESONANCE SUPPRESSOR & SPECTRAL CLEANER',
     status: 'DISPONIBILE',
     description: 'Soppressore chirurgico di risonanze vocali e acustiche multi-banda: 32 filtri SVF Zero-Delay Feedback (ZDF) attivi in tempo reale con analisi spettrale a 60 FPS e modalità Delta Listening per isolare solo il materiale rimosso.',
-    version: 'v1.0.0 Patch 1 (2 Nov 2026)',
+    version: 'v2.0.0 (4 Nov 2026)',
     isNewRelease: true,
-    newReleaseTag: '✨ NUOVA PATCH 2 NOV',
+    newReleaseTag: '✨ PATCH 2.0.0 (4.11)',
     downloadCount: 0,
-    downloadUrl: '/downloads/plugins/171_CleanReso_v1.0.0_Win64.zip',
-    zipFileName: '171_CleanReso_v1.0.0_Win64.zip',
-    zipFileSize: '11.65 MB',
+    downloadUrl: '/downloads/plugins/171_CleanReso_v2.0.0_Win64.zip',
+    zipFileName: '171_CleanReso_v2.0.0_Win64.zip',
+    zipFileSize: '11.66 MB',
     macDownloadUrl: '/downloads/plugins/171_CleanReso_v1.0.0_Mac.zip',
     macZipFileName: '171_CleanReso_v1.0.0_Mac.zip',
     macZipFileSize: '13.07 MB',
     imageUrl: '/assets/plugins/171CleanReso_GUI.png',
     formats: ['VST3 (Win/Mac 64-bit)', 'AudioUnit v2 (macOS)', 'Standalone App (.EXE)'],
     changelog: [
+      {
+        version: 'v2.0.0 Patch 4.11',
+        date: '04/11/2026',
+        title: 'Ricostruzione Motore DSP Core dsp171, ISP Parabolico & Standard 2.0.0 Unificato',
+        features: [
+          'Rilascio ufficiale unificato della Patch 2.0.0 (conteggio versioni da 2.0.0 in avanti)',
+          'Architettura a 32 filtri SVF ZDF ottimizzata con zero sfasamenti sul percorso dry',
+          'Motore DSP Core dsp171 ricompilato con standard C++20 e zero heap allocations nel thread audio',
+          'Spiegazioni interattive e consigli pratici di studio in lingua italiana integrati per ciascun parametro'
+        ],
+        fixes: [
+          'Protezione totale anti-denormale su tutte le 32 sezioni di filtro SVF parallele',
+          'Display spettrale vettoriale a 60 FPS fluido e reattivo con CPU footprint ridotto al minimo'
+        ]
+      },
       {
         version: 'v1.0.0 Patch 1',
         date: '02/11/2026',
@@ -465,19 +586,34 @@ const DEFAULT_PLUGINS: PluginItem[] = [
     badge: 'BOUTIQUE CONSOLE & TUBE PREAMP EMULATION',
     status: 'DISPONIBILE',
     description: 'Preamplificatore valvolare/analogico a modellazione armonica profonda con curve di equalizzazione Baxandall, circuito Air Band fino a 40 kHz e texture vintage Neve, API e Avalon.',
-    version: 'v1.0.1 (3 Nov 2026)',
+    version: 'v2.0.0 (4 Nov 2026)',
     isNewRelease: true,
-    newReleaseTag: '🔥 NUOVA RELEASE v1.0.1',
+    newReleaseTag: '✨ PATCH 2.0.0 (4.11)',
     downloadCount: 0,
-    downloadUrl: '/downloads/plugins/171_PerfectPre_v1.0.1_Win64.zip',
-    zipFileName: '171_PerfectPre_v1.0.1_Win64.zip',
-    zipFileSize: '39.34 MB',
+    downloadUrl: '/downloads/plugins/171_PerfectPre_v2.0.0_Win64.zip',
+    zipFileName: '171_PerfectPre_v2.0.0_Win64.zip',
+    zipFileSize: '18.56 MB',
     macDownloadUrl: '/downloads/plugins/171_PerfectPre_v1.0.0_Mac.zip',
     macZipFileName: '171_PerfectPre_v1.0.0_Mac.zip',
     macZipFileSize: '7.54 MB',
     imageUrl: '/assets/plugins/PerfectPre_Hardware_GUI.png',
     formats: ['VST3 (Win/Mac 64-bit)', 'AudioUnit v2 (macOS)', 'Standalone App (.EXE)'],
     changelog: [
+      {
+        version: 'v2.0.0 Patch 4.11',
+        date: '04/11/2026',
+        title: 'Ricostruzione Motore DSP Core dsp171, ISP Parabolico & Standard 2.0.0 Unificato',
+        features: [
+          'Rilascio ufficiale unificato della Patch 2.0.0 (conteggio versioni da 2.0.0 in avanti)',
+          'Circuito Air Band esteso fino a 40 kHz con curve Baxandall ad accoppiamento continuo',
+          'Motore DSP Core dsp171 ricompilato con standard C++20 e zero heap allocations nel thread audio',
+          'Spiegazioni interattive e consigli pratici di studio in lingua italiana integrati per ciascun parametro'
+        ],
+        fixes: [
+          'Calibrazione VU meter analogico IEC 60268-17 a latenza zero',
+          'Protezione denormale rigorosa su tutti gli stadi di guadagno e modellazione a valvole'
+        ]
+      },
       {
         version: 'v1.0.0 Patch 1',
         date: '02/11/2026',
@@ -507,19 +643,34 @@ const DEFAULT_PLUGINS: PluginItem[] = [
     badge: 'BOUTIQUE HYBRID REVERB & SPACE SCULPTOR',
     status: 'DISPONIBILE',
     description: 'Riverbero ibrido algoritmico boutique con serbatoio lossless FDN-16 ad altissima densità, Ducking dinamico con Sidechain Esterno (Multi-Bus VST3), generatore Harmonic Shimmer valvolare a +1 ottava e filtro Mono-Maker State Variable.',
-    version: 'v1.1.0 Patch (2 Nov 2026)',
+    version: 'v2.0.0 (4 Nov 2026)',
     isNewRelease: true,
-    newReleaseTag: '🔥 NUOVA RELEASE 2 NOV',
+    newReleaseTag: '✨ PATCH 2.0.0 (4.11)',
     downloadCount: 0,
-    downloadUrl: '/downloads/plugins/171_SpaceLuxe_v1.1.0_Win64.zip',
-    zipFileName: '171_SpaceLuxe_v1.1.0_Win64.zip',
-    zipFileSize: '8.86 MB',
+    downloadUrl: '/downloads/plugins/171_SpaceLuxe_v2.0.0_Win64.zip',
+    zipFileName: '171_SpaceLuxe_v2.0.0_Win64.zip',
+    zipFileSize: '8.45 MB',
     macDownloadUrl: '/downloads/plugins/171_SpaceLuxe_v1.1.0_Mac.zip',
     macZipFileName: '171_SpaceLuxe_v1.1.0_Mac.zip',
     macZipFileSize: '0.73 MB',
     imageUrl: '/assets/plugins/171SpaceLuxe_GUI.png',
     formats: ['VST3 (64-bit multi-bus)', 'AudioUnit v2 (macOS)', 'Standalone App (.EXE)'],
     changelog: [
+      {
+        version: 'v2.0.0 Patch 4.11',
+        date: '04/11/2026',
+        title: 'Ricostruzione Motore DSP Core dsp171, ISP Parabolico & Standard 2.0.0 Unificato',
+        features: [
+          'Rilascio ufficiale unificato della Patch 2.0.0 (conteggio versioni da 2.0.0 in avanti)',
+          'Matrice Householder O(N) e 16 linee di ritardo mutualmente prime per decadimenti infinitamente morbidi',
+          'Motore DSP Core dsp171 ricompilato con standard C++20 e zero heap allocations nel thread audio',
+          'Spiegazioni interattive e consigli pratici di studio in lingua italiana integrati per ciascun parametro'
+        ],
+        fixes: [
+          'Protezione totale anti-denormale attiva a ogni ciclo FDN',
+          'True-Peak BS.1770 a vertice analitico per protezione assoluta delle uscite'
+        ]
+      },
       {
         version: 'v1.1.0 Patch',
         date: '02/11/2026',
@@ -552,22 +703,37 @@ const DEFAULT_PLUGINS: PluginItem[] = [
     name: '171 MasterGlue',
     badge: 'ANALOG MASTER BUS CONSOLE & STEREO IMAGER',
     status: 'DISPONIBILE',
-    unlockWeek: 1,
-    unlockDate: '2026-11-06T18:00:00+01:00',
     description: 'Compressore analogico da master bus a doppia topologia (VCA stile SSL 4000 G & Diode-Bridge stile Neve 33609), stadio trasformatore d\'uscita Marinair LO1166, processore d\'immagine stereo TrueSpace e doppi VU meter galvanometrici balistici IEC 60268-17.',
-    version: 'v1.0.1 Studio Master Edition (3 Nov 2026)',
+    version: 'v2.0.0 (4 Nov 2026)',
     isNewRelease: true,
-    newReleaseTag: '🔥 NUOVA RELEASE v1.0.1',
+    newReleaseTag: '✨ PATCH 2.0.0 (4.11)',
     downloadCount: 0,
-    downloadUrl: '/downloads/plugins/171_MasterGlue_v1.0.1_Win64.zip',
-    zipFileName: '171_MasterGlue_v1.0.1_Win64.zip',
-    zipFileSize: '8.88 MB',
+    downloadUrl: '/downloads/plugins/171_MasterGlue_v2.0.0_Win64.zip',
+    zipFileName: '171_MasterGlue_v2.0.0_Win64.zip',
+    zipFileSize: '8.38 MB',
     macDownloadUrl: '/downloads/plugins/171_MasterGlue_v1.0.0_Mac.zip',
     macZipFileName: '171_MasterGlue_v1.0.0_Mac.zip',
     macZipFileSize: '0.52 MB',
     imageUrl: '/assets/plugins/171MasterGlue_GUI.png',
     formats: ['VST3 (64-bit)', 'AudioUnit v2 (macOS)', 'Standalone App (.EXE)'],
     changelog: [
+      {
+        version: 'v2.0.0 Patch 4.11',
+        date: '04/11/2026',
+        title: 'Ricostruzione Motore DSP Core dsp171, ISP Parabolico & Standard 2.0.0 Unificato',
+        features: [
+          'Rilascio ufficiale unificato della Patch 2.0.0 (conteggio versioni da 2.0.0 in avanti)',
+          'Topologia VCA SSL 4000G raffinata con preservazione di parità ed eliminazione spurie asimmetriche',
+          'Saturatore trasformatore Marinair LO1166 con asintoto continuo privo di knee duro',
+          'Filtro Thrust API con bloccaggio angolare stabile pre-tan per sicurezza assoluta a tutte le sample rate',
+          'Motore DSP Core dsp171 ricompilato con standard C++20 e zero heap allocations nel thread audio',
+          'Spiegazioni interattive e consigli pratici di studio in lingua italiana integrati per ciascun parametro'
+        ],
+        fixes: [
+          'Risoluzione analitica del vertice parabolico True-Peak ITU-R BS.1770',
+          'Protezione totale anti-denormale su tutte le memorie analogiche e rami di auto-release'
+        ]
+      },
       {
         version: 'v1.0.0',
         date: '02/11/2026',
@@ -596,23 +762,37 @@ const DEFAULT_PLUGINS: PluginItem[] = [
     id: 'plugin-punchcraft',
     name: '171 PunchCraft',
     badge: 'MULTI-BAND TRANSIENT SHAPER & SUB-HARMONIC SCULPTOR',
-    status: 'IN ARRIVO',
-    unlockWeek: 2,
-    unlockDate: '2026-11-13T18:00:00+01:00',
+    status: 'DISPONIBILE',
     description: 'Processore dinamico di inviluppo multi-banda a 3 bande indipendenti: Differential Envelope Technology per scolpire attacco e sustain senza soglia rigida, generatore sub-armonico sismico a divisione di frequenza e doppio oscilloscopio CRT telemetrico.',
-    version: 'v1.0.0 Studio Impact Edition',
-    isNewRelease: false,
-    newReleaseTag: 'SBLOCCO SETT. 2',
+    version: 'v2.0.0 (4 Nov 2026)',
+    isNewRelease: true,
+    newReleaseTag: '✨ PATCH 2.0.0 (4.11)',
     downloadCount: 0,
-    downloadUrl: '/downloads/plugins/171_PunchCraft_v1.0.0_Win64.zip',
-    zipFileName: '171_PunchCraft_v1.0.0_Win64.zip',
-    zipFileSize: '8.42 MB',
+    downloadUrl: '/downloads/plugins/171_PunchCraft_v2.0.0_Win64.zip',
+    zipFileName: '171_PunchCraft_v2.0.0_Win64.zip',
+    zipFileSize: '8.43 MB',
     macDownloadUrl: '/downloads/plugins/171_PunchCraft_v1.0.0_Mac.zip',
     macZipFileName: '171_PunchCraft_v1.0.0_Mac.zip',
     macZipFileSize: '0.57 MB',
     imageUrl: '/assets/plugins/171PunchCraft_GUI.png',
     formats: ['VST3 (64-bit)', 'AudioUnit v2 (macOS)', 'Standalone App (.EXE)'],
     changelog: [
+      {
+        version: 'v2.0.0 Patch 4.11',
+        date: '04/11/2026',
+        title: 'Ricostruzione Motore DSP Core dsp171, ISP Parabolico & Standard 2.0.0 Unificato',
+        features: [
+          'Rilascio ufficiale unificato della Patch 2.0.0 (conteggio versioni da 2.0.0 in avanti)',
+          'Sintesi sub-armonica a divisione di ottava potenziata con biquad indipendenti privi di collisioni di stato',
+          'Differential Envelope Technology a 3 bande Linkwitz-Riley LR4 con compensazione allpass a fase lineare',
+          'Motore DSP Core dsp171 ricompilato con standard C++20 e zero heap allocations nel thread audio',
+          'Spiegazioni interattive e consigli pratici di studio in lingua italiana integrati per ciascun parametro'
+        ],
+        fixes: [
+          'True-Peak BS.1770 a vertice analitico parabolico per clamping inter-sample rigoroso',
+          'Protezione totale anti-denormale sui filtri di crossover e detector di inviluppo'
+        ]
+      },
       {
         version: 'v1.0.0',
         date: '02/11/2026',
@@ -641,23 +821,37 @@ const DEFAULT_PLUGINS: PluginItem[] = [
     id: 'plugin-perfectclip',
     name: '171 PerfectClip',
     badge: 'MASTERING ADAA-2 CLIPPER & TRANSDETAIL MATRIX',
-    status: 'IN ARRIVO',
-    unlockWeek: 3,
-    unlockDate: '2026-11-20T18:00:00+01:00',
+    status: 'DISPONIBILE',
     description: 'Clipper analogico/digitale di riferimento mastering con antiderivate continue ADAA-2 a doppio ordine, matrice brevettata 171 TransDetail™ per la conservazione assoluta dei micro-transienti e dell\'aria sotto spinta estrema (+12 dB), 4 topologie (Precision Hard Clip, Gold ADC 122, Tube Triode, Germanium) e CRT Oscilloscopio telemetrico vettoriale a 60 FPS.',
-    version: 'v1.0.0 Mastering Edition',
-    isNewRelease: false,
-    newReleaseTag: 'SBLOCCO SETT. 3',
+    version: 'v2.0.0 (4 Nov 2026)',
+    isNewRelease: true,
+    newReleaseTag: '✨ PATCH 2.0.0 (4.11)',
     downloadCount: 0,
-    downloadUrl: '/downloads/plugins/171_PerfectClip_v1.0.0_Win64.zip',
-    zipFileName: '171_PerfectClip_v1.0.0_Win64.zip',
-    zipFileSize: '8.42 MB',
+    downloadUrl: '/downloads/plugins/171_PerfectClip_v2.0.0_Win64.zip',
+    zipFileName: '171_PerfectClip_v2.0.0_Win64.zip',
+    zipFileSize: '8.45 MB',
     macDownloadUrl: '/downloads/plugins/171_PerfectClip_v1.0.0_Mac.zip',
     macZipFileName: '171_PerfectClip_v1.0.0_Mac.zip',
     macZipFileSize: '0.51 MB',
     imageUrl: '/assets/plugins/171PerfectClip_GUI.png',
     formats: ['VST3 (64-bit)', 'AudioUnit v2 (macOS)', 'Standalone App (.EXE)'],
     changelog: [
+      {
+        version: 'v2.0.0 Patch 4.11',
+        date: '04/11/2026',
+        title: 'Ricostruzione Motore DSP Core dsp171, ISP Parabolico & Standard 2.0.0 Unificato',
+        features: [
+          'Rilascio ufficiale unificato della Patch 2.0.0 (conteggio versioni da 2.0.0 in avanti)',
+          'Topologie Tube Triode e Germanium Diode con saturazione monotona asintotica Classe-A priva di inversioni di fase',
+          'Oversampler polifase 4x con rami IIR indipendenti privi di interferenze di stato',
+          'Motore DSP Core dsp171 ricompilato con standard C++20 e zero heap allocations nel thread audio',
+          'Spiegazioni interattive e consigli pratici di studio in lingua italiana integrati per ciascun parametro'
+        ],
+        fixes: [
+          'Risoluzione analitica esatta del vertice parabolico ITU-R BS.1770 per azzeramento assoluto di ISP sottostimati',
+          'Protezione totale anti-denormale a livello campionario su tutti gli stadi'
+        ]
+      },
       {
         version: 'v1.0.0',
         date: '02/11/2026',
