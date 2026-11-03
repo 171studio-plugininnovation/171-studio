@@ -11,6 +11,7 @@ import { PluginItem, STUDIO_PAYPAL_EMAIL, PluginDonationRecord } from '../types/
 import { getPayPalDonationUrl, getPayPalMeUrl, triggerPluginZipFileDownload } from '../utils/emailService';
 import { getAssetUrl } from '../utils/assetPath';
 import { HardwareTiltCard } from './HardwareTiltCard';
+import { ProAudioDemoPlayer } from './ProAudioDemoPlayer';
 
 interface PluginDetailPageProps {
   pluginId: string;
@@ -95,6 +96,19 @@ export const PluginDetailPage: React.FC<PluginDetailPageProps> = ({
   const [previewModalOpen, setPreviewModalOpen] = useState(false);
   const [downloadSuccess, setDownloadSuccess] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
+  const [copiedPathWin, setCopiedPathWin] = useState(false);
+  const [copiedPathMac, setCopiedPathMac] = useState(false);
+
+  const copyPath = (path: string, os: 'win' | 'mac') => {
+    navigator.clipboard.writeText(path);
+    if (os === 'win') {
+      setCopiedPathWin(true);
+      setTimeout(() => setCopiedPathWin(false), 2000);
+    } else {
+      setCopiedPathMac(true);
+      setTimeout(() => setCopiedPathMac(false), 2000);
+    }
+  };
 
   // Feedback form state
   const [rating, setRating] = useState<number>(5);
@@ -340,6 +354,16 @@ export const PluginDetailPage: React.FC<PluginDetailPageProps> = ({
                 <span className="text-[11px] font-mono font-bold text-amber-400">64-bit Audio</span>
               </div>
             </div>
+
+            {/* Embedded Pro Audio A/B Demo Player (UAD / Plugin Alliance signature feature) */}
+            <div className="pt-3">
+              <ProAudioDemoPlayer
+                pluginId={plugin.id}
+                pluginName={plugin.name}
+                category={plugin.badge}
+                compact={false}
+              />
+            </div>
           </div>
         </div>
 
@@ -476,6 +500,47 @@ export const PluginDetailPage: React.FC<PluginDetailPageProps> = ({
                 </button>
               </div>
             )}
+
+            {/* Quick 1-Click Copy Installation Directory Paths (Pro Audio Workflow) */}
+            <div className="p-3.5 rounded-2xl bg-black/90 border border-neutral-800 space-y-2">
+              <div className="flex items-center justify-between text-[10.5px] font-mono text-neutral-400">
+                <span className="font-bold uppercase tracking-wider text-amber-400/90 flex items-center gap-1.5">
+                  <FileArchive className="w-3.5 h-3.5 text-amber-400" />
+                  <span>PERCORSI STANDARD DI INSTALLAZIONE PLUGIN</span>
+                </span>
+                <span className="text-[9px] text-neutral-500">Clicca per copiare</span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[10px] font-mono">
+                <button
+                  type="button"
+                  onClick={() => copyPath('C:\\Program Files\\Common Files\\VST3', 'win')}
+                  className="p-2.5 rounded-xl bg-neutral-900 hover:bg-neutral-850 border border-neutral-800 hover:border-amber-500/40 text-left flex items-center justify-between gap-2 transition-all cursor-pointer"
+                  title="Copia percorso cartella VST3 Windows"
+                >
+                  <div className="truncate">
+                    <span className="text-neutral-500 block text-[8.5px] font-bold">CARTELLA WINDOWS VST3:</span>
+                    <span className="text-neutral-200 truncate block text-[10px]">C:\Program Files\Common Files\VST3</span>
+                  </div>
+                  <span className="shrink-0 text-amber-400">
+                    {copiedPathWin ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => copyPath('~/Library/Audio/Plug-Ins/Components', 'mac')}
+                  className="p-2.5 rounded-xl bg-neutral-900 hover:bg-neutral-850 border border-neutral-800 hover:border-amber-500/40 text-left flex items-center justify-between gap-2 transition-all cursor-pointer"
+                  title="Copia percorso cartella AU macOS"
+                >
+                  <div className="truncate">
+                    <span className="text-neutral-500 block text-[8.5px] font-bold">CARTELLA MACOS AU / VST3:</span>
+                    <span className="text-neutral-200 truncate block text-[10px]">~/Library/Audio/Plug-Ins/Components</span>
+                  </div>
+                  <span className="shrink-0 text-amber-400">
+                    {copiedPathMac ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                  </span>
+                </button>
+              </div>
+            </div>
 
             {downloadSuccess && (
               <div className="p-3 rounded-xl bg-emerald-950/80 border border-emerald-500/60 text-emerald-300 text-xs font-mono flex items-center gap-2 animate-in fade-in duration-200">
@@ -693,6 +758,41 @@ export const PluginDetailPage: React.FC<PluginDetailPageProps> = ({
         {/* TAB 3: Tech & Architecture */}
         {activeTab === 'tech' && (
           <div className="space-y-6 animate-in fade-in duration-200">
+            {/* Analog Hardware Signal Flow Diagram */}
+            <div className="p-6 rounded-3xl bg-neutral-900/90 border border-amber-500/40 space-y-4 shadow-xl">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-mono font-bold text-amber-400 uppercase tracking-widest flex items-center gap-2">
+                  <Radio className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
+                  <span>DIAGRAMMA DEL FLUSSO DI SEGNALE & TOPOLOGIA HARDWARE</span>
+                </span>
+                <span className="text-[10px] font-mono text-neutral-400">
+                  Zero Latency Live Processing
+                </span>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center font-mono">
+                <div className="p-3.5 rounded-2xl bg-black border border-neutral-800 relative">
+                  <span className="text-[8.5px] text-neutral-500 uppercase block">STAGE 01</span>
+                  <span className="text-xs font-bold text-white block mt-0.5">INPUT BUFFER</span>
+                  <span className="text-[9.5px] text-amber-400/90 block mt-1">Transformer Impedance</span>
+                </div>
+                <div className="p-3.5 rounded-2xl bg-black border border-amber-500/30 relative">
+                  <span className="text-[8.5px] text-neutral-500 uppercase block">STAGE 02</span>
+                  <span className="text-xs font-bold text-amber-300 block mt-0.5">TUBE HARMONICS</span>
+                  <span className="text-[9.5px] text-amber-400/90 block mt-1">2nd & 3rd Non-Linear</span>
+                </div>
+                <div className="p-3.5 rounded-2xl bg-black border border-emerald-500/30 relative">
+                  <span className="text-[8.5px] text-neutral-500 uppercase block">STAGE 03</span>
+                  <span className="text-xs font-bold text-emerald-400 block mt-0.5">CORE DSP ENGINE</span>
+                  <span className="text-[9.5px] text-emerald-400/90 block mt-1">64-Bit Float Math</span>
+                </div>
+                <div className="p-3.5 rounded-2xl bg-black border border-cyan-500/30 relative">
+                  <span className="text-[8.5px] text-neutral-500 uppercase block">STAGE 04</span>
+                  <span className="text-xs font-bold text-cyan-400 block mt-0.5">OUTPUT GAIN</span>
+                  <span className="text-[9.5px] text-cyan-400/90 block mt-1">True Peak Guard</span>
+                </div>
+              </div>
+            </div>
+
             <div className="p-8 rounded-3xl bg-neutral-900/80 border border-neutral-800 space-y-4">
               <h3 className="font-heading font-black text-2xl text-white">
                 Architettura Hardware Modellata

@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   ArrowLeft, Cpu, Sparkles, Zap, Flame, Shield, Sliders, Download,
   Check, Mail, Star, Heart, MessageSquare, ExternalLink, FileArchive,
   CheckCircle2, Send, Lock, Bug, ChevronDown, ChevronUp, Eye, X, Layers,
-  Award, Gift, Clock, Calendar, ArrowRight, Filter
+  Award, Gift, Clock, Calendar, ArrowRight, Filter, Search, Radio
 } from 'lucide-react';
 import { PageId } from '../types';
 import { useStudio } from '../context/StudioContext';
@@ -12,6 +12,7 @@ import { getPayPalDonationUrl, getPayPalMeUrl, triggerPluginZipFileDownload } fr
 import { getAssetUrl } from '../utils/assetPath';
 import { HardwareTiltCard } from './HardwareTiltCard';
 import { PluginDetailPage } from './PluginDetailPage';
+import { RackPluginCard } from './RackPluginCard';
 
 interface PluginsPageProps {
   onNavigate: (page: PageId, pluginId?: string | null) => void;
@@ -139,7 +140,9 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
 
   // Modal for previewing hardware GUI snapshot
   const [previewModalImage, setPreviewModalImage] = useState<string | null>(null);
-  const [categoryFilter, setCategoryFilter] = useState<'all' | 'vocal' | 'dynamics' | 'spatial' | 'favorites'>('all');
+  const [categoryFilter, setCategoryFilter] = useState<'all' | 'vocal' | 'dynamics' | 'saturation' | 'spatial' | 'favorites'>('all');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [sortBy, setSortBy] = useState<'featured' | 'downloads' | 'name'>('featured');
 
   // Feedback form state on the post-download page
   const [rating, setRating] = useState<number>(5);
@@ -1159,36 +1162,102 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
             </div>
           </div>
 
-          {/* Quick Category Filter Bar */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-neutral-800/80">
-            <div className="flex items-center gap-2">
-              <Filter className="w-4 h-4 text-amber-400 shrink-0" />
-              <span className="text-xs font-mono uppercase tracking-wider text-neutral-400 font-semibold">
-                Filtra Plugin per Categoria:
-              </span>
+          {/* Pro Audio Search, Filter & Rack Telemetry Console (UAD & Waves Store Style) */}
+          <div className="mb-8 p-5 sm:p-6 rounded-3xl bg-neutral-900/90 border border-neutral-800/90 shadow-2xl backdrop-blur-2xl space-y-5">
+            {/* Top row: Search Bar + Live Counter + Sort Options */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              {/* Search input */}
+              <div className="relative flex-1 max-w-md">
+                <Search className="w-4 h-4 text-amber-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Cerca plugin per nome o tecnologia (es. Opto, Tube, Vocal)..."
+                  className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-black/80 border border-neutral-700/80 hover:border-amber-500/50 focus:border-amber-400 text-xs font-mono text-white placeholder-neutral-500 outline-none transition-all shadow-inner"
+                />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchQuery('')}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-white text-xs font-mono cursor-pointer"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
+
+              {/* Sorting and Pro Telemetry */}
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1.5 text-xs font-mono text-neutral-400">
+                  <span className="hidden sm:inline">Ordina:</span>
+                  <div className="flex items-center gap-1 p-1 rounded-xl bg-black border border-neutral-800">
+                    <button
+                      type="button"
+                      onClick={() => setSortBy('featured')}
+                      className={`px-2.5 py-1 rounded-lg text-[10.5px] font-mono transition-all cursor-pointer ${
+                        sortBy === 'featured'
+                          ? 'bg-amber-500 text-black font-bold shadow-sm'
+                          : 'text-neutral-400 hover:text-white'
+                      }`}
+                    >
+                      Consigliati
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSortBy('downloads')}
+                      className={`px-2.5 py-1 rounded-lg text-[10.5px] font-mono transition-all cursor-pointer ${
+                        sortBy === 'downloads'
+                          ? 'bg-amber-500 text-black font-bold shadow-sm'
+                          : 'text-neutral-400 hover:text-white'
+                      }`}
+                    >
+                      Più Scaricati
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSortBy('name')}
+                      className={`px-2.5 py-1 rounded-lg text-[10.5px] font-mono transition-all cursor-pointer ${
+                        sortBy === 'name'
+                          ? 'bg-amber-500 text-black font-bold shadow-sm'
+                          : 'text-neutral-400 hover:text-white'
+                      }`}
+                    >
+                      A-Z
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div className="flex flex-wrap items-center gap-2">
+
+            {/* Bottom row: Pro Category Tabs */}
+            <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-neutral-800/80">
               {[
-                { id: 'all', label: 'Tutti i Plugin', count: siteContent.plugins.length },
-                { id: 'favorites', label: '❤️ Preferiti', count: favoritePluginIds.length },
-                { id: 'vocal', label: 'Voci & Intonazione', count: siteContent.plugins.filter(p => ['plugin-realtune', 'plugin-easyvoice'].includes(p.id)).length },
-                { id: 'dynamics', label: 'Dinamica & Mix', count: siteContent.plugins.filter(p => ['plugin-optocom', 'plugin-cleandrive', 'plugin-masterglue', 'plugin-punchcraft'].includes(p.id)).length },
-                { id: 'spatial', label: 'Riverberi & Colore', count: siteContent.plugins.filter(p => ['plugin-cleanreso', 'plugin-perfectpre', 'plugin-spaceluxe', 'plugin-perfectclip'].includes(p.id)).length },
+                { id: 'all', label: 'Tutti i Plugin', icon: Layers, count: siteContent.plugins.length },
+                { id: 'favorites', label: 'Preferiti', icon: Heart, count: favoritePluginIds.length },
+                { id: 'vocal', label: 'Voci & Intonazione', icon: Radio, count: siteContent.plugins.filter(p => ['plugin-realtune', 'plugin-easyvoice'].includes(p.id)).length },
+                { id: 'dynamics', label: 'Compressori & Dinamica', icon: Sliders, count: siteContent.plugins.filter(p => ['plugin-optocom', 'plugin-masterglue', 'plugin-punchcraft', 'plugin-perfectclip'].includes(p.id)).length },
+                { id: 'saturation', label: 'Preamp & Saturazione', icon: Flame, count: siteContent.plugins.filter(p => ['plugin-cleandrive', 'plugin-perfectpre'].includes(p.id)).length },
+                { id: 'spatial', label: 'Riverberi & Spazio', icon: Sparkles, count: siteContent.plugins.filter(p => ['plugin-cleanreso', 'plugin-spaceluxe'].includes(p.id)).length },
               ].map((tab) => {
                 const isActive = categoryFilter === tab.id;
+                const IconComponent = tab.icon;
                 return (
                   <button
                     key={tab.id}
                     type="button"
                     onClick={() => setCategoryFilter(tab.id as any)}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all cursor-pointer flex items-center gap-1.5 ${
+                    className={`px-3.5 py-2 rounded-xl text-xs font-mono transition-all cursor-pointer flex items-center gap-2 ${
                       isActive
-                        ? 'bg-amber-500 text-black font-bold shadow-md shadow-amber-500/20'
-                        : 'bg-neutral-900/90 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-800'
+                        ? 'bg-gradient-to-r from-amber-400 to-amber-500 text-black font-bold shadow-md shadow-amber-500/25 scale-[1.02]'
+                        : 'bg-neutral-950/80 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-800/90'
                     }`}
                   >
+                    <IconComponent className={`w-3.5 h-3.5 ${isActive ? 'text-black' : 'text-amber-400'}`} />
                     <span>{tab.label}</span>
-                    <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${isActive ? 'bg-black/25 text-black' : 'bg-neutral-800 text-neutral-400'}`}>
+                    <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
+                      isActive ? 'bg-black/25 text-black' : 'bg-neutral-800 text-neutral-400'
+                    }`}>
                       {tab.count}
                     </span>
                   </button>
@@ -1197,168 +1266,81 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {siteContent.plugins
+          {/* Plugin Grid using Realistic Rackmount Cards */}
+          {(() => {
+            const filteredPlugins = siteContent.plugins
               .filter((plugin) => {
+                // Search query match
+                if (searchQuery.trim()) {
+                  const q = searchQuery.toLowerCase();
+                  const matchName = plugin.name.toLowerCase().includes(q);
+                  const matchDesc = plugin.description.toLowerCase().includes(q);
+                  const matchBadge = plugin.badge.toLowerCase().includes(q);
+                  const matchTech = plugin.technologies?.some(t => t.toLowerCase().includes(q));
+                  if (!matchName && !matchDesc && !matchBadge && !matchTech) return false;
+                }
+
+                // Category match
                 if (categoryFilter === 'all') return true;
                 if (categoryFilter === 'favorites') return isPluginFavorite(plugin.id);
                 if (categoryFilter === 'vocal') return ['plugin-realtune', 'plugin-easyvoice'].includes(plugin.id);
-                if (categoryFilter === 'dynamics') return ['plugin-optocom', 'plugin-cleandrive', 'plugin-masterglue', 'plugin-punchcraft'].includes(plugin.id);
-                if (categoryFilter === 'spatial') return ['plugin-cleanreso', 'plugin-perfectpre', 'plugin-spaceluxe', 'plugin-perfectclip'].includes(plugin.id);
+                if (categoryFilter === 'dynamics') return ['plugin-optocom', 'plugin-masterglue', 'plugin-punchcraft', 'plugin-perfectclip'].includes(plugin.id);
+                if (categoryFilter === 'saturation') return ['plugin-cleandrive', 'plugin-perfectpre'].includes(plugin.id);
+                if (categoryFilter === 'spatial') return ['plugin-cleanreso', 'plugin-spaceluxe'].includes(plugin.id);
                 return true;
               })
-              .map((plugin) => {
-                const countdown = plugin.unlockDate ? getCountdown(plugin.unlockDate) : null;
-                const isLocked = countdown ? !countdown.isUnlocked : (plugin.status === 'IN ARRIVO');
+              .sort((a, b) => {
+                if (sortBy === 'downloads') return (b.downloadCount || 0) - (a.downloadCount || 0);
+                if (sortBy === 'name') return a.name.localeCompare(b.name);
+                // featured: new releases first
+                if (a.isNewRelease && !b.isNewRelease) return -1;
+                if (!a.isNewRelease && b.isNewRelease) return 1;
+                return 0;
+              });
 
-                return (
-                  <div 
-                    key={plugin.id} 
-                    id={plugin.id}
-                    className="p-5 rounded-3xl bg-neutral-900/90 border border-neutral-800 hover:border-amber-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-amber-500/10 flex flex-col justify-between relative overflow-hidden group scroll-mt-24"
-                  >
-                    {/* Corner Ribbon for New Release or Roadmap Week (like Waves Black Friday ribbon) */}
-                    {plugin.isNewRelease ? (
-                      <div className="absolute top-0 right-0 overflow-hidden w-28 h-28 pointer-events-none z-10">
-                        <div className="bg-gradient-to-r from-red-600 to-amber-600 text-white text-[9px] font-mono font-black text-center py-1 w-36 absolute top-4 -right-10 rotate-45 shadow-md uppercase tracking-wider">
-                          Nuova Patch
-                        </div>
-                      </div>
-                    ) : isLocked ? (
-                      <div className="absolute top-0 right-0 overflow-hidden w-28 h-28 pointer-events-none z-10">
-                        <div className="bg-neutral-800 text-amber-300 border border-amber-500/30 text-[8.5px] font-mono font-bold text-center py-1 w-36 absolute top-4 -right-10 rotate-45 shadow-md uppercase tracking-wider">
-                          Settimana {plugin.unlockWeek || 1}
-                        </div>
-                      </div>
-                    ) : null}
-
-                    <div>
-                      {/* Top Wishlist Heart & Category Badge */}
-                      <div className="flex items-center justify-between mb-2.5">
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            toggleFavoritePlugin(plugin.id);
-                          }}
-                          className={`w-8 h-8 rounded-full border flex items-center justify-center transition-all cursor-pointer ${
-                            isPluginFavorite(plugin.id)
-                              ? 'bg-red-500/20 border-red-500/50 text-red-400 shadow-md shadow-red-500/20'
-                              : 'bg-neutral-800/80 hover:bg-neutral-700 border-neutral-700/80 text-neutral-400 hover:text-red-400'
-                          }`}
-                          title={isPluginFavorite(plugin.id) ? "Rimuovi dai tuoi preferiti" : "Salva nei tuoi preferiti"}
-                          aria-label="Salva nei preferiti"
-                        >
-                          <Heart className={`w-3.5 h-3.5 transition-transform ${isPluginFavorite(plugin.id) ? 'fill-red-500 text-red-500 scale-110' : ''}`} />
-                        </button>
-                        <span className="text-[10px] font-mono font-bold text-neutral-400 uppercase tracking-wider pr-10">
-                          {plugin.badge.split(' ')[0]} DSP
-                        </span>
-                      </div>
-
-                      {/* Small Centered Miniature Plugin Image Box (Waves-Style) */}
-                      <div 
-                        onClick={() => handleSelectPlugin(plugin.id)}
-                        className="h-36 sm:h-40 w-full flex items-center justify-center p-3 bg-neutral-950/80 rounded-2xl border border-neutral-800/80 group-hover:border-amber-500/40 transition-colors cursor-pointer relative"
-                        title={`Apri ${plugin.name}`}
-                      >
-                        {plugin.imageUrl ? (
-                          <img 
-                            src={getAssetUrl(plugin.imageUrl)} 
-                            alt={`${plugin.name} Miniature`} 
-                            className="max-h-28 sm:max-h-32 max-w-full object-contain filter drop-shadow-[0_6px_14px_rgba(0,0,0,0.85)] group-hover:scale-105 transition-transform duration-300"
-                            loading="lazy"
-                          />
-                        ) : (
-                          <Cpu className="w-12 h-12 text-amber-400/40" />
-                        )}
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            if (plugin.imageUrl) setPreviewModalImage(plugin.imageUrl);
-                          }}
-                          className="absolute bottom-2 right-2 p-1.5 rounded-lg bg-black/80 hover:bg-black text-amber-400 border border-amber-500/30 text-[10px] font-mono backdrop-blur-md transition-all cursor-pointer shadow-lg"
-                          title="Ingrandisci anteprima GUI"
-                        >
-                          <Eye className="w-3 h-3" />
-                        </button>
-                      </div>
-
-                      {/* "New" or Status Tag (like blue "New" tag in Waves screenshot) */}
-                      <div className="flex items-center gap-2 mt-3 min-h-[1.5rem]">
-                        {plugin.isNewRelease ? (
-                          <span className="inline-block px-2 py-0.5 rounded bg-blue-600 text-white font-mono font-black text-[10px] uppercase tracking-wider">
-                            New Release
-                          </span>
-                        ) : isLocked ? (
-                          <span className="inline-block px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 font-mono font-bold text-[10px] uppercase tracking-wider">
-                            In Arrivo
-                          </span>
-                        ) : (
-                          <span className="inline-block px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 font-mono font-bold text-[10px] uppercase tracking-wider">
-                            Disponibile
-                          </span>
-                        )}
-                        {plugin.version && (
-                          <span className="text-[10.5px] font-mono text-neutral-400 font-semibold truncate">
-                            {plugin.version.split(' ')[0]}
-                          </span>
-                        )}
-                      </div>
-
-                      {/* Plugin Title */}
-                      <h4 
-                        onClick={() => handleSelectPlugin(plugin.id)}
-                        className="font-heading font-black text-lg sm:text-xl text-white group-hover:text-amber-400 transition-colors cursor-pointer mt-1 truncate"
-                        title={`Apri ${plugin.name}`}
-                      >
-                        {plugin.name}
-                      </h4>
-
-                      {/* Short Description (1-2 lines, legible) */}
-                      <p className="text-xs text-neutral-400 font-light leading-relaxed line-clamp-2 mt-1 min-h-[2rem]">
-                        {plugin.description}
-                      </p>
-
-                      {/* Rating Stars (Waves-Style: 5.0 ★★★★★) */}
-                      <div className="flex items-center gap-1.5 mt-2">
-                        <span className="text-xs font-mono font-bold text-white">5.0</span>
-                        <div className="flex items-center text-amber-400 text-xs">
-                          ★★★★★
-                        </div>
-                        <span className="text-[10.5px] font-mono text-neutral-500">
-                          ({plugin.downloadCount > 0 ? `${plugin.downloadCount} dl` : '171 DSP'})
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Prominent Action Button: "Scarica il Plugin" -> navigates to single plugin page */}
-                    <div className="mt-4 pt-1">
-                      <button
-                        type="button"
-                        onClick={() => handleSelectPlugin(plugin.id)}
-                        className="w-full py-2.5 px-4 rounded-full bg-white hover:bg-amber-400 text-black font-heading font-black text-xs sm:text-sm uppercase tracking-wider transition-all duration-200 cursor-pointer shadow-md hover:shadow-lg flex items-center justify-center gap-2 group/btn"
-                        title={`Apri la pagina di download per ${plugin.name}`}
-                      >
-                        <Download className="w-4 h-4 text-black group-hover:translate-y-0.5 transition-transform" />
-                        <span>Scarica il Plugin</span>
-                      </button>
-
-                      <p className="text-[10px] font-mono text-center text-neutral-400 mt-2 truncate">
-                        {isLocked ? (
-                          <span className="text-amber-400 font-bold">
-                            ⏳ Sblocco tra {countdown?.days}g {countdown?.hours}h {countdown?.minutes}m
-                          </span>
-                        ) : (
-                          <>Disponibile per <span className="text-neutral-300 font-semibold">Windows 64-bit</span> & <span className="text-neutral-300 font-semibold">macOS Universal</span></>
-                        )}
-                      </p>
-                    </div>
+            if (filteredPlugins.length === 0) {
+              return (
+                <div className="py-16 text-center space-y-4 p-8 rounded-3xl bg-neutral-900/60 border border-neutral-800">
+                  <div className="w-12 h-12 rounded-full bg-neutral-800 border border-neutral-700 flex items-center justify-center mx-auto text-amber-400">
+                    <Search className="w-6 h-6" />
                   </div>
-                );
-              })}
-          </div>
+                  <h4 className="font-heading font-black text-xl text-white">Nessun plugin trovato</h4>
+                  <p className="text-sm text-neutral-400 font-mono">
+                    Nessun processore corrisponde alla ricerca &laquo;{searchQuery}&raquo; nella categoria selezionata.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => { setSearchQuery(''); setCategoryFilter('all'); }}
+                    className="px-4 py-2 rounded-xl bg-amber-500 text-black font-heading font-bold text-xs uppercase cursor-pointer"
+                  >
+                    Resetta Filtri
+                  </button>
+                </div>
+              );
+            }
+
+            return (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
+                {filteredPlugins.map((plugin) => {
+                  const countdown = plugin.unlockDate ? getCountdown(plugin.unlockDate) : null;
+                  const isLocked = countdown ? !countdown.isUnlocked : (plugin.status === 'IN ARRIVO');
+
+                  return (
+                    <RackPluginCard
+                      key={plugin.id}
+                      plugin={plugin}
+                      countdown={countdown}
+                      isLocked={isLocked}
+                      isFavorite={isPluginFavorite(plugin.id)}
+                      onToggleFavorite={toggleFavoritePlugin}
+                      onSelectPlugin={handleSelectPlugin}
+                      onOpenPreviewModal={(url) => setPreviewModalImage(url)}
+                    />
+                  );
+                })}
+              </div>
+            );
+          })()}
         </div>
 
         {/* Early Access / Support Card - Optimized for Desktop Full Screen and Mobile */}
