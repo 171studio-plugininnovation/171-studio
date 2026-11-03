@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   Download, Eye, Heart, Flame, Sparkles, Cpu, Clock, Check, 
-  ExternalLink, Volume2, Shield, Layers, Radio
+  ExternalLink, Volume2, Shield, Layers, Radio, Star
 } from 'lucide-react';
 import { PluginItem } from '../types/cms';
 import { getAssetUrl } from '../utils/assetPath';
@@ -22,6 +22,8 @@ export interface RackPluginCardProps {
   onSelectPlugin: (id: string) => void;
   onOpenPreviewModal: (imgUrl: string) => void;
   onQuickDownload?: (plugin: PluginItem, os: 'win' | 'mac') => void;
+  reviewCount?: number;
+  averageRating?: number | null;
 }
 
 // Map analog topologies for pro-audio authenticity
@@ -87,6 +89,8 @@ export const RackPluginCard: React.FC<RackPluginCardProps> = ({
   onSelectPlugin,
   onOpenPreviewModal,
   onQuickDownload,
+  reviewCount = 0,
+  averageRating = null,
 }) => {
   const [showDemoPlayer, setShowDemoPlayer] = useState(false);
   const specs = TOPOLOGY_MAP[plugin.id] || {
@@ -150,7 +154,7 @@ export const RackPluginCard: React.FC<RackPluginCardProps> = ({
             </button>
             <div className="leading-none">
               <span className="text-[9.5px] font-mono font-black text-amber-400 uppercase tracking-widest block">
-                171 ANALOG LABS
+                171PluginInnovation
               </span>
               <span className="text-[8.5px] font-mono text-neutral-500 uppercase tracking-tight block truncate max-w-[150px] sm:max-w-[200px]">
                 {specs.topology}
@@ -237,17 +241,48 @@ export const RackPluginCard: React.FC<RackPluginCardProps> = ({
           </div>
         </div>
 
-        {/* Rating & Pro Engineer Certification (Waves Style) */}
-        <div className="flex items-center justify-between gap-2 pt-1">
-          <div className="flex items-center gap-1.5">
-            <span className="text-xs font-mono font-bold text-white">5.0</span>
-            <div className="flex items-center text-amber-400 text-xs">
-              ★★★★★
+        {/* Real Rating & Reviews (Real-time feedback count) */}
+        <div className="flex items-center justify-between gap-2 pt-1 min-h-[1.75rem] flex-wrap">
+          {(!reviewCount || reviewCount === 0) ? (
+            <div className="flex items-center gap-1.5 text-neutral-500">
+              <div className="flex items-center gap-0.5 text-neutral-700">
+                {[1, 2, 3, 4, 5].map((s) => (
+                  <Star key={s} className="w-3 h-3 text-neutral-700" />
+                ))}
+              </div>
+              <span className="text-[10px] font-mono text-neutral-400 font-medium">
+                Nessuna recensione
+              </span>
             </div>
-            <span className="text-[10px] font-mono text-neutral-500">
-              ({plugin.downloadCount > 0 ? `${plugin.downloadCount} dl` : '171 DSP'})
-            </span>
-          </div>
+          ) : (
+            <div className="flex items-center gap-1.5">
+              <span className="text-xs font-mono font-bold text-white">
+                {averageRating?.toFixed(1) || '5.0'}
+              </span>
+              <div className="flex items-center gap-0.5 text-amber-400">
+                {[1, 2, 3, 4, 5].map((starIdx) => {
+                  const ratingVal = averageRating || 5;
+                  const isFilled = ratingVal >= starIdx;
+                  const isHalf = !isFilled && ratingVal >= starIdx - 0.5;
+                  return (
+                    <Star
+                      key={starIdx}
+                      className={`w-3 h-3 ${
+                        isFilled
+                          ? 'fill-amber-400 text-amber-400'
+                          : isHalf
+                          ? 'fill-amber-400/50 text-amber-400'
+                          : 'text-neutral-700'
+                      }`}
+                    />
+                  );
+                })}
+              </div>
+              <span className="text-[10px] font-mono text-neutral-400">
+                ({reviewCount} {reviewCount === 1 ? 'recensione' : 'recensioni'})
+              </span>
+            </div>
+          )}
 
           <button
             type="button"

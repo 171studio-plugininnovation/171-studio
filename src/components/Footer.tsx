@@ -38,7 +38,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
             </div>
             
             <p className="text-xs text-neutral-400 font-light max-w-sm mt-1 leading-relaxed">
-              Studio di registrazione professionale a Messina, acustica di precisione e progettazione di 171 Plugin Innovation.
+              Studio di registrazione professionale a Messina, acustica di precisione e progettazione di 171PluginInnovation.
             </p>
           </div>
 
@@ -74,7 +74,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
                 onClick={() => onNavigate('plugin-innovation')}
                 className="text-left hover:text-amber-400 transition-colors focus:outline-none cursor-pointer"
               >
-                171 Plugin Innovation
+                171PluginInnovation
               </button>
               <button
                 type="button"
@@ -140,7 +140,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
           <div className="flex items-center gap-4">
             <span>STUDIO DI REGISTRAZIONE</span>
             <span>•</span>
-            <span className="text-amber-400/80">171 PLUGIN INNOVATION</span>
+            <span className="text-amber-400/80">171PluginInnovation</span>
           </div>
         </div>
       </div>

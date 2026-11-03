@@ -229,7 +229,7 @@ export const ClientAccountPage: React.FC<ClientAccountPageProps> = ({ onNavigate
             <div className="p-4 rounded-2xl bg-neutral-950 border border-neutral-800 space-y-1">
               <FileAudio className="w-4 h-4 text-emerald-400 mb-1" />
               <span className="text-white font-bold block">I Tuoi File & Plugin</span>
-              <span className="text-neutral-400 text-[11px] block">Archivio Stems, Mix/Master WAV e licenze 171 Plugin Innovation.</span>
+              <span className="text-neutral-400 text-[11px] block">Archivio Stems, Mix/Master WAV e licenze 171PluginInnovation.</span>
             </div>
             <div className="p-4 rounded-2xl bg-neutral-950 border border-neutral-800 space-y-1">
               <Activity className="w-4 h-4 text-blue-400 mb-1" />
@@ -284,7 +284,7 @@ export const ClientAccountPage: React.FC<ClientAccountPageProps> = ({ onNavigate
     );
   }, [albumOrders, currentUser]);
 
-  // Plugin Donations belonging to current user (171 Plugin Innovation)
+  // Plugin Donations belonging to current user (171PluginInnovation)
   const userDonations: PluginDonationRecord[] = useMemo(() => {
     if (!currentUser) return [];
     const uEmail = currentUser.email.toLowerCase().trim();
@@ -1513,7 +1513,7 @@ Data: ${new Date(file.createdAt).toLocaleString('it-IT')}
               </div>
               <div>
                 <span className="text-[10px] font-mono uppercase tracking-widest text-amber-400 font-bold block">
-                  171 PLUGIN INNOVATION • EARLY SUPPORTER PROGRAM
+                  171PluginInnovation • EARLY SUPPORTER PROGRAM
                 </span>
                 <h3 className="text-xl sm:text-2xl font-heading font-black text-white">
                   Le Mie Donazioni & Early Supporter Lifetime Pass
@@ -1547,10 +1547,10 @@ Data: ${new Date(file.createdAt).toLocaleString('it-IT')}
                   </span>
                 </div>
                 <h4 className="text-lg font-heading font-black text-white">
-                  Early Supporter Ufficiale di 171 Plugin Innovation
+                  Early Supporter Ufficiale di 171PluginInnovation
                 </h4>
                 <p className="text-xs text-neutral-300 font-sans leading-relaxed max-w-2xl">
-                  Il tuo account è ufficialmente registrato come <strong>Early Supporter</strong>! Hai diritto all'<strong>Accesso a Vita</strong> ad ogni singolo plugin, espansione o algoritmo DSP sviluppato in futuro da 171 Plugin Innovation, inclusi tutti i futuri aggiornamenti e release commerciali a pagamento!
+                  Il tuo account è ufficialmente registrato come <strong>Early Supporter</strong>! Hai diritto all'<strong>Accesso a Vita</strong> ad ogni singolo plugin, espansione o algoritmo DSP sviluppato in futuro da 171PluginInnovation, inclusi tutti i futuri aggiornamenti e release commerciali a pagamento!
                 </p>
                 <div className="flex flex-wrap items-center gap-3 text-[11px] font-mono text-amber-400/90 pt-0.5">
                   <span>Totale donazioni accumulate: <strong>€{userCumulativeStats.totalDonated.toFixed(2)}</strong></span>
@@ -1585,7 +1585,7 @@ Data: ${new Date(file.createdAt).toLocaleString('it-IT')}
                     Grazie per il supporto, le donazioni sono cumulabili: quando arriverai a 20 dollari sbloccherai tutti i plugin
                   </h4>
                   <p className="text-xs text-neutral-300 font-sans leading-relaxed">
-                    La suite è attualmente in <strong>Early Access gratuito</strong> per permettere lo sviluppo di plugin sempre più precisi e potenti. Con una o più donazioni cumulabili fino a raggiungere 20$ (o 20€) ti garantisci l'<strong>Accesso a Vita</strong> e copie gratuite di tutti i futuri plugin commerciali sviluppati da 171 Plugin Innovation!
+                    La suite è attualmente in <strong>Early Access gratuito</strong> per permettere lo sviluppo di plugin sempre più precisi e potenti. Con una o più donazioni cumulabili fino a raggiungere 20$ (o 20€) ti garantisci l'<strong>Accesso a Vita</strong> e copie gratuite di tutti i futuri plugin commerciali sviluppati da 171PluginInnovation!
                   </p>
                 </div>
 
@@ -2810,7 +2810,7 @@ Data: ${new Date(file.createdAt).toLocaleString('it-IT')}
         </div>
       )}
 
-      {/* SECTION 4: I PLUGIN SCARICATI (171 PLUGIN INNOVATION) */}
+      {/* SECTION 4: I PLUGIN SCARICATI (171PluginInnovation) */}
       {(activeSection === 'overview' || activeSection === 'plugins') && (
         <div className="p-6 sm:p-8 rounded-3xl bg-neutral-900/80 border border-neutral-800 space-y-6 mb-12 shadow-xl">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-800 pb-4">
@@ -2822,7 +2822,7 @@ Data: ${new Date(file.createdAt).toLocaleString('it-IT')}
                 I Tuoi Plugin Scaricati ({userPlugins.length})
               </h2>
               <p className="text-xs font-mono text-neutral-400">
-                Elenco dei plugin VST3 / AU / AAX della suite 171 Plugin Innovation associati al tuo account.
+                Elenco dei plugin VST3 / AU / AAX della suite 171PluginInnovation associati al tuo account.
               </p>
             </div>
 
@@ -2968,7 +2968,7 @@ Data: ${new Date(file.createdAt).toLocaleString('it-IT')}
               </div>
               <div>
                 <span className="text-[10px] font-mono uppercase text-red-400 tracking-widest font-bold block">
-                  171 PLUGIN INNOVATION • BUG REPORTING LAB
+                  171PluginInnovation • BUG REPORTING LAB
                 </span>
                 <h3 className="text-xl sm:text-2xl font-heading font-black text-white">
                   Report Plugin Bug & Help Us

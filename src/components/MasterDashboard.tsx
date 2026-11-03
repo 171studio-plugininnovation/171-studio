@@ -341,7 +341,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
     };
     setFormData(updated);
     updateSiteContent(updated);
-    setDeskActionNotice('Testi di "171 Plugin Innovation" ripristinati ai valori di fabbrica e sincronizzati su Firestore!');
+    setDeskActionNotice('Testi di "171PluginInnovation" ripristinati ai valori di fabbrica e sincronizzati su Firestore!');
     setTimeout(() => setDeskActionNotice(null), 4000);
   };
 
@@ -1550,7 +1550,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
             {[
               { id: 'frontpage', label: '1. Frontpage (Home)', icon: Sparkles },
               { id: 'chi-siamo', label: '2. Chi Siamo', icon: User },
-              { id: 'plugin-innovation', label: '3. 171 Plugin Innovation', icon: Cpu },
+              { id: 'plugin-innovation', label: '3. 171PluginInnovation', icon: Cpu },
               { id: 'prenota-sessione', label: '4. Prenota Sessione', icon: Calendar },
               { id: 'album', label: '5. Album "The God Cypher"', icon: Disc },
             ].map((sub) => {
@@ -1633,7 +1633,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
                       </p>
                     </div>
                     <div className="p-3.5 rounded-xl bg-neutral-950/80 border border-neutral-800 space-y-1">
-                      <span className="text-[10px] font-mono text-amber-400 uppercase font-bold">3. 171 Plugin Innovation</span>
+                      <span className="text-[10px] font-mono text-amber-400 uppercase font-bold">3. 171PluginInnovation</span>
                       <p className="text-[11px] text-neutral-300 line-clamp-2">
                         {formData.frontpageNavPluginsDesc || 'I nostri plugin DSP freeware per la tua DAW.'}
                       </p>
@@ -1813,7 +1813,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
 
                   <div>
                     <label className="block text-xs font-mono uppercase text-neutral-400 mb-1">
-                      Descrizione Scheda "171 Plugin Innovation"
+                      Descrizione Scheda "171PluginInnovation"
                     </label>
                     <textarea
                       rows={2}
@@ -2171,13 +2171,13 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
           {cmsSubTab === 'plugin-innovation' && (
             <div className="space-y-6 animate-in fade-in duration-200">
               
-              {/* Live Preview Card for 171 Plugin Innovation */}
+              {/* Live Preview Card for 171PluginInnovation */}
               <div className="p-5 sm:p-6 rounded-3xl bg-neutral-950/90 border border-amber-500/30 backdrop-blur-xl space-y-4 shadow-xl">
                 <div className="flex items-center justify-between border-b border-neutral-800 pb-3">
                   <div className="flex items-center gap-2">
                     <Eye className="w-4 h-4 text-amber-400" />
                     <span className="text-xs font-mono uppercase text-amber-400 font-bold tracking-wider">
-                      Anteprima Live "171 Plugin Innovation"
+                      Anteprima Live "171PluginInnovation"
                     </span>
                   </div>
                   <span className="text-[10px] font-mono text-neutral-400">
@@ -2231,7 +2231,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
               <div className="p-6 sm:p-8 rounded-3xl bg-neutral-900/60 border border-neutral-800 space-y-4">
                 <h3 className="text-lg font-heading font-bold text-white flex items-center gap-2">
                   <Cpu className="w-5 h-5 text-amber-400" />
-                  <span>171 Plugin Innovation: Titoli & Presentazione</span>
+                  <span>171PluginInnovation: Titoli & Presentazione</span>
                 </h3>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -5912,7 +5912,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
                 </h3>
               </div>
               <p className="text-xs text-neutral-400 font-mono mt-1">
-                Monitoraggio transazioni PayPal, registrazione donazioni e sblocco Lifetime Pass (&ge; 20€) per 171 Plugin Innovation.
+                Monitoraggio transazioni PayPal, registrazione donazioni e sblocco Lifetime Pass (&ge; 20€) per 171PluginInnovation.
               </p>
             </div>
 

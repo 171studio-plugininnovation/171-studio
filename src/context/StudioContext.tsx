@@ -688,7 +688,7 @@ const DEFAULT_PLUGINS: PluginItem[] = [
 const DEFAULT_CONTENT: SiteContent = {
   studioName: '171 STUDIO',
   studioBadge: 'BOUTIQUE PROJECT STUDIO • MESSINA',
-  heroTagline: 'Acustica trattata di precisione, registrazione con feedback diretto e sviluppo di 171 Plugin Innovation.',
+  heroTagline: 'Acustica trattata di precisione, registrazione con feedback diretto e sviluppo di 171PluginInnovation.',
   aboutTitle: 'Chi Siamo',
   aboutIntro: '171 Studio è uno spazio di produzione, registrazione e audio engineering a Messina, nato dalla passione per la purezza del suono e la ricerca costante dell\'identità sonora di ogni artista.',
   aboutPhilosophyTitle: 'La Nostra Filosofia: Il Suono Come Dialogo',
@@ -718,7 +718,7 @@ const DEFAULT_CONTENT: SiteContent = {
   registrationDiscountCode: 'BENVENUTO5',
 
   // 1. Frontpage / Home
-  frontpageHeroSubtitle: 'Acustica trattata di precisione, registrazione con feedback diretto e sviluppo di 171 Plugin Innovation.',
+  frontpageHeroSubtitle: 'Acustica trattata di precisione, registrazione con feedback diretto e sviluppo di 171PluginInnovation.',
   frontpageSpecs: DEFAULT_FRONTPAGE_SPECS,
   frontpageNavChiSiamoDesc: 'Scopri la filosofia acustica, la registrazione a stretto contatto con feedback diretto e lo spazio di 171 Studio.',
   frontpageNavPrenotaDesc: 'Pianifica la tua sessione in studio: registrazione vocale, missaggio, mastering e produzioni su misura.',
@@ -730,7 +730,7 @@ const DEFAULT_CONTENT: SiteContent = {
   aboutCtaTitle: 'VUOI REGISTRARE O PARLARE DEL TUO PROGETTO?',
   aboutCtaDesc: 'Vieni a trovarci in studio a Messina o prenota subito la tua sessione.',
 
-  // 3. 171 Plugin Innovation
+  // 3. 171PluginInnovation
   pluginIntroBadge: 'SOFTWARE DSP & INGEGNERIA AUDIO • 100% FREEWARE',
   pluginIntroTitle: '171 Plugin Innovatio',
   pluginIntroSubtitle: "I nostri plugin audio di nuova generazione: strumenti digitali proprietari gratuiti concepiti e calibrati all'interno di 171 Studio per offrire una qualità da studio professionale direttamente nella tua DAW.",
@@ -1273,7 +1273,7 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     } catch {}
   }, [albumOrders]);
 
-  // Plugin Donations & Early Supporter Pass state ("171 Plugin Innovation" Support)
+  // Plugin Donations & Early Supporter Pass state ("171PluginInnovation" Support)
   const [pluginDonations, setPluginDonations] = useState<PluginDonationRecord[]>(() => {
     try {
       const saved = localStorage.getItem('171_plugin_donations');
@@ -3845,8 +3845,8 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const donationCode = `171-DON-${Date.now().toString().slice(-4)}-${Math.floor(100 + Math.random() * 900)}`;
 
     const donationItemName = isEarlyPass
-      ? '171 Plugin Innovation - Early Supporter Lifetime Pass'
-      : '171 Plugin Innovation - Donazione Sviluppo';
+      ? '171PluginInnovation - Early Supporter Lifetime Pass'
+      : '171PluginInnovation - Donazione Sviluppo';
 
     const newDonation: PluginDonationRecord = {
       id: `don-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
@@ -3861,7 +3861,7 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       status: 'in_attesa_pagamento',
       paymentStatus: 'in_attesa',
       isEarlySupporterPass: isEarlyPass,
-      notes: data.notes?.trim() || (isEarlyPass ? 'Early Supporter Lifetime Pass (Sblocca badge e accesso a vita a tutti i plugin futuri)' : 'Supporto Sviluppo 171 Plugin Innovation - Donazione cumulabile'),
+      notes: data.notes?.trim() || (isEarlyPass ? 'Early Supporter Lifetime Pass (Sblocca badge e accesso a vita a tutti i plugin futuri)' : 'Supporto Sviluppo 171PluginInnovation - Donazione cumulabile'),
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };

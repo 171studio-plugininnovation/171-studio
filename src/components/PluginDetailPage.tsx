@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   ArrowLeft, Cpu, Sparkles, Zap, Flame, Shield, Sliders, Download,
   Check, Mail, Star, Heart, MessageSquare, ExternalLink, FileArchive,
@@ -45,6 +45,20 @@ export const PluginDetailPage: React.FC<PluginDetailPageProps> = ({
   } = useStudio();
 
   const plugin = siteContent.plugins.find((p) => p.id === pluginId) || siteContent.plugins[0];
+
+  // Real-time reviews and rating calculation from verified feedback
+  const currentPluginFeedbacks = useMemo(() => {
+    return pluginFeedbacks.filter(
+      (f) => f.pluginId === plugin?.id || f.pluginName === plugin?.name
+    );
+  }, [pluginFeedbacks, plugin?.id, plugin?.name]);
+
+  const reviewCount = currentPluginFeedbacks.length;
+  const averageRating = useMemo(() => {
+    if (reviewCount === 0) return null;
+    const total = currentPluginFeedbacks.reduce((acc, curr) => acc + (curr.rating || 5), 0);
+    return Math.round((total / reviewCount) * 10) / 10;
+  }, [currentPluginFeedbacks, reviewCount]);
 
   // Active tab in Waves-style product page
   const [activeTab, setActiveTab] = useState<'overview' | 'changelog' | 'tech' | 'specs' | 'feedback'>('overview');
@@ -270,7 +284,7 @@ export const PluginDetailPage: React.FC<PluginDetailPageProps> = ({
             className="hover:text-amber-400 transition-colors cursor-pointer flex items-center gap-1"
           >
             <Sliders className="w-3.5 h-3.5 text-amber-400" />
-            <span>171 Plugin Innovation</span>
+            <span>171PluginInnovation</span>
           </button>
           <span>/</span>
           <span className="text-amber-300 font-bold font-heading">{plugin.name}</span>
@@ -411,6 +425,62 @@ export const PluginDetailPage: React.FC<PluginDetailPageProps> = ({
                 <Check className="w-3.5 h-3.5" />
                 <span>Freeware Illimitato</span>
               </span>
+            </div>
+
+            {/* Real Rating & Review Count Header Row */}
+            <div className="flex items-center gap-2.5 pt-1 text-xs font-mono flex-wrap">
+              {(!reviewCount || reviewCount === 0) ? (
+                <div className="flex items-center gap-2 flex-wrap">
+                  <div className="flex items-center gap-0.5 text-neutral-700">
+                    {[1, 2, 3, 4, 5].map((s) => (
+                      <Star key={s} className="w-3.5 h-3.5 text-neutral-700" />
+                    ))}
+                  </div>
+                  <span className="text-neutral-400 font-semibold">Nessuna recensione</span>
+                  <span className="text-neutral-600">•</span>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('feedback')}
+                    className="text-amber-400 hover:text-amber-300 underline font-medium cursor-pointer"
+                  >
+                    Sii il primo a recensire
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-sm font-bold text-white">{averageRating?.toFixed(1)}</span>
+                  <div className="flex items-center gap-0.5 text-amber-400">
+                    {[1, 2, 3, 4, 5].map((starIdx) => {
+                      const ratingVal = averageRating || 5;
+                      const isFilled = ratingVal >= starIdx;
+                      const isHalf = !isFilled && ratingVal >= starIdx - 0.5;
+                      return (
+                        <Star
+                          key={starIdx}
+                          className={`w-3.5 h-3.5 ${
+                            isFilled
+                              ? 'fill-amber-400 text-amber-400'
+                              : isHalf
+                              ? 'fill-amber-400/50 text-amber-400'
+                              : 'text-neutral-700'
+                          }`}
+                        />
+                      );
+                    })}
+                  </div>
+                  <span className="text-neutral-300 font-medium">
+                    ({reviewCount} {reviewCount === 1 ? 'recensione' : 'recensioni'})
+                  </span>
+                  <span className="text-neutral-600">•</span>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('feedback')}
+                    className="text-amber-400 hover:text-amber-300 underline font-medium cursor-pointer"
+                  >
+                    Leggi recensioni o aggiungi la tua
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 
@@ -639,7 +709,7 @@ export const PluginDetailPage: React.FC<PluginDetailPageProps> = ({
             }`}
           >
             <MessageSquare className="w-4 h-4" />
-            <span>Recensioni & Bug Report</span>
+            <span>Recensioni & Bug Report ({reviewCount})</span>
           </button>
         </div>
       </div>
@@ -769,7 +839,7 @@ export const PluginDetailPage: React.FC<PluginDetailPageProps> = ({
                   Zero Latency Live Processing
                 </span>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center font-mono">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-center font-mono">
                 <div className="p-3.5 rounded-2xl bg-black border border-neutral-800 relative">
                   <span className="text-[8.5px] text-neutral-500 uppercase block">STAGE 01</span>
                   <span className="text-xs font-bold text-white block mt-0.5">INPUT BUFFER</span>
@@ -991,6 +1061,86 @@ export const PluginDetailPage: React.FC<PluginDetailPageProps> = ({
                 </div>
               </div>
 
+              {/* Reviews List & Producer Community Feedback */}
+              <div className="md:col-span-2 space-y-4 pt-6 border-t border-neutral-800">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <MessageSquare className="w-4 h-4 text-amber-400" />
+                    <h4 className="font-heading font-black text-lg text-white">
+                      Recensioni Verificate dei Produttori ({reviewCount})
+                    </h4>
+                  </div>
+                  {averageRating && (
+                    <div className="flex items-center gap-2 text-xs font-mono">
+                      <span className="text-white font-bold text-sm">{averageRating.toFixed(1)} / 5</span>
+                      <div className="flex items-center text-amber-400">
+                        {[1, 2, 3, 4, 5].map((st) => (
+                          <Star
+                            key={st}
+                            className={`w-3.5 h-3.5 ${
+                              averageRating >= st ? 'fill-amber-400 text-amber-400' : 'text-neutral-700'
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {reviewCount === 0 ? (
+                  <div className="p-8 rounded-2xl bg-black/60 border border-neutral-800 text-center space-y-2">
+                    <Star className="w-8 h-8 text-neutral-700 mx-auto" />
+                    <h5 className="font-heading font-bold text-base text-neutral-300">
+                      Nessuna recensione ancora
+                    </h5>
+                    <p className="text-xs text-neutral-400 font-mono max-w-md mx-auto">
+                      Non ci sono ancora recensioni pubblicate per {plugin.name}. Testa il plugin nel tuo prossimo mix o master e lascia la tua valutazione qui sopra!
+                    </p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {currentPluginFeedbacks.map((fb) => (
+                      <div
+                        key={fb.id}
+                        className="p-4 rounded-2xl bg-black/60 border border-neutral-800/90 space-y-2 hover:border-amber-500/30 transition-all"
+                      >
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-2">
+                            <span className="w-7 h-7 rounded-full bg-neutral-800 text-amber-400 font-bold text-xs flex items-center justify-center font-mono">
+                              {fb.userName ? fb.userName[0].toUpperCase() : 'P'}
+                            </span>
+                            <div>
+                              <span className="text-xs font-bold text-white block leading-none">
+                                {fb.userName || 'Produttore 171'}
+                              </span>
+                              <span className="text-[10px] font-mono text-neutral-500 block mt-0.5">
+                                DAW: {fb.dawUsed}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="flex items-center text-amber-400">
+                            {[1, 2, 3, 4, 5].map((st) => (
+                              <Star
+                                key={st}
+                                className={`w-3 h-3 ${
+                                  fb.rating >= st ? 'fill-amber-400 text-amber-400' : 'text-neutral-700'
+                                }`}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                        <p className="text-xs text-neutral-300 font-light leading-relaxed pl-9">
+                          &laquo;{fb.comment}&raquo;
+                        </p>
+                        <div className="text-[9px] font-mono text-neutral-600 pl-9">
+                          {new Date(fb.createdAt).toLocaleDateString('it-IT', { day: '2-digit', month: 'short', year: 'numeric' })}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
             </div>
           </div>
         )}
@@ -1002,7 +1152,7 @@ export const PluginDetailPage: React.FC<PluginDetailPageProps> = ({
         <div className="flex items-center justify-between">
           <div>
             <span className="text-[10px] font-mono font-bold text-amber-400 tracking-wider uppercase block">
-              SUITE COMPLETA 171 PLUGIN INNOVATION
+              171PluginInnovation • SUITE AUDIO DSP
             </span>
             <h3 className="font-heading font-black text-2xl text-white mt-0.5">
               Esplora Altri Plugin della Collezione

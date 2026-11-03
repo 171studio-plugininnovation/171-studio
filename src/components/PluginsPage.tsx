@@ -356,7 +356,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
 
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-[11px] font-mono font-bold uppercase tracking-widest">
               <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-              <span>171 PLUGIN INNOVATION • FREE DOWNLOAD</span>
+              <span>171PluginInnovation • FREE DOWNLOAD</span>
             </span>
 
             <h1 className="text-2xl sm:text-4xl font-heading font-black text-white leading-tight">
@@ -366,7 +366,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
 
             <div className="p-5 rounded-2xl bg-neutral-900/90 border border-amber-500/30 text-sm sm:text-base text-neutral-200 leading-relaxed font-sans space-y-2">
               <p>
-                La suite 171 Plugin Innovation è attualmente in <strong>Early Access di Development gratuito</strong>: questo permette alla community di testare sul campo gli algoritmi DSP e aiutarci a renderli sempre più precisi, musicali e potenti.
+                La suite 171PluginInnovation è attualmente in <strong>Early Access di Development gratuito</strong>: questo permette alla community di testare sul campo gli algoritmi DSP e aiutarci a renderli sempre più precisi, musicali e potenti.
               </p>
               <p className="text-amber-300 font-medium">
                 Con una donazione di <strong>20$ (o 20€)</strong> diventi <strong>Early Supporter</strong> con <strong>Accesso a Vita</strong> a ogni plugin futuro. Inoltre, chi invia feedback e bug verificati riceverà <strong>buoni sconto e plugin commerciali gratis</strong>!
@@ -577,7 +577,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
                       <span>🌟 BADGE EARLY SUPPORTER ATTIVO</span>
                     </div>
                     <p className="text-xs text-neutral-200 leading-relaxed font-sans">
-                      Il tuo account (<strong>{currentUser.email}</strong>) dispone del <strong>Lifetime Supporter Pass</strong> convalidato. Hai accesso garantito a vita a ogni singolo plugin commerciale, aggiornamento ed espansione DSP di 171 Plugin Innovation!
+                      Il tuo account (<strong>{currentUser.email}</strong>) dispone del <strong>Lifetime Supporter Pass</strong> convalidato. Hai accesso garantito a vita a ogni singolo plugin commerciale, aggiornamento ed espansione DSP di 171PluginInnovation!
                     </p>
                     <div className="p-2.5 rounded-lg bg-black/60 border border-amber-500/30 flex items-center justify-between text-xs font-mono">
                       <span className="text-neutral-400">Totale donazioni registrate:</span>
@@ -1139,7 +1139,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
                 </h3>
 
                 <p className="text-sm text-neutral-300 font-light leading-relaxed">
-                  Abbiamo caricato e certificato le nuove release Windows per l'intera suite 171 Plugin Innovation. In evidenza su <strong className="text-amber-400 font-semibold">171 EasyVoice v1.0.1 Patch 2</strong> (eliminato il chattering dell'expander vocale su code lunghe, introdotte dinamiche seriali 1176+LA2A e 8 preamp analogici), <strong className="text-amber-400 font-semibold">171 SpaceLuxe v1.1.0</strong> (sbloccato ora con fix allpass tail glitch e nuova GUI), e fix DSP su <strong className="text-amber-400 font-semibold">171 RealTune</strong>, <strong className="text-amber-400 font-semibold">171 DriveOptocom</strong>, <strong className="text-amber-400 font-semibold">CleanDrive</strong>, <strong className="text-amber-400 font-semibold">CleanReso</strong> e <strong className="text-amber-400 font-semibold">PerfectPre</strong>.
+                  Abbiamo caricato e certificato le nuove release Windows per l'intera suite 171PluginInnovation. In evidenza su <strong className="text-amber-400 font-semibold">171 EasyVoice v1.0.1 Patch 2</strong> (eliminato il chattering dell'expander vocale su code lunghe, introdotte dinamiche seriali 1176+LA2A e 8 preamp analogici), <strong className="text-amber-400 font-semibold">171 SpaceLuxe v1.1.0</strong> (sbloccato ora con fix allpass tail glitch e nuova GUI), e fix DSP su <strong className="text-amber-400 font-semibold">171 RealTune</strong>, <strong className="text-amber-400 font-semibold">171 DriveOptocom</strong>, <strong className="text-amber-400 font-semibold">CleanDrive</strong>, <strong className="text-amber-400 font-semibold">CleanReso</strong> e <strong className="text-amber-400 font-semibold">PerfectPre</strong>.
                 </p>
 
                 <div className="flex flex-wrap items-center gap-4 pt-2 text-xs font-mono text-neutral-400">
@@ -1167,7 +1167,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
             {/* Top row: Search Bar + Live Counter + Sort Options */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               {/* Search input */}
-              <div className="relative flex-1 max-w-md">
+              <div className="relative flex-1 w-full md:max-w-md">
                 <Search className="w-4 h-4 text-amber-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                 <input
                   type="text"
@@ -1188,10 +1188,10 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
               </div>
 
               {/* Sorting and Pro Telemetry */}
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-1.5 text-xs font-mono text-neutral-400">
+              <div className="flex items-center gap-3 overflow-x-auto no-scrollbar justify-between md:justify-end w-full md:w-auto">
+                <div className="flex items-center gap-1.5 text-xs font-mono text-neutral-400 shrink-0">
                   <span className="hidden sm:inline">Ordina:</span>
-                  <div className="flex items-center gap-1 p-1 rounded-xl bg-black border border-neutral-800">
+                  <div className="flex items-center gap-1 p-1 rounded-xl bg-black border border-neutral-800 shrink-0">
                     <button
                       type="button"
                       onClick={() => setSortBy('featured')}
@@ -1231,7 +1231,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
             </div>
 
             {/* Bottom row: Pro Category Tabs */}
-            <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-neutral-800/80">
+            <div className="flex items-center gap-2 pt-2 border-t border-neutral-800/80 overflow-x-auto pb-1.5 no-scrollbar sm:flex-wrap">
               {[
                 { id: 'all', label: 'Tutti i Plugin', icon: Layers, count: siteContent.plugins.length },
                 { id: 'favorites', label: 'Preferiti', icon: Heart, count: favoritePluginIds.length },
@@ -1247,7 +1247,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
                     key={tab.id}
                     type="button"
                     onClick={() => setCategoryFilter(tab.id as any)}
-                    className={`px-3.5 py-2 rounded-xl text-xs font-mono transition-all cursor-pointer flex items-center gap-2 ${
+                    className={`px-3.5 py-2 rounded-xl text-xs font-mono transition-all cursor-pointer flex items-center gap-2 shrink-0 whitespace-nowrap ${
                       isActive
                         ? 'bg-gradient-to-r from-amber-400 to-amber-500 text-black font-bold shadow-md shadow-amber-500/25 scale-[1.02]'
                         : 'bg-neutral-950/80 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-800/90'
@@ -1325,6 +1325,15 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
                   const countdown = plugin.unlockDate ? getCountdown(plugin.unlockDate) : null;
                   const isLocked = countdown ? !countdown.isUnlocked : (plugin.status === 'IN ARRIVO');
 
+                  // Real reviews calculation from actual feedback store
+                  const feedbacksForPlugin = pluginFeedbacks.filter(
+                    (f) => f.pluginId === plugin.id || f.pluginName === plugin.name
+                  );
+                  const reviewCount = feedbacksForPlugin.length;
+                  const averageRating = reviewCount > 0
+                    ? Math.round((feedbacksForPlugin.reduce((acc, curr) => acc + (curr.rating || 5), 0) / reviewCount) * 10) / 10
+                    : null;
+
                   return (
                     <RackPluginCard
                       key={plugin.id}
@@ -1335,6 +1344,8 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
                       onToggleFavorite={toggleFavoritePlugin}
                       onSelectPlugin={handleSelectPlugin}
                       onOpenPreviewModal={(url) => setPreviewModalImage(url)}
+                      reviewCount={reviewCount}
+                      averageRating={averageRating}
                     />
                   );
                 })}
@@ -1359,7 +1370,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
               </h4>
 
               <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed font-sans">
-                La suite di 171 Plugin Innovation è attualmente disponibile in <strong>Early Access di Development</strong>: la community testa sul campo gli algoritmi DSP nelle proprie DAW e ci aiuta a perfezionare ogni processore analogico virtuale. Con un contributo di <strong>20$ (o 20€)</strong> sblocchi il <strong>Lifetime Pass a vita</strong> per tutti i plugin futuri!
+                La suite di 171PluginInnovation è attualmente disponibile in <strong>Early Access di Development</strong>: la community testa sul campo gli algoritmi DSP nelle proprie DAW e ci aiuta a perfezionare ogni processore analogico virtuale. Con un contributo di <strong>20$ (o 20€)</strong> sblocchi il <strong>Lifetime Pass a vita</strong> per tutti i plugin futuri!
               </p>
 
               {/* Supporter Key Benefits Checklist */}
@@ -1521,7 +1532,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
                 <span>Accesso a Vita Garantito & Cumulo Donazioni:</span>
               </div>
               <p className="text-[11.5px] text-white leading-relaxed font-sans">
-                <strong>Grazie per il supporto, le donazioni sono cumulabili: quando arriverai a 20 dollari (o 20€) sbloccherai tutti i plugin</strong> a vita, inclusi tutti i futuri algoritmi DSP e release commerciali di 171 Plugin Innovation!
+                <strong>Grazie per il supporto, le donazioni sono cumulabili: quando arriverai a 20 dollari (o 20€) sbloccherai tutti i plugin</strong> a vita, inclusi tutti i futuri algoritmi DSP e release commerciali di 171PluginInnovation!
               </p>
 
               {/* Real-time cumulative progress bar */}
@@ -1729,7 +1740,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
                   <Sparkles className="w-4 h-4 text-amber-400" />
                   <div>
                     <h3 className="text-sm font-heading font-black text-white flex items-center gap-2">
-                      <span>{activePluginPreview?.name || '171 Plugin Innovation'}</span>
+                      <span>{activePluginPreview?.name || '171PluginInnovation'}</span>
                       {activePluginPreview?.badge && (
                         <span className="text-[10px] font-mono text-amber-400 font-bold px-2 py-0.5 rounded bg-amber-400/10 border border-amber-400/20">
                           {activePluginPreview.badge}

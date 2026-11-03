@@ -44,8 +44,8 @@ export const PAGES: Record<PageId, PageDefinition> = {
   },
   'plugin-innovation': {
     id: 'plugin-innovation',
-    title: '171 Plugin Innovation',
-    navLabel: '171 Plugin Innovation',
+    title: '171PluginInnovation',
+    navLabel: '171PluginInnovation',
     subtitle: 'I Nostri Plugin Audio di Nuova Generazione',
     description: 'Strumenti DSP e plugin innovativi sviluppati da 171 Studio per produttori e sound designer.',
     badge: 'AUDIO DSP & TOOLS',

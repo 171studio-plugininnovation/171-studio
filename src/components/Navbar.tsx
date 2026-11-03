@@ -58,7 +58,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'the-god-cypher', label: 'The God Cypher', badge: 'ALBUM' },
     { id: 'chi-siamo', label: 'Chi Siamo' },
     { id: 'prenota-sessione', label: 'Prenota Sessione' },
-    { id: 'plugin-innovation', label: '171 Plugin Innovation', badge: 'DSP' },
+    { id: 'plugin-innovation', label: '171PluginInnovation', badge: 'DSP' },
     {
       id: 'strumenti-online',
       label: 'Strumenti Online',
@@ -428,7 +428,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <div className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse" />
                   <span className="font-heading font-black text-sm uppercase tracking-widest text-amber-400">
-                    171 Plugin Innovation • Suite Audio DSP
+                    171PluginInnovation • Suite Audio DSP
                   </span>
                   <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/40">
                     VST3 & Standalone 64-bit
@@ -709,7 +709,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   {isActive && <span className="text-xs text-amber-400 font-mono">ATTIVO</span>}
                 </button>
 
-                {/* Mobile sub-items for 171 Plugin Innovation */}
+                {/* Mobile sub-items for 171PluginInnovation */}
                 {item.id === 'plugin-innovation' && mobilePluginsExpanded && (
                   <div className="pl-4 pr-2 py-2 space-y-1.5 bg-neutral-950/80 rounded-xl border border-amber-500/30 my-1 animate-in fade-in duration-200">
                     <button

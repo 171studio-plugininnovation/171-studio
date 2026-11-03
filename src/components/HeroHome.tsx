@@ -62,7 +62,7 @@ export const HeroHome: React.FC<HeroHomeProps> = ({ onNavigate }) => {
     },
     {
       id: 'plugin-innovation' as PageId,
-      title: '171 Plugin Innovation',
+      title: '171PluginInnovation',
       subtitle: 'Tecnologia Sonora Proprietaria',
       description: siteContent.frontpageNavPluginsDesc || 'I nostri plugin DSP progettati per elevare il workflow, la purezza vocale e il calore analogico del mix moderno.',
       icon: Cpu,
@@ -78,7 +78,7 @@ export const HeroHome: React.FC<HeroHomeProps> = ({ onNavigate }) => {
     : [
         { id: 'spec-1', label: 'RECORDING ROOM', title: 'Vocal & Instruments' },
         { id: 'spec-2', label: 'MIX & MASTER', title: 'Analog & Digital' },
-        { id: 'spec-3', label: '171 PLUGINS', title: 'Innovatio DSP' },
+        { id: 'spec-3', label: '171PluginInnovation', title: 'Innovatio DSP' },
         { id: 'spec-4', label: 'FEEDBACK DIRETTO', title: 'Ambiente Trattato' },
       ];
 

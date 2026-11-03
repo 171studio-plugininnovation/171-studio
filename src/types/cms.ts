@@ -451,7 +451,7 @@ export interface SiteContent {
   aboutCtaTitle?: string;
   aboutCtaDesc?: string;
 
-  // 3. 171 Plugin Innovation
+  // 3. 171PluginInnovation
   pluginIntroBadge?: string;
   pluginIntroTitle?: string;
   pluginIntroSubtitle?: string;

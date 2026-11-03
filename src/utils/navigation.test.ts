@@ -13,7 +13,7 @@ test('getPageDefinition returns exact page definition when found', () => {
 
   const plugins = getPageDefinition('plugin-innovation');
   assert.equal(plugins.id, 'plugin-innovation');
-  assert.equal(plugins.title, '171 Plugin Innovation');
+  assert.equal(plugins.title, '171PluginInnovation');
 });
 
 test('getPageDefinition falls back to home on invalid input', () => {

@@ -43,11 +43,11 @@ export function getPayPalPaymentUrl(
 }
 
 /**
- * Generates a PayPal Free Donation URL for 171 Plugin Innovation
+ * Generates a PayPal Free Donation URL for 171PluginInnovation
  */
 export function getPayPalDonationUrl(
   amount?: number,
-  pluginName: string = '171 Plugin Innovation',
+  pluginName: string = '171PluginInnovation',
   paypalEmail: string = STUDIO_PAYPAL_EMAIL
 ): string {
   const encodedEmail = encodeURIComponent(paypalEmail);
@@ -295,7 +295,7 @@ export function triggerPluginZipFileDownload(plugin: PluginItem, platform: 'win'
 
   // Otherwise construct a valid standard PKZIP archive containing the README & VST3/AU info
   const readmeContent = `================================================================
-171 PLUGIN INNOVATION — PACCHETTO UFFICIALE INSTALLAZIONE (.ZIP)
+171PluginInnovation — PACCHETTO UFFICIALE INSTALLAZIONE (.ZIP)
 ================================================================
 Plugin: ${plugin.name}
 Versione: ${plugin.version || '1.0.0'}

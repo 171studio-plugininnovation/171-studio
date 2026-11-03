@@ -26,7 +26,7 @@ export const PlaceholderPage: React.FC<PlaceholderPageProps> = ({ pageId, onNavi
           status: 'SISTEMA DI PRENOTAZIONE IN ATTIVAZIONE',
           tag: 'RECORDING & MASTERING SUITE',
           nextPage: 'plugin-innovation' as PageId,
-          nextLabel: '171 Plugin Innovation',
+          nextLabel: '171PluginInnovation',
         };
       case 'plugin-innovation':
         return {
