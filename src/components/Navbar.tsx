@@ -465,10 +465,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="font-heading font-bold text-sm text-white group-hover:text-amber-400 transition-colors">171 VocalCraft</span>
-                        <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-gradient-to-r from-amber-500/30 to-red-500/30 text-amber-300 border border-amber-500/50">✨ MAJOR V2.0.0</span>
+                        <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-neutral-800 text-amber-300 border border-amber-500/40">⏳ SETT. 5 (27 NOV)</span>
                       </div>
                       <p className="text-[11px] text-neutral-400 font-light mt-0.5">Pre-Mix Intelligente -18 dBFS, Rilevatore Fonetico AI & Multi-Stile</p>
-                      <span className="text-[10px] font-mono text-emerald-400 font-semibold mt-1 inline-block">v2.0.0 (4 Nov 2026) • Win (8.48 MB) • Mac (1.31 MB)</span>
+                      <span className="text-[10px] font-mono text-amber-400 font-semibold mt-1 inline-block">Sblocco Ven 27 Nov • Win (8.48 MB) • Mac (1.31 MB)</span>
                     </div>
                     <span className="text-neutral-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all text-sm mt-1">→</span>
                   </div>
@@ -513,7 +513,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="font-heading font-bold text-sm text-white group-hover:text-amber-400 transition-colors">171 SpaceLuxe</span>
-                        <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-gradient-to-r from-amber-500/30 to-red-500/30 text-amber-300 border border-amber-500/50">✨ MAJOR V2.0.0</span>
+                        <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">🔥 SBLOCCATO (SETT. 1)</span>
                       </div>
                       <p className="text-[11px] text-neutral-400 font-light mt-0.5">Riverbero Ibrido Boutique FDN-16 lossless, Shimmer & Smart Ducking</p>
                       <span className="text-[10px] font-mono text-emerald-400 font-semibold mt-1 inline-block">v2.0.0 (4 Nov 2026) • Win (8.45 MB) • Mac (1.03 MB)</span>
@@ -585,10 +585,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="font-heading font-bold text-sm text-white group-hover:text-amber-400 transition-colors">171 MasterGlue</span>
-                        <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-gradient-to-r from-amber-500/30 to-red-500/30 text-amber-300 border border-amber-500/50">✨ MAJOR V2.0.0</span>
+                        <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-neutral-800 text-amber-300 border border-amber-500/40">⏳ SETT. 2 (6 NOV)</span>
                       </div>
                       <p className="text-[11px] text-neutral-400 font-light mt-0.5">Compressore bus master VCA (SSL 4000) & Diode-Bridge (Neve 33609)</p>
-                      <span className="text-[10px] font-mono text-emerald-400 font-semibold mt-1 inline-block">v2.0.0 (4 Nov 2026) • Win (8.38 MB) • Mac (4.67 MB)</span>
+                      <span className="text-[10px] font-mono text-amber-400 font-semibold mt-1 inline-block">Sblocco Ven 6 Nov • Win (8.38 MB) • Mac (4.67 MB)</span>
                     </div>
                     <span className="text-neutral-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all text-sm mt-1">→</span>
                   </div>
@@ -625,10 +625,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="font-heading font-bold text-sm text-white group-hover:text-amber-400 transition-colors">171 PunchCraft</span>
-                        <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-gradient-to-r from-amber-500/30 to-red-500/30 text-amber-300 border border-amber-500/50">✨ MAJOR V2.0.0</span>
+                        <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-neutral-800 text-amber-300 border border-amber-500/40">⏳ SETT. 3 (13 NOV)</span>
                       </div>
                       <p className="text-[11px] text-neutral-400 font-light mt-0.5">Multi-Band Transient Shaper D.E.T. e sub-armonico sismico</p>
-                      <span className="text-[10px] font-mono text-emerald-400 font-semibold mt-1 inline-block">v2.0.0 (4 Nov 2026) • Win (8.43 MB) • Mac (4.75 MB)</span>
+                      <span className="text-[10px] font-mono text-amber-400 font-semibold mt-1 inline-block">Sblocco Ven 13 Nov • Win (8.43 MB) • Mac (4.75 MB)</span>
                     </div>
                     <span className="text-neutral-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all text-sm mt-1">→</span>
                   </div>
@@ -641,10 +641,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="font-heading font-bold text-sm text-white group-hover:text-amber-400 transition-colors">171 PerfectClip</span>
-                        <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-gradient-to-r from-amber-500/30 to-red-500/30 text-amber-300 border border-amber-500/50">✨ MAJOR V2.0.0</span>
+                        <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-neutral-800 text-amber-300 border border-amber-500/40">⏳ SETT. 4 (20 NOV)</span>
                       </div>
                       <p className="text-[11px] text-neutral-400 font-light mt-0.5">Mastering ADAA-2 Clipper a 64-bit con matrice brevettata TransDetail™</p>
-                      <span className="text-[10px] font-mono text-emerald-400 font-semibold mt-1 inline-block">v2.0.0 (4 Nov 2026) • Win (8.45 MB) • Mac (0.74 MB)</span>
+                      <span className="text-[10px] font-mono text-amber-400 font-semibold mt-1 inline-block">Sblocco Ven 20 Nov • Win (8.45 MB) • Mac (0.74 MB)</span>
                     </div>
                     <span className="text-neutral-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all text-sm mt-1">→</span>
                   </div>
@@ -737,16 +737,17 @@ export const Navbar: React.FC<NavbarProps> = ({
                       <span>→</span>
                     </button>
                     {[
-                      { id: 'plugin-easyvoice', name: '171 EasyVoice', tag: '🔥 NUOVA' },
-                      { id: 'plugin-realtune', name: '171 RealTune', tag: '✨ PATCH' },
+                      { id: 'plugin-easyvoice', name: '171 EasyVoice', tag: '✨ V2.0.0' },
+                      { id: 'plugin-realtune', name: '171 RealTune', tag: '✨ V2.0.0' },
                       { id: 'plugin-spaceluxe', name: '171 SpaceLuxe', tag: '🔥 SBLOCCATO' },
                       { id: 'plugin-optocom', name: '171 DriveOptocom', tag: 'DISP' },
                       { id: 'plugin-cleandrive', name: '171 CleanDrive', tag: 'DISP' },
                       { id: 'plugin-cleanreso', name: '171 CleanReso', tag: 'DISP' },
                       { id: 'plugin-perfectpre', name: '171 PerfectPre', tag: 'DISP' },
-                      { id: 'plugin-masterglue', name: '171 MasterGlue', tag: 'SETT 1' },
-                      { id: 'plugin-punchcraft', name: '171 PunchCraft', tag: 'SETT 2' },
-                      { id: 'plugin-perfectclip', name: '171 PerfectClip', tag: 'SETT 3' },
+                      { id: 'plugin-masterglue', name: '171 MasterGlue', tag: '⏳ SETT 2' },
+                      { id: 'plugin-punchcraft', name: '171 PunchCraft', tag: '⏳ SETT 3' },
+                      { id: 'plugin-perfectclip', name: '171 PerfectClip', tag: '⏳ SETT 4' },
+                      { id: 'plugin-vocalcraft', name: '171 VocalCraft', tag: '⏳ SETT 5' },
                     ].map((subp) => (
                       <button
                         key={subp.id}

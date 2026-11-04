@@ -175,7 +175,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
         // Category match
         if (categoryFilter === 'all') return true;
         if (categoryFilter === 'favorites') return isPluginFavorite(plugin.id);
-        if (categoryFilter === 'vocal') return ['plugin-realtune', 'plugin-easyvoice'].includes(plugin.id);
+        if (categoryFilter === 'vocal') return ['plugin-realtune', 'plugin-easyvoice', 'plugin-vocalcraft'].includes(plugin.id);
         if (categoryFilter === 'dynamics') return ['plugin-optocom', 'plugin-masterglue', 'plugin-punchcraft', 'plugin-perfectclip'].includes(plugin.id);
         if (categoryFilter === 'saturation') return ['plugin-cleandrive', 'plugin-perfectpre'].includes(plugin.id);
         if (categoryFilter === 'spatial') return ['plugin-cleanreso', 'plugin-spaceluxe'].includes(plugin.id);
@@ -993,7 +993,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
                 Scarica Gratis i Plugin di 171 Studio
               </h3>
               <p className="text-xs sm:text-sm text-neutral-400 font-light mt-1">
-                Tutti gli 11 strumenti DSP boutique ufficiali unificati a Major Update V2.0.0 (4 Novembre 2026) attivi per il download immediato in formato VST3 e Standalone 64-bit per Windows e macOS.
+                Gli 11 strumenti DSP boutique ufficiali del laboratorio unificati al Major Update V2.0.0 (4 Novembre 2026), con sblocco progressivo settimanale e pacchetti di download singoli gratuiti per Windows e macOS.
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-2 self-start md:self-auto">
@@ -1031,7 +1031,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
                   Roadmap Sblocco Progressivo 171 Studio Innovatio
                 </h3>
                 <p className="text-xs sm:text-sm text-neutral-300 font-light mt-1 max-w-3xl leading-relaxed">
-                  Con il rilascio del <strong>Major Update V2.0.0 (4 Novembre 2026)</strong>, l'intera serie avanzata (171 SpaceLuxe, 171 MasterGlue, 171 PunchCraft, 171 PerfectClip e il nuovo 171 VocalCraft) è ora <strong>completamente sbloccata e disponibile al download immediato</strong> per Windows 64-bit e macOS sia VST3 che Standalone.
+                  I nuovi processori boutique del laboratorio DSP vengono rilasciati e sbloccati progressivamente su <strong>base settimanale (1 a settimana)</strong> con timer live sincronizzato al secondo. Al termine di ciascun countdown, il relativo pacchetto di download singolo freeware si attiva automaticamente. Nessun archivio cumulativo: scarichi solo ciò che desideri!
                 </p>
               </div>
 
@@ -1041,16 +1041,16 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
               </div>
             </div>
 
-            {/* 4 Weekly Steps Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            {/* 5 Weekly Steps Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 sm:gap-4">
               {[
                 {
                   id: 'plugin-spaceluxe',
                   week: 1,
                   name: '171 SpaceLuxe',
                   cat: 'Hybrid Reverb & Shimmer',
-                  dateStr: '2026-11-04T00:00:00+01:00',
-                  targetDateLabel: '4 Nov 2026 • MAJOR UPDATE V2.0.0 SBLOCCATO',
+                  dateStr: '2026-11-02T16:00:00+01:00',
+                  targetDateLabel: '2 Nov 2026 • SBLOCCATO',
                   winSize: '8.45 MB',
                   macSize: '1.03 MB',
                 },
@@ -1059,8 +1059,8 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
                   week: 2,
                   name: '171 MasterGlue',
                   cat: 'Analog Bus VCA/Diode Console',
-                  dateStr: '2026-11-04T00:00:00+01:00',
-                  targetDateLabel: '4 Nov 2026 • MAJOR UPDATE V2.0.0 SBLOCCATO',
+                  dateStr: '2026-11-06T18:00:00+01:00',
+                  targetDateLabel: 'Ven 6 Nov 2026, 18:00',
                   winSize: '8.38 MB',
                   macSize: '4.67 MB',
                 },
@@ -1069,8 +1069,8 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
                   week: 3,
                   name: '171 PunchCraft',
                   cat: 'Multi-Band Transient Shaper',
-                  dateStr: '2026-11-04T00:00:00+01:00',
-                  targetDateLabel: '4 Nov 2026 • MAJOR UPDATE V2.0.0 SBLOCCATO',
+                  dateStr: '2026-11-13T18:00:00+01:00',
+                  targetDateLabel: 'Ven 13 Nov 2026, 18:00',
                   winSize: '8.43 MB',
                   macSize: '4.75 MB',
                 },
@@ -1079,10 +1079,20 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
                   week: 4,
                   name: '171 PerfectClip',
                   cat: 'Mastering ADAA-2 Clipper',
-                  dateStr: '2026-11-04T00:00:00+01:00',
-                  targetDateLabel: '4 Nov 2026 • MAJOR UPDATE V2.0.0 SBLOCCATO',
+                  dateStr: '2026-11-20T18:00:00+01:00',
+                  targetDateLabel: 'Ven 20 Nov 2026, 18:00',
                   winSize: '8.45 MB',
                   macSize: '0.74 MB',
+                },
+                {
+                  id: 'plugin-vocalcraft',
+                  week: 5,
+                  name: '171 VocalCraft',
+                  cat: 'Pre-Mix & Multi-Style Vocal',
+                  dateStr: '2026-11-27T18:00:00+01:00',
+                  targetDateLabel: 'Ven 27 Nov 2026, 18:00',
+                  winSize: '8.48 MB',
+                  macSize: '1.31 MB',
                 },
               ].map((step) => {
                 const cd = getCountdown(step.dateStr);
@@ -1204,38 +1214,20 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
                 </div>
               </div>
 
-              {/* Master Suite Download CTA Box */}
-              <div className="shrink-0 flex flex-col gap-3 w-full lg:w-auto p-4 sm:p-5 rounded-2xl bg-black/80 border border-amber-500/40 text-center">
+              {/* Individual Single Downloads Only Notice Card */}
+              <div className="shrink-0 flex flex-col gap-2.5 w-full lg:w-72 p-4 sm:p-5 rounded-2xl bg-black/80 border border-amber-500/30 text-center">
                 <span className="text-[10px] font-mono uppercase tracking-widest text-amber-400 font-bold">
-                  MASTER SUITE COMPLETA v2.0.0
+                  DOWNLOAD SINGOLI DEDICATI
                 </span>
-                <span className="text-xl font-heading font-black text-white">
-                  Tutti gli 11 Plugin
+                <span className="text-base font-heading font-black text-white">
+                  Solo Pacchetti Singoli
                 </span>
-                <span className="text-[11px] font-mono text-neutral-400">
-                  Archivio Ufficiale GitHub Release
-                </span>
-                <div className="flex flex-col sm:flex-row gap-2.5 justify-center">
-                  <a
-                    href="https://github.com/171studio-plugininnovation/171-studio/releases/download/v2.0.0/171_Studio_Innovatio_SuiteCompleta_v2.0.0_Win64.zip"
-                    download="171_Studio_Innovatio_SuiteCompleta_v2.0.0_Win64.zip"
-                    className="px-4 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-black font-heading font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-xl shadow-amber-500/30 transition-all cursor-pointer transform hover:scale-[1.02]"
-                  >
-                    <Download className="w-4 h-4 text-black" />
-                    <span>Win64 (151 MB)</span>
-                  </a>
-                  <a
-                    href="https://github.com/171studio-plugininnovation/171-studio/releases/download/v2.0.0/171_Studio_Innovatio_SuiteCompleta_v2.0.0_Mac.zip"
-                    download="171_Studio_Innovatio_SuiteCompleta_v2.0.0_Mac.zip"
-                    className="px-4 py-3 rounded-xl bg-neutral-800 hover:bg-neutral-700 border border-neutral-700 text-white font-heading font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-xl transition-all cursor-pointer transform hover:scale-[1.02]"
-                  >
-                    <Download className="w-4 h-4 text-amber-400" />
-                    <span>macOS AU/VST3 (253 MB)</span>
-                  </a>
+                <p className="text-[11px] text-neutral-400 font-light leading-relaxed">
+                  Ogni plugin dispone del proprio installer e manuale dedicato: scarica solo ciò di cui hai bisogno dal rack qui sotto.
+                </p>
+                <div className="pt-1 text-[10.5px] font-mono text-amber-400 font-semibold flex items-center justify-center gap-1">
+                  <span>⬇ Seleziona i singoli plugin nel rack</span>
                 </div>
-                <span className="text-[9.5px] font-mono text-neutral-400">
-                  Oppure scarica i plugin singoli qui sotto ⬇
-                </span>
               </div>
             </div>
           </div>
@@ -1319,7 +1311,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
               {[
                 { id: 'all', label: 'Tutti i Plugin', icon: Layers, count: siteContent.plugins.length },
                 { id: 'favorites', label: 'Preferiti', icon: Heart, count: favoritePluginIds.length },
-                { id: 'vocal', label: 'Voci & Intonazione', icon: Radio, count: siteContent.plugins.filter(p => ['plugin-realtune', 'plugin-easyvoice'].includes(p.id)).length },
+                { id: 'vocal', label: 'Voci & Intonazione', icon: Radio, count: siteContent.plugins.filter(p => ['plugin-realtune', 'plugin-easyvoice', 'plugin-vocalcraft'].includes(p.id)).length },
                 { id: 'dynamics', label: 'Compressori & Dinamica', icon: Sliders, count: siteContent.plugins.filter(p => ['plugin-optocom', 'plugin-masterglue', 'plugin-punchcraft', 'plugin-perfectclip'].includes(p.id)).length },
                 { id: 'saturation', label: 'Preamp & Saturazione', icon: Flame, count: siteContent.plugins.filter(p => ['plugin-cleandrive', 'plugin-perfectpre'].includes(p.id)).length },
                 { id: 'spatial', label: 'Riverberi & Spazio', icon: Sparkles, count: siteContent.plugins.filter(p => ['plugin-cleanreso', 'plugin-spaceluxe'].includes(p.id)).length },

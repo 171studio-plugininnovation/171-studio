@@ -154,12 +154,12 @@ export const HeroHome: React.FC<HeroHomeProps> = ({ onNavigate }) => {
                 Tutta la Suite 171 Aggiornata a Major Update V2.0.0 con Motore DSP Ricostruito
               </h3>
               <p className="text-xs text-neutral-300 font-light line-clamp-1 sm:line-clamp-none">
-                Risoluzione analitica ISP True-Peak parabolico, protezione anti-denormale a -144 dBFS e tutti gli 11 plugin scaricabili per Windows e macOS sia singolarmente che in Master Suite completa.
+                Risoluzione analitica ISP True-Peak parabolico, protezione anti-denormale a -144 dBFS, sblocco progressivo settimanale e download singoli gratuiti per Windows e macOS.
               </p>
             </div>
           </div>
           <div className="flex items-center gap-2 shrink-0 px-4 py-2.5 rounded-xl bg-amber-500 hover:from-amber-400 hover:to-amber-300 hover:bg-amber-400 text-black font-heading font-black text-xs uppercase tracking-wider transition-all shadow-md shadow-amber-500/30">
-            <span>Scarica Major V2.0.0</span>
+            <span>Scopri i Plugin V2.0.0</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </div>
         </div>

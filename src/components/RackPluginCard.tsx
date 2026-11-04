@@ -292,14 +292,27 @@ export const RackPluginCard: React.FC<RackPluginCardProps> = ({
       {/* Bottom Action Section: Primary Download CTA & Secondary Specs CTA */}
       <div className="p-5 sm:p-6 pt-0 space-y-2.5">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          {/* Primary Action Button: Scarica il Plugin (Gratis) */}
+          {/* Primary Action Button */}
           <button
             type="button"
             onClick={() => onSelectPlugin(plugin.id)}
-            className="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-amber-400 via-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black font-heading font-black text-xs uppercase tracking-wider transition-all duration-200 cursor-pointer shadow-lg shadow-amber-500/20 flex items-center justify-center gap-1.5 group/btn"
+            className={`w-full py-2.5 px-3 rounded-xl font-heading font-black text-xs uppercase tracking-wider transition-all duration-200 cursor-pointer shadow-lg flex items-center justify-center gap-1.5 group/btn ${
+              isLocked
+                ? 'bg-neutral-850 hover:bg-neutral-800 text-amber-300 border border-amber-500/40 hover:border-amber-400'
+                : 'bg-gradient-to-r from-amber-400 via-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black shadow-amber-500/20'
+            }`}
           >
-            <Download className="w-3.5 h-3.5 text-black group-hover/btn:translate-y-0.5 transition-transform" />
-            <span>SCARICA PLUGIN</span>
+            {isLocked ? (
+              <>
+                <Clock className="w-3.5 h-3.5 text-amber-400 animate-spin" />
+                <span>VEDI COUNTDOWN</span>
+              </>
+            ) : (
+              <>
+                <Download className="w-3.5 h-3.5 text-black group-hover/btn:translate-y-0.5 transition-transform" />
+                <span>SCARICA PLUGIN</span>
+              </>
+            )}
           </button>
 
           {/* Secondary Action: Scheda Tecnica */}
