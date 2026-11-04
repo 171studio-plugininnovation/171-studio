@@ -527,7 +527,7 @@ export const PluginDetailPage: React.FC<PluginDetailPageProps> = ({
                     <span className="text-[8px] sm:text-[9px] text-neutral-400 uppercase tracking-wider">GIORNI</span>
                   </div>
                   <div className="p-2 sm:p-2.5 rounded-xl bg-neutral-950 border border-amber-500/30">
-                    <span className="block text-lg sm:text-xl font-black text-amber-400 tabular-nums">{String(countdown?.days ?? 0).padStart(2, '0')}</span>
+                    <span className="block text-lg sm:text-xl font-black text-amber-400 tabular-nums">{String(countdown?.hours ?? 0).padStart(2, '0')}</span>
                     <span className="text-[8px] sm:text-[9px] text-neutral-400 uppercase tracking-wider">ORE</span>
                   </div>
                   <div className="p-2 sm:p-2.5 rounded-xl bg-neutral-950 border border-amber-500/30">

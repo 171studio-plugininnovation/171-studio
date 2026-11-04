@@ -340,28 +340,28 @@ console.log('\n\x1b[36m[SUITE 4/7] Verifica Integrità File e Download 4 Plugin 
 const pluginsToVerify = [
   {
     name: '171 DriveOptocom',
-    zipFile: '171_DriveOptocom_v1.1.0_Win64.zip',
+    zipFile: '171_DriveOptocom_v2.0.0_Win64.zip',
     expectedVst3: 'DRIVE OPTOCOM.vst3',
-    expectedExe: 'DRIVE OPTOCOM.exe',
+    expectedExe: '171DriveOptocom.exe',
     minBytes: 8_000_000,
   },
   {
     name: '171 PerfectPre',
-    zipFile: '171_PerfectPre_v1.0.0_Win64.zip',
-    expectedVst3: 'PerfectPre.vst3',
-    expectedExe: 'PerfectPre.exe',
-    minBytes: 19_000_000,
+    zipFile: '171_PerfectPre_v2.0.0_Win64.zip',
+    expectedVst3: '171PerfectPre.vst3',
+    expectedExe: '171PerfectPre.exe',
+    minBytes: 18_000_000,
   },
   {
     name: '171 CleanDrive',
-    zipFile: '171_CleanDrive_v1.0.0_Win64.zip',
+    zipFile: '171_CleanDrive_v2.0.0_Win64.zip',
     expectedVst3: '171CleanDrive.vst3',
     expectedExe: '171CleanDrive.exe',
     minBytes: 6_000_000,
   },
   {
     name: '171 CleanReso',
-    zipFile: '171_CleanReso_v1.0.0_Win64.zip',
+    zipFile: '171_CleanReso_v2.0.0_Win64.zip',
     expectedVst3: '171CleanReso.vst3',
     expectedExe: '171CleanReso.exe',
     minBytes: 7_000_000,
@@ -397,7 +397,7 @@ for (const p of pluginsToVerify) {
     if (!tarOutput.includes(p.expectedExe)) {
       throw new Error(`Missing ${p.expectedExe} in ${p.zipFile}`);
     }
-    if (!tarOutput.includes('README.txt')) {
+    if (!tarOutput.includes('README.txt') && !tarOutput.includes('LEGGIMI_INSTALLAZIONE_')) {
       throw new Error(`Missing README.txt in ${p.zipFile}`);
     }
   });

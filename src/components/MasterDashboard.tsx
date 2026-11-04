@@ -1101,7 +1101,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
               icon: Cpu,
               badge: `${siteContent.plugins.length} (${siteContent.plugins.reduce((acc, p) => acc + (p.downloadCount || 0), 0)} dl)`,
               badgeClass: 'bg-emerald-500/20 text-emerald-300 font-mono font-bold',
-              description: 'Suite 10 plugin, pacchetti ZIP Win/Mac e roadmap'
+              description: `Suite ${siteContent.plugins.length} plugin, pacchetti ZIP Win/Mac e roadmap`
             },
             {
               id: 'album_orders',
@@ -7107,7 +7107,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
                 <span>Suite 171 Plugin Innovatio & Caricamento Cartelle .ZIP</span>
               </h3>
               <p className="text-xs text-neutral-400 font-mono mt-1">
-                Catalogo Suite Innovatio: 10 Plugin Ufficiali • <strong className="text-emerald-400 font-bold">{siteContent.plugins.reduce((sum, p) => sum + (p.downloadCount || 0), 0)} Download Totali</strong> verificati. Dopo ogni download si apre la pagina di ringraziamento e feedback donazione.
+                Catalogo Suite Innovatio: {siteContent.plugins.length} Plugin Ufficiali • <strong className="text-emerald-400 font-bold">{siteContent.plugins.reduce((sum, p) => sum + (p.downloadCount || 0), 0)} Download Totali</strong> verificati. Dopo ogni download si apre la pagina di ringraziamento e feedback donazione.
               </p>
             </div>
 

@@ -444,7 +444,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 onClick={() => handleNavClick('plugin-innovation', null)}
                 className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-heading font-black text-xs uppercase tracking-wider flex items-center gap-2 shadow-md shadow-amber-500/20 transition-all cursor-pointer"
               >
-                <span>Vedi Tutti i 10 Plugin (Catalogo)</span>
+                <span>Vedi Tutti gli {siteContent.plugins.length} Plugin (Catalogo)</span>
                 <span>→</span>
               </button>
             </div>
@@ -484,7 +484,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                         <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-gradient-to-r from-amber-500/30 to-red-500/30 text-amber-300 border border-amber-500/50">✨ MAJOR V2.0.0</span>
                       </div>
                       <p className="text-[11px] text-neutral-400 font-light mt-0.5">All-in-One Vocal Channel Strip Definitiva (1176+LA2A, 8 Preamp)</p>
-                      <span className="text-[10px] font-mono text-emerald-400 font-semibold mt-1 inline-block">v2.0.0 (4 Nov 2026) • Win (35.19 MB) • Mac (22.87 MB)</span>
+                      <span className="text-[10px] font-mono text-emerald-400 font-semibold mt-1 inline-block">v2.0.0 (4 Nov 2026) • Win (35.19 MB) • Mac (109.39 MB)</span>
                     </div>
                     <span className="text-neutral-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all text-sm mt-1">→</span>
                   </div>

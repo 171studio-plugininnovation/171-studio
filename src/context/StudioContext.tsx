@@ -362,7 +362,7 @@ const DEFAULT_PLUGINS: PluginItem[] = [
     zipFileSize: '35.19 MB',
     macDownloadUrl: 'https://github.com/171studio-plugininnovation/171-studio/releases/download/v2.0.0/171_EasyVoice_v2.0.0_Mac.zip',
     macZipFileName: '171_EasyVoice_v2.0.0_Mac.zip',
-    macZipFileSize: '22.87 MB',
+    macZipFileSize: '109.39 MB',
     imageUrl: '/assets/plugins/171EasyVoice_GUI.png',
     formats: ['VST3 (Win/Mac 64-bit)', 'AudioUnit v2 (macOS)', 'Standalone App (.EXE)'],
     changelog: [
