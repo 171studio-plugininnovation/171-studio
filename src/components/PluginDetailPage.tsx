@@ -11,6 +11,7 @@ import { PluginItem, STUDIO_PAYPAL_EMAIL, PluginDonationRecord } from '../types/
 import { getPayPalDonationUrl, getPayPalMeUrl, triggerPluginZipFileDownload } from '../utils/emailService';
 import { getAssetUrl } from '../utils/assetPath';
 import { HardwareTiltCard } from './HardwareTiltCard';
+import { HardwareLockedModal } from './HardwareLockedModal';
 
 interface PluginDetailPageProps {
   pluginId: string;
@@ -112,6 +113,7 @@ export const PluginDetailPage: React.FC<PluginDetailPageProps> = ({
 
   // State for preview modal image
   const [previewModalOpen, setPreviewModalOpen] = useState(false);
+  const [isLockedModalOpen, setIsLockedModalOpen] = useState(false);
   const [downloadSuccess, setDownloadSuccess] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
   const [copiedPathWin, setCopiedPathWin] = useState(false);
@@ -213,7 +215,7 @@ export const PluginDetailPage: React.FC<PluginDetailPageProps> = ({
   const handleDownload = (os: 'win' | 'mac') => {
     if (!plugin) return;
     if (isLocked) {
-      alert(`Questo plugin sarà sbloccato il ${formatUnlockDate(plugin.unlockDate)}. Il countdown è attivo!`);
+      setIsLockedModalOpen(true);
       return;
     }
     if (!currentUser) {
@@ -1344,6 +1346,17 @@ export const PluginDetailPage: React.FC<PluginDetailPageProps> = ({
           </div>
         </div>
       )}
+
+      {/* Hardware Locked Modal (Amber CRT Countdown - Zero browser alerts) */}
+      <HardwareLockedModal
+        plugin={plugin}
+        isOpen={isLockedModalOpen}
+        onClose={() => setIsLockedModalOpen(false)}
+        countdown={countdown}
+        onExploreAvailable={() => {
+          onBack();
+        }}
+      />
 
     </div>
   );
