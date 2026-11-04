@@ -393,7 +393,7 @@ export const PluginDetailPage: React.FC<PluginDetailPageProps> = ({
               {plugin.isNewRelease && (
                 <span className="text-[10px] font-mono font-black px-3 py-1 rounded-full bg-gradient-to-r from-amber-500/25 to-red-500/25 text-amber-300 border border-amber-500/60 flex items-center gap-1.5 shadow-sm animate-pulse">
                   <Flame className="w-3.5 h-3.5 text-amber-400" />
-                  <span>{plugin.newReleaseTag || 'NUOVA RELEASE 2 NOV'}</span>
+                  <span>{plugin.newReleaseTag || 'MAJOR UPDATE V2.0.0 (4 NOV)'}</span>
                 </span>
               )}
               {isLocked ? (
@@ -417,10 +417,10 @@ export const PluginDetailPage: React.FC<PluginDetailPageProps> = ({
             {/* Version & Date */}
             <div className="flex items-center gap-3 text-xs font-mono text-neutral-300">
               <span className="px-2.5 py-1 rounded-lg bg-neutral-900 border border-neutral-700/80 font-bold text-amber-300">
-                {plugin.version || 'v1.0.0'}
+                {plugin.version || 'v2.0.0 (4 Nov 2026)'}
               </span>
               <span className="text-neutral-500">•</span>
-              <span className="text-neutral-400">Release: 2 Novembre 2026</span>
+              <span className="text-neutral-400">Release: 4 Novembre 2026 • Major Update V2.0.0</span>
               <span className="text-neutral-500">•</span>
               <span className="text-emerald-400 font-semibold flex items-center gap-1">
                 <Check className="w-3.5 h-3.5" />
@@ -753,7 +753,7 @@ export const PluginDetailPage: React.FC<PluginDetailPageProps> = ({
               <div className="flex items-center justify-between pb-4 border-b border-neutral-800">
                 <div>
                   <span className="text-xs font-mono text-amber-400 uppercase tracking-widest block font-bold">
-                    RELEASE UFFICIALE 2 NOVEMBRE 2026
+                    MAJOR UPDATE V2.0.0 • 4 NOVEMBRE 2026
                   </span>
                   <h3 className="font-heading font-black text-2xl sm:text-3xl text-white mt-1">
                     Changelog Dettagliato • {plugin.name} {plugin.version}

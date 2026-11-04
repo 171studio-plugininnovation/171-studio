@@ -123,7 +123,7 @@ export const RackPluginCard: React.FC<RackPluginCardProps> = ({
       {plugin.isNewRelease ? (
         <div className="absolute top-0 right-0 overflow-hidden w-28 h-28 pointer-events-none z-10">
           <div className="bg-gradient-to-r from-amber-500 to-red-600 text-white text-[9px] font-mono font-black text-center py-1 w-36 absolute top-4 -right-10 rotate-45 shadow-md uppercase tracking-wider">
-            Nuova Patch
+            Major V2.0
           </div>
         </div>
       ) : isLocked ? (
@@ -163,7 +163,7 @@ export const RackPluginCard: React.FC<RackPluginCardProps> = ({
           <div className="flex items-center gap-2 pr-6">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_6px_#34d399]" />
             <span className="text-[9.5px] font-mono text-neutral-400 font-bold uppercase">
-              {plugin.version?.split(' ')[0] || 'v1.0'}
+              {plugin.version?.split(' ')[0] || 'v2.0.0'}
             </span>
           </div>
         </div>

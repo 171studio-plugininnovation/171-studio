@@ -131,7 +131,7 @@ export const HeroHome: React.FC<HeroHomeProps> = ({ onNavigate }) => {
           <span className="text-[11px] text-neutral-400 font-light hidden sm:inline">Visite Totali Studio</span>
         </div>
 
-        {/* Patch 2.0.0 Official Release Telemetry Alert Banner */}
+        {/* Major Update V2.0.0 Official Release Telemetry Alert Banner */}
         <div 
           onClick={() => onNavigate('plugin-innovation')}
           className="w-full max-w-4xl p-4 sm:p-5 rounded-2xl sm:rounded-3xl bg-gradient-to-r from-amber-500/20 via-neutral-900/95 to-amber-900/25 border border-amber-500/50 hover:border-amber-400 backdrop-blur-xl shadow-[0_0_35px_rgba(245,158,11,0.25)] flex flex-col sm:flex-row items-center justify-between gap-4 cursor-pointer group transition-all duration-300 mb-2"
@@ -143,7 +143,7 @@ export const HeroHome: React.FC<HeroHomeProps> = ({ onNavigate }) => {
             <div>
               <div className="flex items-center gap-2 mb-0.5">
                 <span className="text-[10px] font-mono uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-bold border border-amber-500/40">
-                  ✨ NUOVA PATCH 2.0.0 • DATA 4.11
+                  ✨ MAJOR UPDATE V2.0.0 • 4 NOVEMBRE 2026
                 </span>
                 <span className="text-[10px] font-mono text-emerald-400 flex items-center gap-1 font-bold">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
@@ -151,15 +151,15 @@ export const HeroHome: React.FC<HeroHomeProps> = ({ onNavigate }) => {
                 </span>
               </div>
               <h3 className="text-base sm:text-lg font-heading font-black text-white group-hover:text-amber-400 transition-colors">
-                Tutta la Suite 171 Aggiornata alla Patch 2.0.0 con Motore DSP Ricostruito
+                Tutta la Suite 171 Aggiornata a Major Update V2.0.0 con Motore DSP Ricostruito
               </h3>
               <p className="text-xs text-neutral-300 font-light line-clamp-1 sm:line-clamp-none">
-                Risoluzione analitica ISP True-Peak, protezione anti-denormale a -144 dBFS e 11 plugin scaricabili singolarmente o in Master Suite completa .ZIP.
+                Risoluzione analitica ISP True-Peak parabolico, protezione anti-denormale a -144 dBFS e tutti gli 11 plugin scaricabili per Windows e macOS sia singolarmente che in Master Suite completa.
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-2 shrink-0 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-heading font-black text-xs uppercase tracking-wider transition-all shadow-md shadow-amber-500/30">
-            <span>Scarica Patch 2.0.0</span>
+          <div className="flex items-center gap-2 shrink-0 px-4 py-2.5 rounded-xl bg-amber-500 hover:from-amber-400 hover:to-amber-300 hover:bg-amber-400 text-black font-heading font-black text-xs uppercase tracking-wider transition-all shadow-md shadow-amber-500/30">
+            <span>Scarica Major V2.0.0</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </div>
         </div>

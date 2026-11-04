@@ -457,6 +457,22 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <span>🎤 Voci, Intonazione & Spazio</span>
                 </div>
                 <div className="space-y-2">
+                  {/* 171 VocalCraft */}
+                  <div 
+                    onClick={() => handleNavClick('plugin-innovation', 'plugin-vocalcraft')}
+                    className="p-3.5 rounded-2xl bg-neutral-900/80 hover:bg-neutral-800/90 border border-neutral-800 hover:border-amber-500/60 transition-all cursor-pointer group flex items-start justify-between gap-3"
+                  >
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-heading font-bold text-sm text-white group-hover:text-amber-400 transition-colors">171 VocalCraft</span>
+                        <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-gradient-to-r from-amber-500/30 to-red-500/30 text-amber-300 border border-amber-500/50">✨ MAJOR V2.0.0</span>
+                      </div>
+                      <p className="text-[11px] text-neutral-400 font-light mt-0.5">Pre-Mix Intelligente -18 dBFS, Rilevatore Fonetico AI & Multi-Stile</p>
+                      <span className="text-[10px] font-mono text-emerald-400 font-semibold mt-1 inline-block">v2.0.0 (4 Nov 2026) • Win (8.48 MB) • Mac (1.31 MB)</span>
+                    </div>
+                    <span className="text-neutral-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all text-sm mt-1">→</span>
+                  </div>
+
                   {/* 171 EasyVoice */}
                   <div 
                     onClick={() => handleNavClick('plugin-innovation', 'plugin-easyvoice')}
@@ -465,10 +481,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="font-heading font-bold text-sm text-white group-hover:text-amber-400 transition-colors">171 EasyVoice</span>
-                        <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-amber-500/25 text-amber-300 border border-amber-500/50">🔥 NUOVA 2 NOV</span>
+                        <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-gradient-to-r from-amber-500/30 to-red-500/30 text-amber-300 border border-amber-500/50">✨ MAJOR V2.0.0</span>
                       </div>
                       <p className="text-[11px] text-neutral-400 font-light mt-0.5">All-in-One Vocal Channel Strip Definitiva (1176+LA2A, 8 Preamp)</p>
-                      <span className="text-[10px] font-mono text-emerald-400 font-semibold mt-1 inline-block">v1.0.1 Patch 2 • Win (35 MB)</span>
+                      <span className="text-[10px] font-mono text-emerald-400 font-semibold mt-1 inline-block">v2.0.0 (4 Nov 2026) • Win (35.19 MB) • Mac (22.87 MB)</span>
                     </div>
                     <span className="text-neutral-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all text-sm mt-1">→</span>
                   </div>
@@ -481,10 +497,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="font-heading font-bold text-sm text-white group-hover:text-amber-400 transition-colors">171 RealTune</span>
-                        <span className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-blue-500/20 text-blue-300 border border-blue-500/40">✨ PATCH 2 NOV</span>
+                        <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-gradient-to-r from-amber-500/30 to-red-500/30 text-amber-300 border border-amber-500/50">✨ MAJOR V2.0.0</span>
                       </div>
                       <p className="text-[11px] text-neutral-400 font-light mt-0.5">Pitch Correction real-time a latenza zero, WSOLA & Cue Mix CMF</p>
-                      <span className="text-[10px] font-mono text-emerald-400 font-semibold mt-1 inline-block">v1.0.1 Patch 1 • Win (19 MB)</span>
+                      <span className="text-[10px] font-mono text-emerald-400 font-semibold mt-1 inline-block">v2.0.0 (4 Nov 2026) • Win (19.19 MB) • Mac (8.37 MB)</span>
                     </div>
                     <span className="text-neutral-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all text-sm mt-1">→</span>
                   </div>
@@ -497,10 +513,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="font-heading font-bold text-sm text-white group-hover:text-amber-400 transition-colors">171 SpaceLuxe</span>
-                        <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-amber-500/25 text-amber-300 border border-amber-500/50">🔥 SBLOCCATO ORA</span>
+                        <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-gradient-to-r from-amber-500/30 to-red-500/30 text-amber-300 border border-amber-500/50">✨ MAJOR V2.0.0</span>
                       </div>
                       <p className="text-[11px] text-neutral-400 font-light mt-0.5">Riverbero Ibrido Boutique FDN-16 lossless, Shimmer & Smart Ducking</p>
-                      <span className="text-[10px] font-mono text-emerald-400 font-semibold mt-1 inline-block">v1.1.0 Patch • Win (8.45 MB)</span>
+                      <span className="text-[10px] font-mono text-emerald-400 font-semibold mt-1 inline-block">v2.0.0 (4 Nov 2026) • Win (8.45 MB) • Mac (1.03 MB)</span>
                     </div>
                     <span className="text-neutral-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all text-sm mt-1">→</span>
                   </div>
@@ -521,10 +537,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="font-heading font-bold text-sm text-white group-hover:text-amber-400 transition-colors">171 DriveOptocom</span>
-                        <span className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">DISPONIBILE</span>
+                        <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-gradient-to-r from-amber-500/30 to-red-500/30 text-amber-300 border border-amber-500/50">✨ MAJOR V2.0.0</span>
                       </div>
                       <p className="text-[11px] text-neutral-400 font-light mt-0.5">Compressore ottico T4B con memoria fotochimica e Tri-Band Drive</p>
-                      <span className="text-[10px] font-mono text-neutral-400 mt-1 inline-block">v1.1.0 Patch • Win (10.98 MB)</span>
+                      <span className="text-[10px] font-mono text-emerald-400 font-semibold mt-1 inline-block">v2.0.0 (4 Nov 2026) • Win (10.99 MB) • Mac (93.9 MB)</span>
                     </div>
                     <span className="text-neutral-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all text-sm mt-1">→</span>
                   </div>
@@ -537,10 +553,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="font-heading font-bold text-sm text-white group-hover:text-amber-400 transition-colors">171 CleanDrive</span>
-                        <span className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">DISPONIBILE</span>
+                        <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-gradient-to-r from-amber-500/30 to-red-500/30 text-amber-300 border border-amber-500/50">✨ MAJOR V2.0.0</span>
                       </div>
                       <p className="text-[11px] text-neutral-400 font-light mt-0.5">Separatore dinamico transienti parallelo e Clipper ADAA-2 a 64-bit</p>
-                      <span className="text-[10px] font-mono text-neutral-400 mt-1 inline-block">v1.0.0 Patch 1 • Win (6.64 MB)</span>
+                      <span className="text-[10px] font-mono text-emerald-400 font-semibold mt-1 inline-block">v2.0.0 (4 Nov 2026) • Win (6.65 MB) • Mac (91.5 MB)</span>
                     </div>
                     <span className="text-neutral-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all text-sm mt-1">→</span>
                   </div>
@@ -553,10 +569,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="font-heading font-bold text-sm text-white group-hover:text-amber-400 transition-colors">171 PerfectPre</span>
-                        <span className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">DISPONIBILE</span>
+                        <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-gradient-to-r from-amber-500/30 to-red-500/30 text-amber-300 border border-amber-500/50">✨ MAJOR V2.0.0</span>
                       </div>
                       <p className="text-[11px] text-neutral-400 font-light mt-0.5">4 Topologie preamp console, tolleranze TMT 72 canali & nastro Studer</p>
-                      <span className="text-[10px] font-mono text-neutral-400 mt-1 inline-block">v1.0.0 Patch 1 • Win (18.55 MB)</span>
+                      <span className="text-[10px] font-mono text-emerald-400 font-semibold mt-1 inline-block">v2.0.0 (4 Nov 2026) • Win (18.56 MB) • Mac (7.88 MB)</span>
                     </div>
                     <span className="text-neutral-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all text-sm mt-1">→</span>
                   </div>
@@ -569,10 +585,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="font-heading font-bold text-sm text-white group-hover:text-amber-400 transition-colors">171 MasterGlue</span>
-                        <span className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40">⏳ SBLOCCO SETT. 1</span>
+                        <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-gradient-to-r from-amber-500/30 to-red-500/30 text-amber-300 border border-amber-500/50">✨ MAJOR V2.0.0</span>
                       </div>
                       <p className="text-[11px] text-neutral-400 font-light mt-0.5">Compressore bus master VCA (SSL 4000) & Diode-Bridge (Neve 33609)</p>
-                      <span className="text-[10px] font-mono text-neutral-400 mt-1 inline-block">v1.0.0 • Win (8.36 MB)</span>
+                      <span className="text-[10px] font-mono text-emerald-400 font-semibold mt-1 inline-block">v2.0.0 (4 Nov 2026) • Win (8.38 MB) • Mac (4.67 MB)</span>
                     </div>
                     <span className="text-neutral-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all text-sm mt-1">→</span>
                   </div>
@@ -593,10 +609,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="font-heading font-bold text-sm text-white group-hover:text-amber-400 transition-colors">171 CleanReso</span>
-                        <span className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">DISPONIBILE</span>
+                        <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-gradient-to-r from-amber-500/30 to-red-500/30 text-amber-300 border border-amber-500/50">✨ MAJOR V2.0.0</span>
                       </div>
                       <p className="text-[11px] text-neutral-400 font-light mt-0.5">32 Filtri SVF Zero-Delay Feedback dinamici con ascolto Delta</p>
-                      <span className="text-[10px] font-mono text-neutral-400 mt-1 inline-block">v1.0.0 Patch 1 • Win (11.65 MB)</span>
+                      <span className="text-[10px] font-mono text-emerald-400 font-semibold mt-1 inline-block">v2.0.0 (4 Nov 2026) • Win (11.66 MB) • Mac (20.97 MB)</span>
                     </div>
                     <span className="text-neutral-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all text-sm mt-1">→</span>
                   </div>
@@ -609,10 +625,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="font-heading font-bold text-sm text-white group-hover:text-amber-400 transition-colors">171 PunchCraft</span>
-                        <span className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40">⏳ SBLOCCO SETT. 2</span>
+                        <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-gradient-to-r from-amber-500/30 to-red-500/30 text-amber-300 border border-amber-500/50">✨ MAJOR V2.0.0</span>
                       </div>
                       <p className="text-[11px] text-neutral-400 font-light mt-0.5">Multi-Band Transient Shaper D.E.T. e sub-armonico sismico</p>
-                      <span className="text-[10px] font-mono text-neutral-400 mt-1 inline-block">v1.0.0 • Win (8.42 MB)</span>
+                      <span className="text-[10px] font-mono text-emerald-400 font-semibold mt-1 inline-block">v2.0.0 (4 Nov 2026) • Win (8.43 MB) • Mac (4.75 MB)</span>
                     </div>
                     <span className="text-neutral-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all text-sm mt-1">→</span>
                   </div>
@@ -625,10 +641,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="font-heading font-bold text-sm text-white group-hover:text-amber-400 transition-colors">171 PerfectClip</span>
-                        <span className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40">⏳ SBLOCCO SETT. 3</span>
+                        <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-gradient-to-r from-amber-500/30 to-red-500/30 text-amber-300 border border-amber-500/50">✨ MAJOR V2.0.0</span>
                       </div>
                       <p className="text-[11px] text-neutral-400 font-light mt-0.5">Mastering ADAA-2 Clipper a 64-bit con matrice brevettata TransDetail™</p>
-                      <span className="text-[10px] font-mono text-neutral-400 mt-1 inline-block">v1.0.0 • Win (8.42 MB)</span>
+                      <span className="text-[10px] font-mono text-emerald-400 font-semibold mt-1 inline-block">v2.0.0 (4 Nov 2026) • Win (8.45 MB) • Mac (0.74 MB)</span>
                     </div>
                     <span className="text-neutral-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all text-sm mt-1">→</span>
                   </div>

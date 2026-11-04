@@ -993,7 +993,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
                 Scarica Gratis i Plugin di 171 Studio
               </h3>
               <p className="text-xs sm:text-sm text-neutral-400 font-light mt-1">
-                Tutti gli 11 strumenti DSP boutique ufficiali unificati alla Patch 2.0.0 (Data 4.11) attivi per il download immediato in formato VST3 e Standalone 64-bit.
+                Tutti gli 11 strumenti DSP boutique ufficiali unificati a Major Update V2.0.0 (4 Novembre 2026) attivi per il download immediato in formato VST3 e Standalone 64-bit per Windows e macOS.
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-2 self-start md:self-auto">
@@ -1031,7 +1031,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
                   Roadmap Sblocco Progressivo 171 Studio Innovatio
                 </h3>
                 <p className="text-xs sm:text-sm text-neutral-300 font-light mt-1 max-w-3xl leading-relaxed">
-                  Con il rilascio della <strong>Patch 2.0.0 (Data 4.11)</strong>, l'intera serie avanzata (171 SpaceLuxe, 171 MasterGlue, 171 PunchCraft, 171 PerfectClip e il nuovo 171 VocalCraft) è ora <strong>completamente sbloccata e disponibile al download immediato</strong> per Windows 64-bit sia VST3 che Standalone.
+                  Con il rilascio del <strong>Major Update V2.0.0 (4 Novembre 2026)</strong>, l'intera serie avanzata (171 SpaceLuxe, 171 MasterGlue, 171 PunchCraft, 171 PerfectClip e il nuovo 171 VocalCraft) è ora <strong>completamente sbloccata e disponibile al download immediato</strong> per Windows 64-bit e macOS sia VST3 che Standalone.
                 </p>
               </div>
 
@@ -1050,9 +1050,9 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
                   name: '171 SpaceLuxe',
                   cat: 'Hybrid Reverb & Shimmer',
                   dateStr: '2026-11-04T00:00:00+01:00',
-                  targetDateLabel: '4 Nov 2026 • SBLOCCATO CON PATCH 2.0.0',
+                  targetDateLabel: '4 Nov 2026 • MAJOR UPDATE V2.0.0 SBLOCCATO',
                   winSize: '8.45 MB',
-                  macSize: '0.73 MB',
+                  macSize: '1.03 MB',
                 },
                 {
                   id: 'plugin-masterglue',
@@ -1060,9 +1060,9 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
                   name: '171 MasterGlue',
                   cat: 'Analog Bus VCA/Diode Console',
                   dateStr: '2026-11-04T00:00:00+01:00',
-                  targetDateLabel: '4 Nov 2026 • SBLOCCATO CON PATCH 2.0.0',
-                  winSize: '8.88 MB',
-                  macSize: '0.52 MB',
+                  targetDateLabel: '4 Nov 2026 • MAJOR UPDATE V2.0.0 SBLOCCATO',
+                  winSize: '8.38 MB',
+                  macSize: '4.67 MB',
                 },
                 {
                   id: 'plugin-punchcraft',
@@ -1070,9 +1070,9 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
                   name: '171 PunchCraft',
                   cat: 'Multi-Band Transient Shaper',
                   dateStr: '2026-11-04T00:00:00+01:00',
-                  targetDateLabel: '4 Nov 2026 • SBLOCCATO CON PATCH 2.0.0',
-                  winSize: '8.42 MB',
-                  macSize: '0.57 MB',
+                  targetDateLabel: '4 Nov 2026 • MAJOR UPDATE V2.0.0 SBLOCCATO',
+                  winSize: '8.43 MB',
+                  macSize: '4.75 MB',
                 },
                 {
                   id: 'plugin-perfectclip',
@@ -1080,9 +1080,9 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
                   name: '171 PerfectClip',
                   cat: 'Mastering ADAA-2 Clipper',
                   dateStr: '2026-11-04T00:00:00+01:00',
-                  targetDateLabel: '4 Nov 2026 • SBLOCCATO CON PATCH 2.0.0',
-                  winSize: '8.42 MB',
-                  macSize: '0.51 MB',
+                  targetDateLabel: '4 Nov 2026 • MAJOR UPDATE V2.0.0 SBLOCCATO',
+                  winSize: '8.45 MB',
+                  macSize: '0.74 MB',
                 },
               ].map((step) => {
                 const cd = getCountdown(step.dateStr);
@@ -1145,7 +1145,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
             </div>
           </div>
 
-          {/* Official Announcement Card: Nuova Patch 2.0.0 (Data 4.11 / 4 Novembre 2026) */}
+          {/* Official Announcement Card: Major Update V2.0.0 (4 Novembre 2026) */}
           <div className="mb-8 relative overflow-hidden rounded-3xl bg-gradient-to-br from-neutral-900/98 via-neutral-950/95 to-amber-950/45 border-2 border-amber-500/60 p-6 sm:p-8 shadow-[0_0_50px_rgba(245,158,11,0.22)] backdrop-blur-2xl">
             <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/15 rounded-full blur-3xl pointer-events-none" />
             <div className="absolute -bottom-10 -left-10 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
@@ -1155,7 +1155,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
                 <div className="flex flex-wrap items-center gap-2.5">
                   <span className="text-[10.5px] font-mono font-black px-3.5 py-1 rounded-full bg-gradient-to-r from-amber-500/30 to-red-500/30 text-amber-300 border border-amber-500/60 flex items-center gap-1.5 shadow-sm animate-pulse">
                     <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                    <span>✨ ANNUNCIO UFFICIALE: RILASCIO PATCH 2.0.0 (DATA 4.11)</span>
+                    <span>✨ ANNUNCIO UFFICIALE: MAJOR UPDATE V2.0.0 (4 NOVEMBRE 2026)</span>
                   </span>
                   <span className="text-[10px] font-mono px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/40 flex items-center gap-1.5">
                     <Cpu className="w-3.5 h-3.5 text-blue-400" />
@@ -1168,11 +1168,11 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
                 </div>
 
                 <h3 className="font-heading font-black text-2xl sm:text-3xl md:text-4xl text-white tracking-tight">
-                  Nuova Patch 2.0.0 (Data 4.11): Tutta la Suite Unificata al Nuovo Standard Industriale DSP
+                  Major Update V2.0.0 (4 Novembre 2026): Tutta la Suite Unificata al Nuovo Standard Industriale DSP
                 </h3>
 
                 <p className="text-sm sm:text-base text-neutral-200 font-light leading-relaxed">
-                  Annunciamo ufficialmente il rilascio della <strong>Patch 2.0.0 (Data 4.11 / 4 Novembre 2026)</strong>: da questo numero in poi contiamo tutte le future release della suite 171 Studio Innovatio. L'intero motore DSP Core <code className="text-amber-400 bg-black/60 px-1.5 py-0.5 rounded text-xs">dsp171</code> è stato ricostruito e validato da un comitato indipendente di esperti matematici e psicoacustici:
+                  Annunciamo ufficialmente il rilascio del <strong>Major Update V2.0.0 (4 Novembre 2026)</strong>: da questa pietra miliare in poi contiamo tutte le future release della suite 171 Plugin Innovation. L'intero motore DSP Core <code className="text-amber-400 bg-black/60 px-1.5 py-0.5 rounded text-xs">dsp171</code> è stato ricostruito nativamente in C++20 e validato con benchmark matematici e psicoacustici ad alta severità:
                 </p>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1 text-xs font-mono text-neutral-300">
@@ -1197,10 +1197,10 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
                 <div className="flex flex-wrap items-center gap-3 pt-2 text-xs font-mono text-neutral-400">
                   <span className="text-emerald-400 font-bold flex items-center gap-1.5">
                     <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                    <span>Tutti gli 11 Plugin Ufficiali Aggiornati alla Patch 2.0.0</span>
+                    <span>Tutti gli 11 Plugin Ufficiali Aggiornati a Major Update V2.0.0</span>
                   </span>
                   <span className="text-neutral-600">•</span>
-                  <span>Formati VST3 (64-bit) & Standalone .EXE inclusi</span>
+                  <span>Formati VST3 (64-bit), AudioUnit v2 (macOS) & Standalone .EXE inclusi</span>
                 </div>
               </div>
 
@@ -1213,16 +1213,26 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
                   Tutti gli 11 Plugin
                 </span>
                 <span className="text-[11px] font-mono text-neutral-400">
-                  Archivio Unico .ZIP (151 MB)
+                  Archivio Ufficiale GitHub Release
                 </span>
-                <a
-                  href={getAssetUrl('/downloads/plugins/171_Studio_Innovatio_SuiteCompleta_v2.0.0_Win64.zip')}
-                  download="171_Studio_Innovatio_SuiteCompleta_v2.0.0_Win64.zip"
-                  className="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-black font-heading font-black text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2.5 shadow-xl shadow-amber-500/30 transition-all cursor-pointer transform hover:scale-[1.02]"
-                >
-                  <Download className="w-4 h-4 text-black" />
-                  <span>Scarica Suite Completa (.ZIP)</span>
-                </a>
+                <div className="flex flex-col sm:flex-row gap-2.5 justify-center">
+                  <a
+                    href="https://github.com/171studio-plugininnovation/171-studio/releases/download/v2.0.0/171_Studio_Innovatio_SuiteCompleta_v2.0.0_Win64.zip"
+                    download="171_Studio_Innovatio_SuiteCompleta_v2.0.0_Win64.zip"
+                    className="px-4 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-black font-heading font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-xl shadow-amber-500/30 transition-all cursor-pointer transform hover:scale-[1.02]"
+                  >
+                    <Download className="w-4 h-4 text-black" />
+                    <span>Win64 (151 MB)</span>
+                  </a>
+                  <a
+                    href="https://github.com/171studio-plugininnovation/171-studio/releases/download/v2.0.0/171_Studio_Innovatio_SuiteCompleta_v2.0.0_Mac.zip"
+                    download="171_Studio_Innovatio_SuiteCompleta_v2.0.0_Mac.zip"
+                    className="px-4 py-3 rounded-xl bg-neutral-800 hover:bg-neutral-700 border border-neutral-700 text-white font-heading font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-xl transition-all cursor-pointer transform hover:scale-[1.02]"
+                  >
+                    <Download className="w-4 h-4 text-amber-400" />
+                    <span>macOS AU/VST3 (253 MB)</span>
+                  </a>
+                </div>
                 <span className="text-[9.5px] font-mono text-neutral-400">
                   Oppure scarica i plugin singoli qui sotto ⬇
                 </span>
