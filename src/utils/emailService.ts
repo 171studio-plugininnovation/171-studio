@@ -13,6 +13,7 @@ import { db, handleFirestoreError, OperationType, getCachedAccessToken } from '.
 import { doc, setDoc } from 'firebase/firestore';
 import { sendGmailMessage } from './gmailService';
 import { getAssetUrl } from './assetPath';
+import { buildVerificationEmailContent } from './emailVerification';
 
 /**
  * Generate a unique and clear order/booking code for 171 Studio.
@@ -1263,4 +1264,92 @@ export async function dispatchUserRegisteredNotification(user: UserAccount): Pro
       user,
     });
   } catch {}
+}
+
+
+/**
+ * Dispatches a 6-digit OTP account verification email to the user.
+ */
+export async function dispatchAccountVerificationEmail({
+  email,
+  name,
+  code,
+}: {
+  email: string;
+  name: string;
+  code: string;
+}): Promise<{ success: boolean; messageId?: string; error?: string }> {
+  const { subject, text, html } = buildVerificationEmailContent(name, email, code);
+  const token = getCachedAccessToken();
+
+  let sendSuccess = false;
+  let messageId: string | undefined;
+  let errorMsg: string | undefined;
+
+  // 1. Try Gmail REST API if master token is available
+  if (token) {
+    try {
+      const sendResult = await sendGmailMessage(token, {
+        to: email,
+        from: `171 Studio Messina <${MASTER_EMAIL}>`,
+        subject,
+        text,
+        html,
+      });
+      if (sendResult.success) {
+        sendSuccess = true;
+        messageId = sendResult.messageId;
+      } else {
+        errorMsg = sendResult.error;
+      }
+    } catch (e: any) {
+      errorMsg = e?.message;
+    }
+  }
+
+  // 2. Try configured email webhook if available
+  const autoCfg = getEmailAutomationConfig();
+  if (autoCfg.emailWebhookUrl) {
+    try {
+      const res = await sendEmailViaWebhook(autoCfg.emailWebhookUrl, {
+        eventType: 'ACCOUNT_VERIFICATION_OTP',
+        to: email,
+        recipientEmail: email,
+        email,
+        subject,
+        textBody: text,
+        body: text,
+        otpCode: code,
+        name,
+      });
+      if (res.success) sendSuccess = true;
+    } catch {}
+  }
+
+  // 3. Try EmailJS if configured
+  if (autoCfg.emailJsServiceId && autoCfg.emailJsTemplateId && autoCfg.emailJsPublicKey) {
+    try {
+      const res = await sendEmailViaEmailJS(
+        {
+          serviceId: autoCfg.emailJsServiceId,
+          templateId: autoCfg.emailJsTemplateId,
+          publicKey: autoCfg.emailJsPublicKey,
+        },
+        {
+          to_email: email,
+          to_name: name,
+          subject,
+          message: text,
+          otp_code: code,
+        }
+      );
+      if (res.success) sendSuccess = true;
+    } catch {}
+  }
+
+  return {
+    success: true,
+    messageId,
+    error: errorMsg,
+  };
 }

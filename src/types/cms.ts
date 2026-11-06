@@ -490,6 +490,10 @@ export interface UserAccount {
   isVerifiedBugHunter?: boolean;
   verifiedBugHunterUnlockedAt?: string;
   lifetimeCommercialPluginsFree?: boolean;
+  // Email Verification Status & Security
+  emailVerified?: boolean;
+  emailVerifiedAt?: string;
+  verificationMethod?: 'otp_email' | 'google' | 'master_pass' | 'legacy';
 }
 
 export interface UserActivity {

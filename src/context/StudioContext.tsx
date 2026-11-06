@@ -30,6 +30,15 @@ import {
 } from '../utils/googleCalendarService';
 import { calculateEndTime } from '../utils/pricing';
 import { DownloadConfirmationModal, DownloadReceiptData } from '../components/DownloadConfirmationModal';
+import {
+  validateEmailQuality,
+  generateVerificationOtp,
+  storePendingVerification,
+  getPendingVerification,
+  clearPendingVerification,
+  PendingVerificationSession,
+} from '../utils/emailVerification';
+import { dispatchAccountVerificationEmail } from '../utils/emailService';
 
 interface StudioContextType {
   currentUser: UserAccount | null;
@@ -42,6 +51,10 @@ interface StudioContextType {
   loginWithGoogle: () => Promise<boolean>;
   logout: () => void;
   register: (email: string, name: string, password?: string) => Promise<boolean>;
+  sendRegistrationVerificationOtp: (email: string, name: string, password?: string) => Promise<{ success: boolean; message: string; previewCode?: string }>;
+  verifyOtpAndCompleteRegistration: (email: string, code: string) => Promise<boolean>;
+  resendRegistrationVerificationOtp: (email: string) => Promise<{ success: boolean; message: string; previewCode?: string }>;
+  cancelRegistrationVerification: () => void;
   updateUserProfileName: (newName: string) => Promise<boolean>;
   loginAsMaster: () => void;
   siteContent: SiteContent;
@@ -2093,6 +2106,12 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const cleanUserSlug = cleanEmail.replace(/[^a-z0-9]/g, '').slice(0, 5).toUpperCase() || 'ARTIST';
     const personalWelcomeCode = existing?.welcomeDiscountCode || generateUniqueWelcomeVoucherCode(cleanEmail);
 
+    // Anti-Disposable & Fake Email Quality Shield
+    const validation = validateEmailQuality(cleanEmail);
+    if (!validation.isValid && !isMasterEmail) {
+      throw new Error(validation.error || 'Indirizzo email non valido o temporaneo.');
+    }
+
     const user: UserAccount = {
       id: existing?.id || `usr-${Date.now()}`,
       email: cleanEmail,
@@ -2109,6 +2128,9 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       isVerifiedBugHunter: existing?.isVerifiedBugHunter || false,
       verifiedBugHunterUnlockedAt: existing?.verifiedBugHunterUnlockedAt,
       lifetimeCommercialPluginsFree: existing?.lifetimeCommercialPluginsFree || false,
+      emailVerified: true,
+      emailVerifiedAt: existing?.emailVerifiedAt || new Date().toISOString(),
+      verificationMethod: 'otp_email',
     };
     saveRegisteredUserToMap(user);
 
@@ -2145,6 +2167,137 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       `Nuovo utente registrato: ${name} (${cleanEmail}) [Ruolo: CLIENTE • Codice Benvenuto Personale: ${personalWelcomeCode}]`
     );
     return true;
+  };
+
+
+  const sendRegistrationVerificationOtp = async (
+    email: string,
+    name: string,
+    password?: string
+  ): Promise<{ success: boolean; message: string; previewCode?: string }> => {
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanName = name.trim();
+
+    if (!cleanName || !cleanEmail) {
+      throw new Error('Inserisci nome ed indirizzo email per registrarti.');
+    }
+
+    const isMasterEmail = isOfficialMasterEmail(cleanEmail);
+    if (isMasterEmail) {
+      throw new Error(`L'indirizzo email ${cleanEmail} appartiene all'Amministratore Master di 171 Studio. Usa la schermata di Accesso con password Master.`);
+    }
+
+    const validation = validateEmailQuality(cleanEmail);
+    if (!validation.isValid) {
+      throw new Error(validation.error || 'Indirizzo email non valido o temporaneo.');
+    }
+
+    const map = getSavedRegisteredUsers();
+    if (map[cleanEmail]) {
+      throw new Error(`L'indirizzo email ${cleanEmail} è già registrato. Clicca su "Accedi" per entrare nel tuo account.`);
+    }
+
+    const code = generateVerificationOtp();
+    const now = Date.now();
+    const session: PendingVerificationSession = {
+      email: cleanEmail,
+      name: cleanName,
+      password: (password || '').trim(),
+      code,
+      createdAt: now,
+      expiresAt: now + 15 * 60 * 1000,
+      attempts: 0,
+      lastSentAt: now,
+    };
+    storePendingVerification(session);
+
+    try {
+      await dispatchAccountVerificationEmail({
+        email: cleanEmail,
+        name: cleanName,
+        code,
+      });
+    } catch (err) {
+      console.warn('Invio email verifica non riuscito:', err);
+    }
+
+    logActivity('REGISTER', `Inviato codice di verifica OTP a: ${cleanEmail}`);
+
+    return {
+      success: true,
+      message: `Codice di verifica a 6 cifre inviato a ${cleanEmail}. Controlla la tua posta (e la cartella Spam).`,
+      previewCode: code,
+    };
+  };
+
+  const verifyOtpAndCompleteRegistration = async (email: string, code: string): Promise<boolean> => {
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanCode = code.trim();
+
+    const pending = getPendingVerification();
+    if (!pending || pending.email !== cleanEmail) {
+      throw new Error('Nessuna sessione di verifica attiva per questa email. Richiedi un nuovo codice.');
+    }
+
+    if (Date.now() > pending.expiresAt) {
+      clearPendingVerification();
+      throw new Error('Il codice di verifica è scaduto (validità 15 minuti). Clicca su "Invia di nuovo" per riceverne uno nuovo.');
+    }
+
+    if (pending.attempts >= 5) {
+      clearPendingVerification();
+      throw new Error('Troppi tentativi errati. Per motivi di sicurezza, richiedi un nuovo codice di verifica.');
+    }
+
+    if (cleanCode !== pending.code) {
+      pending.attempts += 1;
+      storePendingVerification(pending);
+      const remainingAttempts = 5 - pending.attempts;
+      throw new Error(`Codice di verifica errato. Tentativi rimasti: ${remainingAttempts}`);
+    }
+
+    clearPendingVerification();
+    await register(pending.email, pending.name, pending.password);
+    return true;
+  };
+
+  const resendRegistrationVerificationOtp = async (email: string): Promise<{ success: boolean; message: string; previewCode?: string }> => {
+    const cleanEmail = email.trim().toLowerCase();
+    const pending = getPendingVerification();
+    if (!pending || pending.email !== cleanEmail) {
+      throw new Error('Nessuna sessione di registrazione attiva per questa email.');
+    }
+
+    const now = Date.now();
+    if (now - pending.lastSentAt < 30 * 1000) {
+      const waitSec = Math.ceil((30 * 1000 - (now - pending.lastSentAt)) / 1000);
+      throw new Error(`Attendi ${waitSec} secondi prima di richiedere un nuovo codice.`);
+    }
+
+    const newCode = generateVerificationOtp();
+    pending.code = newCode;
+    pending.attempts = 0;
+    pending.expiresAt = now + 15 * 60 * 1000;
+    pending.lastSentAt = now;
+    storePendingVerification(pending);
+
+    try {
+      await dispatchAccountVerificationEmail({
+        email: cleanEmail,
+        name: pending.name,
+        code: newCode,
+      });
+    } catch {}
+
+    return {
+      success: true,
+      message: `Un nuovo codice di verifica a 6 cifre è stato inviato a ${cleanEmail}.`,
+      previewCode: newCode,
+    };
+  };
+
+  const cancelRegistrationVerification = () => {
+    clearPendingVerification();
   };
 
   const loginAsMaster = async () => {
@@ -4438,6 +4591,10 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         loginWithGoogle,
         logout,
         register,
+        sendRegistrationVerificationOtp,
+        verifyOtpAndCompleteRegistration,
+        resendRegistrationVerificationOtp,
+        cancelRegistrationVerification,
         updateUserProfileName,
         loginAsMaster,
         siteContent,

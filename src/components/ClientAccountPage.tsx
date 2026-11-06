@@ -634,8 +634,19 @@ Data: ${new Date(file.createdAt).toLocaleString('it-IT')}
                 </button>
               </form>
             )}
-            <p className="text-xs font-mono text-neutral-400">
-              Email registrata: <strong className="text-neutral-200">{currentUser.email}</strong> • Gestione sessioni (cancellazione fino a 24h prima), file audio, plugin e Key & BPM Finder
+            <div className="flex flex-wrap items-center gap-2 mt-1">
+              <p className="text-xs font-mono text-neutral-400">
+                Email registrata: <strong className="text-neutral-200">{currentUser.email}</strong>
+              </p>
+              {currentUser.emailVerified !== false && (
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-[10px] font-mono font-bold shadow-[0_0_10px_rgba(16,185,129,0.2)]">
+                  <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                  <span>EMAIL VERIFICATA</span>
+                </span>
+              )}
+            </div>
+            <p className="text-[11px] font-mono text-neutral-500">
+              Gestione sessioni (cancellazione fino a 24h prima), file audio, plugin e Key & BPM Finder
             </p>
           </div>
         </div>
