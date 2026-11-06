@@ -6,7 +6,7 @@ import {
   DollarSign, CreditCard, Send, Copy, AlertCircle, Eye, ChevronDown, ChevronUp,
   Inbox, Archive, Search, RotateCcw, Printer, X, BarChart3, TrendingUp,
   Upload, Download, FolderArchive, FolderOpen, Tag, Gift, Percent, MessageSquare, Star,
-  Sliders, Music, Monitor, Smartphone, Tablet, Truck, Bug, Wrench, Globe, Heart, Users
+  Sliders, Music, Monitor, Smartphone, Tablet, Truck, Bug, Wrench, Globe, Heart, Users, ShieldAlert
 } from 'lucide-react';
 import { useStudio, isIgnoredUserEmail } from '../context/StudioContext';
 import { PageId } from '../types';
@@ -68,6 +68,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
     pluginBugReports, updatePluginBugReportStatus, deletePluginBugReport, verifyPluginBugReportAndReward,
     pluginDonations, confirmPluginDonationPayPal, updatePluginDonation, deletePluginDonation,
     registeredUsers,
+    purgeInvalidAndFakeDomainAccounts,
     visitorCount,
     liveOnlineCount,
     openGmailWebCompose, openMailtoCompose, downloadBookingCalendarIcs, openGoogleCalendarWeb
@@ -78,6 +79,27 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
   const [previewTabPage, setPreviewTabPage] = useState<PageId>('home');
   const [copiedLocalUrl, setCopiedLocalUrl] = useState(false);
   const [userSearchQuery, setUserSearchQuery] = useState('');
+  const [isPurgingAccounts, setIsPurgingAccounts] = useState(false);
+  const [purgeFeedback, setPurgeFeedback] = useState<string | null>(null);
+
+  const handlePurgeFakeAccounts = async () => {
+    setIsPurgingAccounts(true);
+    setPurgeFeedback(null);
+    try {
+      const res = await purgeInvalidAndFakeDomainAccounts();
+      if (res.deletedCount > 0) {
+        setPurgeFeedback(`Pulizia completata: rimossi ${res.deletedCount} account fake/inesistenti (${res.purgedEmails.join(', ')})`);
+      } else {
+        setPurgeFeedback('Tutti gli account registrati hanno email e domini reali e validi. Nessun account fake trovato.');
+      }
+    } catch {
+      setPurgeFeedback('Errore durante la pulizia degli account.');
+    } finally {
+      setIsPurgingAccounts(false);
+      setTimeout(() => setPurgeFeedback(null), 6000);
+    }
+  };
+
   const [tabCategory, setTabCategory] = useState<'all' | 'studio' | 'products' | 'cms' | 'admin'>('all');
   const [tabSearchFilter, setTabSearchFilter] = useState('');
 
@@ -7478,7 +7500,18 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3">
+              <button
+                type="button"
+                onClick={handlePurgeFakeAccounts}
+                disabled={isPurgingAccounts}
+                className="px-3.5 py-2 rounded-xl bg-red-950/80 hover:bg-red-900 border border-red-600/50 text-red-300 hover:text-white text-xs font-mono flex items-center gap-1.5 transition-all shadow-md cursor-pointer disabled:opacity-50"
+                title="Elimina tutti gli account con domini inesistenti, temporanei o fake"
+              >
+                <ShieldAlert className="w-3.5 h-3.5 text-red-400" />
+                <span>{isPurgingAccounts ? 'Pulizia in corso...' : 'Pulisci Domini Inesistenti'}</span>
+              </button>
+
               <div className="relative">
                 <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500" />
                 <input
@@ -7501,6 +7534,13 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
               )}
             </div>
           </div>
+
+          {purgeFeedback && (
+            <div className="mb-4 p-3.5 rounded-2xl bg-amber-950/70 border border-amber-500/50 text-amber-300 text-xs font-mono flex items-center gap-2 shadow-lg">
+              <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+              <span>{purgeFeedback}</span>
+            </div>
+          )}
 
           <div className="rounded-3xl bg-neutral-900 border border-neutral-800 overflow-hidden shadow-2xl">
             {registeredUsers.length === 0 ? (

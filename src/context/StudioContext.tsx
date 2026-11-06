@@ -55,6 +55,7 @@ interface StudioContextType {
   verifyOtpAndCompleteRegistration: (email: string, code: string) => Promise<boolean>;
   resendRegistrationVerificationOtp: (email: string) => Promise<{ success: boolean; message: string; previewCode?: string }>;
   cancelRegistrationVerification: () => void;
+  purgeInvalidAndFakeDomainAccounts: () => Promise<{ deletedCount: number; purgedEmails: string[] }>;
   updateUserProfileName: (newName: string) => Promise<boolean>;
   loginAsMaster: () => void;
   siteContent: SiteContent;
@@ -988,31 +989,10 @@ export const isOfficialMasterEmail = (email?: string | null): boolean => {
 export const isDisposableOrSpamEmail = (email?: string | null): boolean => {
   if (!email || !email.includes('@')) return false;
   const clean = email.toLowerCase().trim();
-  const parts = clean.split('@');
-  if (parts.length < 2) return false;
-  const domain = parts[1];
 
-  const disposableDomains = [
-    'seigay.com',
-    'tempmail.com',
-    'temp-mail.org',
-    'guerrillamail.com',
-    'guerrillamail.net',
-    'guerrillamail.org',
-    'mailinator.com',
-    'yopmail.com',
-    'yopmail.fr',
-    '10minutemail.com',
-    'throwawaymail.com',
-    'dispostable.com',
-    'trashmail.com',
-    'sharklasers.com',
-    'getairmail.com',
-    'mohmal.com',
-    'fakemailgenerator.com',
-  ];
-
-  if (disposableDomains.some((d) => domain === d || domain.endsWith('.' + d))) {
+  // Strict quality validation against disposable, fake, or non-existent domains
+  const quality = validateEmailQuality(clean);
+  if (!quality.isValid) {
     return true;
   }
 
@@ -1766,8 +1746,12 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
             const firestoreUsersMap: Record<string, UserAccount> = {};
             snap.docs.forEach((d) => {
               const u = d.data() as UserAccount;
-              if (u && u.email && !isIgnoredUserEmail(u.email)) {
-                firestoreUsersMap[u.email.toLowerCase().trim()] = u;
+              const email = (u?.email || '').trim().toLowerCase();
+              if (!email || isIgnoredUserEmail(email) || isDisposableOrSpamEmail(email) || !validateEmailQuality(email).isValid) {
+                // Auto-purge invalid / fake / non-existent domain document from Firestore
+                deleteDoc(doc(db, 'users', d.id)).catch(() => {});
+              } else {
+                firestoreUsersMap[email] = u;
               }
             });
             // Merge into localStorage registered users map
@@ -2299,6 +2283,56 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const cancelRegistrationVerification = () => {
     clearPendingVerification();
   };
+
+  const purgeInvalidAndFakeDomainAccounts = async (): Promise<{ deletedCount: number; purgedEmails: string[] }> => {
+    const purgedEmails: string[] = [];
+
+    // 1. Purge from Firestore 'users' collection
+    try {
+      const snap = await getDocs(collection(db, 'users'));
+      for (const d of snap.docs) {
+        const data = d.data();
+        const email = (data.email || '').trim().toLowerCase();
+        if (!email || isDisposableOrSpamEmail(email) || !validateEmailQuality(email).isValid) {
+          await deleteDoc(doc(db, 'users', d.id));
+          purgedEmails.push(email || d.id);
+        }
+      }
+    } catch {}
+
+    // 2. Purge from localStorage registered users map
+    try {
+      const raw = localStorage.getItem('171_registered_users_map');
+      if (raw) {
+        const parsed: Record<string, UserAccount> = JSON.parse(raw);
+        const cleaned: Record<string, UserAccount> = {};
+        let modified = false;
+        Object.entries(parsed).forEach(([key, val]) => {
+          const email = (val?.email || key).trim().toLowerCase();
+          if (isDisposableOrSpamEmail(email) || !validateEmailQuality(email).isValid) {
+            modified = true;
+            if (!purgedEmails.includes(email)) purgedEmails.push(email);
+          } else {
+            cleaned[key] = val;
+          }
+        });
+        if (modified) {
+          localStorage.setItem('171_registered_users_map', JSON.stringify(cleaned));
+          setRegisteredUsersMap(cleaned);
+        }
+      }
+    } catch {}
+
+    if (purgedEmails.length > 0) {
+      logActivity(
+        'CMS_EDIT',
+        `Pulizia account completata: eliminati ${purgedEmails.length} account con email o domini inesistenti/fake: ${purgedEmails.join(', ')}`
+      );
+    }
+
+    return { deletedCount: purgedEmails.length, purgedEmails };
+  };
+
 
   const loginAsMaster = async () => {
     // Directs to genuine Google Workspace OAuth login
@@ -4595,6 +4629,7 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         verifyOtpAndCompleteRegistration,
         resendRegistrationVerificationOtp,
         cancelRegistrationVerification,
+        purgeInvalidAndFakeDomainAccounts,
         updateUserProfileName,
         loginAsMaster,
         siteContent,
