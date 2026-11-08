@@ -309,7 +309,7 @@ export const HeroHome: React.FC<HeroHomeProps> = ({ onNavigate }) => {
         </div>
       </div>
 
-      {/* 3. PROMINENT MAJOR UPDATE V2.0.0 LUXURY RELEASE BANNER (UNIVERSAL AUDIO / WAVES STYLE) */}
+      {/* 3. PROMINENT MAJOR UPDATE 2.2.5 LUXURY RELEASE BANNER (UNIVERSAL AUDIO / WAVES STYLE) */}
       <div 
         className="w-full relative rounded-3xl bg-gradient-to-b from-neutral-900 via-neutral-950 to-black border-2 border-amber-500/60 shadow-[0_15px_50px_rgba(245,158,11,0.25)] p-5 sm:p-8 overflow-hidden group"
       >
@@ -331,12 +331,12 @@ export const HeroHome: React.FC<HeroHomeProps> = ({ onNavigate }) => {
         <div className="absolute -top-24 -right-24 w-96 h-96 bg-amber-500/15 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-          <div className="space-y-3 max-w-3xl text-left">
+          <div className="space-y-3.5 max-w-3xl text-left">
             {/* Top Badges & Glowing Jewel Lamp */}
             <div className="flex flex-wrap items-center gap-2.5">
               <span className="w-3 h-3 rounded-full bg-amber-400 shadow-[0_0_12px_rgba(245,158,11,0.9)] animate-pulse" />
               <span className="text-[10px] font-mono uppercase tracking-widest px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 font-bold border border-amber-500/50">
-                ✨ MAJOR UPDATE V2.0.0 • 4 NOVEMBRE 2026 • OFFICIAL RELEASE
+                ✨ MAJOR UPDATE 2.2.5 • 8 NOVEMBRE 2026 • OFFICIAL RELEASE
               </span>
               <span className="text-[10px] font-mono text-emerald-400 font-bold px-2.5 py-0.5 rounded-full bg-emerald-950/60 border border-emerald-500/40">
                 100% FREEWARE ILLIMITATO
@@ -345,28 +345,30 @@ export const HeroHome: React.FC<HeroHomeProps> = ({ onNavigate }) => {
 
             {/* Banner Main Title */}
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-heading font-black text-white leading-tight">
-              171PluginInnovation V2.0.0 — Nuova Generazione DSP per Voce e Master
+              171PluginInnovation Major Update 2.2.5 — Nuove Versioni per RealTune, EasyVoice, PerfectPre e SpaceLuxe
             </h2>
 
             {/* Technical Bullet Highlights */}
             <p className="text-xs sm:text-sm text-neutral-300 font-light leading-relaxed">
-              La suite completa di plugin analog-modeled è stata aggiornata con motore C++20 ad altissima risoluzione: 
-              <strong> Oversampling Polifase 4x ADAA-2</strong> privo di aliasing, calcolo analitico <strong>ISP True-Peak a -0.10 dBTP</strong> (BS.1770-4) 
-              e <strong>guardia hardware FTZ/DAZ</strong> anti-denormale a -144 dBFS.
+              Rilascio maggiore con ottimizzazioni specifiche e verifiche matematiche dsp171: tracking sub-cent (&lt; 0.0033 Hz) e curva quintica per <strong>RealTune</strong>, 0 dB Pre-Open e routing seriale invertibile per <strong>EasyVoice</strong>, taglio LC Neve 1073 con decramping Andy Simper per <strong>PerfectPre</strong> e serbatoio FDN-16 lossless senza glitch per <strong>SpaceLuxe</strong>.
             </p>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1 text-[11px] font-mono text-neutral-300">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-[11px] font-mono text-neutral-300">
               <div className="flex items-center gap-2 p-2 rounded-xl bg-neutral-950/80 border border-neutral-800">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>Oversampling 4x ADAA-2</span>
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                <span>RealTune 2.2.5 (&lt;0.01 cent)</span>
               </div>
               <div className="flex items-center gap-2 p-2 rounded-xl bg-neutral-950/80 border border-neutral-800">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>True-Peak -0.10 dBTP</span>
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                <span>EasyVoice 2.2.5 (Dual Dyn)</span>
               </div>
               <div className="flex items-center gap-2 p-2 rounded-xl bg-neutral-950/80 border border-neutral-800">
-                <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
-                <span>Windows x64 + macOS AU</span>
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                <span>PerfectPre 2.2.5 (Neve 1073)</span>
+              </div>
+              <div className="flex items-center gap-2 p-2 rounded-xl bg-neutral-950/80 border border-neutral-800">
+                <CheckCircle2 className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                <span>SpaceLuxe 2.2.5 (FDN-16)</span>
               </div>
             </div>
           </div>
@@ -378,16 +380,16 @@ export const HeroHome: React.FC<HeroHomeProps> = ({ onNavigate }) => {
               onClick={() => onNavigate('plugin-innovation')}
               className="py-3.5 px-6 rounded-2xl bg-amber-500 hover:bg-amber-400 text-black font-heading font-black text-xs uppercase tracking-wider transition-all shadow-[0_0_25px_rgba(245,158,11,0.35)] flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98]"
             >
-              <span>Esplora Suite Completa V2.0.0</span>
+              <span>Esplora Major Update 2.2.5</span>
               <ArrowRight className="w-4 h-4" />
             </button>
             
             <button
               type="button"
-              onClick={() => onNavigate('plugin-innovation', 'plugin-spaceluxe')}
+              onClick={() => onNavigate('plugin-innovation', 'plugin-easyvoice')}
               className="py-3 px-5 rounded-2xl bg-neutral-900 hover:bg-neutral-800 text-amber-300 hover:text-amber-200 font-mono text-xs uppercase tracking-wider border border-amber-500/30 transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
-              <span>Vedi SpaceLuxe (Week 1 Sbloccato)</span>
+              <span>Vedi EasyVoice v2.2.5</span>
               <Sparkles className="w-3.5 h-3.5 text-amber-400" />
             </button>
           </div>

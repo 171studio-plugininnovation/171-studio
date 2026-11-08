@@ -340,14 +340,14 @@ console.log('\n\x1b[36m[SUITE 4/7] Verifica Integrità File e Download 4 Plugin 
 const pluginsToVerify = [
   {
     name: '171 RealTune',
-    zipFile: '171RealTune_v2.2.0_Win64.zip',
+    zipFile: '171RealTune_v2.2.5_Win64.zip',
     expectedVst3: '171RealTune.vst3',
     expectedExe: '171RealTune.exe',
     minBytes: 19_000_000,
   },
   {
     name: '171 PerfectPre',
-    zipFile: '171PerfectPre_v2.2.0_Win64.zip',
+    zipFile: '171PerfectPre_v2.2.5_Win64.zip',
     expectedVst3: '171PerfectPre.vst3',
     expectedExe: '171PerfectPre.exe',
     minBytes: 18_000_000,
