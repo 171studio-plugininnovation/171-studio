@@ -29,11 +29,6 @@ const TOPOLOGY_MAP: Record<string, { topology: string; tube: string; oversamplin
     tube: '12AX7 & 6BA6 Analog Valves',
     oversampling: '4x ADAA-2 Oversampling',
   },
-  'plugin-optocom': {
-    topology: 'T4B OPTICAL CELL & DISCRETE TUBE GAIN',
-    tube: 'Photocell Non-Linear Curve',
-    oversampling: 'True Hardware Hysteresis',
-  },
   'plugin-cleandrive': {
     topology: 'TRANSIENT-SPLIT ASYMMETRIC SATURATOR',
     tube: 'Triode + Pentode Bias',

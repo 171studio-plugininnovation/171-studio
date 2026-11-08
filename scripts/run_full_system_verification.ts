@@ -339,15 +339,15 @@ console.log('\n\x1b[36m[SUITE 4/7] Verifica Integrità File e Download 4 Plugin 
 
 const pluginsToVerify = [
   {
-    name: '171 DriveOptocom',
-    zipFile: '171_DriveOptocom_v2.0.0_Win64.zip',
-    expectedVst3: 'DRIVE OPTOCOM.vst3',
-    expectedExe: '171DriveOptocom.exe',
-    minBytes: 8_000_000,
+    name: '171 RealTune',
+    zipFile: '171RealTune_v2.2.0_Win64.zip',
+    expectedVst3: '171RealTune.vst3',
+    expectedExe: '171RealTune.exe',
+    minBytes: 19_000_000,
   },
   {
     name: '171 PerfectPre',
-    zipFile: '171_PerfectPre_v2.0.0_Win64.zip',
+    zipFile: '171PerfectPre_v2.2.0_Win64.zip',
     expectedVst3: '171PerfectPre.vst3',
     expectedExe: '171PerfectPre.exe',
     minBytes: 18_000_000,
@@ -411,8 +411,8 @@ console.log('\n\x1b[36m[SUITE 5/7] Verifica Recensioni & Report Bug Plugin...\x1
 runTest('Plugin Feedback', 'Inserimento Recensione Utente (5/5 su Ableton Live 12)', () => {
   const newFeedback = {
     id: `fb-bot-test-${Date.now()}`,
-    pluginId: 'plugin-optocom',
-    pluginName: '171 DriveOptocom',
+    pluginId: 'plugin-easyvoice',
+    pluginName: '171 EasyVoice',
     userId: botUser1.id,
     userName: botUser1.name,
     userEmail: botUser1.email,

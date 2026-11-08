@@ -117,7 +117,6 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
   const [expandedTechPluginId, setExpandedTechPluginId] = useState<Record<string, boolean>>({
     'plugin-realtune': true,
     'plugin-easyvoice': true,
-    'plugin-optocom': true,
     'plugin-cleandrive': true,
     'plugin-cleanreso': true,
     'plugin-perfectpre': true,
@@ -132,7 +131,6 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
     'plugin-easyvoice': true,
     'plugin-spaceluxe': true,
     'plugin-realtune': true,
-    'plugin-optocom': false,
     'plugin-cleandrive': false,
     'plugin-cleanreso': false,
     'plugin-perfectpre': false,
@@ -176,7 +174,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
         if (categoryFilter === 'all') return true;
         if (categoryFilter === 'favorites') return isPluginFavorite(plugin.id);
         if (categoryFilter === 'vocal') return ['plugin-realtune', 'plugin-easyvoice', 'plugin-vocalcraft'].includes(plugin.id);
-        if (categoryFilter === 'dynamics') return ['plugin-optocom', 'plugin-masterglue', 'plugin-punchcraft', 'plugin-perfectclip'].includes(plugin.id);
+        if (categoryFilter === 'dynamics') return ['plugin-masterglue', 'plugin-punchcraft', 'plugin-perfectclip'].includes(plugin.id);
         if (categoryFilter === 'saturation') return ['plugin-cleandrive', 'plugin-perfectpre'].includes(plugin.id);
         if (categoryFilter === 'spatial') return ['plugin-cleanreso', 'plugin-spaceluxe'].includes(plugin.id);
         return true;
@@ -1312,7 +1310,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
                 { id: 'all', label: 'Tutti i Plugin', icon: Layers, count: siteContent.plugins.length },
                 { id: 'favorites', label: 'Preferiti', icon: Heart, count: favoritePluginIds.length },
                 { id: 'vocal', label: 'Voci & Intonazione', icon: Radio, count: siteContent.plugins.filter(p => ['plugin-realtune', 'plugin-easyvoice', 'plugin-vocalcraft'].includes(p.id)).length },
-                { id: 'dynamics', label: 'Compressori & Dinamica', icon: Sliders, count: siteContent.plugins.filter(p => ['plugin-optocom', 'plugin-masterglue', 'plugin-punchcraft', 'plugin-perfectclip'].includes(p.id)).length },
+                { id: 'dynamics', label: 'Compressori & Dinamica', icon: Sliders, count: siteContent.plugins.filter(p => ['plugin-masterglue', 'plugin-punchcraft', 'plugin-perfectclip'].includes(p.id)).length },
                 { id: 'saturation', label: 'Preamp & Saturazione', icon: Flame, count: siteContent.plugins.filter(p => ['plugin-cleandrive', 'plugin-perfectpre'].includes(p.id)).length },
                 { id: 'spatial', label: 'Riverberi & Spazio', icon: Sparkles, count: siteContent.plugins.filter(p => ['plugin-cleanreso', 'plugin-spaceluxe'].includes(p.id)).length },
               ].map((tab) => {

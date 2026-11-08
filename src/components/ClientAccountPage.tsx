@@ -136,8 +136,8 @@ export const ClientAccountPage: React.FC<ClientAccountPageProps> = ({ onNavigate
   };
 
   // Dedicated Bug Report Form State ("Report Plugin Bug and Help Us")
-  const [bugPluginId, setBugPluginId] = useState<string>('plugin-optocom');
-  const [bugPluginName, setBugPluginName] = useState<string>('171 DriveOptocom');
+  const [bugPluginId, setBugPluginId] = useState<string>('plugin-easyvoice');
+  const [bugPluginName, setBugPluginName] = useState<string>('171 EasyVoice');
   const [bugDaw, setBugDaw] = useState<string>('FL Studio');
   const [bugOs, setBugOs] = useState<string>('Windows 11 (64-bit)');
   const [bugFormat, setBugFormat] = useState<string>('VST3 (64-bit)');
@@ -3026,7 +3026,7 @@ Data: ${new Date(file.createdAt).toLocaleString('it-IT')}
                   {(siteContent.plugins && siteContent.plugins.length > 0 ? siteContent.plugins : [
                     { id: 'plugin-realtune', name: '171 RealTune' },
                     { id: 'plugin-easyvoice', name: '171 EasyVoice' },
-                    { id: 'plugin-optocom', name: '171 DriveOptocom' },
+                    
                     { id: 'plugin-cleandrive', name: '171 CleanDrive' },
                     { id: 'plugin-cleanreso', name: '171 CleanReso' },
                     { id: 'plugin-perfectpre', name: '171 PerfectPre' },

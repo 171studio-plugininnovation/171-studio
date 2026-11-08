@@ -529,22 +529,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <span>🎛️ Dinamiche & Preamp Analogici</span>
                 </div>
                 <div className="space-y-2">
-                  {/* 171 DriveOptocom */}
-                  <div 
-                    onClick={() => handleNavClick('plugin-innovation', 'plugin-optocom')}
-                    className="p-3.5 rounded-2xl bg-neutral-900/80 hover:bg-neutral-800/90 border border-neutral-800 hover:border-amber-500/60 transition-all cursor-pointer group flex items-start justify-between gap-3"
-                  >
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-heading font-bold text-sm text-white group-hover:text-amber-400 transition-colors">171 DriveOptocom</span>
-                        <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-gradient-to-r from-amber-500/30 to-red-500/30 text-amber-300 border border-amber-500/50">✨ MAJOR V2.0.0</span>
-                      </div>
-                      <p className="text-[11px] text-neutral-400 font-light mt-0.5">Compressore ottico T4B con memoria fotochimica e Tri-Band Drive</p>
-                      <span className="text-[10px] font-mono text-emerald-400 font-semibold mt-1 inline-block">v2.0.0 (4 Nov 2026) • Win (10.99 MB) • Mac (93.9 MB)</span>
-                    </div>
-                    <span className="text-neutral-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all text-sm mt-1">→</span>
-                  </div>
-
                   {/* 171 CleanDrive */}
                   <div 
                     onClick={() => handleNavClick('plugin-innovation', 'plugin-cleandrive')}
@@ -737,14 +721,13 @@ export const Navbar: React.FC<NavbarProps> = ({
                       <span>→</span>
                     </button>
                     {[
-                      { id: 'plugin-easyvoice', name: '171 EasyVoice', tag: '✨ V2.0.0' },
-                      { id: 'plugin-realtune', name: '171 RealTune', tag: '✨ V2.0.0' },
-                      { id: 'plugin-spaceluxe', name: '171 SpaceLuxe', tag: '🔥 SBLOCCATO' },
-                      { id: 'plugin-optocom', name: '171 DriveOptocom', tag: 'DISP' },
+                      { id: 'plugin-easyvoice', name: '171 EasyVoice', tag: '⭐ GM V2.2.0' },
+                      { id: 'plugin-realtune', name: '171 RealTune', tag: '⭐ GM V2.2.0' },
+                      { id: 'plugin-spaceluxe', name: '171 SpaceLuxe', tag: '⭐ GM V2.4.0' },
                       { id: 'plugin-cleandrive', name: '171 CleanDrive', tag: 'DISP' },
                       { id: 'plugin-cleanreso', name: '171 CleanReso', tag: 'DISP' },
-                      { id: 'plugin-perfectpre', name: '171 PerfectPre', tag: 'DISP' },
-                      { id: 'plugin-masterglue', name: '171 MasterGlue', tag: '⏳ SETT 2' },
+                      { id: 'plugin-perfectpre', name: '171 PerfectPre', tag: '⭐ GM V2.2.0' },
+                      { id: 'plugin-masterglue', name: '171 MasterGlue', tag: '🔒 1 DIC' },
                       { id: 'plugin-punchcraft', name: '171 PunchCraft', tag: '⏳ SETT 3' },
                       { id: 'plugin-perfectclip', name: '171 PerfectClip', tag: '⏳ SETT 4' },
                       { id: 'plugin-vocalcraft', name: '171 VocalCraft', tag: '⏳ SETT 5' },

@@ -192,7 +192,7 @@ export const ProAudioDemoPlayer: React.FC<ProAudioDemoPlayerProps> = ({
     shaper.curve = curve;
     shaper.oversample = '4x';
 
-    // Studio compressor (171 DriveOptocom / MasterGlue)
+    // Studio compressor (171 MasterGlue)
     const compressor = ctx.createDynamicsCompressor();
     compressor.threshold.value = -18;
     compressor.knee.value = 6;
