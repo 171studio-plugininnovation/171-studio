@@ -62,7 +62,7 @@ export const generateBookingIcsContent = (booking: BookingRecord, isForClient: b
   const orderCode = booking.orderCode || booking.id.slice(-8);
 
   const summary = isForClient
-    ? `Sessione in Studio: ${booking.serviceTitle} @ 171 Studio`
+    ? `171 Studio: ${booking.serviceTitle}`
     : `171 STUDIO: ${booking.serviceTitle} - ${booking.userName}`;
 
   const descriptionLines = isForClient

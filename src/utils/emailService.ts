@@ -218,14 +218,15 @@ export function getActiveEmailTemplates(custom?: Partial<EmailTemplatesConfig>):
 export function interpolateEmailTemplate(
   templateText: string,
   booking: BookingRecord,
-  orderCode: string
+  orderCode?: string
 ): string {
   const userName = booking.userName?.trim() || 'Artista';
+  const effectiveCode = orderCode || booking.orderCode || booking.id || 'ORD-171';
   return templateText
     .replace(/\{nome\}/gi, userName)
     .replace(/\{user\}/gi, userName)
     .replace(/\{username\}/gi, userName)
-    .replace(/\{codice_ordine\}/gi, orderCode)
+    .replace(/\{codice_ordine\}/gi, effectiveCode)
     .replace(/\{servizio\}/gi, booking.serviceTitle || 'Sessione in Studio')
     .replace(/\{data\}/gi, booking.date || '')
     .replace(/\{ora\}/gi, booking.time || '')
@@ -470,6 +471,11 @@ export function buildBookingReceivedEmailHtml(
           <td style="padding: 6px 0; font-weight: 600; color: #ffffff;">dalle ore ${booking.time} alle ${booking.endTime || 'fine sessione'} (${booking.hours}h)</td>
         </tr>
         ${discountRowHtml}
+        ${booking.notes ? `
+        <tr>
+          <td style="padding: 6px 0; color: #a3a3a3;">Note & Specifiche:</td>
+          <td style="padding: 6px 0; color: #f59e0b; font-weight: 600;">${booking.notes}</td>
+        </tr>` : ''}
         <tr>
           <td style="padding: 6px 0; color: #a3a3a3;">Importo Totale:</td>
           <td style="padding: 6px 0; font-weight: 800; color: #10b981; font-size: 16px;">${booking.estimatedPrice} €</td>
@@ -574,6 +580,11 @@ export function buildBookingConfirmedEmailHtml(
           <td style="padding: 6px 0; font-weight: 700; color: #ffffff;">dalle ore ${booking.time} alle ${booking.endTime || 'fine sessione'} (${booking.hours}h)</td>
         </tr>
         ${discountRowHtml}
+        ${booking.notes ? `
+        <tr>
+          <td style="padding: 6px 0; color: #a3a3a3;">Note & Specifiche:</td>
+          <td style="padding: 6px 0; color: #f59e0b; font-weight: 600;">${booking.notes}</td>
+        </tr>` : ''}
         <tr>
           <td style="padding: 6px 0; color: #a3a3a3;">Importo da Saldare:</td>
           <td style="padding: 6px 0; font-weight: 900; color: #34d399; font-size: 18px;">${booking.estimatedPrice} €</td>
@@ -1327,14 +1338,13 @@ export async function dispatchAccountVerificationEmail({
   }
 
   // 3. Try EmailJS if configured
-  if (autoCfg.emailJsServiceId && autoCfg.emailJsTemplateId && autoCfg.emailJsPublicKey) {
+  const emailJsTpl = autoCfg.emailjsTemplateIdReceipt || autoCfg.emailjsTemplateIdConfirmation || '';
+  if (autoCfg.emailjsServiceId && emailJsTpl && autoCfg.emailjsPublicKey) {
     try {
       const res = await sendEmailViaEmailJS(
-        {
-          serviceId: autoCfg.emailJsServiceId,
-          templateId: autoCfg.emailJsTemplateId,
-          publicKey: autoCfg.emailJsPublicKey,
-        },
+        autoCfg.emailjsServiceId,
+        emailJsTpl,
+        autoCfg.emailjsPublicKey,
         {
           to_email: email,
           to_name: name,

@@ -92,7 +92,7 @@ export interface EmailTemplatesConfig {
 export const DEFAULT_EMAIL_TEMPLATES: EmailTemplatesConfig = {
   receiptSubject: '[171 STUDIO] Ciao {nome}, richiesta ricevuta per {servizio}! - Ordine #{codice_ordine}',
   receiptHeading: 'Ciao {nome}, grazie della tua prenotazione!',
-  receiptIntro: 'Il nostro staff sta verificando la disponibilità dello studio per la sessione richiesta.',
+  receiptIntro: 'Ciao {nome}, il nostro staff sta verificando la disponibilità dello studio per la sessione richiesta.',
   receiptNextStep: 'Una volta che il Master confermerà la disponibilità dello studio dal pannello di controllo, riceverai una seconda email con l\'Ordine Confermato, i dettagli finali e il link per il saldo anticipato con PayPal prima di arrivare in studio.',
   receiptSignature: '171 Studio Staff — Messina, Sicilia',
   confirmationSubject: '[171 STUDIO] Sessione confermata per {nome}! - Ordine #{codice_ordine}',

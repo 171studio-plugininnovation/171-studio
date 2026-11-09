@@ -5,7 +5,7 @@ import { useStudio } from '../context/StudioContext';
 import { DEFAULT_PAGE_VALUES } from '../types/cms';
 import { StudioButton } from './ui';
 import { GearLockerSection } from './GearLockerSection';
-import { CheckCircle2, Shield, Activity, Waves } from 'lucide-react';
+import { CheckCircle2, Shield, Activity, Waves, Zap } from 'lucide-react';
 
 interface AboutPageProps {
   onNavigate: (page: PageId) => void;
