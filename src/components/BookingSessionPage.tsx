@@ -55,6 +55,7 @@ export const BookingSessionPage: React.FC<BookingSessionPageProps> = ({ onNaviga
   const [dataPreferita, setDataPreferita] = useState(todayStr);
   const [oraPreferita, setOraPreferita] = useState('15:00');
   const [note, setNote] = useState('');
+  const [selectedMic, setSelectedMic] = useState<string>('rode-nt1a');
   
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [submittedBooking, setSubmittedBooking] = useState<BookingRecord | null>(null);
@@ -986,6 +987,89 @@ export const BookingSessionPage: React.FC<BookingSessionPageProps> = ({ onNaviga
                     }}
                     leftIcon={<Phone className="w-4 h-4" />}
                   />
+                </div>
+
+                {/* Scelta Microfono Vocale per la Sessione (Interactive Mic Locker) */}
+                <div className="space-y-2 text-left p-4 rounded-2xl bg-neutral-950/80 border border-neutral-800 shadow-inner">
+                  <div className="flex items-center justify-between">
+                    <label className="block text-xs font-mono uppercase tracking-wider text-amber-400 font-bold flex items-center gap-1.5">
+                      <Mic2 className="w-3.5 h-3.5" />
+                      <span>Scegli il Tuo Microfono Vocale per la Sessione</span>
+                    </label>
+                    <span className="text-[10px] font-mono text-emerald-400 font-bold px-2 py-0.5 rounded bg-emerald-950/60 border border-emerald-500/30">
+                      INCLUSO NEL PREZZO
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-neutral-400 font-light leading-snug">
+                    Troverai la capsula selezionata già montata sull'asta, riscaldata e calibrata sul tuo canale d'ingresso all'inizio della sessione:
+                  </p>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 text-xs font-mono">
+                    {[
+                      { 
+                        id: 'rode-nt1a', 
+                        name: 'RØDE NT1-A Signature', 
+                        tag: 'STANDARD DI SALA', 
+                        desc: 'Capsula 1" oro • 4.5 dBA • Suono moderno, aperto e radio-ready per Rap & Trap',
+                        color: 'border-emerald-500/50 bg-emerald-500/10 text-emerald-300'
+                      },
+                      { 
+                        id: 'warm-wa47jr', 
+                        name: 'Warm Audio WA-47jr', 
+                        tag: 'SU RICHIESTA • VINTAGE', 
+                        desc: 'Capsula K47 stile Neumann U47 • Calore analogico, corpo e medi setosi per Pop & R&B',
+                        color: 'border-amber-500/50 bg-amber-500/10 text-amber-300'
+                      },
+                      { 
+                        id: 'lewitt-440', 
+                        name: 'Lewitt LCT 440 PURE', 
+                        tag: 'SU RICHIESTA • DEFINIZIONE', 
+                        desc: 'Condensatore austriaco • Dettaglio chirurgico dei transienti e massima fedeltà',
+                        color: 'border-blue-500/50 bg-blue-500/10 text-blue-300'
+                      },
+                      { 
+                        id: 'shure-sm7b', 
+                        name: 'Shure SM7B Dynamic', 
+                        tag: 'SU RICHIESTA • PUNCH', 
+                        desc: 'Dinamico cardioide leggendario • Zero riflessioni e punch compatto per Rap aggressivo',
+                        color: 'border-red-500/50 bg-red-500/10 text-red-300'
+                      },
+                    ].map((mic) => {
+                      const isSelected = selectedMic === mic.id;
+                      return (
+                        <div
+                          key={mic.id}
+                          onClick={() => {
+                            setSelectedMic(mic.id);
+                            // Pre-fill or append microfono in note if not already there
+                            const micTag = `[Microfono scelto: ${mic.name}]`;
+                            if (!note.includes('[Microfono scelto:')) {
+                              setNote(note ? `${note}\n${micTag}` : micTag);
+                            } else {
+                              setNote(note.replace(/\[Microfono scelto:[^\]]+\]/, micTag));
+                            }
+                          }}
+                          className={`p-3 rounded-xl border transition-all cursor-pointer flex flex-col justify-between gap-1.5 ${
+                            isSelected 
+                              ? `${mic.color} ring-1 ring-amber-400 shadow-md` 
+                              : 'border-neutral-800 bg-black/60 hover:border-neutral-700 text-neutral-300'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between gap-1">
+                            <span className="font-heading font-black text-xs text-white">
+                              {mic.name}
+                            </span>
+                            <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-black/60 border border-neutral-700 font-semibold">
+                              {mic.tag}
+                            </span>
+                          </div>
+                          <p className="text-[10px] text-neutral-400 font-light leading-snug">
+                            {mic.desc}
+                          </p>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
 
                 {/* Note Aggiuntive */}

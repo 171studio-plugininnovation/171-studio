@@ -11,6 +11,7 @@ import { StudioLogoLockup } from './StudioLogoLockup';
 import { getAssetUrl } from '../utils/assetPath';
 import { HardwareTiltCard } from './HardwareTiltCard';
 import { HardwareLockedModal } from './HardwareLockedModal';
+import { GearLockerSection } from './GearLockerSection';
 import { triggerPluginZipFileDownload } from '../utils/emailService';
 
 interface HeroHomeProps {
@@ -239,37 +240,52 @@ export const HeroHome: React.FC<HeroHomeProps> = ({ onNavigate }) => {
       
       {/* 1. UNIVERSAL AUDIO / WAVES STYLE TOP RACK METER BRIDGE (TELEMETRY STRIP) */}
       <div className="w-full rounded-2xl bg-gradient-to-r from-neutral-950 via-neutral-900 to-neutral-950 border border-neutral-800 shadow-xl p-2.5 sm:p-3 flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
-        {/* Hardware Status LED */}
-        <div className="flex items-center gap-2.5">
+        {/* Hardware Status LED & Live On Air Status */}
+        <div className="flex flex-wrap items-center gap-2.5">
           <span className="relative flex h-2.5 w-2.5">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
             <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
           </span>
           <span className="text-neutral-200 font-bold uppercase tracking-wider text-[11px]">
-            171 STUDIO ENGINE • V2.0.0
+            171 STUDIO MESSINA • ENGINE V2.2.5
           </span>
           <span className="text-neutral-600 hidden sm:inline">|</span>
           <span className="text-amber-400 font-semibold hidden md:inline text-[11px]">
-            64-BIT FLOAT • 44.1 - 192 KHZ • ZERO HOST LATENCY
+            APOLLO TWIN X 192 kHz • AURATONE & KALI REFERENCE
+          </span>
+          <span className="text-neutral-600 hidden lg:inline">|</span>
+          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-950/70 border border-emerald-500/50 text-[10px] text-emerald-300 font-bold">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span>STUDIO APERTO • 15:00 - 20:00</span>
           </span>
         </div>
 
-        {/* Live Studio Reach Telemetry */}
-        <div className="flex items-center gap-3">
+        {/* Live Studio Reach Telemetry & Gear Link */}
+        <div className="flex items-center gap-2.5 sm:gap-3">
+          <button
+            type="button"
+            onClick={() => {
+              const el = document.getElementById('gear-locker');
+              if (el) {
+                el.scrollIntoView({ behavior: 'smooth' });
+              } else {
+                onNavigate('chi-siamo');
+              }
+            }}
+            className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-neutral-900 hover:bg-neutral-800 text-amber-300 text-[11px] font-mono border border-amber-500/30 transition-colors cursor-pointer"
+          >
+            <span>🎛️ GEAR LOCKER</span>
+          </button>
           <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-neutral-900/90 border border-neutral-800">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-[11px] text-emerald-400 font-bold">{liveOnlineCount} ATTIVI ORA</span>
-          </div>
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-neutral-900/90 border border-neutral-800">
-            <span className="text-amber-400 font-bold">{visitorCount.toLocaleString('it-IT')}</span>
-            <span className="text-neutral-400 text-[10px] hidden sm:inline uppercase">VISITE TOTALI</span>
+            <span className="text-[11px] text-emerald-400 font-bold">{liveOnlineCount} ATTIVI</span>
           </div>
           <button
             type="button"
             onClick={() => onNavigate('prenota-sessione')}
-            className="hidden sm:flex items-center gap-1 text-amber-400 hover:text-amber-300 font-bold text-[11px] uppercase tracking-wider transition-colors cursor-pointer"
+            className="flex items-center gap-1 text-amber-400 hover:text-amber-300 font-bold text-[11px] uppercase tracking-wider transition-colors cursor-pointer"
           >
-            <span>PRENOTA STUDIO</span>
+            <span>PRENOTA</span>
             <ChevronRight className="w-3.5 h-3.5" />
           </button>
         </div>
@@ -690,7 +706,10 @@ export const HeroHome: React.FC<HeroHomeProps> = ({ onNavigate }) => {
         </div>
       </section>
 
-      {/* 6. EXCLUSIVE RELEASE BANNER: "THE GOD CYPHER" OFFICIAL ALBUM */}
+      {/* 6. THE 171 GEAR LOCKER: OFFICIAL STUDIO HARDWARE & ACOUSTIC RIDER */}
+      <GearLockerSection onNavigate={onNavigate} />
+
+      {/* 7. EXCLUSIVE RELEASE BANNER: "THE GOD CYPHER" OFFICIAL ALBUM */}
       <div 
         onClick={() => onNavigate('the-god-cypher')}
         className="w-full p-5 sm:p-7 rounded-3xl bg-gradient-to-r from-black via-[#160606] to-black border-2 border-red-700/60 shadow-[0_10px_40px_rgba(220,38,38,0.25)] hover:border-red-500 transition-all cursor-pointer group relative overflow-hidden"
@@ -729,7 +748,7 @@ export const HeroHome: React.FC<HeroHomeProps> = ({ onNavigate }) => {
         </div>
       </div>
 
-      {/* 7. "I NOSTRI LAVORI" SECTION: SPOTIFY & YOUTUBE PLAYERS */}
+      {/* 8. "I NOSTRI LAVORI" SECTION: SPOTIFY & YOUTUBE PLAYERS */}
       <section 
         className="w-full pt-4 pb-2"
         aria-label="I Nostri Lavori - Playlist Spotify e YouTube"
@@ -934,7 +953,7 @@ export const HeroHome: React.FC<HeroHomeProps> = ({ onNavigate }) => {
         </div>
       </section>
 
-      {/* 8. DYNAMIC AUDIO CONSOLE FOOTER INDICATOR */}
+      {/* 9. DYNAMIC AUDIO CONSOLE FOOTER INDICATOR */}
       <div className="w-full p-3 sm:p-4 rounded-2xl bg-neutral-950/70 border border-neutral-900 backdrop-blur-md flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-mono text-neutral-400">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
@@ -962,7 +981,7 @@ export const HeroHome: React.FC<HeroHomeProps> = ({ onNavigate }) => {
         </div>
       </div>
 
-      {/* 9. BOUTIQUE HARDWARE LOCKED MODAL (NO BROWSER ALERTS) */}
+      {/* 10. BOUTIQUE HARDWARE LOCKED MODAL (NO BROWSER ALERTS) */}
       <HardwareLockedModal
         plugin={lockedModalPlugin}
         isOpen={lockedModalPlugin !== null}
