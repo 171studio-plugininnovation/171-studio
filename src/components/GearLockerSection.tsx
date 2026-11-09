@@ -34,7 +34,7 @@ export const STUDIO_GEAR_INVENTORY: StudioGearItem[] = [
     brand: 'RØDE Microphones',
     category: 'mics',
     categoryLabel: 'MICROFONO DA RIPRESA VOCALE',
-    badge: 'STANDARD INCLUSO • 0€ NELLA TARIFFA',
+    badge: 'STANDARD DI SALA • INCLUSO A 0€',
     role: 'Ripresa Vocale Lead & Doppie • Trasparenza Moderna',
     isStandardInSession: true,
     highlightSpecs: ['Capsula HF6 1" Dorata', '4.5 dBA Rumore Proprio (Record Mondiale)', 'Cardioide Puro', 'SPL Max 137 dB'],
@@ -50,7 +50,7 @@ export const STUDIO_GEAR_INVENTORY: StudioGearItem[] = [
     brand: 'Warm Audio',
     category: 'mics',
     categoryLabel: 'MICROFONO FET A GRANDE DIAFRAMMA',
-    badge: 'SU RICHIESTA • +10€ FISSI A SESSIONE',
+    badge: 'IN DOTAZIONE • DISPONIBILE SU RICHIESTA',
     role: 'Corpo Analogico Vintage & Calore Valvolare',
     isOnRequest: true,
     highlightSpecs: ['Capsula K47 Vintage Brass', 'Circuito Discreto a FET', 'Multi-Pattern (Cardioide, Omni, 8)', 'Pad -10dB & HPF 70Hz'],
@@ -66,7 +66,7 @@ export const STUDIO_GEAR_INVENTORY: StudioGearItem[] = [
     brand: 'Lewitt Audio (Vienna)',
     category: 'mics',
     categoryLabel: 'CONDENSATORE DI PRECISIONE AUSTRIACA',
-    badge: 'SU RICHIESTA • +10€ FISSI A SESSIONE',
+    badge: 'IN DOTAZIONE • DISPONIBILE SU RICHIESTA',
     role: 'Dettaglio Transiente Chirurgico & Purezza Naturale',
     isOnRequest: true,
     highlightSpecs: ['Capsula da 1" in Mylar Oro 3 Micron', 'Gamma Dinamica 133 dB(A)', 'Zero Colorazione Parassita', 'Risposta ai Transienti Fulminea'],
@@ -82,7 +82,7 @@ export const STUDIO_GEAR_INVENTORY: StudioGearItem[] = [
     brand: 'Shure',
     category: 'mics',
     categoryLabel: 'MICROFONO DINAMICO CARDIOIDE DA STUDIO',
-    badge: 'SU RICHIESTA • +10€ FISSI A SESSIONE',
+    badge: 'IN DOTAZIONE • DISPONIBILE SU RICHIESTA',
     role: 'Ripresa Vocale Ravvicinata & Voci Aggressive',
     isOnRequest: true,
     highlightSpecs: ['Bobina Dinamica Cardioid', 'Schermatura Anti-Ronzio Elettromagnetico', 'Filtro Bass Rolloff & Presence Boost', 'Sospensione Interna ad Aria'],
@@ -247,11 +247,11 @@ export const GearLockerSection: React.FC<GearLockerSectionProps> = ({ onNavigate
           </div>
 
           <h2 className="text-2xl sm:text-4xl font-heading font-black text-white tracking-tight">
-            Il Parco Macchine di <span className="text-amber-400">171 Studio</span>
+            Il Nostro Setup in Studio: <span className="text-amber-400">Tutto Ciò che Abbiamo</span>
           </h2>
 
           <p className="text-xs sm:text-sm text-neutral-300 font-light leading-relaxed">
-            Nessuna macchina virtuale fantasma o claim artefatto: qui trovi la <strong>catena fisica autentica</strong> su cui registrerai e ascolterai la tua musica. Dalla microfonia selezionata alla conversione <strong>Universal Audio Apollo Twin X a 192 kHz</strong>, fino al doppio ascolto critico <strong>Kali Audio LP-6</strong> e ai leggendari cubi <strong>Auratone C1A</strong>.
+            Nessuna macchina virtuale fantasma: <strong>il setup hardware dello studio è sempre uguale per ogni sessione</strong>. Lavorerai sulla catena fissa con conversione <strong>Universal Audio Apollo Twin X a 192 kHz</strong>, controller passivo <strong>Palmer Monicon</strong>, doppio ascolto <strong>Kali Audio LP-6</strong> & cubi <strong>Auratone C1A</strong>, cuffie professionali Sennheiser/Audio-Technica e filtraggio di rete <strong>Black Lion Audio PG-1 Type F</strong>. <strong>Non cambia nulla del setup: solo i microfoni vocali cambiano su richiesta</strong>, e potrai indicare il tuo microfono ideale direttamente nel modulo di prenotazione sessione.
           </p>
         </div>
 
@@ -427,17 +427,14 @@ export const GearLockerSection: React.FC<GearLockerSectionProps> = ({ onNavigate
                     className="text-[11px] font-mono text-neutral-400 hover:text-white transition-colors flex items-center gap-1 cursor-pointer py-1"
                   >
                     <Info className="w-3.5 h-3.5 text-amber-400" />
-                    <span>{isExpanded ? 'Chiudi Dettagli' : 'Scheda Tecnica & Impiego'}</span>
+                    <span>{isExpanded ? 'Chiudi Scheda' : 'Scheda Tecnica'}</span>
                   </button>
 
-                  <button
-                    type="button"
-                    onClick={() => onNavigate('prenota-sessione')}
-                    className="text-[11px] font-mono text-amber-400 hover:text-amber-300 font-bold flex items-center gap-1 cursor-pointer py-1"
-                  >
-                    <span>Prenota con Questo Setup</span>
-                    <ChevronRight className="w-3.5 h-3.5" />
-                  </button>
+                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-black/60 border border-neutral-800 text-neutral-300">
+                    {item.category === 'mics' 
+                      ? (item.isStandardInSession ? 'Standard di Sala' : 'In Dotazione') 
+                      : 'Setup Fisso di Sala'}
+                  </span>
                 </div>
               </div>
             </div>
@@ -445,27 +442,27 @@ export const GearLockerSection: React.FC<GearLockerSectionProps> = ({ onNavigate
         })}
       </div>
 
-      {/* Pro-Studio Callout: Microfoni su Richiesta per la Sessione */}
-      <div className="p-5 sm:p-7 rounded-3xl bg-gradient-to-r from-neutral-950 via-neutral-900 to-black border-2 border-amber-500/40 shadow-2xl relative overflow-hidden flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
+      {/* Studio Hardware Permanent Setup Banner */}
+      <div className="p-5 sm:p-7 rounded-3xl bg-gradient-to-r from-neutral-950 via-neutral-900 to-black border border-neutral-800 shadow-2xl relative overflow-hidden flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
         <div className="space-y-2 max-w-3xl">
           <div className="flex items-center gap-2">
-            <Mic2 className="w-5 h-5 text-amber-400 shrink-0" />
+            <Sparkles className="w-5 h-5 text-amber-400 shrink-0" />
             <h3 className="text-base sm:text-lg font-heading font-black text-white">
-              Personalizza il Microfono della Tua Sessione a 171 Studio
+              Setup Fisso di Sala • Massima Affidabilità & Continuità
             </h3>
           </div>
           <p className="text-xs sm:text-sm text-neutral-300 font-light leading-relaxed">
-            Il nostro microfono standard montato in sala è il <strong>RØDE NT1-A Signature Edition</strong> (sempre incluso a <strong>0€</strong> nella tariffa oraria o nei pacchetti). Se per il tuo timbro preferisci il calore vintage del <strong>Warm Audio WA-47jr</strong>, la definizione chirurgica del <strong>Lewitt LCT 440 PURE</strong> o l'impatto aggressivo dello <strong>Shure SM7B</strong>, puoi richiederlo durante la prenotazione con un piccolo costo fisso trasparente di soli <strong>10€ a sessione</strong> per setup, taratura e calibrazione della capsula: troverai la catena vocale già pronta e tarata al tuo arrivo in studio.
+            A 171 Studio il setup di acquisizione e ascolto è <strong>sempre identico per ogni artista</strong>: Apollo Twin X a 192 kHz, controller Palmer Monicon, casse Kali Audio LP-6, cubi Auratone C1A, cuffie Sennheiser/Audio-Technica e controllo elettrico Black Lion PG-1. <strong>Il setup non cambia: potrai selezionare il tipo di microfono vocale direttamente nel modulo di prenotazione sessione</strong> in base al tuo genere musicale.
           </p>
         </div>
 
         <button
           type="button"
           onClick={() => onNavigate('prenota-sessione')}
-          className="shrink-0 px-5 py-3 rounded-2xl bg-neutral-900 hover:bg-neutral-800 text-amber-300 hover:text-amber-200 font-mono text-xs uppercase tracking-wider border border-amber-500/40 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg active:scale-[0.98]"
+          className="shrink-0 px-6 py-3.5 rounded-2xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black font-heading font-black text-xs uppercase tracking-wider transition-all shadow-xl shadow-amber-500/20 flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98]"
         >
-          <span>Scegli Microfono nel Booking</span>
-          <ArrowRight className="w-4 h-4 text-amber-400" />
+          <span>Prenota la Tua Sessione</span>
+          <ArrowRight className="w-4 h-4" />
         </button>
       </div>
     </section>

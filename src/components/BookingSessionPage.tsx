@@ -96,8 +96,8 @@ export const BookingSessionPage: React.FC<BookingSessionPageProps> = ({ onNaviga
   const estimate = calculateEstimatedPrice(selectedService, effectiveHours, siteContent);
 
   const selectedMicFee = useMemo(() => {
-    return getMicrophoneFee(selectedMic, siteContent.optionalMicFee);
-  }, [selectedMic, siteContent.optionalMicFee]);
+    return getMicrophoneFee(selectedMic);
+  }, [selectedMic]);
 
   const selectedMicObj = useMemo(() => {
     return STUDIO_MICROPHONE_OPTIONS.find((m) => m.id === selectedMic) || STUDIO_MICROPHONE_OPTIONS[0];
@@ -1011,36 +1011,41 @@ export const BookingSessionPage: React.FC<BookingSessionPageProps> = ({ onNaviga
                 </div>
 
                 {/* Scelta Microfono Vocale per la Sessione (Interactive Mic Locker) */}
-                <div className="space-y-2 text-left p-4 rounded-2xl bg-neutral-950/80 border border-neutral-800 shadow-inner">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
+                <div className="space-y-2.5 text-left p-5 rounded-2xl bg-neutral-950/90 border border-neutral-800 shadow-inner">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                     <label className="text-xs font-mono uppercase tracking-wider text-amber-400 font-bold flex items-center gap-1.5">
-                      <Mic2 className="w-3.5 h-3.5" />
-                      <span>Scegli il Tuo Microfono Vocale per la Sessione</span>
+                      <Mic2 className="w-4 h-4" />
+                      <span>Scegli il Tipo di Microfono per la Sessione</span>
                     </label>
                     {selectedMicFee > 0 ? (
-                      <span className="inline-flex items-center text-[10px] font-mono text-amber-300 font-bold px-2 py-0.5 rounded bg-amber-950/60 border border-amber-500/30">
-                        SUPPLEMENTO BOUTIQUE: +{selectedMicFee}€ FISSI
+                      <span className="inline-flex items-center text-[10px] font-mono text-amber-300 font-bold px-2.5 py-0.5 rounded-full bg-amber-950/60 border border-amber-500/40">
+                        CAMBIO MICROFONO: +{selectedMicFee}€ A SESSIONE
                       </span>
                     ) : (
-                      <span className="inline-flex items-center text-[10px] font-mono text-emerald-400 font-bold px-2 py-0.5 rounded bg-emerald-950/60 border border-emerald-500/30">
-                        STANDARD DI SALA INCLUSO (0€ EXTRA)
+                      <span className="inline-flex items-center text-[10px] font-mono text-emerald-400 font-bold px-2.5 py-0.5 rounded-full bg-emerald-950/60 border border-emerald-500/40">
+                        STANDARD DI SALA INCLUSO (0€)
                       </span>
                     )}
                   </div>
-                  <p className="text-[11px] text-neutral-400 font-light leading-snug">
-                    Troverai la capsula selezionata già montata sull'asta, riscaldata e calibrata sul tuo canale d'ingresso Apollo Twin X all'inizio della sessione. Il RØDE NT1-A è sempre incluso gratuitamente nella tariffa; i microfoni boutique hanno un costo fisso trasparente di {siteContent.optionalMicFee ?? 10}€ a sessione:
-                  </p>
                   
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 text-xs font-mono">
+                  <div className="p-3 rounded-xl bg-black/60 border border-neutral-800/80 text-[11px] text-neutral-300 font-light space-y-1">
+                    <p>
+                      <strong className="text-white">Il setup hardware dello studio è sempre identico:</strong> stessa conversione Apollo Twin X a 192 kHz, controller Palmer Monicon, casse Kali LP-6 & Auratone C1A, cuffie e corrente stabilizzata PG-1.
+                    </p>
+                    <p className="text-neutral-400">
+                      <strong>Solo il microfono vocale cambia</strong> sull'asta di ripresa. Il costo aggiuntivo a sessione è congruo al valore di mercato della capsula scelta, in linea con gli standard degli studi professionali online:
+                    </p>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1 text-xs font-mono">
                     {STUDIO_MICROPHONE_OPTIONS.map((mic) => {
                       const isSelected = selectedMic === mic.id;
-                      const effectiveFee = mic.isStandard ? 0 : (siteContent.optionalMicFee ?? mic.fee);
                       return (
                         <div
                           key={mic.id}
                           onClick={() => {
                             setSelectedMic(mic.id);
-                            const feeNote = effectiveFee > 0 ? ` (+${effectiveFee}€ fisso)` : ' (Incluso a 0€)';
+                            const feeNote = mic.fee > 0 ? ` (+${mic.fee}€ a sessione)` : ' (Incluso a 0€)';
                             const micTag = `[Microfono scelto: ${mic.name}${feeNote}]`;
                             if (!note.includes('[Microfono scelto:')) {
                               setNote(note ? `${note}\n${micTag}` : micTag);
@@ -1048,9 +1053,9 @@ export const BookingSessionPage: React.FC<BookingSessionPageProps> = ({ onNaviga
                               setNote(note.replace(/\[Microfono scelto:[^\]]+\]/, micTag));
                             }
                           }}
-                          className={`p-3 rounded-xl border transition-all cursor-pointer flex flex-col justify-between gap-1.5 ${
+                          className={`p-3.5 rounded-xl border transition-all cursor-pointer flex flex-col justify-between gap-2 ${
                             isSelected 
-                              ? `${mic.color} ring-1 ring-amber-400 shadow-md` 
+                              ? `${mic.color} ring-1 ring-amber-400 shadow-md scale-[1.01]` 
                               : 'border-neutral-800 bg-black/60 hover:border-neutral-700 text-neutral-300'
                           }`}
                         >
@@ -1058,15 +1063,19 @@ export const BookingSessionPage: React.FC<BookingSessionPageProps> = ({ onNaviga
                             <span className="font-heading font-black text-xs text-white">
                               {mic.name}
                             </span>
-                            <span className={`text-[9px] font-mono px-1.5 py-0.5 rounded bg-black/60 border font-semibold ${
-                              effectiveFee > 0 ? 'border-amber-500/40 text-amber-300' : 'border-emerald-500/40 text-emerald-300'
+                            <span className={`text-[9.5px] font-mono px-2 py-0.5 rounded-md font-bold border ${
+                              mic.fee > 0 ? 'border-amber-500/40 bg-amber-500/10 text-amber-300' : 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300'
                             }`}>
-                              {effectiveFee > 0 ? `+${effectiveFee}€ FISSO` : 'INCLUSO (0€)'}
+                              {mic.badge}
                             </span>
                           </div>
-                          <p className="text-[10px] text-neutral-400 font-light leading-snug">
+                          <p className="text-[10.5px] text-neutral-400 font-light leading-snug">
                             {mic.desc}
                           </p>
+                          <div className="pt-1 border-t border-neutral-900 flex justify-between text-[9.5px] text-neutral-500">
+                            <span>Valore Hardware: <strong className="text-neutral-400">{mic.retailValue}</strong></span>
+                            <span>{mic.isStandard ? 'Incluso nella tariffa' : `+${mic.fee}€ fisso`}</span>
+                          </div>
                         </div>
                       );
                     })}
@@ -1395,13 +1404,25 @@ export const BookingSessionPage: React.FC<BookingSessionPageProps> = ({ onNaviga
                       <span>Registrazione Vocale / Strumentale:</span>
                       <strong className="text-amber-400">{siteContent.hourlyRecordingPrice ?? 25}€ / ora</strong>
                     </li>
+                    <li className="flex justify-between border-b border-neutral-900 pb-1.5 text-neutral-400 text-[11px]">
+                      <span>Setup di Studio (Apollo Twin X, Palmer, Kali, Auratone, PG-1):</span>
+                      <strong className="text-white">Fisso & Permanente (Incluso)</strong>
+                    </li>
                     <li className="flex justify-between border-b border-neutral-900 pb-1.5 text-emerald-400">
                       <span>Microfono Standard di Sala (RØDE NT1-A):</span>
                       <strong className="text-emerald-400">Incluso a 0€</strong>
                     </li>
+                    <li className="flex justify-between border-b border-neutral-900 pb-1.5 text-blue-300">
+                      <span>Lewitt LCT 440 PURE (Precisione Austriaca):</span>
+                      <strong className="text-blue-400">+5€ fisso / sessione</strong>
+                    </li>
                     <li className="flex justify-between border-b border-neutral-900 pb-1.5 text-amber-300">
-                      <span>Microfoni Scelti su Richiesta (WA-47jr / LCT 440 / SM7B):</span>
-                      <strong className="text-amber-400">+{siteContent.optionalMicFee ?? 10}€ fisso / sessione</strong>
+                      <span>Warm Audio WA-47jr (Capsula K47 Vintage):</span>
+                      <strong className="text-amber-400">+10€ fisso / sessione</strong>
+                    </li>
+                    <li className="flex justify-between border-b border-neutral-900 pb-1.5 text-red-300">
+                      <span>Shure SM7B Dynamic (Punch Rap & Broadcast):</span>
+                      <strong className="text-red-400">+15€ fisso / sessione</strong>
                     </li>
                     <li className="flex justify-between border-b border-neutral-900 pb-1.5 text-amber-300">
                       <span>Pack 4 Ore Messina (Mezza Giornata):</span>
