@@ -472,17 +472,17 @@ assertTest('Live Server', 'HTTP 200 OK & Header Security su https://171studio.it
   return 'HTTP 200 OK confermato';
 });
 
-assertTest('Live Server', 'Presenza del bundle compilato più recente index-CepyghOp.js', () => {
+assertTest('Live Server', 'Presenza del bundle compilato più recente index-6Q5uH0Nz.js', () => {
   const htmlOutput = execSync('curl.exe -s https://171studio.it', { maxBuffer: 10 * 1024 * 1024 }).toString();
-  if (!htmlOutput.includes('index-CepyghOp.js')) {
-    throw new Error('Il server live non sta servendo il bundle index-CepyghOp.js');
+  if (!htmlOutput.includes('index-6Q5uH0Nz.js')) {
+    throw new Error('Il server live non sta servendo il bundle index-6Q5uH0Nz.js');
   }
-  return 'Bundle attivo: index-CepyghOp.js';
+  return 'Bundle attivo: index-6Q5uH0Nz.js';
 });
 
 assertTest('Live Server', 'Verifica contenuto live: tariffe microfoni caricate nel runtime del browser', () => {
   // Use node fetch to avoid spawnSync buffer limits
-  const bundleUrl = 'https://171studio.it/assets/index-CepyghOp.js';
+  const bundleUrl = 'https://171studio.it/assets/index-6Q5uH0Nz.js';
   const jsOutput = execSync(`node -e "fetch('${bundleUrl}').then(r=>r.text()).then(t=>{ console.log(t.includes('lewitt-440') && t.includes('+10€ A SESSIONE') && t.includes('warm-wa47jr') && t.includes('shure-sm7b') && t.includes('rode-nt1a')) })"`).toString().trim();
 
   if (jsOutput !== 'true') {
