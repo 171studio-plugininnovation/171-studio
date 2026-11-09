@@ -1018,6 +1018,7 @@ const DEFAULT_CONTENT: SiteContent = {
   produzioneNonEsclusivaPrice: 50,
   produzioneEsclusivaPrice: 150,
   beatProductionPrice: 150,
+  optionalMicFee: 10,
   paypalEmail: STUDIO_PAYPAL_EMAIL,
   allowOnlinePayment: true,
   calendarSettings: DEFAULT_CALENDAR_SETTINGS,

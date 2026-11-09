@@ -168,6 +168,7 @@ export interface DynamicPricingConfig {
   produzioneNonEsclusivaPrice?: number;
   produzioneEsclusivaPrice?: number;
   beatProductionPrice?: number;
+  optionalMicFee?: number;
 }
 
 export function getDynamicServiceOptions(pricing?: DynamicPricingConfig): ServiceOption[] {
@@ -398,4 +399,73 @@ export function calculateEstimatedPrice(
         explanation: 'Tariffa base studio',
       };
   }
+}
+
+// ==========================================
+// 171 STUDIO VOCAL MICROPHONES & SETUP FEES
+// ==========================================
+export const DEFAULT_OPTIONAL_MIC_FEE = 10; // 10€ fisso a sessione per microfoni su richiesta
+
+export interface StudioMicrophoneOption {
+  id: string;
+  name: string;
+  brand: string;
+  tag: string;
+  badge: string;
+  fee: number;
+  isStandard: boolean;
+  desc: string;
+  color: string;
+}
+
+export const STUDIO_MICROPHONE_OPTIONS: StudioMicrophoneOption[] = [
+  {
+    id: 'rode-nt1a',
+    name: 'RØDE NT1-A Signature',
+    brand: 'RØDE Microphones',
+    tag: 'STANDARD DI SALA',
+    badge: 'INCLUSO (0€)',
+    fee: 0,
+    isStandard: true,
+    desc: 'Capsula 1" oro • 4.5 dBA • Suono moderno, aperto e radio-ready per Rap & Trap',
+    color: 'border-emerald-500/50 bg-emerald-500/10 text-emerald-300',
+  },
+  {
+    id: 'warm-wa47jr',
+    name: 'Warm Audio WA-47jr',
+    brand: 'Warm Audio',
+    tag: 'SU RICHIESTA • VINTAGE',
+    badge: '+10€ FISSI',
+    fee: 10,
+    isStandard: false,
+    desc: 'Capsula K47 stile Neumann U47 • Calore analogico, corpo e medi setosi per Pop & R&B',
+    color: 'border-amber-500/50 bg-amber-500/10 text-amber-300',
+  },
+  {
+    id: 'lewitt-440',
+    name: 'Lewitt LCT 440 PURE',
+    brand: 'Lewitt Audio',
+    tag: 'SU RICHIESTA • DEFINIZIONE',
+    badge: '+10€ FISSI',
+    fee: 10,
+    isStandard: false,
+    desc: 'Condensatore austriaco • Dettaglio chirurgico dei transienti e massima fedeltà',
+    color: 'border-blue-500/50 bg-blue-500/10 text-blue-300',
+  },
+  {
+    id: 'shure-sm7b',
+    name: 'Shure SM7B Dynamic',
+    brand: 'Shure',
+    tag: 'SU RICHIESTA • PUNCH',
+    badge: '+10€ FISSI',
+    fee: 10,
+    isStandard: false,
+    desc: 'Dinamico cardioide leggendario • Zero riflessioni e punch compatto per Rap aggressivo',
+    color: 'border-red-500/50 bg-red-500/10 text-red-300',
+  },
+];
+
+export function getMicrophoneFee(micId: string, customFee?: number): number {
+  if (!micId || micId === 'rode-nt1a') return 0;
+  return typeof customFee === 'number' && customFee >= 0 ? customFee : DEFAULT_OPTIONAL_MIC_FEE;
 }

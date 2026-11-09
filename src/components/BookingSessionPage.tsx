@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { 
-  ArrowLeft, Calendar as CalendarIcon, Clock, User, Mail, Phone, 
+  ArrowLeft, Calendar as CalendarIcon, Clock, User, Mail, Phone, Mic2, 
   CheckCircle2, Sparkles, Info, ShieldCheck, DollarSign, Send, RotateCcw,
   Lock, LogIn, ChevronRight, Check, CreditCard, ExternalLink, Copy, Sliders, Sun, Moon, Zap, Tag, Gift, Percent, X, Download
 } from 'lucide-react';
 import { PageId } from '../types';
 import { 
-  SERVICE_OPTIONS, ServiceType, getDynamicServiceOptions, calculateEstimatedPrice, formatDurationLabel, calculateEndTime 
+  SERVICE_OPTIONS, ServiceType, getDynamicServiceOptions, calculateEstimatedPrice, formatDurationLabel, calculateEndTime,
+  STUDIO_MICROPHONE_OPTIONS, getMicrophoneFee, DEFAULT_OPTIONAL_MIC_FEE
 } from '../utils/pricing';
 import { useStudio, isDisposableOrSpamEmail } from '../context/StudioContext';
 import { BookingRecord, STUDIO_PAYPAL_EMAIL, VoucherItem } from '../types/cms';
@@ -94,25 +95,37 @@ export const BookingSessionPage: React.FC<BookingSessionPageProps> = ({ onNaviga
   const effectiveHours = currentServiceObj.allowsExtraHours ? hours : 2;
   const estimate = calculateEstimatedPrice(selectedService, effectiveHours, siteContent);
 
+  const selectedMicFee = useMemo(() => {
+    return getMicrophoneFee(selectedMic, siteContent.optionalMicFee);
+  }, [selectedMic, siteContent.optionalMicFee]);
+
+  const selectedMicObj = useMemo(() => {
+    return STUDIO_MICROPHONE_OPTIONS.find((m) => m.id === selectedMic) || STUDIO_MICROPHONE_OPTIONS[0];
+  }, [selectedMic]);
+
+  const subtotalWithMic = useMemo(() => {
+    return Number((estimate.total + selectedMicFee).toFixed(2));
+  }, [estimate.total, selectedMicFee]);
+
   // Live discount calculation whenever service, hours, email, or appliedVoucherCode changes
   const discountCalculation = useMemo(() => {
     if (!appliedVoucherCode) {
       return {
         valid: false,
         discountAmount: 0,
-        finalPrice: estimate.total,
+        finalPrice: subtotalWithMic,
         message: '',
       };
     }
     return validateAndCalculateDiscount(
       appliedVoucherCode,
       selectedService,
-      estimate.total,
+      subtotalWithMic,
       email || currentUser?.email
     );
-  }, [appliedVoucherCode, selectedService, estimate.total, email, currentUser?.email, validateAndCalculateDiscount]);
+  }, [appliedVoucherCode, selectedService, subtotalWithMic, email, currentUser?.email, validateAndCalculateDiscount]);
 
-  const finalPriceToPay = discountCalculation.valid ? discountCalculation.finalPrice : estimate.total;
+  const finalPriceToPay = discountCalculation.valid ? discountCalculation.finalPrice : subtotalWithMic;
 
   const handleApplyVoucher = (codeToApply?: string) => {
     const targetCode = (codeToApply ?? voucherInput).trim().toUpperCase();
@@ -222,9 +235,11 @@ export const BookingSessionPage: React.FC<BookingSessionPageProps> = ({ onNaviga
         time: oraPreferita,
         endTime: calculatedEndTime,
         estimatedPrice: finalPriceToPay,
-        originalPrice: estimate.total,
+        originalPrice: subtotalWithMic,
         discountCode: discountCalculation.valid ? appliedVoucherCode : undefined,
         discountAmount: discountCalculation.valid ? discountCalculation.discountAmount : undefined,
+        selectedMic: selectedMicObj.name,
+        selectedMicFee,
         notes: note.trim(),
       });
 
@@ -434,6 +449,12 @@ export const BookingSessionPage: React.FC<BookingSessionPageProps> = ({ onNaviga
                 <span className="text-neutral-400">Data & Orario Sessione:</span>
                 <span className="text-white font-semibold">
                   {dataPreferita} • {oraPreferita} ➔ {calculatedEndTime} ({formatDurationLabel(effectiveHours)})
+                </span>
+              </div>
+              <div className="flex justify-between border-b border-neutral-800 pb-2">
+                <span className="text-neutral-400">Microfono Vocale Scelto:</span>
+                <span className="text-amber-300 font-semibold">
+                  {submittedBooking?.selectedMic || selectedMicObj.name} {selectedMicFee > 0 ? `(+${selectedMicFee} € fisso)` : '(Incluso a 0€)'}
                 </span>
               </div>
               {submittedBooking?.discountCode && submittedBooking?.discountAmount ? (
@@ -991,58 +1012,36 @@ export const BookingSessionPage: React.FC<BookingSessionPageProps> = ({ onNaviga
 
                 {/* Scelta Microfono Vocale per la Sessione (Interactive Mic Locker) */}
                 <div className="space-y-2 text-left p-4 rounded-2xl bg-neutral-950/80 border border-neutral-800 shadow-inner">
-                  <div className="flex items-center justify-between">
-                    <label className="block text-xs font-mono uppercase tracking-wider text-amber-400 font-bold flex items-center gap-1.5">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
+                    <label className="text-xs font-mono uppercase tracking-wider text-amber-400 font-bold flex items-center gap-1.5">
                       <Mic2 className="w-3.5 h-3.5" />
                       <span>Scegli il Tuo Microfono Vocale per la Sessione</span>
                     </label>
-                    <span className="text-[10px] font-mono text-emerald-400 font-bold px-2 py-0.5 rounded bg-emerald-950/60 border border-emerald-500/30">
-                      INCLUSO NEL PREZZO
-                    </span>
+                    {selectedMicFee > 0 ? (
+                      <span className="inline-flex items-center text-[10px] font-mono text-amber-300 font-bold px-2 py-0.5 rounded bg-amber-950/60 border border-amber-500/30">
+                        SUPPLEMENTO BOUTIQUE: +{selectedMicFee}€ FISSI
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center text-[10px] font-mono text-emerald-400 font-bold px-2 py-0.5 rounded bg-emerald-950/60 border border-emerald-500/30">
+                        STANDARD DI SALA INCLUSO (0€ EXTRA)
+                      </span>
+                    )}
                   </div>
                   <p className="text-[11px] text-neutral-400 font-light leading-snug">
-                    Troverai la capsula selezionata già montata sull'asta, riscaldata e calibrata sul tuo canale d'ingresso all'inizio della sessione:
+                    Troverai la capsula selezionata già montata sull'asta, riscaldata e calibrata sul tuo canale d'ingresso Apollo Twin X all'inizio della sessione. Il RØDE NT1-A è sempre incluso gratuitamente nella tariffa; i microfoni boutique hanno un costo fisso trasparente di {siteContent.optionalMicFee ?? 10}€ a sessione:
                   </p>
                   
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 text-xs font-mono">
-                    {[
-                      { 
-                        id: 'rode-nt1a', 
-                        name: 'RØDE NT1-A Signature', 
-                        tag: 'STANDARD DI SALA', 
-                        desc: 'Capsula 1" oro • 4.5 dBA • Suono moderno, aperto e radio-ready per Rap & Trap',
-                        color: 'border-emerald-500/50 bg-emerald-500/10 text-emerald-300'
-                      },
-                      { 
-                        id: 'warm-wa47jr', 
-                        name: 'Warm Audio WA-47jr', 
-                        tag: 'SU RICHIESTA • VINTAGE', 
-                        desc: 'Capsula K47 stile Neumann U47 • Calore analogico, corpo e medi setosi per Pop & R&B',
-                        color: 'border-amber-500/50 bg-amber-500/10 text-amber-300'
-                      },
-                      { 
-                        id: 'lewitt-440', 
-                        name: 'Lewitt LCT 440 PURE', 
-                        tag: 'SU RICHIESTA • DEFINIZIONE', 
-                        desc: 'Condensatore austriaco • Dettaglio chirurgico dei transienti e massima fedeltà',
-                        color: 'border-blue-500/50 bg-blue-500/10 text-blue-300'
-                      },
-                      { 
-                        id: 'shure-sm7b', 
-                        name: 'Shure SM7B Dynamic', 
-                        tag: 'SU RICHIESTA • PUNCH', 
-                        desc: 'Dinamico cardioide leggendario • Zero riflessioni e punch compatto per Rap aggressivo',
-                        color: 'border-red-500/50 bg-red-500/10 text-red-300'
-                      },
-                    ].map((mic) => {
+                    {STUDIO_MICROPHONE_OPTIONS.map((mic) => {
                       const isSelected = selectedMic === mic.id;
+                      const effectiveFee = mic.isStandard ? 0 : (siteContent.optionalMicFee ?? mic.fee);
                       return (
                         <div
                           key={mic.id}
                           onClick={() => {
                             setSelectedMic(mic.id);
-                            // Pre-fill or append microfono in note if not already there
-                            const micTag = `[Microfono scelto: ${mic.name}]`;
+                            const feeNote = effectiveFee > 0 ? ` (+${effectiveFee}€ fisso)` : ' (Incluso a 0€)';
+                            const micTag = `[Microfono scelto: ${mic.name}${feeNote}]`;
                             if (!note.includes('[Microfono scelto:')) {
                               setNote(note ? `${note}\n${micTag}` : micTag);
                             } else {
@@ -1059,8 +1058,10 @@ export const BookingSessionPage: React.FC<BookingSessionPageProps> = ({ onNaviga
                             <span className="font-heading font-black text-xs text-white">
                               {mic.name}
                             </span>
-                            <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-black/60 border border-neutral-700 font-semibold">
-                              {mic.tag}
+                            <span className={`text-[9px] font-mono px-1.5 py-0.5 rounded bg-black/60 border font-semibold ${
+                              effectiveFee > 0 ? 'border-amber-500/40 text-amber-300' : 'border-emerald-500/40 text-emerald-300'
+                            }`}>
+                              {effectiveFee > 0 ? `+${effectiveFee}€ FISSO` : 'INCLUSO (0€)'}
                             </span>
                           </div>
                           <p className="text-[10px] text-neutral-400 font-light leading-snug">
@@ -1319,33 +1320,51 @@ export const BookingSessionPage: React.FC<BookingSessionPageProps> = ({ onNaviga
                     </div>
 
                     {/* Price calculation */}
-                    <div className="pt-2 border-t border-neutral-800 flex justify-between items-baseline">
-                      <span className="text-xs font-mono uppercase text-neutral-300 font-bold">
-                        Totale Stimato:
-                      </span>
-                      <div className="text-right">
-                        {discountCalculation.valid && discountCalculation.discountAmount > 0 ? (
-                          <div>
-                            <span className="text-xs font-mono text-neutral-500 line-through mr-2">
-                              {estimate.total} €
-                            </span>
-                            <span className="text-2xl font-black text-emerald-400 font-heading">
-                              {finalPriceToPay} €
-                            </span>
-                            <p className="text-[10px] text-emerald-400 font-mono font-bold">
-                              Risparmi {discountCalculation.discountAmount} € con {appliedVoucherCode}
-                            </p>
-                          </div>
-                        ) : (
-                          <div>
-                            <span className="text-2xl font-black text-amber-400 font-heading">
-                              {estimate.total} €
-                            </span>
-                            <p className="text-[10px] text-neutral-400 font-mono">
-                              {estimate.explanation}
-                            </p>
-                          </div>
-                        )}
+                    <div className="pt-2 border-t border-neutral-800 space-y-2 text-xs font-mono">
+                      <div className="flex justify-between text-neutral-400">
+                        <span>Servizio ({currentServiceObj.title}):</span>
+                        <span className="text-white font-bold">{estimate.total} €</span>
+                      </div>
+                      <div className="flex justify-between text-neutral-400">
+                        <span>Microfono ({selectedMicObj.name}):</span>
+                        <span className={selectedMicFee > 0 ? 'text-amber-400 font-bold' : 'text-emerald-400 font-bold'}>
+                          {selectedMicFee > 0 ? `+${selectedMicFee} € (Boutique)` : 'Incluso a 0 € (Standard)'}
+                        </span>
+                      </div>
+                      {discountCalculation.valid && discountCalculation.discountAmount > 0 && (
+                        <div className="flex justify-between text-emerald-400">
+                          <span>Sconto Coupon ({appliedVoucherCode}):</span>
+                          <span className="font-bold">-{discountCalculation.discountAmount} €</span>
+                        </div>
+                      )}
+                      <div className="pt-2 border-t border-neutral-800/80 flex justify-between items-baseline">
+                        <span className="text-xs uppercase text-neutral-300 font-bold">
+                          Totale Stimato:
+                        </span>
+                        <div className="text-right">
+                          {discountCalculation.valid && discountCalculation.discountAmount > 0 ? (
+                            <div>
+                              <span className="text-xs text-neutral-500 line-through mr-2">
+                                {subtotalWithMic} €
+                              </span>
+                              <span className="text-2xl font-black text-emerald-400 font-heading">
+                                {finalPriceToPay} €
+                              </span>
+                              <p className="text-[10px] text-emerald-400 font-mono font-bold">
+                                Risparmi {discountCalculation.discountAmount} € con {appliedVoucherCode}
+                              </p>
+                            </div>
+                          ) : (
+                            <div>
+                              <span className="text-2xl font-black text-amber-400 font-heading">
+                                {finalPriceToPay} €
+                              </span>
+                              <p className="text-[10px] text-neutral-400 font-mono">
+                                {estimate.explanation}{selectedMicFee > 0 ? ` + ${selectedMicFee}€ microfono ${selectedMicObj.name}` : ' (Microfono standard incluso)'}
+                              </p>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
 
@@ -1375,6 +1394,14 @@ export const BookingSessionPage: React.FC<BookingSessionPageProps> = ({ onNaviga
                     <li className="flex justify-between border-b border-neutral-900 pb-1.5">
                       <span>Registrazione Vocale / Strumentale:</span>
                       <strong className="text-amber-400">{siteContent.hourlyRecordingPrice ?? 25}€ / ora</strong>
+                    </li>
+                    <li className="flex justify-between border-b border-neutral-900 pb-1.5 text-emerald-400">
+                      <span>Microfono Standard di Sala (RØDE NT1-A):</span>
+                      <strong className="text-emerald-400">Incluso a 0€</strong>
+                    </li>
+                    <li className="flex justify-between border-b border-neutral-900 pb-1.5 text-amber-300">
+                      <span>Microfoni Scelti su Richiesta (WA-47jr / LCT 440 / SM7B):</span>
+                      <strong className="text-amber-400">+{siteContent.optionalMicFee ?? 10}€ fisso / sessione</strong>
                     </li>
                     <li className="flex justify-between border-b border-neutral-900 pb-1.5 text-amber-300">
                       <span>Pack 4 Ore Messina (Mezza Giornata):</span>

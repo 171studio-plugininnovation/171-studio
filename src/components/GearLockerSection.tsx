@@ -34,7 +34,7 @@ export const STUDIO_GEAR_INVENTORY: StudioGearItem[] = [
     brand: 'RØDE Microphones',
     category: 'mics',
     categoryLabel: 'MICROFONO DA RIPRESA VOCALE',
-    badge: 'MICROFONO STANDARD IN STUDIO',
+    badge: 'STANDARD INCLUSO • 0€ NELLA TARIFFA',
     role: 'Ripresa Vocale Lead & Doppie • Trasparenza Moderna',
     isStandardInSession: true,
     highlightSpecs: ['Capsula HF6 1" Dorata', '4.5 dBA Rumore Proprio (Record Mondiale)', 'Cardioide Puro', 'SPL Max 137 dB'],
@@ -50,7 +50,7 @@ export const STUDIO_GEAR_INVENTORY: StudioGearItem[] = [
     brand: 'Warm Audio',
     category: 'mics',
     categoryLabel: 'MICROFONO FET A GRANDE DIAFRAMMA',
-    badge: 'SU RICHIESTA • VINTAGE TONE',
+    badge: 'SU RICHIESTA • +10€ FISSI A SESSIONE',
     role: 'Corpo Analogico Vintage & Calore Valvolare',
     isOnRequest: true,
     highlightSpecs: ['Capsula K47 Vintage Brass', 'Circuito Discreto a FET', 'Multi-Pattern (Cardioide, Omni, 8)', 'Pad -10dB & HPF 70Hz'],
@@ -66,7 +66,7 @@ export const STUDIO_GEAR_INVENTORY: StudioGearItem[] = [
     brand: 'Lewitt Audio (Vienna)',
     category: 'mics',
     categoryLabel: 'CONDENSATORE DI PRECISIONE AUSTRIACA',
-    badge: 'SU RICHIESTA • ULTRA DEFINITION',
+    badge: 'SU RICHIESTA • +10€ FISSI A SESSIONE',
     role: 'Dettaglio Transiente Chirurgico & Purezza Naturale',
     isOnRequest: true,
     highlightSpecs: ['Capsula da 1" in Mylar Oro 3 Micron', 'Gamma Dinamica 133 dB(A)', 'Zero Colorazione Parassita', 'Risposta ai Transienti Fulminea'],
@@ -82,7 +82,7 @@ export const STUDIO_GEAR_INVENTORY: StudioGearItem[] = [
     brand: 'Shure',
     category: 'mics',
     categoryLabel: 'MICROFONO DINAMICO CARDIOIDE DA STUDIO',
-    badge: 'SU RICHIESTA • PUNCH & ISOLAMENTO',
+    badge: 'SU RICHIESTA • +10€ FISSI A SESSIONE',
     role: 'Ripresa Vocale Ravvicinata & Voci Aggressive',
     isOnRequest: true,
     highlightSpecs: ['Bobina Dinamica Cardioid', 'Schermatura Anti-Ronzio Elettromagnetico', 'Filtro Bass Rolloff & Presence Boost', 'Sospensione Interna ad Aria'],
@@ -455,7 +455,7 @@ export const GearLockerSection: React.FC<GearLockerSectionProps> = ({ onNavigate
             </h3>
           </div>
           <p className="text-xs sm:text-sm text-neutral-300 font-light leading-relaxed">
-            Il nostro microfono standard montato in sala è il <strong>RØDE NT1-A Signature Edition</strong>. Se per il tuo timbro preferisci il calore vintage del <strong>Warm Audio WA-47jr</strong>, la definizione chirurgica del <strong>Lewitt LCT 440 PURE</strong> o l'impatto aggressivo dello <strong>Shure SM7B</strong>, specificalo nelle note al momento della prenotazione: troverai la capsula già montata, riscaldata e tarata sul tuo canale d'ingresso al tuo arrivo in studio.
+            Il nostro microfono standard montato in sala è il <strong>RØDE NT1-A Signature Edition</strong> (sempre incluso a <strong>0€</strong> nella tariffa oraria o nei pacchetti). Se per il tuo timbro preferisci il calore vintage del <strong>Warm Audio WA-47jr</strong>, la definizione chirurgica del <strong>Lewitt LCT 440 PURE</strong> o l'impatto aggressivo dello <strong>Shure SM7B</strong>, puoi richiederlo durante la prenotazione con un piccolo costo fisso trasparente di soli <strong>10€ a sessione</strong> per setup, taratura e calibrazione della capsula: troverai la catena vocale già pronta e tarata al tuo arrivo in studio.
           </p>
         </div>
 

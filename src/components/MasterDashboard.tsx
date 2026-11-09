@@ -2908,6 +2908,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
                   onClick={() => {
                     const resetPrices = {
                       hourlyRecordingPrice: 25,
+                      optionalMicFee: siteContent.optionalMicFee ?? 10,
                       mixMasterPrice: 50,
                       soloMasterPrice: 40,
                       soloMixOnlinePrice: 60,
@@ -3158,6 +3159,34 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
                       className="w-24 px-3 py-2 rounded-xl bg-neutral-900 border border-neutral-700 focus:border-amber-400 text-lg font-bold text-white text-center outline-none font-mono"
                     />
                     <span className="text-xs font-mono text-amber-400">€ / esclusiva</span>
+                  </div>
+                </div>
+
+                {/* 9. Supplemento Microfoni Scelti (Boutique su Richiesta) */}
+                <div className="p-4 rounded-2xl bg-neutral-950 border border-neutral-800 hover:border-amber-500/30 transition-colors flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between gap-2 mb-1">
+                      <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/30 font-bold">
+                        9. MICROFONI BOUTIQUE
+                      </span>
+                      <span className="text-[10px] font-mono text-neutral-500">Fisso / Sessione</span>
+                    </div>
+                    <label className="block text-xs font-heading font-bold text-white mt-1.5">
+                      Supplemento Microfoni Scelti su Richiesta
+                    </label>
+                    <span className="text-[11px] text-neutral-400 font-light mt-1 block">
+                      RØDE NT1-A standard è sempre a 0€. Costo fisso a sessione per Warm Audio WA-47jr, Lewitt 440, Shure SM7B.
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 mt-4 pt-3 border-t border-neutral-900">
+                    <input
+                      type="number"
+                      min={0}
+                      value={formData.optionalMicFee ?? 10}
+                      onChange={(e) => setFormData({ ...formData, optionalMicFee: Number(e.target.value) })}
+                      className="w-24 px-3 py-2 rounded-xl bg-neutral-900 border border-neutral-700 focus:border-amber-400 text-lg font-bold text-white text-center outline-none font-mono"
+                    />
+                    <span className="text-xs font-mono text-amber-400">€ fisso a sessione</span>
                   </div>
                 </div>
               </div>
@@ -3776,6 +3805,9 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
                       <div className="text-xs text-neutral-300 font-mono space-y-1.5 bg-neutral-950/70 p-3.5 rounded-2xl border border-neutral-800">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                           <p><span className="text-neutral-500">Servizio:</span> <strong className="text-amber-400">{b.serviceTitle}</strong></p>
+                          {b.selectedMic && (
+                            <p><span className="text-neutral-500">Microfono:</span> <span className="text-amber-300 font-semibold">{b.selectedMic}</span> {b.selectedMicFee ? `(+${b.selectedMicFee}€ fisso)` : '(Standard 0€)'}</p>
+                          )}
                           <p><span className="text-neutral-500">Data & Orario:</span> <span className="text-white font-semibold">{b.date} alle {b.time}</span> ({b.hours} ore)</p>
                           <p><span className="text-neutral-500">Email:</span> <span className="text-neutral-200">{b.userEmail}</span></p>
                           <p><span className="text-neutral-500">Telefono:</span> <span className="text-neutral-200">{b.userPhone || 'Non specificato'}</span></p>

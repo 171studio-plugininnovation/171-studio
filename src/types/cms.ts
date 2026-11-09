@@ -421,6 +421,7 @@ export interface SiteContent {
   produzioneNonEsclusivaPrice?: number;
   produzioneEsclusivaPrice?: number;
   beatProductionPrice: number;
+  optionalMicFee?: number;
   paypalEmail: string;
   allowOnlinePayment: boolean;
   calendarSettings?: CalendarSettings;
@@ -579,6 +580,8 @@ export interface BookingRecord {
   discountAmount?: number;
   discountPercent?: number;
   estimatedPrice: number;
+  selectedMic?: string;
+  selectedMicFee?: number;
   notes: string;
   status: 'in_attesa' | 'confermata' | 'completata' | 'annullata';
   paymentStatus: 'in_attesa' | 'saldato' | 'pagamento_in_studio';

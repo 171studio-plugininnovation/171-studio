@@ -15,7 +15,7 @@ import path from 'path';
 import { execSync } from 'child_process';
 import { STUDIO_PAYPAL_EMAIL, PluginItem, AlbumOrderRecord, BookingRecord } from '../src/types/cms';
 import { getPayPalPaymentUrl, generateOrderCode } from '../src/utils/emailService';
-import { calculateEstimatedPrice, SERVICE_OPTIONS } from '../src/utils/pricing';
+import { calculateEstimatedPrice, SERVICE_OPTIONS, STUDIO_MICROPHONE_OPTIONS, getMicrophoneFee } from '../src/utils/pricing';
 
 interface TestResult {
   suite: string;
@@ -330,6 +330,30 @@ runTest('Services', 'Verifica Tariffe Solo Master (€40), Solo Mix Online (€6
   if (!soloMaster || soloMaster.basePrice !== 40) throw new Error('Solo master price mismatch');
   if (!soloMix || soloMix.basePrice !== 60) throw new Error('Solo mix price mismatch');
   if (!branoCompleto || branoCompleto.basePrice !== 150) throw new Error('Brano completo price mismatch');
+});
+
+// 3.4: Microfoni Scelti (Boutique) & Supplemento Fisso (+10€) vs Standard Gratuito (0€)
+runTest('Services', 'Verifica Microfoni Studio: RØDE NT1-A standard (0€) vs Warm WA-47jr / Lewitt / Shure (+10€) e Saldo PayPal', () => {
+  const rode = STUDIO_MICROPHONE_OPTIONS.find(m => m.id === 'rode-nt1a');
+  const warm = STUDIO_MICROPHONE_OPTIONS.find(m => m.id === 'warm-wa47jr');
+  const lewitt = STUDIO_MICROPHONE_OPTIONS.find(m => m.id === 'lewitt-440');
+  const shure = STUDIO_MICROPHONE_OPTIONS.find(m => m.id === 'shure-sm7b');
+
+  if (!rode || getMicrophoneFee('rode-nt1a') !== 0) throw new Error('RØDE NT1-A fee must be 0€ (incluso)');
+  if (!warm || getMicrophoneFee('warm-wa47jr') !== 10) throw new Error('Warm Audio fee must be 10€');
+  if (!lewitt || getMicrophoneFee('lewitt-440') !== 10) throw new Error('Lewitt fee must be 10€');
+  if (!shure || getMicrophoneFee('shure-sm7b') !== 10) throw new Error('Shure SM7B fee must be 10€');
+
+  // Test full booking with optional mic calculation: 2h session (50€) + Warm Audio WA-47jr (10€) = 60€
+  const sessionBase = calculateEstimatedPrice('recording_hourly', 2).total; // 50€
+  const micFee = getMicrophoneFee('warm-wa47jr'); // 10€
+  const totalWithMic = sessionBase + micFee; // 60€
+  if (totalWithMic !== 60) throw new Error(`Expected 60€, got ${totalWithMic}`);
+
+  // Test PayPal URL with mic fee included
+  const orderCode = generateOrderCode();
+  const paypalUrl = getPayPalPaymentUrl(totalWithMic, orderCode, STUDIO_PAYPAL_EMAIL);
+  if (!paypalUrl.includes('amount=60.00')) throw new Error('PayPal URL must include amount=60.00');
 });
 
 // -------------------------------------------------------------
