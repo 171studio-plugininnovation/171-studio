@@ -332,33 +332,33 @@ runTest('Services', 'Verifica Tariffe Solo Master (€40), Solo Mix Online (€6
   if (!branoCompleto || branoCompleto.basePrice !== 150) throw new Error('Brano completo price mismatch');
 });
 
-// 3.4: Microfoni Scelti: Tariffe Proporzionali al Costo Hardware (RØDE 0€, Lewitt +5€, Warm +10€, Shure +15€)
-runTest('Services', 'Verifica Tariffe Microfoni Proporzionali: RØDE 0€, Lewitt +5€, WA-47jr +10€, SM7B +15€ & Saldo PayPal', () => {
+// 3.4: Microfoni Scelti: Tariffe Conflitti Costo Hardware (RØDE 0€, Lewitt +10€, Warm +20€, Shure +20€)
+runTest('Services', 'Verifica Tariffe Microfoni: RØDE 0€, Lewitt +10€, WA-47jr +20€, SM7B +20€ & Saldo PayPal', () => {
   const rode = STUDIO_MICROPHONE_OPTIONS.find(m => m.id === 'rode-nt1a');
   const lewitt = STUDIO_MICROPHONE_OPTIONS.find(m => m.id === 'lewitt-440');
   const warm = STUDIO_MICROPHONE_OPTIONS.find(m => m.id === 'warm-wa47jr');
   const shure = STUDIO_MICROPHONE_OPTIONS.find(m => m.id === 'shure-sm7b');
 
   if (!rode || getMicrophoneFee('rode-nt1a') !== 0) throw new Error('RØDE NT1-A fee must be 0€ (incluso)');
-  if (!lewitt || getMicrophoneFee('lewitt-440') !== 5) throw new Error('Lewitt fee must be 5€');
-  if (!warm || getMicrophoneFee('warm-wa47jr') !== 10) throw new Error('Warm Audio fee must be 10€');
-  if (!shure || getMicrophoneFee('shure-sm7b') !== 15) throw new Error('Shure SM7B fee must be 15€');
+  if (!lewitt || getMicrophoneFee('lewitt-440') !== 10) throw new Error('Lewitt fee must be 10€');
+  if (!warm || getMicrophoneFee('warm-wa47jr') !== 20) throw new Error('Warm Audio fee must be 20€');
+  if (!shure || getMicrophoneFee('shure-sm7b') !== 20) throw new Error('Shure SM7B fee must be 20€');
 
-  // Test session 2h (50€) + Shure SM7B (+15€) = 65€
+  // Test session 2h (50€) + Shure SM7B (+20€) = 70€
   const sessionBase = calculateEstimatedPrice('recording_hourly', 2).total; // 50€
-  const shureFee = getMicrophoneFee('shure-sm7b'); // 15€
-  const totalWithShure = sessionBase + shureFee; // 65€
-  if (totalWithShure !== 65) throw new Error(`Expected 65€, got ${totalWithShure}`);
+  const shureFee = getMicrophoneFee('shure-sm7b'); // 20€
+  const totalWithShure = sessionBase + shureFee; // 70€
+  if (totalWithShure !== 70) throw new Error(`Expected 70€, got ${totalWithShure}`);
 
-  // Test session 2h (50€) + Lewitt LCT 440 (+5€) = 55€
-  const lewittFee = getMicrophoneFee('lewitt-440'); // 5€
-  const totalWithLewitt = sessionBase + lewittFee; // 55€
-  if (totalWithLewitt !== 55) throw new Error(`Expected 55€, got ${totalWithLewitt}`);
+  // Test session 2h (50€) + Lewitt LCT 440 (+10€) = 60€
+  const lewittFee = getMicrophoneFee('lewitt-440'); // 10€
+  const totalWithLewitt = sessionBase + lewittFee; // 60€
+  if (totalWithLewitt !== 60) throw new Error(`Expected 60€, got ${totalWithLewitt}`);
 
   // Test PayPal URL with SM7B included
   const orderCode = generateOrderCode();
   const paypalUrl = getPayPalPaymentUrl(totalWithShure, orderCode, STUDIO_PAYPAL_EMAIL);
-  if (!paypalUrl.includes('amount=65.00')) throw new Error('PayPal URL must include amount=65.00');
+  if (!paypalUrl.includes('amount=70.00')) throw new Error('PayPal URL must include amount=70.00');
 });
 
 // -------------------------------------------------------------

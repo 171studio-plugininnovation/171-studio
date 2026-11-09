@@ -1414,15 +1414,15 @@ export const BookingSessionPage: React.FC<BookingSessionPageProps> = ({ onNaviga
                     </li>
                     <li className="flex justify-between border-b border-neutral-900 pb-1.5 text-blue-300">
                       <span>Lewitt LCT 440 PURE (Precisione Austriaca):</span>
-                      <strong className="text-blue-400">+5€ fisso / sessione</strong>
+                      <strong className="text-blue-400">+10€ fisso / sessione</strong>
                     </li>
                     <li className="flex justify-between border-b border-neutral-900 pb-1.5 text-amber-300">
                       <span>Warm Audio WA-47jr (Capsula K47 Vintage):</span>
-                      <strong className="text-amber-400">+10€ fisso / sessione</strong>
+                      <strong className="text-amber-400">+20€ fisso / sessione</strong>
                     </li>
                     <li className="flex justify-between border-b border-neutral-900 pb-1.5 text-red-300">
                       <span>Shure SM7B Dynamic (Punch Rap & Broadcast):</span>
-                      <strong className="text-red-400">+15€ fisso / sessione</strong>
+                      <strong className="text-red-400">+20€ fisso / sessione</strong>
                     </li>
                     <li className="flex justify-between border-b border-neutral-900 pb-1.5 text-amber-300">
                       <span>Pack 4 Ore Messina (Mezza Giornata):</span>
