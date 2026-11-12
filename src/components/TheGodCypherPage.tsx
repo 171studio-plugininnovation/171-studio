@@ -1359,7 +1359,7 @@ export const TheGodCypherPage: React.FC<TheGodCypherPageProps> = ({ onNavigate }
                       Clicca sul pulsante per aprire PayPal e inviare l'importo di <strong className="text-white">€{completedOrder.totalAmount.toFixed(2)}</strong> a favore di <strong className="text-amber-400">vkrealhakiesake@gmail.com</strong> (specificando come nota/causale <strong className="text-white">#{completedOrder.orderCode}</strong>).
                     </p>
                     <a
-                      href={completedOrder.paypalPaymentUrl || 'https://www.paypal.com/paypalme/igorrozanov171'}
+                      href={completedOrder.paypalPaymentUrl || `https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=${encodeURIComponent('vkrealhakiesake@gmail.com')}&currency_code=EUR&amount=${completedOrder.totalAmount.toFixed(2)}&item_name=${encodeURIComponent(`171 Studio - The God Cypher (#${completedOrder.orderCode})`)}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="w-full py-2.5 px-4 rounded-xl bg-[#ffc439] hover:bg-[#f4b82d] text-black font-['Cinzel_Decorative',serif] font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg transition-all cursor-pointer"

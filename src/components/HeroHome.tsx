@@ -70,6 +70,21 @@ const TOPOLOGY_MAP: Record<string, { topology: string; tube: string; oversamplin
     tube: 'Twin 12AX7 & EF86 Pentode',
     oversampling: '8x Pristine Oversampling',
   },
+  'plugin-onesilk': {
+    topology: 'ONE-KNOB DYNAMIC VOCAL SILK & LOUDNESS NORMALIZER',
+    tube: 'Neve Silk Red Class-A Harmonics',
+    oversampling: 'Cytomic ZDF 64-Bit Trapezoidal',
+  },
+  'plugin-snipertune': {
+    topology: 'MANUAL GRAPHICAL PITCH & FORMANT 60 FPS CANVAS',
+    tube: '4D Consonant Shield Pure Bypass',
+    oversampling: 'GCD-PSOLA Lanczos-16 Sinc',
+  },
+  'plugin-sessionbuilder': {
+    topology: 'MODULAR CONSOLE RECALL & AUTO-GAIN STAGING',
+    tube: '6-Slot Hot-Swappable Analog DSP',
+    oversampling: '-18 dBFS Nominal Sweet Spot',
+  },
 };
 
 export const HeroHome: React.FC<HeroHomeProps> = ({ onNavigate }) => {
@@ -226,7 +241,7 @@ export const HeroHome: React.FC<HeroHomeProps> = ({ onNavigate }) => {
     : [
         { id: 'spec-1', label: 'RECORDING ROOM', title: 'Vocal & Instruments' },
         { id: 'spec-2', label: 'MIX & MASTER', title: 'Analog & Digital' },
-        { id: 'spec-3', label: '171PluginInnovation', title: 'Innovatio DSP' },
+        { id: 'spec-3', label: '171PluginInnovation', title: 'Innovation DSP' },
         { id: 'spec-4', label: 'FEEDBACK DIRETTO', title: 'Ambiente Trattato' },
       ];
 
@@ -247,7 +262,7 @@ export const HeroHome: React.FC<HeroHomeProps> = ({ onNavigate }) => {
             <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
           </span>
           <span className="text-neutral-200 font-bold uppercase tracking-wider text-[11px]">
-            171 STUDIO MESSINA • ENGINE V2.2.5
+            171 STUDIO MESSINA • DSP SUITE V2.4.0
           </span>
           <span className="text-neutral-600 hidden sm:inline">|</span>
           <span className="text-amber-400 font-semibold hidden md:inline text-[11px]">
@@ -325,7 +340,7 @@ export const HeroHome: React.FC<HeroHomeProps> = ({ onNavigate }) => {
         </div>
       </div>
 
-      {/* 3. PROMINENT MAJOR UPDATE 2.2.5 LUXURY RELEASE BANNER (UNIVERSAL AUDIO / WAVES STYLE) */}
+      {/* 3. PROMINENT DSP RELEASES LUXURY BANNER (UNIVERSAL AUDIO / WAVES STYLE) */}
       <div 
         className="w-full relative rounded-3xl bg-gradient-to-b from-neutral-900 via-neutral-950 to-black border-2 border-amber-500/60 shadow-[0_15px_50px_rgba(245,158,11,0.25)] p-5 sm:p-8 overflow-hidden group"
       >
@@ -352,7 +367,7 @@ export const HeroHome: React.FC<HeroHomeProps> = ({ onNavigate }) => {
             <div className="flex flex-wrap items-center gap-2.5">
               <span className="w-3 h-3 rounded-full bg-amber-400 shadow-[0_0_12px_rgba(245,158,11,0.9)] animate-pulse" />
               <span className="text-[10px] font-mono uppercase tracking-widest px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 font-bold border border-amber-500/50">
-                ✨ MAJOR UPDATE 2.2.5 • 8 NOVEMBRE 2026 • OFFICIAL RELEASE
+                ✨ ULTIME RELEASE DISPONIBILI • NOVEMBRE 2026 • ANNUNCI DEDICATI
               </span>
               <span className="text-[10px] font-mono text-emerald-400 font-bold px-2.5 py-0.5 rounded-full bg-emerald-950/60 border border-emerald-500/40">
                 100% FREEWARE ILLIMITATO
@@ -361,30 +376,30 @@ export const HeroHome: React.FC<HeroHomeProps> = ({ onNavigate }) => {
 
             {/* Banner Main Title */}
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-heading font-black text-white leading-tight">
-              171PluginInnovation Major Update 2.2.5 — Nuove Versioni per RealTune, EasyVoice, PerfectPre e SpaceLuxe
+              171Plugin Innovation: Ultime Versioni DSP e Annunci Specifici per Singolo Plugin
             </h2>
 
             {/* Technical Bullet Highlights */}
             <p className="text-xs sm:text-sm text-neutral-300 font-light leading-relaxed">
-              Rilascio maggiore con ottimizzazioni specifiche e verifiche matematiche dsp171: tracking sub-cent (&lt; 0.0033 Hz) e curva quintica per <strong>RealTune</strong>, 0 dB Pre-Open e routing seriale invertibile per <strong>EasyVoice</strong>, taglio LC Neve 1073 con decramping Andy Simper per <strong>PerfectPre</strong> e serbatoio FDN-16 lossless senza glitch per <strong>SpaceLuxe</strong>.
+              I 4 processori cardine della suite sono ora attivi per il download immediato gratuito: <strong>RealTune v2.2.1</strong> con Humanize sustain easing, <strong>EasyVoice v3.2.1</strong> con 0 dB pre-open expander e routing seriale invertibile, <strong>CleanReso v2.3.0</strong> con 32 filtri ZDF paralleli disaccoppiati e <strong>PerfectPre v2.2.0</strong> Gold Master con Neve 1073 Channel EQ. Gli altri processori boutique sono consultabili con il rispettivo changelog e verranno sbloccati progressivamente.
             </p>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-[11px] font-mono text-neutral-300">
               <div className="flex items-center gap-2 p-2 rounded-xl bg-neutral-950/80 border border-neutral-800">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                <span>RealTune 2.2.5 (&lt;0.01 cent)</span>
+                <span>RealTune v2.2.1 (&lt;0.01 cent)</span>
               </div>
               <div className="flex items-center gap-2 p-2 rounded-xl bg-neutral-950/80 border border-neutral-800">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                <span>EasyVoice 2.2.5 (Dual Dyn)</span>
+                <span>EasyVoice v3.2.1 (Dual Dyn)</span>
               </div>
               <div className="flex items-center gap-2 p-2 rounded-xl bg-neutral-950/80 border border-neutral-800">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                <span>PerfectPre 2.2.5 (Neve 1073)</span>
+                <span>CleanReso v2.3.0 (ZDF 32-B)</span>
               </div>
               <div className="flex items-center gap-2 p-2 rounded-xl bg-neutral-950/80 border border-neutral-800">
-                <CheckCircle2 className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                <span>SpaceLuxe 2.2.5 (FDN-16)</span>
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                <span>PerfectPre v2.2.0 (Neve 1073)</span>
               </div>
             </div>
           </div>
@@ -396,7 +411,7 @@ export const HeroHome: React.FC<HeroHomeProps> = ({ onNavigate }) => {
               onClick={() => onNavigate('plugin-innovation')}
               className="py-3.5 px-6 rounded-2xl bg-amber-500 hover:bg-amber-400 text-black font-heading font-black text-xs uppercase tracking-wider transition-all shadow-[0_0_25px_rgba(245,158,11,0.35)] flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98]"
             >
-              <span>Esplora Major Update 2.2.5</span>
+              <span>Esplora Annunci Plugin</span>
               <ArrowRight className="w-4 h-4" />
             </button>
             
@@ -405,7 +420,7 @@ export const HeroHome: React.FC<HeroHomeProps> = ({ onNavigate }) => {
               onClick={() => onNavigate('plugin-innovation', 'plugin-easyvoice')}
               className="py-3 px-5 rounded-2xl bg-neutral-900 hover:bg-neutral-800 text-amber-300 hover:text-amber-200 font-mono text-xs uppercase tracking-wider border border-amber-500/30 transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
-              <span>Vedi EasyVoice v2.2.5</span>
+              <span>Vedi EasyVoice v3.2.1</span>
               <Sparkles className="w-3.5 h-3.5 text-amber-400" />
             </button>
           </div>

@@ -32,7 +32,7 @@ export const PlaceholderPage: React.FC<PlaceholderPageProps> = ({ pageId, onNavi
         return {
           category: 'SOFTWARE & AUDIO DSP',
           status: 'PLUGIN SUITE IN SVILUPPO',
-          tag: 'INNOVATIO AUDIO DSP ENGINE',
+          tag: '171PLUGIN INNOVATION DSP ENGINE',
           nextPage: 'chi-siamo' as PageId,
           nextLabel: 'Chi Siamo',
         };

@@ -314,7 +314,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
       studioName: '171 STUDIO',
       studioBadge: 'RECORDING & MASTERING SUITE',
       heroTagline: 'Lo studio di registrazione e mastering acusticamente trattato a Messina, con tecnologia di ripresa a feedback diretto.',
-      frontpageHeroSubtitle: 'Ambiente di ripresa a feedback continuo, catena 192kHz e suite proprietaria 171 Plugin Innovatio.',
+      frontpageHeroSubtitle: 'Ambiente di ripresa a feedback continuo, catena 192kHz e suite proprietaria 171 Plugin Innovation.',
       frontpageSpecs: [...DEFAULT_FRONTPAGE_SPECS],
       frontpageNavChiSiamoDesc: 'Scopri la filosofia acustica, la registrazione a stretto contatto con feedback diretto e lo spazio di 171 Studio.',
       frontpageNavPrenotaDesc: 'Pianifica la tua sessione in studio: registrazione vocale, missaggio, mastering e produzioni su misura.',
@@ -353,10 +353,10 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
     const updated = {
       ...formData,
       pluginIntroBadge: 'SOFTWARE DSP & INGEGNERIA AUDIO • 100% FREEWARE',
-      pluginIntroTitle: '171 Plugin Innovatio',
+      pluginIntroTitle: '171 Plugin Innovation',
       pluginIntroSubtitle: "I nostri plugin audio di nuova generazione: strumenti digitali proprietari gratuiti concepiti e calibrati all'interno di 171 Studio per offrire una qualità da studio professionale direttamente nella tua DAW.",
-      pluginAboutSectionTitle: "Cos'è 171 Plugin Innovatio",
-      pluginAboutSectionText1: "171 Plugin Innovatio è la divisione di ricerca e sviluppo software di 171 Studio. Nasce da un'esigenza diretta: durante le nostre sessioni quotidiane di missaggio e mastering cercavamo plugin che combinassero la musicalità e la pasta sonora degli outboard analogici d'epoca con la flessibilità chirurgica e la stabilità del software moderno.",
+      pluginAboutSectionTitle: "Cos'è 171 Plugin Innovation",
+      pluginAboutSectionText1: "171 Plugin Innovation è la divisione di ricerca e sviluppo software di 171 Studio. Nasce da un'esigenza diretta: durante le nostre sessioni quotidiane di missaggio e mastering cercavamo plugin che combinassero la musicalità e la pasta sonora degli outboard analogici d'epoca con la flessibilità chirurgica e la stabilità del software moderno.",
       pluginAboutSectionText2: 'Il nostro è un progetto gratuito e rimarrà sempre tale: scarica liberamente i pacchetti .ZIP dei plugin, provali nelle tue produzioni e lasciaci un feedback per aiutarci a migliorarli costantemente!',
       pluginBenefitsTitle: 'Quali Benefici Offrono i Nostri Plugin',
       pluginBenefits: [...DEFAULT_PLUGIN_BENEFITS],
@@ -908,13 +908,13 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
         <div 
           onClick={() => setActiveTab('plugins')}
           className="p-4 rounded-2xl bg-neutral-900/60 border border-neutral-800 cursor-pointer hover:border-amber-400 transition-all group"
-          title="Suite Innovatio: 6 disponibili + 4 con sblocco settimanale"
+          title="Suite Innovation: 6 disponibili + 4 con sblocco settimanale"
         >
           <span className="text-xs font-mono text-neutral-400 uppercase block group-hover:text-amber-300">Plugin Catalogo</span>
           <span className="text-3xl font-heading font-black text-white mt-1 block group-hover:scale-105 transition-transform">
             {siteContent.plugins.length}
           </span>
-          <span className="text-[10px] text-amber-400 font-mono">Suite Innovatio (10)</span>
+          <span className="text-[10px] text-amber-400 font-mono">Suite Innovation (10)</span>
         </div>
 
         <div 
@@ -1118,7 +1118,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
             },
             {
               id: 'plugins',
-              label: '171 Plugin Innovatio',
+              label: '171 Plugin Innovation',
               category: 'products',
               icon: Cpu,
               badge: `${siteContent.plugins.length} (${siteContent.plugins.reduce((acc, p) => acc + (p.downloadCount || 0), 0)} dl)`,
@@ -1716,7 +1716,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
                   <input
                     type="text"
                     value={formData.frontpageHeroSubtitle || ''}
-                    placeholder="Ambiente di ripresa a feedback continuo, catena 192kHz e suite proprietaria 171 Plugin Innovatio."
+                    placeholder="Ambiente di ripresa a feedback continuo, catena 192kHz e suite proprietaria 171 Plugin Innovation."
                     onChange={(e) => setFormData({ ...formData, frontpageHeroSubtitle: e.target.value })}
                     className="w-full px-4 py-2.5 rounded-xl bg-neutral-950 border border-neutral-800 text-sm text-white focus:border-amber-400 outline-none"
                   />
@@ -2189,7 +2189,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
             </div>
           )}
 
-          {/* SUBTAB 3: 171 PLUGIN INNOVATIO */}
+          {/* SUBTAB 3: 171 PLUGIN INNOVATION */}
           {cmsSubTab === 'plugin-innovation' && (
             <div className="space-y-6 animate-in fade-in duration-200">
               
@@ -2212,7 +2212,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
                     <span>{formData.pluginIntroBadge || 'SOFTWARE DSP & INGEGNERIA AUDIO • 100% FREEWARE'}</span>
                   </div>
                   <h2 className="text-2xl sm:text-3xl font-heading font-black text-white">
-                    {formData.pluginIntroTitle || '171 Plugin Innovatio'}
+                    {formData.pluginIntroTitle || '171 Plugin Innovation'}
                   </h2>
                   <p className="text-xs sm:text-sm font-light text-neutral-300 max-w-2xl mx-auto leading-relaxed">
                     {formData.pluginIntroSubtitle || "I nostri plugin audio di nuova generazione: strumenti digitali proprietari gratuiti..."}
@@ -2221,10 +2221,10 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
                   {/* Manifesto R&D Box */}
                   <div className="p-4 rounded-xl bg-neutral-950 border border-amber-500/30 text-left max-w-2xl mx-auto space-y-1.5">
                     <span className="text-xs font-heading font-bold text-white block">
-                      {formData.pluginAboutSectionTitle || "Cos'è 171 Plugin Innovatio"}
+                      {formData.pluginAboutSectionTitle || "Cos'è 171 Plugin Innovation"}
                     </span>
                     <p className="text-[11px] text-neutral-300 font-light leading-relaxed">
-                      {formData.pluginAboutSectionText1 || "171 Plugin Innovatio è la divisione di ricerca e sviluppo software di 171 Studio..."}
+                      {formData.pluginAboutSectionText1 || "171 Plugin Innovation è la divisione di ricerca e sviluppo software di 171 Studio..."}
                     </p>
                     <p className="text-[11px] text-neutral-400 font-light leading-relaxed pt-1 border-t border-neutral-800/80">
                       {formData.pluginAboutSectionText2 || 'Il nostro è un progetto gratuito e rimarrà sempre tale...'}
@@ -2277,7 +2277,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
                     <input
                       type="text"
                       value={formData.pluginIntroTitle || ''}
-                      placeholder="171 Plugin Innovatio"
+                      placeholder="171 Plugin Innovation"
                       onChange={(e) => setFormData({ ...formData, pluginIntroTitle: e.target.value })}
                       className="w-full px-4 py-2.5 rounded-xl bg-neutral-950 border border-neutral-800 text-sm text-white focus:border-amber-400 outline-none"
                     />
@@ -2298,11 +2298,11 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
                 </div>
               </div>
 
-              {/* Sezione Cos'è 171 Plugin Innovatio */}
+              {/* Sezione Cos'è 171 Plugin Innovation */}
               <div className="p-6 sm:p-8 rounded-3xl bg-neutral-900/60 border border-neutral-800 space-y-4">
                 <h3 className="text-lg font-heading font-bold text-white flex items-center gap-2">
                   <Sparkles className="w-5 h-5 text-amber-400" />
-                  <span>Sezione "Cos'è 171 Plugin Innovatio" (Manifesto R&D)</span>
+                  <span>Sezione "Cos'è 171 Plugin Innovation" (Manifesto R&D)</span>
                 </h3>
 
                 <div>
@@ -2312,7 +2312,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
                   <input
                     type="text"
                     value={formData.pluginAboutSectionTitle || ''}
-                    placeholder="Cos'è 171 Plugin Innovatio"
+                    placeholder="Cos'è 171 Plugin Innovation"
                     onChange={(e) => setFormData({ ...formData, pluginAboutSectionTitle: e.target.value })}
                     className="w-full px-4 py-2.5 rounded-xl bg-neutral-950 border border-neutral-800 text-sm text-white focus:border-amber-400 outline-none"
                   />
@@ -2325,7 +2325,7 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
                   <textarea
                     rows={3}
                     value={formData.pluginAboutSectionText1 || ''}
-                    placeholder="171 Plugin Innovatio è la divisione di ricerca e sviluppo software di 171 Studio..."
+                    placeholder="171 Plugin Innovation è la divisione di ricerca e sviluppo software di 171 Studio..."
                     onChange={(e) => setFormData({ ...formData, pluginAboutSectionText1: e.target.value })}
                     className="w-full px-4 py-2.5 rounded-xl bg-neutral-950 border border-neutral-800 text-sm text-white focus:border-amber-400 outline-none resize-none"
                   />
@@ -7151,17 +7151,17 @@ export const MasterDashboard: React.FC<MasterDashboardProps> = ({ onClose }) => 
         </div>
       )}
 
-      {/* TAB 5: GESTIONE PLUGIN INNOVATIO & UPLOAD CARTELLE .ZIP */}
+      {/* TAB 5: GESTIONE PLUGIN INNOVATION & UPLOAD CARTELLE .ZIP */}
       {activeTab === 'plugins' && (
         <div className="space-y-8">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <h3 className="text-xl font-heading font-bold text-white flex items-center gap-2">
                 <FolderArchive className="w-5 h-5 text-amber-400" />
-                <span>Suite 171 Plugin Innovatio & Caricamento Cartelle .ZIP</span>
+                <span>Suite 171 Plugin Innovation & Caricamento Cartelle .ZIP</span>
               </h3>
               <p className="text-xs text-neutral-400 font-mono mt-1">
-                Catalogo Suite Innovatio: {siteContent.plugins.length} Plugin Ufficiali • <strong className="text-emerald-400 font-bold">{siteContent.plugins.reduce((sum, p) => sum + (p.downloadCount || 0), 0)} Download Totali</strong> verificati. Dopo ogni download si apre la pagina di ringraziamento e feedback donazione.
+                Catalogo Suite Innovation: {siteContent.plugins.length} Plugin Ufficiali • <strong className="text-emerald-400 font-bold">{siteContent.plugins.reduce((sum, p) => sum + (p.downloadCount || 0), 0)} Download Totali</strong> verificati. Dopo ogni download si apre la pagina di ringraziamento e feedback donazione.
               </p>
             </div>
 

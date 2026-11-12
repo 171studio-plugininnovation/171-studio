@@ -72,6 +72,26 @@ const TOPOLOGY_MAP: Record<string, { topology: string; tube: string; oversamplin
     tube: 'Bipolar Diode Clamping',
     oversampling: '4x ADAA-2 Zero-Aliasing',
   },
+  'plugin-vocalcraft': {
+    topology: 'COMPLETE DUAL-TUBE RACK & CRT HARMONIC SUITE',
+    tube: 'Twin 12AX7 & EF86 Pentode',
+    oversampling: '8x Pristine Oversampling',
+  },
+  'plugin-onesilk': {
+    topology: 'ONE-KNOB DYNAMIC VOCAL SILK & LOUDNESS NORMALIZER',
+    tube: 'Neve Silk Red Class-A Harmonics',
+    oversampling: 'Cytomic ZDF 64-Bit Trapezoidal',
+  },
+  'plugin-snipertune': {
+    topology: 'MANUAL GRAPHICAL PITCH & FORMANT 60 FPS CANVAS',
+    tube: '4D Consonant Shield Pure Bypass',
+    oversampling: 'GCD-PSOLA Lanczos-16 Sinc',
+  },
+  'plugin-sessionbuilder': {
+    topology: 'MODULAR CONSOLE RECALL & AUTO-GAIN STAGING',
+    tube: '6-Slot Hot-Swappable Analog DSP',
+    oversampling: '-18 dBFS Nominal Sweet Spot',
+  },
 };
 
 export const RackPluginCard: React.FC<RackPluginCardProps> = ({

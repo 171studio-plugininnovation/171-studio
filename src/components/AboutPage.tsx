@@ -108,7 +108,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
                 <span>Doppio Ascolto di Regia</span>
               </span>
               <p className="text-[11px] text-neutral-300 font-light leading-relaxed">
-                Monitor nearfield Kali Audio LP-6 con guida d\'onda 3D affiancati ai leggendari cubi Auratone C1A pilotati dal controller passivo Palmer Monicon.
+                Monitor nearfield Kali Audio LP-6 2nd Wave con guida d'onda 3D affiancati ai leggendari cubi Auratone C5A (o 5C Super Sound Cube) pilotati dal controller passivo Palmer Monicon.
               </p>
             </div>
             <div className="p-3.5 rounded-2xl bg-black/60 border border-neutral-800 space-y-1.5">
@@ -117,7 +117,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
                 <span>Catena Ibrida 192 kHz</span>
               </span>
               <p className="text-[11px] text-neutral-300 font-light leading-relaxed">
-                Conversione Apollo Twin X Thunderbolt d\'élite con preamplificazione Unison a impedenza variabile e suite proprietaria 171PluginInnovation.
+                Conversione Universal Audio Apollo Twin X Duo Heritage Thunderbolt con preamplificazione Unison e suite proprietaria 171Plugin Innovation.
               </p>
             </div>
           </div>
@@ -143,7 +143,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
             </div>
             <div className="p-3 rounded-xl bg-neutral-900/90 border border-neutral-800 flex flex-col justify-between gap-1">
               <span className="text-[9px] text-amber-400 font-bold">2. CONVERSIONE</span>
-              <span className="text-white font-bold text-xs">Apollo Twin X</span>
+              <span className="text-white font-bold text-xs">Apollo Twin X Duo</span>
               <span className="text-[9.5px] text-neutral-400">192 kHz / 24-bit AD</span>
             </div>
             <div className="p-3 rounded-xl bg-neutral-900/90 border border-neutral-800 flex flex-col justify-between gap-1">
@@ -158,7 +158,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
             </div>
             <div className="p-3 rounded-xl bg-neutral-900/90 border border-neutral-800 flex flex-col justify-between gap-1">
               <span className="text-[9px] text-amber-400 font-bold">5. DIFFUSORI</span>
-              <span className="text-white font-bold text-xs">Kali LP-6 & Auratone</span>
+              <span className="text-white font-bold text-xs">Kali LP-6 & Auratone 5C</span>
               <span className="text-[9.5px] text-neutral-400">Doppio Riferimento</span>
             </div>
             <div className="p-3 rounded-xl bg-neutral-900/90 border border-neutral-800 flex flex-col justify-between gap-1">

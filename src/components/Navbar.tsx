@@ -481,10 +481,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="font-heading font-bold text-sm text-white group-hover:text-amber-400 transition-colors">171 EasyVoice</span>
-                        <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-gradient-to-r from-amber-500/30 to-red-500/30 text-amber-300 border border-amber-500/50">⭐ UPDATE 2.2.5</span>
+                        <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-gradient-to-r from-amber-500/30 to-red-500/30 text-amber-300 border border-amber-500/50">⭐ MAJOR UPDATE v3.2.1</span>
                       </div>
                       <p className="text-[11px] text-neutral-400 font-light mt-0.5">All-in-One Vocal Channel Strip Definitiva (1176+LA2A, 8 Preamp)</p>
-                      <span className="text-[10px] font-mono text-emerald-400 font-semibold mt-1 inline-block">v2.2.5 (8 Nov 2026) • Win (35.19 MB) • Mac (109.39 MB)</span>
+                      <span className="text-[10px] font-mono text-emerald-400 font-semibold mt-1 inline-block">v3.2.1 (Nov 2026) • Win (35.19 MB) • Mac (109.64 MB)</span>
                     </div>
                     <span className="text-neutral-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all text-sm mt-1">→</span>
                   </div>
@@ -497,10 +497,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="font-heading font-bold text-sm text-white group-hover:text-amber-400 transition-colors">171 RealTune</span>
-                        <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-gradient-to-r from-amber-500/30 to-red-500/30 text-amber-300 border border-amber-500/50">⭐ UPDATE 2.2.5</span>
+                        <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-gradient-to-r from-amber-500/30 to-red-500/30 text-amber-300 border border-amber-500/50">⭐ UPDATE v2.2.1</span>
                       </div>
                       <p className="text-[11px] text-neutral-400 font-light mt-0.5">Pitch Correction real-time a latenza zero, WSOLA & Cue Mix CMF</p>
-                      <span className="text-[10px] font-mono text-emerald-400 font-semibold mt-1 inline-block">v2.2.5 (8 Nov 2026) • Win (19.19 MB) • Mac (8.37 MB)</span>
+                      <span className="text-[10px] font-mono text-emerald-400 font-semibold mt-1 inline-block">v2.2.1 (Nov 2026) • Win (19.20 MB) • Mac (8.67 MB)</span>
                     </div>
                     <span className="text-neutral-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all text-sm mt-1">→</span>
                   </div>
@@ -513,10 +513,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="font-heading font-bold text-sm text-white group-hover:text-amber-400 transition-colors">171 SpaceLuxe</span>
-                        <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-gradient-to-r from-amber-500/30 to-red-500/30 text-amber-300 border border-amber-500/50">⭐ UPDATE 2.2.5</span>
+                        <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-neutral-800 text-amber-300 border border-amber-500/40">⏳ IN ARRIVO • v2.4.0</span>
                       </div>
                       <p className="text-[11px] text-neutral-400 font-light mt-0.5">Riverbero Ibrido Boutique FDN-16 lossless, Shimmer & Smart Ducking</p>
-                      <span className="text-[10px] font-mono text-emerald-400 font-semibold mt-1 inline-block">v2.2.5 (8 Nov 2026) • Win (8.45 MB) • Mac (1.03 MB)</span>
+                      <span className="text-[10px] font-mono text-amber-400 font-semibold mt-1 inline-block">Sblocco Sett. 2 (16 Nov) • Win (8.56 MB) • Mac (1.10 MB)</span>
                     </div>
                     <span className="text-neutral-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all text-sm mt-1">→</span>
                   </div>
@@ -537,10 +537,26 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="font-heading font-bold text-sm text-white group-hover:text-amber-400 transition-colors">171 CleanDrive</span>
-                        <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-gradient-to-r from-amber-500/30 to-red-500/30 text-amber-300 border border-amber-500/50">⭐ UPDATE 2.2.5</span>
+                        <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-neutral-800 text-amber-300 border border-amber-500/40">⏳ IN ARRIVO • v2.2.0</span>
                       </div>
-                      <p className="text-[11px] text-neutral-400 font-light mt-0.5">4 Topologie preamp console, tolleranze TMT 72 canali & nastro Studer</p>
-                      <span className="text-[10px] font-mono text-emerald-400 font-semibold mt-1 inline-block">v2.2.5 (8 Nov 2026) • Win (18.56 MB) • Mac (7.88 MB)</span>
+                      <p className="text-[11px] text-neutral-400 font-light mt-0.5">Saturatore analogico a doppio canale con clipper ADAA-2 a 64-bit</p>
+                      <span className="text-[10px] font-mono text-amber-400 font-semibold mt-1 inline-block">Sblocco Nov 2026 • Win (6.65 MB) • Mac (91.65 MB)</span>
+                    </div>
+                    <span className="text-neutral-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all text-sm mt-1">→</span>
+                  </div>
+
+                  {/* 171 PerfectPre */}
+                  <div 
+                    onClick={() => handleNavClick('plugin-innovation', 'plugin-perfectpre')}
+                    className="p-3.5 rounded-2xl bg-neutral-900/80 hover:bg-neutral-800/90 border border-neutral-800 hover:border-amber-500/60 transition-all cursor-pointer group flex items-start justify-between gap-3"
+                  >
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-heading font-bold text-sm text-white group-hover:text-amber-400 transition-colors">171 PerfectPre</span>
+                        <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-gradient-to-r from-blue-500/30 to-amber-500/30 text-amber-300 border border-amber-500/50">⭐ GOLD MASTER v2.2.0</span>
+                      </div>
+                      <p className="text-[11px] text-neutral-400 font-light mt-0.5">4 Topologie preamp console, Neve 1073 LC ladder & nastro Studer</p>
+                      <span className="text-[10px] font-mono text-emerald-400 font-semibold mt-1 inline-block">v2.2.0 (Nov 2026) • Win (18.56 MB) • Mac (8.18 MB)</span>
                     </div>
                     <span className="text-neutral-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all text-sm mt-1">→</span>
                   </div>
@@ -577,10 +593,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="font-heading font-bold text-sm text-white group-hover:text-amber-400 transition-colors">171 CleanReso</span>
-                        <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-gradient-to-r from-amber-500/30 to-red-500/30 text-amber-300 border border-amber-500/50">✨ MAJOR V2.0.0</span>
+                        <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-gradient-to-r from-amber-500/30 to-red-500/30 text-amber-300 border border-amber-500/50">⭐ GOLD MASTER v2.3.0</span>
                       </div>
                       <p className="text-[11px] text-neutral-400 font-light mt-0.5">32 Filtri SVF Zero-Delay Feedback dinamici con ascolto Delta</p>
-                      <span className="text-[10px] font-mono text-emerald-400 font-semibold mt-1 inline-block">v2.0.0 (4 Nov 2026) • Win (11.66 MB) • Mac (20.97 MB)</span>
+                      <span className="text-[10px] font-mono text-emerald-400 font-semibold mt-1 inline-block">v2.3.0 (Nov 2026) • Win (11.66 MB) • Mac (21.05 MB)</span>
                     </div>
                     <span className="text-neutral-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all text-sm mt-1">→</span>
                   </div>
@@ -705,16 +721,19 @@ export const Navbar: React.FC<NavbarProps> = ({
                       <span>→</span>
                     </button>
                     {[
-                      { id: 'plugin-easyvoice', name: '171 EasyVoice', tag: '⭐ UPDATE 2.2.5' },
-                      { id: 'plugin-realtune', name: '171 RealTune', tag: '⭐ UPDATE 2.2.5' },
-                      { id: 'plugin-spaceluxe', name: '171 SpaceLuxe', tag: '⭐ UPDATE 2.2.5' },
-                      { id: 'plugin-cleandrive', name: '171 CleanDrive', tag: 'DISP' },
-                      { id: 'plugin-cleanreso', name: '171 CleanReso', tag: 'DISP' },
-                      { id: 'plugin-perfectpre', name: '171 PerfectPre', tag: '⭐ UPDATE 2.2.5' },
-                      { id: 'plugin-masterglue', name: '171 MasterGlue', tag: '🔒 1 DIC' },
-                      { id: 'plugin-punchcraft', name: '171 PunchCraft', tag: '⏳ SETT 3' },
-                      { id: 'plugin-perfectclip', name: '171 PerfectClip', tag: '⏳ SETT 4' },
-                      { id: 'plugin-vocalcraft', name: '171 VocalCraft', tag: '⏳ SETT 5' },
+                      { id: 'plugin-realtune', name: '171 RealTune', tag: 'DISPONIBILE v2.2.1' },
+                      { id: 'plugin-easyvoice', name: '171 EasyVoice', tag: 'DISPONIBILE v3.2.1' },
+                      { id: 'plugin-cleanreso', name: '171 CleanReso', tag: 'DISPONIBILE v2.3.0' },
+                      { id: 'plugin-perfectpre', name: '171 PerfectPre', tag: 'DISPONIBILE v2.2.0' },
+                      { id: 'plugin-spaceluxe', name: '171 SpaceLuxe', tag: 'IN ARRIVO (16 Nov)' },
+                      { id: 'plugin-cleandrive', name: '171 CleanDrive', tag: 'IN ARRIVO v2.2.0' },
+                      { id: 'plugin-vocalcraft', name: '171 VocalCraft', tag: 'IN ARRIVO (27 Nov)' },
+                      { id: 'plugin-onesilk', name: '171 OneSilk', tag: 'IN ARRIVO v1.1.0' },
+                      { id: 'plugin-snipertune', name: '171 SniperTune', tag: 'IN ARRIVO v1.0.0' },
+                      { id: 'plugin-sessionbuilder', name: '171 SessionBuilder', tag: 'IN ARRIVO v1.0.0' },
+                      { id: 'plugin-punchcraft', name: '171 PunchCraft', tag: '13 NOV' },
+                      { id: 'plugin-perfectclip', name: '171 PerfectClip', tag: '20 NOV' },
+                      { id: 'plugin-masterglue', name: '171 MasterGlue', tag: '1 DIC' },
                     ].map((subp) => (
                       <button
                         key={subp.id}

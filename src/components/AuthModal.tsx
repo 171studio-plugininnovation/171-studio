@@ -27,6 +27,7 @@ export const AuthModal: React.FC = () => {
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [otpCode, setOtpCode] = useState('');
+  const [previewCode, setPreviewCode] = useState<string | null>(null);
   
   const [error, setError] = useState('');
   const [infoMessage, setInfoMessage] = useState('');
@@ -54,6 +55,7 @@ export const AuthModal: React.FC = () => {
     setError('');
     setInfoMessage('');
     setOtpCode('');
+    setPreviewCode(null);
     setResendCooldown(0);
     closeAuthModal();
   };
@@ -93,6 +95,9 @@ export const AuthModal: React.FC = () => {
         // Send OTP verification code
         const res = await sendRegistrationVerificationOtp(cleanEmail, cleanName, password);
         setInfoMessage(res.message);
+        if (res.previewCode) {
+          setPreviewCode(res.previewCode);
+        }
         setMode('verify');
         setResendCooldown(30);
       } else if (mode === 'verify') {
@@ -122,6 +127,9 @@ export const AuthModal: React.FC = () => {
     try {
       const res = await resendRegistrationVerificationOtp(email.trim().toLowerCase());
       setInfoMessage(res.message);
+      if (res.previewCode) {
+        setPreviewCode(res.previewCode);
+      }
       setResendCooldown(30);
     } catch (err: unknown) {
       const e = err as Error;
@@ -135,6 +143,7 @@ export const AuthModal: React.FC = () => {
     cancelRegistrationVerification();
     setMode('register');
     setOtpCode('');
+    setPreviewCode(null);
     setError('');
     setInfoMessage('');
     setResendCooldown(0);
@@ -288,6 +297,21 @@ export const AuthModal: React.FC = () => {
                 <Clock className="w-3 h-3 text-amber-500" />
                 <span>Codice valido per 15 minuti</span>
               </div>
+
+              {previewCode && (
+                <div className="mt-3 p-2 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between text-[11px] font-mono">
+                  <span className="text-neutral-300">
+                    Codice inviato: <strong className="text-amber-400 tracking-wider font-bold">{previewCode}</strong>
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setOtpCode(previewCode)}
+                    className="px-2 py-0.5 rounded bg-amber-500 hover:bg-amber-400 text-black font-bold text-[10px] uppercase transition-all cursor-pointer"
+                  >
+                    Inserisci
+                  </button>
+                </div>
+              )}
             </div>
 
             <StudioButton

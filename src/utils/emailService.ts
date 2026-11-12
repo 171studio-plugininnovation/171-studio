@@ -66,7 +66,8 @@ export function getPayPalDonationUrl(
  */
 export function getPayPalMeUrl(amount?: number, paypalUser: string = 'vkrealhakiesake'): string {
   if (amount && amount > 0) {
-    return `https://paypal.me/${paypalUser}/${Math.round(amount)}EUR`;
+    const formattedAmount = Number.isInteger(amount) ? amount.toString() : amount.toFixed(2);
+    return `https://paypal.me/${paypalUser}/${formattedAmount}EUR`;
   }
   return `https://paypal.me/${paypalUser}`;
 }
@@ -222,6 +223,10 @@ export function interpolateEmailTemplate(
 ): string {
   const userName = booking.userName?.trim() || 'Artista';
   const effectiveCode = orderCode || booking.orderCode || booking.id || 'ORD-171';
+  const micInfo = booking.selectedMic
+    ? `${booking.selectedMic}${booking.selectedMicFee && booking.selectedMicFee > 0 ? ` (+${booking.selectedMicFee}€)` : ' (Incluso a 0€)'}`
+    : 'RØDE NT1-A Signature Edition (Incluso a 0€)';
+
   return templateText
     .replace(/\{nome\}/gi, userName)
     .replace(/\{user\}/gi, userName)
@@ -230,9 +235,15 @@ export function interpolateEmailTemplate(
     .replace(/\{servizio\}/gi, booking.serviceTitle || 'Sessione in Studio')
     .replace(/\{data\}/gi, booking.date || '')
     .replace(/\{ora\}/gi, booking.time || '')
+    .replace(/\{ore\}/gi, `${booking.hours || 1}h`)
+    .replace(/\{durata\}/gi, `${booking.hours || 1}h`)
     .replace(/\{importo\}/gi, `${booking.estimatedPrice} €`)
     .replace(/\{email\}/gi, booking.userEmail || '')
     .replace(/\{telefono\}/gi, booking.userPhone || '')
+    .replace(/\{microfono\}/gi, micInfo)
+    .replace(/\{microfono_scelto\}/gi, micInfo)
+    .replace(/\{mic\}/gi, micInfo)
+    .replace(/\{paypal_email\}/gi, STUDIO_PAYPAL_EMAIL)
     .replace(
       /\{sconto\}/gi,
       booking.discountCode
@@ -470,6 +481,10 @@ export function buildBookingReceivedEmailHtml(
           <td style="padding: 6px 0; color: #a3a3a3;">Orario Richiesto:</td>
           <td style="padding: 6px 0; font-weight: 600; color: #ffffff;">dalle ore ${booking.time} alle ${booking.endTime || 'fine sessione'} (${booking.hours}h)</td>
         </tr>
+        <tr>
+          <td style="padding: 6px 0; color: #a3a3a3;">Microfono Vocale:</td>
+          <td style="padding: 6px 0; color: #f59e0b; font-weight: 600;">${booking.selectedMic || 'RØDE NT1-A Signature (Incluso)'} ${booking.selectedMicFee && booking.selectedMicFee > 0 ? `(+${booking.selectedMicFee} €)` : ''}</td>
+        </tr>
         ${discountRowHtml}
         ${booking.notes ? `
         <tr>
@@ -579,6 +594,10 @@ export function buildBookingConfirmedEmailHtml(
           <td style="padding: 6px 0; color: #a3a3a3;">Orario Confermato:</td>
           <td style="padding: 6px 0; font-weight: 700; color: #ffffff;">dalle ore ${booking.time} alle ${booking.endTime || 'fine sessione'} (${booking.hours}h)</td>
         </tr>
+        <tr>
+          <td style="padding: 6px 0; color: #a3a3a3;">Microfono Vocale:</td>
+          <td style="padding: 6px 0; color: #f59e0b; font-weight: 600;">${booking.selectedMic || 'RØDE NT1-A Signature (Incluso)'} ${booking.selectedMicFee && booking.selectedMicFee > 0 ? `(+${booking.selectedMicFee} €)` : ''}</td>
+        </tr>
         ${discountRowHtml}
         ${booking.notes ? `
         <tr>
@@ -662,6 +681,7 @@ CODICE ORDINE: #${orderCode}
 SERVIZIO: ${booking.serviceTitle}
 DATA RICHIESTA: ${booking.date}
 ORARIO: dalle ore ${booking.time} alle ${booking.endTime || 'fine sessione'} (${booking.hours}h)
+MICROFONO: ${booking.selectedMic || 'RØDE NT1-A Signature (Incluso 0€)'}${booking.selectedMicFee && booking.selectedMicFee > 0 ? ` (+${booking.selectedMicFee}€)` : ''}
 ${discountLine}IMPORTO STIMATO: ${booking.estimatedPrice} €
 STUDIO: 171 Studio — Messina (ME), Sicilia
 --------------------------------------------------
@@ -859,6 +879,7 @@ CODICE ORDINE: #${orderCode}
 SERVIZIO: ${booking.serviceTitle}
 DATA CONFERMATA: ${booking.date}
 ORARIO CONFERMATO: dalle ore ${booking.time} alle ${booking.endTime || 'fine sessione'} (${booking.hours}h)
+MICROFONO CONFERMATO: ${booking.selectedMic || 'RØDE NT1-A Signature (Incluso 0€)'}${booking.selectedMicFee && booking.selectedMicFee > 0 ? ` (+${booking.selectedMicFee}€)` : ''}
 ${discountLine}IMPORTO FINALE DA SALDARE: ${booking.estimatedPrice} €
 INDIRIZZO STUDIO: Messina (ME), Sicilia — Italia
 --------------------------------------------------

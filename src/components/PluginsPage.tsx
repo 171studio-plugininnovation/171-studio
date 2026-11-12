@@ -61,6 +61,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
 
   const [downloadSuccessId, setDownloadSuccessId] = useState<string | null>(null);
   const [thankYouPlugin, setThankYouPlugin] = useState<PluginItem | null>(null);
+  const [announcementPluginId, setAnnouncementPluginId] = useState<string>('all');
 
   // Live real-time clock ticking every 1000ms for weekly unlock countdowns
   const [now, setNow] = useState<number>(Date.now());
@@ -173,7 +174,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
         // Category match
         if (categoryFilter === 'all') return true;
         if (categoryFilter === 'favorites') return isPluginFavorite(plugin.id);
-        if (categoryFilter === 'vocal') return ['plugin-realtune', 'plugin-easyvoice', 'plugin-vocalcraft'].includes(plugin.id);
+        if (categoryFilter === 'vocal') return ['plugin-realtune', 'plugin-easyvoice', 'plugin-vocalcraft', 'plugin-onesilk', 'plugin-snipertune', 'plugin-sessionbuilder'].includes(plugin.id);
         if (categoryFilter === 'dynamics') return ['plugin-masterglue', 'plugin-punchcraft', 'plugin-perfectclip'].includes(plugin.id);
         if (categoryFilter === 'saturation') return ['plugin-cleandrive', 'plugin-perfectpre'].includes(plugin.id);
         if (categoryFilter === 'spatial') return ['plugin-cleanreso', 'plugin-spaceluxe'].includes(plugin.id);
@@ -907,7 +908,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
           </div>
 
           <h1 className="font-heading font-black text-3xl sm:text-5xl md:text-6xl text-white tracking-tight mb-3">
-            {siteContent.pluginIntroTitle || '171 Plugin Innovatio'}
+            {siteContent.pluginIntroTitle || '171 Plugin Innovation'}
           </h1>
 
           <p className="text-sm sm:text-base md:text-lg text-neutral-300 font-light leading-relaxed">
@@ -915,20 +916,20 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
           </p>
         </div>
 
-        {/* Cos'è 171 Plugin Innovatio */}
+        {/* Cos'è 171 Plugin Innovation */}
         <div className="p-5 sm:p-7 rounded-2xl sm:rounded-3xl bg-neutral-950/80 border border-amber-500/30 backdrop-blur-xl shadow-2xl relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/5 rounded-full blur-3xl pointer-events-none" />
 
           <div className="flex items-center gap-3 mb-4">
             <Sparkles className="w-6 h-6 text-amber-400" />
             <h2 className="text-xl sm:text-2xl font-heading font-bold text-white">
-              {siteContent.pluginAboutSectionTitle || "Cos'è 171 Plugin Innovatio"}
+              {siteContent.pluginAboutSectionTitle || "Cos'è 171 Plugin Innovation"}
             </h2>
           </div>
 
           <div className="space-y-4 text-sm sm:text-base text-neutral-300 font-light leading-relaxed">
             <p>
-              {siteContent.pluginAboutSectionText1 || "171 Plugin Innovatio è la divisione di ricerca e sviluppo software di 171 Studio. Nasce da un'esigenza diretta: durante le nostre sessioni quotidiane di missaggio e mastering cercavamo plugin che combinassero la musicalità e la pasta sonora degli outboard analogici d'epoca con la flessibilità chirurgica e la stabilità del software moderno."}
+              {siteContent.pluginAboutSectionText1 || "171 Plugin Innovation è la divisione di ricerca e sviluppo software di 171 Studio. Nasce da un'esigenza diretta: durante le nostre sessioni quotidiane di missaggio e mastering cercavamo plugin che combinassero la musicalità e la pasta sonora degli outboard analogici d'epoca con la flessibilità chirurgica e la stabilità del software moderno."}
             </p>
             <p>
               {siteContent.pluginAboutSectionText2 || 'Il nostro è un progetto gratuito e rimarrà sempre tale: scarica liberamente i pacchetti .ZIP dei plugin, provali nelle tue produzioni e lasciaci un feedback per aiutarci a migliorarli costantemente!'}
@@ -991,7 +992,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
                 Scarica Gratis i Plugin di 171 Studio
               </h3>
               <p className="text-xs sm:text-sm text-neutral-400 font-light mt-1">
-                Gli 11 strumenti DSP boutique ufficiali del laboratorio aggiornati a Major Update 2.2.5 (8 Novembre 2026), con sblocco progressivo settimanale e pacchetti di download singoli gratuiti per Windows e macOS.
+                Tutti i 13 strumenti DSP boutique ufficiali 171Plugin Innovation aggiornati alle versioni stabili compilate C++20 (12 Novembre 2026). Al momento sono attivi per il download gratuito immediato (.ZIP) i 4 strumenti cardine della suite: <strong>171 RealTune</strong>, <strong>171 PerfectPre</strong>, <strong>171 CleanReso</strong> e <strong>171 EasyVoice</strong> per Windows e macOS.
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-2 self-start md:self-auto">
@@ -1026,7 +1027,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
                   <span>PROGRAMMA UFFICIALE DI SBLOCCO SETTIMANALE • 1 A SETTIMANA</span>
                 </div>
                 <h3 className="text-xl sm:text-2xl lg:text-3xl font-heading font-black text-white tracking-tight">
-                  Roadmap Sblocco Progressivo 171 Studio Innovatio
+                  Roadmap Sblocco Progressivo 171 Studio Innovation
                 </h3>
                 <p className="text-xs sm:text-sm text-neutral-300 font-light mt-1 max-w-3xl leading-relaxed">
                   I nuovi processori boutique del laboratorio DSP vengono rilasciati e sbloccati progressivamente su <strong>base settimanale (1 a settimana)</strong> con timer live sincronizzato al secondo. Al termine di ciascun countdown, il relativo pacchetto di download singolo freeware si attiva automaticamente. Nessun archivio cumulativo: scarichi solo ciò che desideri!
@@ -1043,54 +1044,54 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 sm:gap-4">
               {[
                 {
-                  id: 'plugin-spaceluxe',
-                  week: 1,
-                  name: '171 SpaceLuxe',
-                  cat: 'Hybrid Reverb & Shimmer',
-                  dateStr: '2026-11-02T16:00:00+01:00',
-                  targetDateLabel: '2 Nov 2026 • SBLOCCATO',
-                  winSize: '8.45 MB',
-                  macSize: '1.03 MB',
-                },
-                {
-                  id: 'plugin-masterglue',
-                  week: 2,
-                  name: '171 MasterGlue',
-                  cat: 'Analog Bus VCA/Diode Console',
-                  dateStr: '2026-11-06T18:00:00+01:00',
-                  targetDateLabel: 'Ven 6 Nov 2026, 18:00',
-                  winSize: '8.38 MB',
-                  macSize: '4.67 MB',
-                },
-                {
                   id: 'plugin-punchcraft',
-                  week: 3,
+                  week: 1,
                   name: '171 PunchCraft',
                   cat: 'Multi-Band Transient Shaper',
                   dateStr: '2026-11-13T18:00:00+01:00',
                   targetDateLabel: 'Ven 13 Nov 2026, 18:00',
                   winSize: '8.43 MB',
-                  macSize: '4.75 MB',
+                  macSize: '4.83 MB',
+                },
+                {
+                  id: 'plugin-spaceluxe',
+                  week: 2,
+                  name: '171 SpaceLuxe',
+                  cat: 'Hybrid Reverb & Shimmer',
+                  dateStr: '2026-11-16T18:00:00+01:00',
+                  targetDateLabel: 'Lun 16 Nov 2026, 18:00',
+                  winSize: '8.56 MB',
+                  macSize: '1.10 MB',
                 },
                 {
                   id: 'plugin-perfectclip',
-                  week: 4,
+                  week: 3,
                   name: '171 PerfectClip',
                   cat: 'Mastering ADAA-2 Clipper',
                   dateStr: '2026-11-20T18:00:00+01:00',
                   targetDateLabel: 'Ven 20 Nov 2026, 18:00',
-                  winSize: '8.45 MB',
-                  macSize: '0.74 MB',
+                  winSize: '8.44 MB',
+                  macSize: '1.00 MB',
                 },
                 {
                   id: 'plugin-vocalcraft',
-                  week: 5,
+                  week: 4,
                   name: '171 VocalCraft',
                   cat: 'Pre-Mix & Multi-Style Vocal',
                   dateStr: '2026-11-27T18:00:00+01:00',
                   targetDateLabel: 'Ven 27 Nov 2026, 18:00',
-                  winSize: '8.48 MB',
-                  macSize: '1.31 MB',
+                  winSize: '8.29 MB',
+                  macSize: '22.66 MB',
+                },
+                {
+                  id: 'plugin-masterglue',
+                  week: 5,
+                  name: '171 MasterGlue',
+                  cat: 'Analog Bus VCA/Diode Console',
+                  dateStr: '2026-12-01T18:00:00+01:00',
+                  targetDateLabel: 'Mar 1 Dic 2026, 18:00',
+                  winSize: '8.38 MB',
+                  macSize: '4.74 MB',
                 },
               ].map((step) => {
                 const cd = getCountdown(step.dateStr);
@@ -1153,8 +1154,8 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
             </div>
           </div>
 
-          {/* Official Announcement Card: Major Update 2.2.5 (8 Novembre 2026) */}
-          <div className="mb-8 relative overflow-hidden rounded-3xl bg-gradient-to-br from-neutral-900/98 via-neutral-950/95 to-amber-950/45 border-2 border-amber-500/60 p-6 sm:p-8 shadow-[0_0_50px_rgba(245,158,11,0.22)] backdrop-blur-2xl">
+          {/* Official Announcements Hub: Per-Plugin Release Notes & Dedicated Packages (12 Novembre 2026) */}
+          <div className="mb-10 relative overflow-hidden rounded-3xl bg-gradient-to-br from-neutral-900/98 via-neutral-950/95 to-amber-950/45 border-2 border-amber-500/60 p-6 sm:p-8 shadow-[0_0_50px_rgba(245,158,11,0.22)] backdrop-blur-2xl">
             <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/15 rounded-full blur-3xl pointer-events-none" />
             <div className="absolute -bottom-10 -left-10 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
 
@@ -1165,11 +1166,11 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
                   <div className="flex flex-wrap items-center gap-2.5">
                     <span className="text-[10.5px] font-mono font-black px-3.5 py-1 rounded-full bg-gradient-to-r from-amber-500/30 to-red-500/30 text-amber-300 border border-amber-500/60 flex items-center gap-1.5 shadow-sm animate-pulse">
                       <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                      <span>✨ ANNUNCIO UFFICIALE: MAJOR UPDATE 2.2.5 (8 NOVEMBRE 2026)</span>
+                      <span>✨ ANNUNCI UFFICIALI & RELEASE NOTES • 171PLUGIN INNOVATION (12 NOVEMBRE 2026)</span>
                     </span>
                     <span className="text-[10px] font-mono px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/40 flex items-center gap-1.5">
                       <Cpu className="w-3.5 h-3.5 text-blue-400" />
-                      <span>MOTORE DSP dsp171 V2.2.5 COMPILATO C++20</span>
+                      <span>MOTORI DSP COMPILATI C++20 • AVX2 / NEON</span>
                     </span>
                     <span className="text-[10px] font-mono px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 flex items-center gap-1.5">
                       <Shield className="w-3.5 h-3.5 text-emerald-400" />
@@ -1178,172 +1179,264 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
                   </div>
 
                   <h3 className="font-heading font-black text-2xl sm:text-3xl md:text-4xl text-white tracking-tight">
-                    Major Update 2.2.5: Novità Specifiche e Changelog Dettagliato per Plugin
+                    Ultime Versioni Stabili & Annunci Dedicati per Singolo Plugin
                   </h3>
 
                   <p className="text-sm sm:text-base text-neutral-200 font-light leading-relaxed">
-                    Annunciamo ufficialmente il rilascio del <strong>Major Update 2.2.5 (8 Novembre 2026)</strong>. Abbiamo perfezionato gli algoritmi audio e la metrologia dei quattro strumenti cardine della suite (RealTune, EasyVoice, PerfectPre e SpaceLuxe) rispetto alle release precedenti, introducendo miglioramenti di calcolo e operatività analogica certificati. Inoltre, confermiamo il rilascio di <strong>171 MasterGlue programmato per il 1° Dicembre 2026</strong> e l'ottimizzazione del catalogo con la rimozione di 171 DriveOptocom.
+                    Tutti i plugin del laboratorio sono stati sincronizzati con le ultime versioni compilate dei motori DSP C++20. Al momento sono <strong>attivi per il download immediato gratuito i 4 strumenti cardine della suite: 171 RealTune v2.2.1, 171 PerfectPre v2.2.0, 171 CleanReso v2.3.0 e 171 EasyVoice v3.2.1</strong> per Windows 64-bit e macOS Universal. Gli altri processori boutique sono consultabili con i rispettivi annunci tecnici e verranno sbloccati progressivamente.
                   </p>
                 </div>
 
-                {/* Single Downloads Notice Pill */}
-                <div className="shrink-0 flex flex-col gap-2 p-4 rounded-2xl bg-black/80 border border-amber-500/30 text-center w-full lg:w-64">
-                  <span className="text-[10px] font-mono uppercase tracking-widest text-amber-400 font-bold">
-                    DOWNLOAD SINGOLI DEDICATI
-                  </span>
+                {/* 4 Core Active Downloads Box */}
+                <div className="shrink-0 flex flex-col gap-2.5 p-4 sm:p-5 rounded-2xl bg-black/85 border border-amber-500/40 text-center w-full lg:w-80 shadow-xl">
+                  <div className="flex items-center justify-center gap-1.5 text-[10px] font-mono uppercase tracking-widest text-amber-400 font-bold">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                    <span>4 PLUGIN ATTIVI AL DOWNLOAD</span>
+                  </div>
                   <span className="text-sm font-heading font-black text-white">
-                    Pacchetti Singoli v2.2.5
+                    RealTune • EasyVoice • CleanReso • PerfectPre
                   </span>
                   <p className="text-[11px] text-neutral-400 font-light leading-snug">
-                    Ogni plugin include installer VST3/AU/Standalone e manuale d'uso: scarica solo ciò che ti serve dal rack sottostante.
+                    I 4 processori cardine certificati per Windows e macOS, 100% freeware senza paywall o account obbligatorio.
                   </p>
+                  <div className="grid grid-cols-2 gap-1.5 pt-1">
+                    <button
+                      onClick={() => {
+                        const p = siteContent.plugins.find(x => x.id === 'plugin-realtune');
+                        if (p) handleDownload(p, 'win');
+                      }}
+                      className="px-2 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-heading font-black text-xs transition-all cursor-pointer shadow active:scale-95 flex items-center justify-center gap-1"
+                    >
+                      <Download className="w-3 h-3" />
+                      <span>RealTune</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        const p = siteContent.plugins.find(x => x.id === 'plugin-easyvoice');
+                        if (p) handleDownload(p, 'win');
+                      }}
+                      className="px-2 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-heading font-black text-xs transition-all cursor-pointer shadow active:scale-95 flex items-center justify-center gap-1"
+                    >
+                      <Download className="w-3 h-3" />
+                      <span>EasyVoice</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        const p = siteContent.plugins.find(x => x.id === 'plugin-cleanreso');
+                        if (p) handleDownload(p, 'win');
+                      }}
+                      className="px-2 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-heading font-black text-xs transition-all cursor-pointer shadow active:scale-95 flex items-center justify-center gap-1"
+                    >
+                      <Download className="w-3 h-3" />
+                      <span>CleanReso</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        const p = siteContent.plugins.find(x => x.id === 'plugin-perfectpre');
+                        if (p) handleDownload(p, 'win');
+                      }}
+                      className="px-2 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-heading font-black text-xs transition-all cursor-pointer shadow active:scale-95 flex items-center justify-center gap-1"
+                    >
+                      <Download className="w-3 h-3" />
+                      <span>PerfectPre</span>
+                    </button>
+                  </div>
                 </div>
               </div>
 
-              {/* SPECIFIC PLUGIN CHANGES GRID (2x2) */}
+              {/* FILTER TABS: SELECT BY INDIVIDUAL PLUGIN */}
+              <div className="pt-2 border-t border-neutral-800/80">
+                <div className="flex items-center justify-between gap-3 mb-3">
+                  <div className="flex items-center gap-2 text-xs font-mono text-neutral-300">
+                    <Filter className="w-3.5 h-3.5 text-amber-400" />
+                    <span className="font-bold uppercase tracking-wider text-[11px]">Seleziona Annuncio Plugin:</span>
+                  </div>
+                  {announcementPluginId !== 'all' && (
+                    <button
+                      onClick={() => setAnnouncementPluginId('all')}
+                      className="text-[11px] font-mono text-amber-400 hover:text-amber-300 underline cursor-pointer"
+                    >
+                      Mostra Tutti ({siteContent.plugins.length})
+                    </button>
+                  )}
+                </div>
+
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <button
+                    onClick={() => setAnnouncementPluginId('all')}
+                    className={`px-3 py-1.5 rounded-xl font-mono text-xs font-bold transition-all cursor-pointer ${
+                      announcementPluginId === 'all'
+                        ? 'bg-amber-500 text-black shadow-[0_0_15px_rgba(245,158,11,0.4)]'
+                        : 'bg-black/60 hover:bg-neutral-800/80 text-neutral-300 border border-neutral-800'
+                    }`}
+                  >
+                    Tutti gli Annunci ({siteContent.plugins.length})
+                  </button>
+
+                  {siteContent.plugins.map((p) => {
+                    const isSelected = announcementPluginId === p.id;
+                    const isAvailable = p.status === 'DISPONIBILE';
+                    return (
+                      <button
+                        key={p.id}
+                        onClick={() => setAnnouncementPluginId(p.id)}
+                        className={`px-3 py-1.5 rounded-xl font-mono text-xs transition-all flex items-center gap-1.5 cursor-pointer ${
+                          isSelected
+                            ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-black font-bold shadow-[0_0_15px_rgba(245,158,11,0.4)]'
+                            : 'bg-black/60 hover:bg-neutral-800/80 text-neutral-300 border border-neutral-800 hover:border-neutral-700'
+                        }`}
+                      >
+                        <span className={`w-1.5 h-1.5 rounded-full ${isSelected ? 'bg-black' : (isAvailable ? 'bg-emerald-400' : 'bg-amber-400')}`} />
+                        <span>{p.name.replace('171 ', '')}</span>
+                        <span className={`text-[10px] font-black px-1.5 py-0.2 rounded ${isSelected ? 'bg-black/20 text-black' : 'bg-neutral-800 text-neutral-400'}`}>
+                          {p.version}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* INDIVIDUAL PLUGIN ANNOUNCEMENT CARDS */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-                {/* 1. 171 RealTune v2.2.5 */}
-                <div className="p-4 sm:p-5 rounded-2xl bg-black/60 border border-neutral-800 hover:border-amber-500/40 transition-all space-y-3">
-                  <div className="flex items-center justify-between pb-2 border-b border-neutral-800/80">
-                    <div className="flex items-center gap-2">
-                      <span className="w-2.5 h-2.5 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(245,158,11,0.8)]" />
-                      <span className="font-heading font-black text-white text-base">171 RealTune</span>
-                      <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40">v2.2.5</span>
-                    </div>
-                    <span className="text-[10px] font-mono text-emerald-400 font-semibold">Zero Latency Host</span>
-                  </div>
-                  <ul className="text-xs font-mono text-neutral-300 space-y-2">
-                    <li className="flex items-start gap-2">
-                      <span className="text-amber-400 font-bold shrink-0">✔</span>
-                      <span><strong>F0 Tracking Sub-Cent (&lt; 0.0033 Hz):</strong> Errore d'intonazione abbattuto a meno di 0.01 cent su tutto il registro vocale A2–A5.</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-amber-400 font-bold shrink-0">✔</span>
-                      <span><strong>Curva Quintic Smootherstep (C²):</strong> Transizioni armoniche a derivata seconda continua per correzioni fulminee prive di click o gradini di fase.</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-amber-400 font-bold shrink-0">✔</span>
-                      <span><strong>Hysteresis Deadband (±5.8 Hz):</strong> Finestra di stabilizzazione stile Waves Tune RT per preservare il vibrato naturale ed eliminare il flutter.</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-amber-400 font-bold shrink-0">✔</span>
-                      <span><strong>LPC Formant Shifter (50%–150%):</strong> Modellazione fisica della laringe con compensazione spettrale per evitare timbri artefatti o chipmunk.</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-amber-400 font-bold shrink-0">✔</span>
-                      <span><strong>Bit-Exact Master Bypass:</strong> 0 delta, 0 dB e 0 rad di scostamento in Live e compensazione PDC perfetta in Studio HQ.</span>
-                    </li>
-                  </ul>
-                </div>
+                {siteContent.plugins
+                  .filter((p) => announcementPluginId === 'all' || p.id === announcementPluginId)
+                  .map((p) => {
+                    const isAvailable = ['plugin-realtune', 'plugin-easyvoice', 'plugin-cleanreso', 'plugin-perfectpre'].includes(p.id);
+                    const latestChangelog = p.changelog?.[0];
+                    const changes: string[] = [
+                      ...(latestChangelog?.features || []),
+                      ...(latestChangelog?.fixes || [])
+                    ];
+                    const winSize = p.zipFileSize || '15 MB';
+                    const macSize = p.macZipFileSize || (p.macDownloadUrl ? '15 MB' : null);
+                    const releaseDateText = latestChangelog?.date || p.unlockDate || '12 Novembre 2026';
 
-                {/* 2. 171 EasyVoice v2.2.5 */}
-                <div className="p-4 sm:p-5 rounded-2xl bg-black/60 border border-neutral-800 hover:border-amber-500/40 transition-all space-y-3">
-                  <div className="flex items-center justify-between pb-2 border-b border-neutral-800/80">
-                    <div className="flex items-center gap-2">
-                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
-                      <span className="font-heading font-black text-white text-base">171 EasyVoice</span>
-                      <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">v2.2.5</span>
-                    </div>
-                    <span className="text-[10px] font-mono text-emerald-400 font-semibold">All-in-One Vocal</span>
-                  </div>
-                  <ul className="text-xs font-mono text-neutral-300 space-y-2">
-                    <li className="flex items-start gap-2">
-                      <span className="text-amber-400 font-bold shrink-0">✔</span>
-                      <span><strong>0 dB Pre-Open Reset State:</strong> VocalNoiseExpander azzera qualsiasi attenuazione sul campione 0, preservando al 100% l'attacco transiente vocale.</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-amber-400 font-bold shrink-0">✔</span>
-                      <span><strong>Soft-Knee Expander C¹ Anti-Chatter:</strong> Curva quadratica su 6 dB di knee: azzerato il tremolio o pompaggio su silenzi, code e respiri.</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-amber-400 font-bold shrink-0">✔</span>
-                      <span><strong>Routing Dinamico Seriale Commutabile:</strong> Switch hardware real-time per invertire la catena: <code>OPTO &gt; EQ &gt; FET</code> oppure <code>FET &gt; EQ &gt; OPTO</code>.</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-amber-400 font-bold shrink-0">✔</span>
-                      <span><strong>Ricalibrazione Headroom FET -18 dBFS:</strong> Risolto il clipping prematuro a -14 dBFS dell'1176; tarato a unity gain su -18 dBFS da standard di mastering.</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-amber-400 font-bold shrink-0">✔</span>
-                      <span><strong>8 Preamplificatori Normalizzati a 0.00 dB:</strong> Calibrazione a guadagno unitario a Drive 0 (Neve, SSL, Tube, Studer, EMI, HG-2, Avalon, Decapitator).</span>
-                    </li>
-                  </ul>
-                </div>
+                    return (
+                      <div
+                        key={p.id}
+                        className={`p-5 rounded-2xl bg-black/70 border transition-all space-y-4 flex flex-col justify-between ${
+                          announcementPluginId === p.id
+                            ? 'border-amber-500/80 shadow-[0_0_25px_rgba(245,158,11,0.25)] ring-1 ring-amber-500/50'
+                            : 'border-neutral-800 hover:border-amber-500/40 hover:bg-neutral-950/80'
+                        }`}
+                      >
+                        <div className="space-y-3">
+                          {/* Card Top: Name + Version + Status + Release Date */}
+                          <div className="flex flex-wrap items-center justify-between gap-2 pb-2.5 border-b border-neutral-800/80">
+                            <div className="flex items-center gap-2">
+                              <span className={`w-2.5 h-2.5 rounded-full ${isAvailable ? 'bg-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.8)]' : 'bg-amber-400 shadow-[0_0_8px_rgba(245,158,11,0.8)]'}`} />
+                              <span className="font-heading font-black text-white text-lg tracking-tight">{p.name}</span>
+                              <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                                {p.version}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              {p.newReleaseTag && (
+                                <span className="text-[9.5px] font-mono font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-gradient-to-r from-red-500/30 to-amber-500/30 text-amber-300 border border-amber-500/50">
+                                  {p.newReleaseTag}
+                                </span>
+                              )}
+                              <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-full border ${
+                                isAvailable
+                                  ? 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30'
+                                  : 'bg-amber-500/10 text-amber-300 border-amber-500/30'
+                              }`}>
+                                {isAvailable ? 'DISPONIBILE' : 'IN ARRIVO'}
+                              </span>
+                            </div>
+                          </div>
 
-                {/* 3. 171 PerfectPre v2.2.5 */}
-                <div className="p-4 sm:p-5 rounded-2xl bg-black/60 border border-neutral-800 hover:border-amber-500/40 transition-all space-y-3">
-                  <div className="flex items-center justify-between pb-2 border-b border-neutral-800/80">
-                    <div className="flex items-center gap-2">
-                      <span className="w-2.5 h-2.5 rounded-full bg-blue-400 shadow-[0_0_8px_rgba(59,130,246,0.8)]" />
-                      <span className="font-heading font-black text-white text-base">171 PerfectPre</span>
-                      <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-500/40">v2.2.5</span>
-                    </div>
-                    <span className="text-[10px] font-mono text-emerald-400 font-semibold">Boutique Analog</span>
-                  </div>
-                  <ul className="text-xs font-mono text-neutral-300 space-y-2">
-                    <li className="flex items-start gap-2">
-                      <span className="text-amber-400 font-bold shrink-0">✔</span>
-                      <span><strong>Neve 1073 Channel EQ HPF LC Ladder:</strong> Taglio a 18 dB/ottava calibrato a -3.000 dB esatti (&lt;0.01 dB) con risonanza passiva +0.200 dB a 1.25·fc.</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-amber-400 font-bold shrink-0">✔</span>
-                      <span><strong>High Shelf 12 kHz Andy Simper Decramped:</strong> Linearizzazione della banda aria a 20 kHz (errore ridotto da +2.49 dB a 0.69 dB a 44.1 kHz).</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-amber-400 font-bold shrink-0">✔</span>
-                      <span><strong>Small-Signal Unity Gain a 0.00 dB:</strong> Tutti i 4 modelli di circuito (British, American Tube, Germanium, Pure Clean) allineati a 0.00 dB a Drive 0.</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-amber-400 font-bold shrink-0">✔</span>
-                      <span><strong>Saturazione American Tube C^∞:</strong> Curva valvolare asintotica continua senza clipping duro, con totale immunità a valori NaN o Inf.</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-amber-400 font-bold shrink-0">✔</span>
-                      <span><strong>Ripristino Slew Rate Germanium OC44:</strong> Recupero dinamico a 1 kHz senza perdite anomale sui transienti percussivi.</span>
-                    </li>
-                  </ul>
-                </div>
+                          {/* Release Date & Subtitle */}
+                          <div className="flex items-center justify-between text-xs font-mono text-neutral-400">
+                            <span className="text-neutral-300 font-semibold">{p.badge}</span>
+                            <span>Rilascio: {releaseDateText}</span>
+                          </div>
 
-                {/* 4. 171 SpaceLuxe v2.2.5 */}
-                <div className="p-4 sm:p-5 rounded-2xl bg-black/60 border border-neutral-800 hover:border-amber-500/40 transition-all space-y-3">
-                  <div className="flex items-center justify-between pb-2 border-b border-neutral-800/80">
-                    <div className="flex items-center gap-2">
-                      <span className="w-2.5 h-2.5 rounded-full bg-purple-400 shadow-[0_0_8px_rgba(168,85,247,0.8)]" />
-                      <span className="font-heading font-black text-white text-base">171 SpaceLuxe</span>
-                      <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/40">v2.2.5</span>
-                    </div>
-                    <span className="text-[10px] font-mono text-emerald-400 font-semibold">FDN-16 Hybrid Reverb</span>
-                  </div>
-                  <ul className="text-xs font-mono text-neutral-300 space-y-2">
-                    <li className="flex items-start gap-2">
-                      <span className="text-amber-400 font-bold shrink-0">✔</span>
-                      <span><strong>FDN-16 Lossless Householder Reservoir:</strong> 16 delay mutualmente primi con matrice ortogonale O(N) per densità spettrale senza risonanze metalliche.</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-amber-400 font-bold shrink-0">✔</span>
-                      <span><strong>Allpass Anti-Denormal Interpolators:</strong> Risolti fischietto, fuzz e degradazione di calcolo sui decadimenti prolungati oltre i 10 secondi.</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-amber-400 font-bold shrink-0">✔</span>
-                      <span><strong>Smart Ducking Dinamico con Tail Bloom:</strong> Riapertura morbida della coda sui silenzi e presenza vocale preservata durante il cantato.</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-amber-400 font-bold shrink-0">✔</span>
-                      <span><strong>Harmonic Shimmer Valvolare (+1 Ottava):</strong> Generazione armonica calda a +12 semitoni con saturatore a triodo modellato.</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-amber-400 font-bold shrink-0">✔</span>
-                      <span><strong>GUI CRT Rimodulata:</strong> Geometria dei fader e potenziometri ottimizzata su tutte le scale DPI senza accavallamenti visivi.</span>
-                    </li>
-                  </ul>
-                </div>
+                          <p className="text-xs text-neutral-300 font-light leading-relaxed">
+                            {p.description}
+                          </p>
+
+                          {/* Specific DSP Innovations / Changelog Checklist */}
+                          {changes.length > 0 && (
+                            <div className="space-y-1.5 pt-1">
+                              <span className="text-[10px] font-mono uppercase tracking-wider text-amber-400 font-bold block">
+                                Innovazioni Tecniche & Ottimizzazioni {p.version}:
+                              </span>
+                              <ul className="text-xs font-mono text-neutral-300 space-y-1.5 pl-0.5">
+                                {changes.map((change: string, idx: number) => (
+                                  <li key={idx} className="flex items-start gap-2">
+                                    <span className="text-amber-400 font-bold shrink-0">✔</span>
+                                    <span className="leading-snug">{change}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Action Footer: Direct Downloads for 4 Core Plugins, or In Arrivo badge */}
+                        <div className="pt-3 border-t border-neutral-800/80 flex flex-wrap items-center justify-between gap-2.5">
+                          {isAvailable ? (
+                            <div className="flex flex-wrap items-center gap-2">
+                              {/* Windows Download */}
+                              <button
+                                onClick={() => handleDownload(p, 'win')}
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-heading font-black text-xs shadow transition-all cursor-pointer active:scale-95"
+                                title={`Scarica pacchetto .ZIP per Windows 64-bit (${winSize})`}
+                              >
+                                <Download className="w-3.5 h-3.5" />
+                                <span>Win64 (.ZIP {winSize})</span>
+                              </button>
+
+                              {/* Mac Download */}
+                              {p.macDownloadUrl ? (
+                                <button
+                                  onClick={() => handleDownload(p, 'mac')}
+                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-neutral-200 font-mono text-xs transition-all cursor-pointer active:scale-95"
+                                  title={`Scarica pacchetto .ZIP per macOS (${macSize})`}
+                                >
+                                  <Download className="w-3.5 h-3.5 text-cyan-400" />
+                                  <span>macOS (.ZIP {macSize})</span>
+                                </button>
+                              ) : (
+                                <span className="text-[10.5px] font-mono text-neutral-500 px-2 py-1 rounded bg-neutral-900/50 border border-neutral-800">
+                                  Mac in arrivo
+                                </span>
+                              )}
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-2">
+                              <span className="text-[11px] font-mono font-bold text-amber-400 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center gap-1.5">
+                                <Clock className="w-3.5 h-3.5" />
+                                <span>Download in arrivo (In calibrazione DSP)</span>
+                              </span>
+                            </div>
+                          )}
+
+                          <button
+                            onClick={() => handleSelectPlugin(p.id)}
+                            className="inline-flex items-center gap-1 text-xs font-mono text-amber-400 hover:text-amber-300 transition-colors cursor-pointer ml-auto"
+                          >
+                            <span>Scheda & Controlli</span>
+                            <ArrowRight className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
               </div>
 
-              {/* Complementary Status Line: MasterGlue, DriveOptocom & Single Downloads */}
+              {/* Complementary Status Footer */}
               <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-neutral-800 text-xs font-mono text-neutral-400">
                 <div className="flex flex-wrap items-center gap-3">
                   <span className="text-amber-400 font-semibold flex items-center gap-1.5">
-                    <span>🔒 171 MasterGlue: Rilascio Ufficiale 1° Dicembre 2026 (Countdown Attivo)</span>
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span>Tutti i download sono 100% freeware: nessun codice di attivazione o account obbligatorio.</span>
+                  </span>
+                  <span className="text-neutral-600 hidden sm:inline">•</span>
+                  <span className="text-amber-300">
+                    🔒 171 MasterGlue: Rilascio Ufficiale 1° Dicembre 2026 (Countdown Attivo)
                   </span>
                   <span className="text-neutral-600 hidden sm:inline">•</span>
                   <span className="text-neutral-400">
@@ -1352,7 +1445,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
                 </div>
                 <div className="text-emerald-400 font-bold flex items-center gap-1.5">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                  <span>Compatibilità Totale Windows x64 VST3 & Standalone</span>
+                  <span>Bit-Exact Master Bypass & Zero Latency Certificati</span>
                 </div>
               </div>
             </div>
@@ -1437,7 +1530,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
               {[
                 { id: 'all', label: 'Tutti i Plugin', icon: Layers, count: siteContent.plugins.length },
                 { id: 'favorites', label: 'Preferiti', icon: Heart, count: favoritePluginIds.length },
-                { id: 'vocal', label: 'Voci & Intonazione', icon: Radio, count: siteContent.plugins.filter(p => ['plugin-realtune', 'plugin-easyvoice', 'plugin-vocalcraft'].includes(p.id)).length },
+                { id: 'vocal', label: 'Voci & Intonazione', icon: Radio, count: siteContent.plugins.filter(p => ['plugin-realtune', 'plugin-easyvoice', 'plugin-vocalcraft', 'plugin-onesilk', 'plugin-snipertune', 'plugin-sessionbuilder'].includes(p.id)).length },
                 { id: 'dynamics', label: 'Compressori & Dinamica', icon: Sliders, count: siteContent.plugins.filter(p => ['plugin-masterglue', 'plugin-punchcraft', 'plugin-perfectclip'].includes(p.id)).length },
                 { id: 'saturation', label: 'Preamp & Saturazione', icon: Flame, count: siteContent.plugins.filter(p => ['plugin-cleandrive', 'plugin-perfectpre'].includes(p.id)).length },
                 { id: 'spatial', label: 'Riverberi & Spazio', icon: Sparkles, count: siteContent.plugins.filter(p => ['plugin-cleanreso', 'plugin-spaceluxe'].includes(p.id)).length },

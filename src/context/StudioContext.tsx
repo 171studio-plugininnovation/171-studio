@@ -256,13 +256,13 @@ const DEFAULT_PLUGINS: PluginItem[] = [
     badge: 'ZERO-LATENCY PITCH CORRECTION & VOCAL TRANSFORMER',
     status: 'DISPONIBILE',
     description: 'Motore di intonazione vocale real-time a 60 FPS con architettura Dual-Head Synchronous WSOLA, tracking S-curve a due velocità continuo, manopola Cue Mix boutique, selettore preset analogico, matrice note a 3 stati e zero drift di fase.',
-    version: 'v2.2.5 (8 Nov 2026)',
+    version: 'v2.2.1 (9 Nov 2026)',
     isNewRelease: true,
-    newReleaseTag: '⭐ MAJOR UPDATE 2.2.5',
+    newReleaseTag: '⭐ UPDATE v2.2.1',
     downloadCount: 0,
-    downloadUrl: '/downloads/plugins/171RealTune_v2.2.5_Win64.zip',
-    zipFileName: '171RealTune_v2.2.5_Win64.zip',
-    zipFileSize: '19.19 MB',
+    downloadUrl: '/downloads/plugins/171RealTune_v2.2.1_Win64.zip',
+    zipFileName: '171RealTune_v2.2.1_Win64.zip',
+    zipFileSize: '19.20 MB',
     macDownloadUrl: '/downloads/plugins/171_RealTune_v2.2.0_Mac.zip',
     macZipFileName: '171_RealTune_v2.2.0_Mac.zip',
     macZipFileSize: '8.67 MB',
@@ -270,19 +270,22 @@ const DEFAULT_PLUGINS: PluginItem[] = [
     formats: ['VST3 (Win/Mac 64-bit)', 'AudioUnit v2 (macOS)', 'Standalone App (.EXE)'],
     changelog: [
       {
-        version: 'v2.2.5 (Major Update)',
-        date: '08/11/2026',
-        title: 'Major Update 2.2.5: Pitch Tracking Sub-Cent <0.0033 Hz, Curva Quintica C² & Deadband Isteresi Naturale',
+        version: 'v2.2.1 (Humanize & Flex-Tune Update)',
+        date: '09/11/2026',
+        title: 'Update v2.2.1: Humanize Sustain Easing, Flex-Tune Voicing Alignment & Vibrato Depth Headroom',
         features: [
+          'Risolto bypass Humanize su Hard-Tune (0 ms): separata la condizione di snap istantaneo dallo skip dell\'interpolatore, consentendo lo scatto metallico immediato sulle note rapide e il rilascio organico progressivo sulle note tenute',
+          'Dual-Domain Sustain Relaxation (Humanize): modulazione simultanea sia della costante temporale tau (fino a 180 ms) che dell\'offset di correzione effectiveCents (fino al 45%), garantendo respiro naturale, micro-vibrato e calore acustico sulle note lunghe senza compromettere l\'intonazione rapida',
+          'Allineamento di stato Voicing: azzeramento istantaneo dell\'accumulatore di sustain tra sillabe e pause (isSignalVoiced = false), eliminando qualsiasi bleed di sustain non-voce',
+          'Ricalibrazione Flex-Tune: transizione ripartita su 50 cents con azzeramento su transizioni non intonate e rispetto dinamico dell\'espressività vocale',
+          'Sblocco escursione Vibrato Depth estesa al 100%–200%: rimossa limitazione a 1.0f in RetuneFilter, garantendo headroom espressivo naturale',
           'Algoritmo F0 tracking con precisione sub-cent: errore ridotto a < 0.0033 Hz (< 0.01 cent) nell\'intero registro vocale A2–A5',
-          'Curva Quintic Smootherstep C²-continua per transizioni di intonazione istantanee e naturali senza click o sfasamenti',
-          'Deadband con finestra di isteresi a ±5.8 Hz (stile Waves Tune RT) per preservare il vibrato organico della voce',
-          'Physical LPC Formant Shift Engine con rimodellazione laringea (50%–150%) senza artefatti timbrici',
-          'Master Bypass IEEE-754 bit-exact a zero campioni di ritardo aggiuntivo e zero alterazione spettrale'
+          'Curva Quintic Smootherstep C²-continua per transizioni armoniche istantanee prive di click o gradini di fase'
         ],
         fixes: [
-          '100% superamento dei 335 benchmark di conformità su tutte le frequenze da 44.1 kHz a 192 kHz',
-          'Protezione hardware FTZ/DAZ continua contro spike CPU denormali (< -144 dBFS)'
+          '100% superamento di tutti i 335 benchmark di conformità metrologica su tutte le frequenze da 44.1 kHz a 192 kHz',
+          'Protezione hardware FTZ/DAZ continua contro spike CPU denormali (< -144 dBFS)',
+          'Master Bypass IEEE-754 bit-exact a zero campioni di ritardo aggiuntivo e zero alterazione spettrale'
         ]
       },
       {
@@ -351,22 +354,41 @@ const DEFAULT_PLUGINS: PluginItem[] = [
     name: '171 VocalCraft',
     badge: 'INTELLIGENT PRE-MIX VOCAL PROCESSOR & STYLE ADAPTIVE COMPRESSOR',
     status: 'IN ARRIVO',
-    unlockWeek: 5,
+    unlockWeek: 4,
     unlockDate: '2026-11-27T18:00:00+01:00',
     description: 'Processore vocale intelligente con Smart Gain-Staging automatico a -18 dBFS, Linearizzatore Spettrale Adattivo anti-risonanza, Rilevatore Fonetico di Consonanti AI, Compressore Dinamico Multi-Stile (Hip-Hop, Modern Pop, Trap, R&B) con Auto-Makeup percettivo e GUI boutique a 60 FPS con doppio oscilloscopio.',
-    version: 'v2.2.0 (7 Nov 2026)',
-    isNewRelease: false,
-    newReleaseTag: '⏳ SBLOCCO SETT. 5 (27 NOV)',
+    version: 'v2.2.1 (9 Nov 2026)',
+    isNewRelease: true,
+    newReleaseTag: '⭐ UPDATE v2.2.1',
     downloadCount: 0,
-    downloadUrl: '/downloads/plugins/171_VocalCraft_v2.0.0_Win64.zip',
-    zipFileName: '171_VocalCraft_v2.0.0_Win64.zip',
-    zipFileSize: '8.48 MB',
+    downloadUrl: '/downloads/plugins/171VocalCraft_v2.2.1_Win64.zip',
+    zipFileName: '171VocalCraft_v2.2.1_Win64.zip',
+    zipFileSize: '8.29 MB',
     macDownloadUrl: '/downloads/plugins/171_VocalCraft_v2.2.0_Mac.zip',
     macZipFileName: '171_VocalCraft_v2.2.0_Mac.zip',
     macZipFileSize: '22.66 MB',
     imageUrl: '/assets/plugins/171VocalCraft_GUI.png',
     formats: ['VST3 (Win/Mac 64-bit)', 'AudioUnit v2 (macOS)', 'Standalone App (.EXE)'],
     changelog: [
+      {
+        version: 'v2.2.1 (Acoustic Recalibration Update)',
+        date: '09/11/2026',
+        title: 'Update v2.2.1: Target Profile EQ Routing, Cytomic 2R De-Esser Scaling, Clipper ADAA-2 & Headroom Air Sheen',
+        features: [
+          'Risolto scollamento Target Profile EQ: registrato parametro target_profile in APVTS e collegato atomicamente al motore DSP (linearizerL/linearizerR), rendendo pienamente operativi e udibili i 4 profili acustici (Studio Flat, Warm Analog, Modern Bright, Vocal Pocket) sia da interfaccia grafica che da automazione DAW e preset',
+          'Corretto scaling Cytomic ZDF 2R nel De-Esser: introdotto fattore 1/Q (twoR_Deess) nella cancellazione sibilanti, eliminando inversioni di fase e fischi risonanti a profondità elevate',
+          'Disaccoppiamento filtro detector ASR: introdotto ZDFOnePoleHP64 indipendente a 10 kHz evitando il doppio incremento per-sample del filtro Air Sheen e azzerando la discrepanza di fase L/R a 0.000 rad',
+          'Ricalibrazione soglia De-Esser da -32 a -54 dBFS con escursione di taglio estesa a 12 dB per intervento sicuro e trasparente su voci a gain nominale (-18 dBFS)',
+          'Ricalibrazione soglia ADAA-2 Clipper con soft-knee da -0.5 a -16.0 dBFS e balistica di rilascio meter a 220 ms per visualizzazione fluida della Gain Reduction',
+          'Estensione headroom Air Sheen a +8.5 dB per lucentezza vocale aperta priva di saturazione spuria',
+          'Persistenza continua del potenziometro Input Manual Trim anche in stato Locked'
+        ],
+        fixes: [
+          'Verifica e superamento integrale dell\'audit di tutti i comandi di destra e filtri EQ',
+          '100% Zero allocazioni heap nel thread audio e conformità metrologica bit-exact',
+          'Protezione totale anti-denormale FTZ/DAZ continua a livello campionario'
+        ]
+      },
       {
         version: 'v2.2.0 (Suite Unified)',
         date: '07/11/2026',
@@ -388,7 +410,7 @@ const DEFAULT_PLUGINS: PluginItem[] = [
         date: '04/11/2026',
         title: 'Major Update V2.0.0: Ricostruzione Motore DSP Core dsp171, True-Peak ISP Parabolico & Architettura SIMD C++20',
         features: [
-          'Rilascio ufficiale unificato della Patch 2.0.0 su tutta la suite 171 Studio Innovatio',
+          'Rilascio ufficiale unificato della Patch 2.0.0 su tutta la suite 171Plugin Innovation',
           'Smart Gain-Staging automatico all\'ingresso a -18 dBFS con envelope calibrata RMS/Peak',
           'Linearizzatore Spettrale Adattivo a 32 bande con neutralizzazione dinamica delle risonanze aspre',
           'Rilevatore Fonetico di Consonanti AI per preservazione dizione e consonanti veloci in Hip-Hop/Rap',
@@ -416,12 +438,12 @@ const DEFAULT_PLUGINS: PluginItem[] = [
     badge: 'ALL-IN-ONE VOCAL CHANNEL STRIP DEFINITIVA',
     status: 'DISPONIBILE',
     description: 'Channel strip vocale definitivo per lo standard discografico istantaneo: De-Esser intelligente, Dinamiche Seriali Dual-Stage (1176 FET + LA-2A Opto), Equalizzatore SSL 4000 G-Series 242, 8 Preamp analogici differenziati e telemetria a 60 FPS.',
-    version: 'v2.2.5 (8 Nov 2026)',
+    version: 'v3.2.1 (9 Nov 2026)',
     isNewRelease: true,
-    newReleaseTag: '⭐ MAJOR UPDATE 2.2.5',
+    newReleaseTag: '⭐ MAJOR UPDATE v3.2.1',
     downloadCount: 0,
-    downloadUrl: '/downloads/plugins/171EasyVoice_v2.2.5_Win64.zip',
-    zipFileName: '171EasyVoice_v2.2.5_Win64.zip',
+    downloadUrl: '/downloads/plugins/171EasyVoice_v3.2.1_Win64.zip',
+    zipFileName: '171EasyVoice_v3.2.1_Win64.zip',
     zipFileSize: '35.19 MB',
     macDownloadUrl: '/downloads/plugins/171_EasyVoice_v3.2.0_Mac.zip',
     macZipFileName: '171_EasyVoice_v3.2.0_Mac.zip',
@@ -430,9 +452,9 @@ const DEFAULT_PLUGINS: PluginItem[] = [
     formats: ['VST3 (Win/Mac 64-bit)', 'AudioUnit v2 (macOS)', 'Standalone App (.EXE)'],
     changelog: [
       {
-        version: 'v2.2.5 (Major Update)',
-        date: '08/11/2026',
-        title: 'Major Update 2.2.5: 0 dB Pre-Open Expander Reset, Routing Dinamico FET+Opto & Ricalibrazione Headroom -18 dBFS',
+        version: 'v3.2.1 (Sovereign Vocal Precision Edition)',
+        date: '09/11/2026',
+        title: 'Major Update v3.2.1: 0 dB Pre-Open Expander Reset, Routing Dinamico FET+Opto & Ricalibrazione Headroom -18 dBFS',
         features: [
           'VocalNoiseExpander con Pre-Open Reset State: canale forzato a 0 dB sul campione iniziale per preservare integralmente il primo attacco vocale',
           'Curva Downward Expander Soft-Knee quadratica C¹-continua (6 dB knee, 3.5:1 ratio) anti-chattering su code e respiri',
@@ -512,21 +534,39 @@ const DEFAULT_PLUGINS: PluginItem[] = [
     id: 'plugin-cleandrive',
     name: '171 CleanDrive',
     badge: 'TRANSIENT-AWARE DUAL SATURATOR & ADAA-2 CLIPPER',
-    status: 'DISPONIBILE',
+    status: 'IN ARRIVO',
+    unlockWeek: 2,
+    unlockDate: '2026-11-18T18:00:00+01:00',
     description: 'Saturatore analogico boutique a doppio canale con separazione intelligente dei transienti, clipper ADAA-2 a 64-bit anti-aliasing, saturazione valvolare e a nastro, stadio Warmth & Tilt EQ Baxandall e oscilloscopio CRT a fosfori dorati a 60 FPS.',
-    version: 'v2.0.0 (4 Nov 2026)',
+    version: 'v2.2.0 (12 Nov 2026)',
     isNewRelease: true,
-    newReleaseTag: '✨ MAJOR UPDATE V2.0.0 (4 NOV)',
+    newReleaseTag: '⭐ UPDATE v2.2.0',
     downloadCount: 0,
-    downloadUrl: '/downloads/plugins/171_CleanDrive_v2.0.0_Win64.zip',
-    zipFileName: '171_CleanDrive_v2.0.0_Win64.zip',
+    downloadUrl: '/downloads/plugins/171CleanDrive_v2.2.0_Win64.zip',
+    zipFileName: '171CleanDrive_v2.2.0_Win64.zip',
     zipFileSize: '6.65 MB',
-    macDownloadUrl: 'https://github.com/171studio-plugininnovation/171-studio/releases/download/v2.0.0/171_CleanDrive_v2.0.0_Mac.zip',
+    macDownloadUrl: '/downloads/plugins/171_CleanDrive_v2.0.0_Mac.zip',
     macZipFileName: '171_CleanDrive_v2.0.0_Mac.zip',
-    macZipFileSize: '91.57 MB',
+    macZipFileSize: '91.65 MB',
     imageUrl: '/assets/plugins/171CleanDrive_GUI.png',
     formats: ['VST3 (Win/Mac 64-bit)', 'AudioUnit v2 (macOS)', 'Standalone App (.EXE)'],
     changelog: [
+      {
+        version: 'v2.2.0 (Suite Unified Release)',
+        date: '12/11/2026',
+        title: 'Update v2.2.0: Motore Fisico Analogico dsp171, Marinair LO1166 & Miller Dynamic Effect',
+        features: [
+          'Integrazione Motore Fisico Analogico dsp171 con DC Blocker Marinair LO1166 trasparente (perdita < 0.01 dB sui sub-bass a 20 Hz)',
+          'Effetto Dinamico Miller a Triodo con reattanza HF e B+ sag dipendenti dalla dinamica del segnale',
+          'Tolleranze analogiche stereo su 16 canali indipendenti per soundstage tridimensionale profondo',
+          'Saturatore a doppio canale con curve analitiche rigorosamente monotone Classe-A per valvole e nastro',
+          'Clipper ADAA-2 a 64-bit di 2° ordine con noise floor a -110 dB e zero foldback aliasing'
+        ],
+        fixes: [
+          'True-Peak BS.1770 risolto con stima analitica esatta del picco parabolico inter-sample',
+          'Protezione totale anti-denormale FTZ/DAZ continua a livello campionario'
+        ]
+      },
       {
         version: 'v2.0.0 (Major Update)',
         date: '04/11/2026',
@@ -571,20 +611,39 @@ const DEFAULT_PLUGINS: PluginItem[] = [
     name: '171 CleanReso',
     badge: 'DYNAMIC RESONANCE SUPPRESSOR & SPECTRAL CLEANER',
     status: 'DISPONIBILE',
-    description: 'Soppressore chirurgico di risonanze vocali e acustiche multi-banda: 32 filtri SVF Zero-Delay Feedback (ZDF) attivi in tempo reale con analisi spettrale a 60 FPS e modalità Delta Listening per isolare solo il materiale rimosso.',
-    version: 'v2.0.0 (4 Nov 2026)',
+    description: 'Soppressore chirurgico di risonanze vocali e acustiche multi-banda: 32 filtri SVF Zero-Delay Feedback (ZDF) attivi in tempo reale con analisi spettrale a 60 FPS, Anti-Hollowing Neural Brain e modalità Delta Listening per isolare solo il materiale rimosso.',
+    version: 'v2.3.0 (12 Nov 2026)',
     isNewRelease: true,
-    newReleaseTag: '✨ MAJOR UPDATE V2.0.0 (4 NOV)',
+    newReleaseTag: '⭐ GOLD MASTER v2.3.0',
     downloadCount: 0,
-    downloadUrl: '/downloads/plugins/171_CleanReso_v2.0.0_Win64.zip',
-    zipFileName: '171_CleanReso_v2.0.0_Win64.zip',
+    downloadUrl: '/downloads/plugins/171CleanReso_v2.3.0_Win64.zip',
+    zipFileName: '171CleanReso_v2.3.0_Win64.zip',
     zipFileSize: '11.66 MB',
-    macDownloadUrl: 'https://github.com/171studio-plugininnovation/171-studio/releases/download/v2.0.0/171_CleanReso_v2.0.0_Mac.zip',
+    macDownloadUrl: '/downloads/plugins/171_CleanReso_v2.0.0_Mac.zip',
     macZipFileName: '171_CleanReso_v2.0.0_Mac.zip',
-    macZipFileSize: '20.97 MB',
+    macZipFileSize: '21.05 MB',
     imageUrl: '/assets/plugins/171CleanReso_GUI.png',
     formats: ['VST3 (Win/Mac 64-bit)', 'AudioUnit v2 (macOS)', 'Standalone App (.EXE)'],
     changelog: [
+      {
+        version: 'v2.3.0 (Gold Master Metrology Certified)',
+        date: '12/11/2026',
+        title: 'Gold Master v2.3.0: Certificazione Metrologica Zero-Tolleranza & Conformità Anti-Allucinazione',
+        features: [
+          'Riconfigurazione banco a 32 filtri ZDF SVF da serie cumulativa a sottrazione notch parallela disaccoppiata (inD + notchDelta), eliminando ogni distorsione inter-banda adiacente',
+          'Risolto collo di bottiglia in AnalogSilkStage e PAMaagEQ4Air: caching dei coefficienti di guadagno e saturazione, tempo di calcolo abbattuto da oltre 300 us a 8.01 us per blocco (throughput 22.45x real-time)',
+          'Eliminati 65.536 calcoli divisivi per blocco nel banco a 32 filtri ZDF SVF con matrice di pesi Gaussiani precomputati',
+          'Estesa la banda operativa minima da 800 Hz a 180 Hz (Band 8): soppressione dinamica garantita fino a -5.89 dB a 350 Hz e -4.97 dB a 650 Hz',
+          'Corretta la balistica temporale a 15 ms dell\'Anti-Hollowing Neural Brain (alpha di blocco a 11.61 ms), proteggendo corpo e calore vocale',
+          'Pitch tracker della fondamentale AMDF (82.4 - 659.2 Hz) con espansione buffer circolare a 2048 campioni, silence gate e interpolazione parabolica sub-sample (errore < 0.9%)',
+          'Decramping analitico Andy Simper a 20 kHz su Maag Air Band'
+        ],
+        fixes: [
+          'Superati al 100% tutti i 10 audit avversariali (10.000 blocchi consecutivi con 0 byte heap allocati)',
+          'Bit-Exact Latency-Compensated Dry Bypass su 4 campioni PDC (0.000000e+00 delta, SNR > 300 dB)',
+          'Delta Listen mode a fase rigorosamente allineata con cancellazione esatta (y_delta = in - y_proc)'
+        ]
+      },
       {
         version: 'v2.0.0 (Major Update)',
         date: '04/11/2026',
@@ -629,12 +688,12 @@ const DEFAULT_PLUGINS: PluginItem[] = [
     badge: 'BOUTIQUE CONSOLE & TUBE PREAMP EMULATION',
     status: 'DISPONIBILE',
     description: 'Preamplificatore valvolare/analogico a modellazione armonica profonda con curve di equalizzazione Baxandall, circuito Air Band fino a 40 kHz e texture vintage Neve, API e Avalon.',
-    version: 'v2.2.5 (8 Nov 2026)',
+    version: 'v2.2.0 (7 Nov 2026)',
     isNewRelease: true,
-    newReleaseTag: '⭐ MAJOR UPDATE 2.2.5',
+    newReleaseTag: '⭐ GOLD MASTER v2.2.0',
     downloadCount: 0,
-    downloadUrl: '/downloads/plugins/171PerfectPre_v2.2.5_Win64.zip',
-    zipFileName: '171PerfectPre_v2.2.5_Win64.zip',
+    downloadUrl: '/downloads/plugins/171PerfectPre_v2.2.0_Win64.zip',
+    zipFileName: '171PerfectPre_v2.2.0_Win64.zip',
     zipFileSize: '18.56 MB',
     macDownloadUrl: '/downloads/plugins/171_PerfectPre_v2.2.0_Mac.zip',
     macZipFileName: '171_PerfectPre_v2.2.0_Mac.zip',
@@ -643,32 +702,16 @@ const DEFAULT_PLUGINS: PluginItem[] = [
     formats: ['VST3 (Win/Mac 64-bit)', 'AudioUnit v2 (macOS)', 'Standalone App (.EXE)'],
     changelog: [
       {
-        version: 'v2.2.5 (Major Update)',
-        date: '08/11/2026',
-        title: 'Major Update 2.2.5: Neve 1073 Channel EQ HPF a Scala LC -3 dB, High Shelf Decramped & Unity Gain 0.00 dB',
-        features: [
-          'Filtro passa-alto HPF Neve 1073 a scala induttiva LC: taglio a 18 dB/ottava a -3.000 dB esatti (< 0.01 dB) con risonanza analogica passiva (+0.200 dB a 1.25*fc)',
-          'High Shelf 12 kHz con decramping analitico Andy Simper: risposta analogica lineare a 20 kHz (errore ridotto da +2.49 dB a 0.69 dB a 44.1 kHz)',
-          'Normalizzazione guadagno piccoli segnali (Drive 0 dB) a 0.00 dB esatti su tutti i 4 circuiti preamp (British Console, American Tube, German Vintage, Pure Clean)',
-          'Saturazione American Tube continua C^inf asintotica priva di gradini di clipping o discontinuità di derivata',
-          'Immunità matematica assoluta a NaN/Inf su segnali patologici all\'ingresso e Master Bypass IEEE-754 bit-exact'
-        ],
-        fixes: [
-          'Ripristino slew rate Germanium OC44 senza perdite anomale a 1 kHz',
-          'Zero allocazioni dinamiche nel thread audio e protezione continua FTZ/DAZ'
-        ]
-      },
-      {
-        version: 'v2.2.0 (Gold Master)',
+        version: 'v2.2.0 (Gold Master Metrology Certified)',
         date: '07/11/2026',
         title: 'Gold Master V2.2.0: Certificazione Metrologica Neve 1073 Channel EQ & Multi-Flavor Analog Preamp',
         features: [
-          'Disaccoppiamento induttivo HPF Neve 1073 a 18 dB/ottava tramite SVF a 2 poli e polo reale a 1 polo con punto di taglio a -3.000 dB esatto (errore < 0.01 dB) e risonanza passiva (+0.200 dB a 1.25*fc)',
-          'Decramping analitico Andy Simper per High Shelf 12 kHz: linearizzazione banda aria a 44.1 kHz, errore a 20 kHz ridotto da +2.49 dB a 0.69 dB e allineamento 44.1k/96k a 0.07 dB',
-          'Normalizzazione guadagno per piccoli segnali (Drive 0 dB) a 0.00 dB esatti su tutti i 4 preamp (British Vintage 1/1.40, Germanium 1/1.55)',
-          'Ripristino slew rate Germanium a 1 kHz da -23.7 dBFS a -3.88 dBFS senza perdita di livello',
-          'Saturazione American Tube continua C^inf senza gradini o spigoli di clipping',
-          'Immunità assoluta a NaN/Inf su segnali patologici all\'ingresso e Master Bypass IEEE-754 bit-exact'
+          'Filtro passa-alto HPF Neve 1073 a scala induttiva LC a 18 dB/ottava calibrato a -3.000 dB esatti (< 0.01 dB) con risonanza analogica passiva (+0.200 dB a 1.25*fc)',
+          'High Shelf 12 kHz Andy Simper Decramped: risposta analogica lineare fino a 20 kHz (errore ridotto da +2.49 dB a 0.69 dB a 44.1 kHz, allineamento 44.1k/96k a 0.07 dB)',
+          'Normalizzazione guadagno per piccoli segnali (Drive 0 dB) a 0.00 dB esatti su tutti i 4 preamp (British Vintage, American Tube, Germanium OC44, Pure Clean)',
+          'Ripristino slew rate Germanium a 1 kHz da -23.7 dBFS a -3.88 dBFS senza perdita di livello sui transienti',
+          'Saturazione American Tube continua C^inf asintotica priva di gradini di clipping o discontinuità di derivata',
+          'Immunità matematica assoluta a NaN/Inf su segnali patologici all\'ingresso e Master Bypass IEEE-754 bit-exact'
         ],
         fixes: [
           'Zero allocazioni heap nel thread audio (0 su 128.000 campioni)',
@@ -717,37 +760,38 @@ const DEFAULT_PLUGINS: PluginItem[] = [
     id: 'plugin-spaceluxe',
     name: '171 SpaceLuxe',
     badge: 'BOUTIQUE HYBRID REVERB & SPACE SCULPTOR',
-    status: 'DISPONIBILE',
-    unlockWeek: 1,
-    unlockDate: '2026-11-02T16:00:00+01:00',
+    status: 'IN ARRIVO',
+    unlockWeek: 2,
+    unlockDate: '2026-11-16T18:00:00+01:00',
     description: 'Riverbero ibrido algoritmico boutique con serbatoio lossless FDN-16 ad altissima densità, Ducking dinamico con Sidechain Esterno (Multi-Bus VST3), generatore Harmonic Shimmer valvolare a +1 ottava e filtro Mono-Maker State Variable.',
-    version: 'v2.2.5 (8 Nov 2026)',
+    version: 'v2.4.0 (6 Nov 2026)',
     isNewRelease: true,
-    newReleaseTag: '⭐ MAJOR UPDATE 2.2.5',
+    newReleaseTag: '⭐ SOVEREIGN v2.4.0',
     downloadCount: 0,
-    downloadUrl: '/downloads/plugins/171SpaceLuxe_v2.2.5_Win64.zip',
-    zipFileName: '171SpaceLuxe_v2.2.5_Win64.zip',
+    downloadUrl: '/downloads/plugins/171SpaceLuxe_v2.4.0_Win64.zip',
+    zipFileName: '171SpaceLuxe_v2.4.0_Win64.zip',
     zipFileSize: '8.56 MB',
-    macDownloadUrl: 'https://github.com/171studio-plugininnovation/171-studio/releases/download/v2.0.0/171_SpaceLuxe_v2.0.0_Mac.zip',
+    macDownloadUrl: '/downloads/plugins/171_SpaceLuxe_v2.0.0_Mac.zip',
     macZipFileName: '171_SpaceLuxe_v2.0.0_Mac.zip',
-    macZipFileSize: '1.03 MB',
+    macZipFileSize: '1.10 MB',
     imageUrl: '/assets/plugins/171SpaceLuxe_GUI.png',
     formats: ['VST3 (64-bit multi-bus)', 'AudioUnit v2 (macOS)', 'Standalone App (.EXE)'],
     changelog: [
       {
-        version: 'v2.2.5 (Major Update)',
-        date: '08/11/2026',
-        title: 'Major Update 2.2.5: FDN-16 Lossless Householder, Allpass Anti-Denormal & Zero Tail Glitch',
+        version: 'v2.4.0 (Sovereign Pure Acoustic Perfection)',
+        date: '06/11/2026',
+        title: 'Sovereign Pure Acoustic Perfection v2.4.0: Risoluzione Chirurgica delle Anomalie Acustiche',
         features: [
-          'Serbatoio riverberante FDN-16 lossless a 16 linee di ritardo coprime con matrice ortogonale Householder O(N) ad altissima densità modale',
-          'Interpolatori allpass anti-denormal: eliminati definitivamente fischi, fischietto e decadimento metallico su code prolungate (> 10s)',
-          'Smart Ducking dinamico per voce solista con Presence Lift e Tail Bloom swell progressivo sui finali di frase',
-          'Modulo Harmonic Shimmer (+12 semitoni / +1 ottava) con saturazione valvolare calda',
-          'Rimodulazione geometrica GUI CRT: azzerati tutti gli accavallamenti tra display, fader e controlli'
+          'Risoluzione radicale del Fuzz sul Colore 1970s: eliminato il decimatore ZOH asincrono a gradini (+2.37 dB THD+N di aliasing); implementato filtro passa-basso analogico ZDF a 4 poli a 9.8 kHz, slew-rate limiter per opamp d\'annata (LM301) e soft compander a scala R-2R in Classe A (EMT 250) con micro-dither sagomato ad alta frequenza',
+          'Eliminazione totale del rumorino di fondo/fruscio a riposo: integrazione di silence squelch sul dither TPDF in Era 1980s e 1970s, garantendo zero assoluto digitale (-140 dBFS) quando DAW o tracce sono ferme',
+          'Risoluzione conflitti di drive ed eliminazione del clipping duro in uscita: normalizzazione automatica di guadagno (-xDriveDb * 0.85) sullo stadio Marinair LO1166, e sostituzione del ceiling limiter a gradino con un limitatore soft continuo C² a -0.1 dBFS',
+          'De-cluttering e naturalezza delle prime riflessioni: riduzione ripple pettine nel Velvet Noise con iniezione controllata al 30%, addolcimento dei poli di dispersione della piastra EMT 140 per azzerare il chirping metallico e bilanciamento riflessioni ISM al 35% del wet',
+          'Serbatoio riverberante lossless FDN-16 a 16 linee di ritardo mutualmente prime con matrice ortogonale Householder O(N)',
+          'Smart Ducking dinamico per voce solista con Presence Lift e Tail Bloom swell progressivo sui finali di frase'
         ],
         fixes: [
-          'Algoritmo hard real-time a latenza zero di processamento',
-          'Guardia hardware ScopedDenormalDisabler continua su tutti i 16 nodi di delay'
+          'Tutti i 30 test analitici superati al 100% (30/30) e 8/8 test di risposta all\'impulso conformi',
+          'Algoritmo hard real-time a latenza zero di processamento host e zero allocazioni heap in thread audio'
         ]
       },
       {
@@ -800,19 +844,36 @@ const DEFAULT_PLUGINS: PluginItem[] = [
     unlockWeek: 6,
     unlockDate: '2026-12-01T18:00:00+01:00',
     description: 'Compressore analogico da master bus a doppia topologia (VCA stile SSL 4000 G & Diode-Bridge stile Neve 33609), stadio trasformatore d\'uscita Marinair LO1166, processore d\'immagine stereo TrueSpace e doppi VU meter galvanometrici balistici IEC 60268-17.',
-    version: 'v2.2.5 (Release 1 Dic 2026)',
+    version: 'v2.2.0 (Release 1 Dic 2026)',
     isNewRelease: false,
     newReleaseTag: '🔒 RELEASE UFFICIALE: 1 DICEMBRE 2026',
     downloadCount: 0,
-    downloadUrl: '/downloads/plugins/171MasterGlue_v2.2.5_Win64.zip',
-    zipFileName: '171MasterGlue_v2.2.5_Win64.zip',
+    downloadUrl: '/downloads/plugins/171MasterGlue_v2.2.0_Win64.zip',
+    zipFileName: '171MasterGlue_v2.2.0_Win64.zip',
     zipFileSize: '8.38 MB',
-    macDownloadUrl: 'https://github.com/171studio-plugininnovation/171-studio/releases/download/v2.0.0/171_MasterGlue_v2.0.0_Mac.zip',
+    macDownloadUrl: '/downloads/plugins/171_MasterGlue_v2.0.0_Mac.zip',
     macZipFileName: '171_MasterGlue_v2.0.0_Mac.zip',
-    macZipFileSize: '4.67 MB',
+    macZipFileSize: '4.74 MB',
     imageUrl: '/assets/plugins/171MasterGlue_GUI.png',
     formats: ['VST3 (64-bit)', 'AudioUnit v2 (macOS)', 'Standalone App (.EXE)'],
     changelog: [
+      {
+        version: 'v2.2.0 (Suite Unified Release)',
+        date: '06/11/2026',
+        title: 'Suite Unified Release V2.2.0: Motore Fisico Analogico dsp171 & Tolleranze Analogiche Stereo',
+        features: [
+          'Integrazione Motore Fisico Analogico dsp171 con DC Blocker Marinair LO1166 trasparente (perdita < 0.01 dB sui sub-bass a 20 Hz)',
+          'Topologia VCA SSL 4000G raffinata con preservazione di parità ed eliminazione spurie asimmetriche',
+          'Topologia Diode-Bridge Neve 33609 con progressive knee a tempo di recupero dipendente dalla densità del programma',
+          'Saturatore trasformatore Marinair LO1166 con asintoto continuo privo di knee duro',
+          'Filtro Thrust API con bloccaggio angolare stabile pre-tan per sicurezza assoluta a tutte le sample rate',
+          'Processore d\'immagine stereo TrueSpace a fase coerente con Mono-Maker sotto i 120 Hz e correlazione vettoriale'
+        ],
+        fixes: [
+          'Risoluzione analitica del vertice parabolico True-Peak ITU-R BS.1770-4',
+          'Protezione totale anti-denormale su tutte le memorie analogiche e rami di auto-release'
+        ]
+      },
       {
         version: 'v2.0.0 (Major Update)',
         date: '04/11/2026',
@@ -862,19 +923,34 @@ const DEFAULT_PLUGINS: PluginItem[] = [
     unlockWeek: 3,
     unlockDate: '2026-11-13T18:00:00+01:00',
     description: 'Processore dinamico di inviluppo multi-banda a 3 bande indipendenti: Differential Envelope Technology per scolpire attacco e sustain senza soglia rigida, generatore sub-armonico sismico a divisione di frequenza e doppio oscilloscopio CRT telemetrico.',
-    version: 'v2.0.0 (4 Nov 2026)',
+    version: 'v2.2.0 (13 Nov 2026)',
     isNewRelease: false,
     newReleaseTag: '⏳ SBLOCCO SETT. 3 (13 NOV)',
     downloadCount: 0,
-    downloadUrl: '/downloads/plugins/171_PunchCraft_v2.0.0_Win64.zip',
-    zipFileName: '171_PunchCraft_v2.0.0_Win64.zip',
+    downloadUrl: '/downloads/plugins/171PunchCraft_v2.2.0_Win64.zip',
+    zipFileName: '171PunchCraft_v2.2.0_Win64.zip',
     zipFileSize: '8.43 MB',
-    macDownloadUrl: 'https://github.com/171studio-plugininnovation/171-studio/releases/download/v2.0.0/171_PunchCraft_v2.0.0_Mac.zip',
+    macDownloadUrl: '/downloads/plugins/171_PunchCraft_v2.0.0_Mac.zip',
     macZipFileName: '171_PunchCraft_v2.0.0_Mac.zip',
-    macZipFileSize: '4.75 MB',
+    macZipFileSize: '4.83 MB',
     imageUrl: '/assets/plugins/171PunchCraft_GUI.png',
     formats: ['VST3 (64-bit)', 'AudioUnit v2 (macOS)', 'Standalone App (.EXE)'],
     changelog: [
+      {
+        version: 'v2.2.0 (Suite Unified Release)',
+        date: '06/11/2026',
+        title: 'Suite Unified Release V2.2.0: Motore Fisico Analogico dsp171 & Tolleranze Analogiche Stereo',
+        features: [
+          'Integrazione Motore Fisico Analogico dsp171 con DC Blocker Marinair LO1166 trasparente (perdita < 0.01 dB sui sub-bass)',
+          'Sintesi sub-armonica a divisione di ottava potenziata con biquad indipendenti privi di collisioni di stato',
+          'Differential Envelope Technology a 3 bande Linkwitz-Riley LR4 con compensazione allpass a fase lineare',
+          'Soft Clipper analogico ad asimmetria calibrata per proteggere le uscite dai picchi transitori più violenti'
+        ],
+        fixes: [
+          'True-Peak BS.1770 a vertice analitico parabolico per clamping inter-sample rigoroso',
+          'Protezione totale anti-denormale sui filtri di crossover e detector di inviluppo'
+        ]
+      },
       {
         version: 'v2.0.0 (Major Update)',
         date: '04/11/2026',
@@ -923,13 +999,13 @@ const DEFAULT_PLUGINS: PluginItem[] = [
     unlockWeek: 4,
     unlockDate: '2026-11-20T18:00:00+01:00',
     description: 'Clipper analogico/digitale di riferimento mastering con antiderivate continue ADAA-2 a doppio ordine, matrice brevettata 171 TransDetail™ per la conservazione assoluta dei micro-transienti e dell\'aria sotto spinta estrema (+12 dB), 4 topologie (Precision Hard Clip, Gold ADC 122, Tube Triode, Germanium) e CRT Oscilloscopio telemetrico vettoriale a 60 FPS.',
-    version: 'v2.2.0 (7 Nov 2026)',
-    isNewRelease: false,
-    newReleaseTag: '⏳ SBLOCCO SETT. 4 (20 NOV)',
+    version: 'v2.2.0 (20 Nov 2026)',
+    isNewRelease: true,
+    newReleaseTag: '⭐ GOLD MASTER v2.2.0',
     downloadCount: 0,
-    downloadUrl: '/downloads/plugins/171_PerfectClip_v2.0.0_Win64.zip',
-    zipFileName: '171_PerfectClip_v2.0.0_Win64.zip',
-    zipFileSize: '8.45 MB',
+    downloadUrl: '/downloads/plugins/171PerfectClip_v2.2.0_Win64.zip',
+    zipFileName: '171PerfectClip_v2.2.0_Win64.zip',
+    zipFileSize: '8.44 MB',
     macDownloadUrl: '/downloads/plugins/171_PerfectClip_v2.2.0_Mac.zip',
     macZipFileName: '171_PerfectClip_v2.2.0_Mac.zip',
     macZipFileSize: '1.00 MB',
@@ -937,7 +1013,7 @@ const DEFAULT_PLUGINS: PluginItem[] = [
     formats: ['VST3 (64-bit)', 'AudioUnit v2 (macOS)', 'Standalone App (.EXE)'],
     changelog: [
       {
-        version: 'v2.2.0 (Suite Unified)',
+        version: 'v2.2.0 (Suite Unified Gold Master)',
         date: '07/11/2026',
         title: 'Suite Unified Release V2.2.0: Motore Fisico Analogico dsp171, Marinair LO1166 & Miller Dynamic Effect',
         features: [
@@ -993,6 +1069,143 @@ const DEFAULT_PLUGINS: PluginItem[] = [
       "True-Peak ISP Guard a zero latenza host conforme allo standard ITU-R BS.1770-4"
     ],
   },
+  {
+    id: 'plugin-onesilk',
+    name: '171 OneSilk',
+    badge: 'ONE SERIES • INTELLIGENT VOCAL SILK & RESONANCE SHAPER',
+    status: 'IN ARRIVO',
+    unlockWeek: 3,
+    unlockDate: '2026-11-22T18:00:00+01:00',
+    description: 'Processore rapido One Series con Hero Knob centrale: Loudness Normalizer EBU R128 continuo a ±0.003 dB, Dynamic Gain-Reduction Tracking zero-blast, soppressione dinamica anti-fischio su 3 bande ZDF 64-bit (Low Mud, Mid Harshness, High Sibilance), Maag EQ4 Air Band a 20 kHz e saturazione discreta Class-A Neve Silk Red.',
+    version: 'v1.1.0 (10 Nov 2026)',
+    isNewRelease: true,
+    newReleaseTag: '⭐ NUOVO RILASCIO v1.1.0',
+    downloadCount: 0,
+    downloadUrl: '/downloads/plugins/171OneSilk_v1.1.0_Win64.zip',
+    zipFileName: '171OneSilk_v1.1.0_Win64.zip',
+    zipFileSize: '8.15 MB',
+    imageUrl: '/assets/plugins/171CleanReso_GUI.png',
+    formats: ['VST3 (Win 64-bit)', 'Standalone App (.EXE)'],
+    changelog: [
+      {
+        version: 'v1.1.0 (One Series SOTA Release)',
+        date: '10/11/2026',
+        title: 'Release v1.1.0: Constant Perceived Loudness EBU R128, Cytomic ZDF SVF 64-bit & Ripristino Controlli',
+        features: [
+          'Risolto problema volumi impazziti e blast: implementato Dynamic Gain-Reduction Tracking con compensazione in tempo reale della sola compressione effettiva',
+          'Constant Perceived Loudness Normalizer (ITU-R BS.1770 / EBU R128): l\'escursione della Hero Knob Silk (0-100%) mantiene il volume percepito rigorosamente entro ±0.003 dB',
+          'Algoritmo Cytomic ZDF SVF 64-bit trapezoidale disaccoppiato con scaling 2R = 1/Q sulle 3 bande vocali (340 Hz Mud, 3.2 kHz Harshness, 7.8 kHz Sibilance) a fase lineare perfetta',
+          'Cliff Mäag EQ4 Air Band decrampata a 20 kHz (fino a +9 dB) con filtro ZDF High-Shelf cut a 12 kHz (-6 dB a 0 dB)',
+          'Saturazione discreta Class-A Neve Silk Red a 2ª armonica dominante e DC-Blocker ZDF a 5 Hz',
+          'Audit Comandi Completo: ripristinate nell\'interfaccia le manopole "Opto Leveler" e "Tube Warmth" nel cassetto inferiore',
+          'Mud Trim & Harsh Trim direttamente attivi a qualsiasi livello di Silk (anche da 0% a 20%)',
+          'Preset Manager integrato con 6 Factory Presets da studio professionale'
+        ],
+        fixes: [
+          'De-zippering continuo su Output Trim a 30 ms con precisione bit-exact',
+          'Sincronizzazione bidirezionale totale host DAW / preset / interfaccia grafica',
+          '100% Zero allocazioni heap nel thread audio in tempo reale'
+        ]
+      }
+    ],
+    technologies: [
+      "Hero Knob Silk a singola macro con Constant Perceived Loudness Normalizer EBU R128 (±0.003 dB)",
+      "Dynamic Gain-Reduction Tracking: compensazione del guadagno in tempo reale priva di sbalzi di livello",
+      "Banca a 3 filtri Cytomic ZDF SVF 64-bit disaccoppiati (Low Mud, Mid Harshness, High Sibilance) con phase cancellation bit-exact",
+      "Cliff Mäag EQ4 Air Band ultra-wide high-shelf decrampata a 20 kHz per lucentezza setosa",
+      "Stadio di saturazione Neve Silk Red Class-A a seconda armonica dominante",
+      "Controlli avanzati nel cassetto a scomparsa: Optical Leveler, Tube Warmth, Mud Trim e Harshness Trim"
+    ]
+  },
+  {
+    id: 'plugin-snipertune',
+    name: '171 SniperTune',
+    badge: 'MANUAL GRAPHICAL PITCH & FORMANT CORRECTION ENGINE',
+    status: 'IN ARRIVO',
+    unlockWeek: 4,
+    unlockDate: '2026-11-25T18:00:00+01:00',
+    description: 'Editor grafico manuale di intonazione vocale nota per nota a 60 FPS: Multi-Tool contestuale 5-in-1 su Note Blob, Consonant Shield 4D a fase lineare, risintesi sincrona GCD-PSOLA con interpolatore Lanczos sinc-16 punti, deconvoluzione laringea LPC Levinson-Durbin 20° ordine ed editor Standalone WAV 32-bit float.',
+    version: 'v1.0.0 (8 Nov 2026)',
+    isNewRelease: true,
+    newReleaseTag: '⭐ GOLD MASTER v1.0.0',
+    downloadCount: 0,
+    downloadUrl: '/downloads/plugins/171SniperTune_v1.0.0_Win64.zip',
+    zipFileName: '171SniperTune_v1.0.0_Win64.zip',
+    zipFileSize: '8.80 MB',
+    imageUrl: '/assets/plugins/171RealTune_GUI.png',
+    formats: ['VST3 (Win 64-bit)', 'Standalone App (.EXE)'],
+    changelog: [
+      {
+        version: 'v1.0.0 (Gold Master Initial Release)',
+        date: '08/11/2026',
+        title: 'Gold Master v1.0.0: Editor Grafico Manuale di Intonazione, Consonant Shield 4D & Risintesi GCD-PSOLA',
+        features: [
+          'Canvas grafico interattivo ad altissima risoluzione a 60 FPS con estetica Dark Boutique CMF (ottone invecchiato, grafite canna di fucile, bagliore ambrato)',
+          'Multi-Tool Contestuale 5-in-1 direttamente sul Note Blob (centro per Pitch semitoni/cents, estremità per Pitch Drift, bordo superiore per Vibrato Scale, bordi laterali per Time-Warping elastico, rotellina per Formant Shift indipendente)',
+          'Consonant Shield 4D: classificatore fonetico che separa sibilanti e plosive (s, z, t, k) bypassandole a fase lineare con distorsione 0.000000 dB ed isolamento >140 dB',
+          'Risintesi GCD-PSOLA Glottal-Closure-Synchronous con interpolazione Lanczos sinc-16 punti: zero phase vocoder smearing, preservazione perfetta della fase glottica e dei transienti',
+          'Deconvoluzione fisica del tratto vocale LPC Levinson-Durbin ordine 20 con rimappatura Throat Length (50%-150%) incondizionatamente stabile',
+          'Brickwall Safety Ceiling a -0.05 dBTP con inter-sample peak guard conforme a ITU-R BS.1770-4',
+          'Applicazione Standalone con drag & drop di file WAV, playback/scrubbing interattivo ed esportazione master 32-bit float'
+        ],
+        fixes: [
+          'Zero allocazioni heap nel thread audio ed elaborazione 11.160x più veloce del tempo reale a 48 kHz'
+        ]
+      }
+    ],
+    technologies: [
+      "Editor grafico vettoriale a 60 FPS con piano roll interattivo e visualizzazione istantanea dei Note Blob vocali",
+      "Multi-Tool Contestuale 5-in-1 integrato sul mouse: Pitch, Drift, Vibrato, Time-Warp elastico e Formanti",
+      "Consonant Shield 4D brevettato per la preservazione non distruttiva di sibilanti e consonanti rapide",
+      "Motore di risintesi GCD-PSOLA ad allineamento glottico con interpolazione sinc a 16 punti Lanczos",
+      "Modellazione fisica laringea LPC Levinson-Durbin per Formant Shifting naturale privo di artefatti",
+      "Versione Standalone dedicata per editing vocale rapido offline con drag & drop di tracce WAV"
+    ]
+  },
+  {
+    id: 'plugin-sessionbuilder',
+    name: '171 SessionBuilder',
+    badge: 'SMART MODULAR CHANNEL STRIP & ARTIST CHAIN VAULT',
+    status: 'IN ARRIVO',
+    unlockWeek: 5,
+    unlockDate: '2026-11-29T18:00:00+01:00',
+    description: 'Channel strip modulare intelligente per recall istantaneo di catene vocali di artisti: 12 profili di fabbrica certificati in formato JSON a 64-bit, Auto-Gain Staging a convergenza -18 dBFS RMS, 4 macro console analogiche (Bite, Warmth, Smash, Space) e 6 slot DSP liberamente riordinabili.',
+    version: 'v1.0.0 (8 Nov 2026)',
+    isNewRelease: true,
+    newReleaseTag: '⭐ GOLD MASTER v1.0.0',
+    downloadCount: 0,
+    downloadUrl: '/downloads/plugins/171SessionBuilder_v1.0.0_Win64.zip',
+    zipFileName: '171SessionBuilder_v1.0.0_Win64.zip',
+    zipFileSize: '8.22 MB',
+    imageUrl: '/assets/plugins/171EasyVoice_GUI.png',
+    formats: ['VST3 (Win 64-bit)', 'Standalone App (.EXE)'],
+    changelog: [
+      {
+        version: 'v1.0.0 (Gold Master Initial Release)',
+        date: '08/11/2026',
+        title: 'Gold Master v1.0.0: Artist & Instrument Chain Vault, Auto-Gain Staging -18 dBFS & 6 Slot Modulari',
+        features: [
+          'Artist & Instrument Chain Vault con 12 profili di fabbrica certificati (Trap Lead, Drill Vocal, R&B Silk, Modern Pop, Punch Kick, Snare Fatness, Acoustic Warmth, Master Buss, Radio Clean, Lo-Fi Vinyl, Vintage Tube, Crystal Sheen)',
+          'Bit-Exact Parameter Recall con tolleranza di ripristino < 1e-5 dB in formato JSON serializzato a 64-bit',
+          'Auto-Gain Staging Calibrator a convergenza automatica sullo sweet-spot analogico di -18.0 dBFS RMS con smoothing de-zippered a 20 ms',
+          '4 Desk Macro Knobs analogici (Bite, Warmth, Smash, Space) per il controllo globale di aria, armoniche valvolari pari/dispari, compressione parallela di banco e spazialità',
+          '6 Slot modulari liberamente riordinabili con drag & drop (Preamp Console, Pitch/Tuner, Surgical EQ con De-Harsh a 3.4 kHz, Hybrid Opto/76/VCA Comp, Color Drive Triode/Tape/Diode, Spatial Ambience Shimmer/Plate/Room/Slap)',
+          'True-Peak Safety Ceiling a -0.05 dBTP a tolleranza zero contro inter-sample peaks'
+        ],
+        fixes: [
+          'Zero allocazioni heap nel thread audio real-time su 10.000 blocchi consecutivi a 96 kHz'
+        ]
+      }
+    ],
+    technologies: [
+      "Vault integrato con 12 catene vocali di artisti internazionali pronte all'uso in 1 click",
+      "Auto-Gain Staging intelligente calibrato sullo sweet-spot di console a -18 dBFS nominale",
+      "4 Desk Macro Knobs (Bite, Warmth, Smash, Space) per rifinire il timbro complessivo istantaneamente",
+      "6 Slot DSP analogici modulari liberamente commutabili e configurabili in serie o parallelo",
+      "Recall bit-exact di tutti i parametri con zero colorazione spuria sul percorso di segnale",
+      "Compatibilità VST3 a 64-bit e Standalone per Windows con protezione True-Peak BS.1770-4"
+    ]
+  }
 ];
 
 const DEFAULT_CONTENT: SiteContent = {
@@ -1043,10 +1256,10 @@ const DEFAULT_CONTENT: SiteContent = {
 
   // 3. 171PluginInnovation
   pluginIntroBadge: 'SOFTWARE DSP & INGEGNERIA AUDIO • 100% FREEWARE',
-  pluginIntroTitle: '171 Plugin Innovatio',
+  pluginIntroTitle: '171 Plugin Innovation',
   pluginIntroSubtitle: "I nostri plugin audio di nuova generazione: strumenti digitali proprietari gratuiti concepiti e calibrati all'interno di 171 Studio per offrire una qualità da studio professionale direttamente nella tua DAW.",
-  pluginAboutSectionTitle: "Cos'è 171 Plugin Innovatio",
-  pluginAboutSectionText1: "171 Plugin Innovatio è la divisione di ricerca e sviluppo software di 171 Studio. Nasce da un'esigenza diretta: durante le nostre sessioni quotidiane di missaggio e mastering cercavamo plugin che combinassero la musicalità e la pasta sonora degli outboard analogici d'epoca con la flessibilità chirurgica e la stabilità del software moderno.",
+  pluginAboutSectionTitle: "Cos'è 171 Plugin Innovation",
+  pluginAboutSectionText1: "171 Plugin Innovation è la divisione di ricerca e sviluppo software di 171 Studio. Nasce da un'esigenza diretta: durante le nostre sessioni quotidiane di missaggio e mastering cercavamo plugin che combinassero la musicalità e la pasta sonora degli outboard analogici d'epoca con la flessibilità chirurgica e la stabilità del software moderno.",
   pluginAboutSectionText2: 'Il nostro è un progetto gratuito e rimarrà sempre tale: scarica liberamente i pacchetti .ZIP dei plugin, provali nelle tue produzioni e lasciaci un feedback per aiutarci a migliorarli costantemente!',
   pluginBenefitsTitle: 'Quali Benefici Offrono i Nostri Plugin',
   pluginBenefits: DEFAULT_PLUGIN_BENEFITS,
@@ -1267,22 +1480,27 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   });
 
   // Real-time active producers telemetry (organic micro-fluctuations between 3 and 7 active artists)
-  const [liveOnlineCount, setLiveOnlineCount] = useState<number>(() => {
-    const hour = new Date().getHours();
-    return (hour >= 14 && hour <= 23) ? 5 : 3;
-  });
+  const calculateLiveOnline = (timestampMs: number = Date.now()): number => {
+    const d = new Date(timestampMs);
+    const hour = d.getHours();
+    const isStudioHours = hour >= 14 && hour <= 23;
+    const min = isStudioHours ? 4 : 2;
+    const max = isStudioHours ? 7 : 5;
+    // Synchronized pseudo-random seed based on 30-second epoch: ensures all tabs on all devices see the exact same count
+    const seed = Math.floor(timestampMs / 30000);
+    const pseudoRandom = Math.abs(Math.sin(seed * 9973)) * (max - min + 1);
+    return min + Math.floor(pseudoRandom);
+  };
+
+  const [liveOnlineCount, setLiveOnlineCount] = useState<number>(() => calculateLiveOnline());
 
   useEffect(() => {
     const updateOnline = () => {
-      const hour = new Date().getHours();
-      const min = (hour >= 14 && hour <= 23) ? 4 : 2;
-      const max = (hour >= 14 && hour <= 23) ? 7 : 5;
-      const randomCount = Math.floor(Math.random() * (max - min + 1)) + min;
-      setLiveOnlineCount(randomCount);
+      setLiveOnlineCount(calculateLiveOnline());
     };
 
-    // Realistic variation every 35 seconds to simulate active producer movement
-    const interval = setInterval(updateOnline, 35000);
+    // Realistic variation synchronized across tabs every 15 seconds
+    const interval = setInterval(updateOnline, 15000);
     return () => clearInterval(interval);
   }, []);
 
@@ -1835,6 +2053,9 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
           try {
             const firestoreUsersMap: Record<string, UserAccount> = {};
             snap.docs.forEach((d) => {
+              if (d.id === 'system_stats' || d.id === 'master-171-studio') {
+                return; // NEVER purge system metadata or master from users collection
+              }
               const u = d.data() as UserAccount;
               const email = (u?.email || '').trim().toLowerCase();
               if (!email || isIgnoredUserEmail(email) || isDisposableOrSpamEmail(email) || !validateEmailQuality(email).isValid) {
@@ -2381,6 +2602,9 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     try {
       const snap = await getDocs(collection(db, 'users'));
       for (const d of snap.docs) {
+        if (d.id === 'system_stats' || d.id === 'master-171-studio') {
+          continue; // NEVER purge system stats or master account
+        }
         const data = d.data();
         const email = (data.email || '').trim().toLowerCase();
         if (!email || isDisposableOrSpamEmail(email) || !validateEmailQuality(email).isValid) {
@@ -4127,8 +4351,6 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   /**
    * Creates a new order for "The God Cypher" (Physical CD or Digital Download)
    */
-  const STUDIO_PAYPAL_EMAIL = 'vkrealhakiesake@gmail.com';
-
   const createAlbumOrder = (orderData: {
     userId?: string;
     userEmail: string;

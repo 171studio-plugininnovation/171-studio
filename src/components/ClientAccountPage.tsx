@@ -5,7 +5,7 @@ import {
   Sparkles, Shield, LogOut, ArrowRight, X, Check, Lock, History,
   CreditCard, FolderOpen, HelpCircle, Copy, Search, Disc, Truck,
   MapPin, PackageCheck, Package, MailCheck, ShoppingBag, Eye, ShieldCheck,
-  Bug, Wrench, Send, Tag, Gift, Info, AlertCircle, Heart, Award, Mail, Edit2
+  Bug, Wrench, Send, Tag, Gift, Info, AlertCircle, Heart, Award, Mail, Edit2, Mic2
 } from 'lucide-react';
 import { PageId } from '../types';
 import { useStudio } from '../context/StudioContext';
@@ -1234,7 +1234,7 @@ Data: ${new Date(file.createdAt).toLocaleString('it-IT')}
                               {order.paymentStatus !== 'saldato' && (
                                 <div className="space-y-2 mt-2 pt-2 border-t border-amber-900/40">
                                   <a
-                                    href={order.paypalPaymentUrl || 'https://www.paypal.com/paypalme/igorrozanov171'}
+                                    href={order.paypalPaymentUrl || `https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=${encodeURIComponent(STUDIO_PAYPAL_EMAIL)}&currency_code=EUR&amount=${order.totalAmount.toFixed(2)}&item_name=${encodeURIComponent(`171 Studio - The God Cypher (#${order.orderCode})`)}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="w-full py-2 px-3 rounded-lg bg-[#ffc439] hover:bg-[#f4b82d] text-black font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md"
@@ -2118,6 +2118,12 @@ Data: ${new Date(file.createdAt).toLocaleString('it-IT')}
                             <Clock className="w-3.5 h-3.5 text-amber-400" />
                             <strong>Orario:</strong> {booking.time} ({booking.hours}h)
                           </span>
+                          {booking.selectedMic && (
+                            <span className="flex items-center gap-1.5 text-amber-300">
+                              <Mic2 className="w-3.5 h-3.5 text-amber-400" />
+                              <strong>Mic:</strong> {booking.selectedMic} {booking.selectedMicFee ? `(+${booking.selectedMicFee}€)` : ''}
+                            </span>
+                          )}
                           <span className="text-emerald-400 font-bold">
                             Quota: {booking.estimatedPrice}€
                           </span>

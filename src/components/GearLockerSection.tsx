@@ -91,18 +91,18 @@ export const STUDIO_GEAR_INVENTORY: StudioGearItem[] = [
     bestFor: ['Rap Aggressivo & Drill', 'Voci Urlate & Rock / Hardcore', 'Podcast & Spoken Word', 'Sessioni ad Alta Pressione Sonora'],
     chassisColor: 'red',
   },
-  // 5. Universal Audio Apollo Twin X
+  // 5. Universal Audio Apollo Twin X Duo Heritage
   {
     id: 'gear-apollo-twin-x',
-    name: 'Apollo Twin X (Thunderbolt 3)',
+    name: 'Apollo Twin X Duo Heritage',
     brand: 'Universal Audio',
     category: 'interface',
-    categoryLabel: 'INTERFACCIA AUDIO & CONVERSIONE D\'ÉLITE',
+    categoryLabel: 'INTERFACCIA AUDIO THUNDERBOLT & CONVERSIONE D\'ÉLITE',
     badge: 'CUORE DEL SISTEMA • 192 kHz',
     role: 'Conversione AD/DA 127 dB & Preamp Unison Realtime DSP',
     isStandardInSession: true,
     highlightSpecs: ['Convertitori Elite-Class 24-bit/192 kHz', 'Preamplificatori Unison a Impedenza Fisica', 'Elaborazione UAD Realtime a Latenza Zero', 'Dynamic Range 127.5 dB D/A'],
-    description: 'Il centro nevralgico della catena audio di 171 Studio. I convertitori di punta Apollo Twin X catturano il segnale del microfono a 192 kHz con trasparenza assoluta, consentendo all\'artista di ascoltarsi in cuffia in tempo reale con processing analogico e zero latenza percepibile.',
+    description: 'Il centro nevralgico della catena audio di 171 Studio. I convertitori di punta Apollo Twin X Duo Heritage catturano il segnale del microfono a 192 kHz con trasparenza assoluta, consentendo all\'artista di ascoltarsi in cuffia in tempo reale con processing analogico e zero latenza percepibile.',
     vocalProfile: 'Fedeltà master-grade, rumore di fondo inudibile e calibrazione dinamica millimetrica prima dell\'elaborazione in DAW.',
     bestFor: ['Acquisizione Vocale Master', 'Tracking Live in Cuffia a Latenza Zero', 'Clocking di Riferimento', 'DSP Real-Time UAD'],
     chassisColor: 'amber',
@@ -110,7 +110,7 @@ export const STUDIO_GEAR_INVENTORY: StudioGearItem[] = [
   // 6. Palmer Monicon
   {
     id: 'gear-palmer-monicon',
-    name: 'Monicon Passive Controller',
+    name: 'Palmer Monicon',
     brand: 'Palmer Audio',
     category: 'interface',
     categoryLabel: 'CONTROLLER PASSIVO PER MONITORAGGIO',
@@ -123,10 +123,10 @@ export const STUDIO_GEAR_INVENTORY: StudioGearItem[] = [
     bestFor: ['Controllo Volume Regia di Precisione', 'Verifica Mono Compatibilità Immediata', 'Attenuazione Trasparente', 'Zero Distorsione Armonica'],
     chassisColor: 'blue',
   },
-  // 7. Kali Audio LP-6 (2nd Wave)
+  // 7. Kali Audio LP-6 2nd Wave
   {
     id: 'gear-kali-lp6',
-    name: 'LP-6 (Lone Pine 2nd Wave)',
+    name: 'Kali Audio LP-6 2nd Wave',
     brand: 'Kali Audio',
     category: 'monitors',
     categoryLabel: 'MONITOR NEARFIELD ATTIVI BI-AMPLIFICATI',
@@ -139,18 +139,18 @@ export const STUDIO_GEAR_INVENTORY: StudioGearItem[] = [
     bestFor: ['Missaggio Vocale & Bilanciamento Beat', 'Controllo Basse Frequenze 808 / Sub', 'Pannaggio Spaziale & Riverberi', 'Ascolto Finale di Produzione'],
     chassisColor: 'purple',
   },
-  // 8. Auratone C1A / 5C Super Sound Cube
+  // 8. Auratone C5A (o 5C Super Sound Cube)
   {
     id: 'gear-auratone-5c',
-    name: 'Auratone C1A / 5C Reference',
-    brand: 'Auratone Sound Cubes',
+    name: 'Auratone C5A (5C Super Sound Cube)',
+    brand: 'Auratone',
     category: 'monitors',
     categoryLabel: 'REFERENCE MONITOR MIDRANGE MONO/STEREO',
     badge: 'STANDARD MONDIALE DI RIFERIMENTO',
     role: 'Il Test Definitivo per Smartphone, Radio & Club',
     isStandardInSession: true,
     highlightSpecs: ['Driver Full-Range Singolo da 4.5"', 'Zero Crossover di Fase sul Percorso', 'Focalizzazione Midrange (200 Hz – 5 kHz)', 'Cabinet Sigillato a Sospensione Pneumatica'],
-    description: 'Presenti nei più grandi studi del mondo da oltre 40 anni (da Abbey Road a Quincy Jones per Thriller). I diffusori Auratone non hanno crossover e riproducono con assoluta severità il punto più critico del mix: la voce e il bilanciamento delle frequenze medie. Se suona bene su Auratone, suonerà perfetto ovunque.',
+    description: 'Presenti nei più grandi studi del mondo da oltre 40 anni (da Abbey Road a Quincy Jones per Thriller). I diffusori Auratone C5A (5C Super Sound Cube) non hanno crossover e riproducono con assoluta severità il punto più critico del mix: la voce e il bilanciamento delle frequenze medie. Se suona bene su Auratone, suonerà perfetto ovunque.',
     vocalProfile: 'Severità di traduzione assoluta: evidenzia all\'istante sibilanti, mascheramenti timbrici e voci troppo basse o alte nel mix.',
     bestFor: ['Controllo Compatibilità Smartphone & Earbuds', 'Bilanciamento Livello Voce nel Mix', 'Traduzione Mono Perfetta', 'Controllo Cruciale della Gamma Media'],
     chassisColor: 'amber',
@@ -158,12 +158,12 @@ export const STUDIO_GEAR_INVENTORY: StudioGearItem[] = [
   // 9. Sennheiser HD 600
   {
     id: 'gear-sennheiser-hd600',
-    name: 'HD 600 Audiophile Reference',
+    name: 'Sennheiser HD 600',
     brand: 'Sennheiser',
     category: 'headphones',
     categoryLabel: 'CUFFIE APERTE DI RIFERIMENTO MASTERING',
     badge: 'RIFERIMENTO CRITICO MONDIALE',
-    role: 'Ascolto Critico Spaziale, Timbrico & Controllo Riverberi',
+    role: 'Mixing & Mastering Critico • Ascolto Spaziale & Timbro Naturale',
     isStandardInSession: true,
     highlightSpecs: ['Design Aperto Circumaural', 'Risposta in Frequenza 12 Hz – 40.5 kHz', 'Bobine in Alluminio ad Alta Velocità', 'Timbro Ultra-Lineare Riconosciuto da Fonici'],
     description: 'La cuffia aperta considerata universalmente lo standard d\'oro per il missaggio e il mastering critico. La sua risposta timbrica priva di colorazioni e la naturalezza della scena sonora aperta permettono di scolpire con precisione microscopica ogni riverbero, coda e taglio di equalizzazione.',
@@ -171,26 +171,42 @@ export const STUDIO_GEAR_INVENTORY: StudioGearItem[] = [
     bestFor: ['Mastering & Controllo Dettaglio EQ', 'Regolazione Micro-Riverberi e Spazio Stereo', 'Controllo Intonazione RealTune', 'Ascolto Critico per il Produttore'],
     chassisColor: 'blue',
   },
-  // 10. Audio-Technica ATH-M50x & ATH-M30x
+  // 10. Audio-Technica ATH-M50x
   {
-    id: 'gear-ath-headphones',
-    name: 'ATH-M50x & ATH-M30x',
+    id: 'gear-ath-m50x',
+    name: 'Audio-Technica ATH-M50x',
     brand: 'Audio-Technica',
     category: 'headphones',
-    categoryLabel: 'PARCO CUFFIE CHIUSE DA RECORDING & MONITORING',
-    badge: 'ZERO BLEED • TRACKING VOCALE',
-    role: 'Cuffie per Artisti in Registrazione & Studio Monitoring',
+    categoryLabel: 'CUFFIA CHIUSA MONITORAGGIO & REGIA',
+    badge: 'MONITORING & REGIA • PRECISIONE',
+    role: 'Monitoring di Regia • Controllo Dinamica & Basse Frequenze',
     isStandardInSession: true,
-    highlightSpecs: ['Driver Proprietari da 45 mm (M50x) & 40 mm (M30x)', 'Isolamento Acustico Sigillato Zero-Bleed', 'Risposta Veloce sui Transienti', 'Massimo Comfort per Sessioni Lunghe'],
-    description: 'La coppia di cuffie chiuse da riferimento per lo studio. L\'ATH-M30x è dedicata all\'artista durante la registrazione vocale per garantire il massimo volume in cuffia con zero rientri sonori (bleed) nel microfono. L\'ATH-M50x è la cuffia di monitoraggio da regia per verificare la resa dei bassi e la compatibilità su sistemi moderni.',
-    vocalProfile: 'Bassi solidi e incisivi, chiarezza vocale immediata e isolamento ermetico dal microfono.',
-    bestFor: ['Tracking Vocale in Cuffia per l\'Artista', 'Zero Bleed di Base o Metronomo nel Microfono', 'Verifica Basso / 808 in Cuffia', 'Ascolto ad Alto Volume in Registrazione'],
+    highlightSpecs: ['Driver Proprietari ad Ampia Apertura da 45 mm', 'Magneti in Terre Rare & Bobine in Alluminio Rame', 'Isolamento Acustico Circumaural Eccezionale', 'Risposta Piatta e Rapida sui Transienti'],
+    description: 'La cuffia chiusa da monitoraggio di riferimento in regia per verificare la resa dei bassi (808/sub), l\'impatto dinamico e la compatibilità su sistemi moderni di riproduzione.',
+    vocalProfile: 'Bassi solidi e incisivi, chiarezza vocale immediata e risolutezza dinamica senza affaticamento.',
+    bestFor: ['Monitoring di Regia & Verifica Bassi', 'Controllo Livello Sub/808 in Cuffia', 'Verifica Risposta Dinamica', 'Ascolto Alternativo di Produzione'],
     chassisColor: 'purple',
   },
-  // 11. Black Lion Audio PG-1 Type F
+  // 11. Audio-Technica ATH-M30x
+  {
+    id: 'gear-ath-m30x',
+    name: 'Audio-Technica ATH-M30x',
+    brand: 'Audio-Technica',
+    category: 'headphones',
+    categoryLabel: 'CUFFIA CHIUSA RECORDING CANTANTI',
+    badge: 'ZERO BLEED • RECORDING CANTANTI',
+    role: 'Registrazione Cantanti • Isolamento Sigillato Senza Rientri',
+    isStandardInSession: true,
+    highlightSpecs: ['Driver ad Alta Definizione da 40 mm', 'Isolamento Ermetico Anti-Bleed nel Microfono', 'Sintonizzata per Massima Chiarezza Vocale sui Medi', 'Archetto Imbottito per Sessioni Prolungate'],
+    description: 'La cuffia ufficiale per l\'artista durante la registrazione vocale a 171 Studio. Il suo design sigillato impedisce qualsiasi rientro sonoro (bleed) di beat o metronomo nel microfono, garantendo take vocali immacolate.',
+    vocalProfile: 'Chiarezza vocale cristallina sui medi e isolamento ermetico dal microfono.',
+    bestFor: ['Tracking Vocale in Cuffia per Cantanti', 'Zero Bleed di Base o Metronomo nel Microfono', 'Massima Chiarezza di Pitch per l\'Artista', 'Comfort Prolungato durante le Registrazioni'],
+    chassisColor: 'emerald',
+  },
+  // 12. Black Lion Audio PG-1 Type F
   {
     id: 'gear-black-lion-pg1',
-    name: 'PG-1 Type F Power Conditioner',
+    name: 'Black Lion Audio PG-1 Type F',
     brand: 'Black Lion Audio (Chicago)',
     category: 'power',
     categoryLabel: 'CONDIZIONAMENTO ELETTRICO & PROTEZIONE RETE',
@@ -198,10 +214,10 @@ export const STUDIO_GEAR_INVENTORY: StudioGearItem[] = [
     role: 'Alimentazione Elettrica Purificata PG-99 & Zero Rumore di Fondo',
     isStandardInSession: true,
     highlightSpecs: ['Filtro PG-99 ad Alto Smorzamento (-99.7% Noise)', 'Protezione da Sovratensioni di Grado Studio', 'Prese Differenziate Digitali, Analogiche & Hi-Current', 'Display Voltmetro LED di Regia'],
-    description: 'La qualità del suono parte dalla corrente elettrica. Il Black Lion Audio PG-1 purifica l\'alimentazione di tutta la regia di 171 Studio filtrando ronzii, disturbi elettromagnetici e sbalzi di tensione. Il risultato è un floor di rumore abbattuto, convertitori Apollo più precisi e preamplificatori più dinamici e silenziosi.',
+    description: 'La qualità del suono parte dalla corrente elettrica. Il Black Lion Audio PG-1 Type F purifica l\'alimentazione di tutta la regia di 171 Studio filtrando ronzii, disturbi elettromagnetici e sbalzi di tensione. Il risultato è un floor di rumore abbattuto, convertitori Apollo più precisi e preamplificatori più dinamici e silenziosi.',
     vocalProfile: 'Silenzio assoluto sui silenzi: zero hum a 50 Hz, zero sibili di rete, massima dinamica sfruttabile.',
-    bestFor: ['Filtraggio Rumore di Rete per Apollo Twin X', 'Protezione Assoluta dell\'Equipaggiamento', 'Alimentazione Stabile 230V di Regia', 'Eliminazione Ground Loops e Ronzii'],
-    chassisColor: 'emerald',
+    bestFor: ['Filtraggio Rumore di Rete per Apollo Twin X Duo Heritage', 'Protezione Assoluta dell\'Equipaggiamento', 'Alimentazione Stabile 230V di Regia', 'Eliminazione Ground Loops e Ronzii'],
+    chassisColor: 'amber',
   },
 ];
 
@@ -251,7 +267,7 @@ export const GearLockerSection: React.FC<GearLockerSectionProps> = ({ onNavigate
           </h2>
 
           <p className="text-xs sm:text-sm text-neutral-300 font-light leading-relaxed">
-            Nessuna macchina virtuale fantasma: <strong>il setup hardware dello studio è sempre uguale per ogni sessione</strong>. Lavorerai sulla catena fissa con conversione <strong>Universal Audio Apollo Twin X a 192 kHz</strong>, controller passivo <strong>Palmer Monicon</strong>, doppio ascolto <strong>Kali Audio LP-6</strong> & cubi <strong>Auratone C1A</strong>, cuffie professionali Sennheiser/Audio-Technica e filtraggio di rete <strong>Black Lion Audio PG-1 Type F</strong>. <strong>Non cambia nulla del setup: solo i microfoni vocali cambiano su richiesta</strong>, e potrai indicare il tuo microfono ideale direttamente nel modulo di prenotazione sessione.
+            Nessuna macchina virtuale fantasma: <strong>il setup hardware dello studio è sempre uguale per ogni sessione</strong>. Lavorerai sulla catena fissa con conversione <strong>Universal Audio Apollo Twin X Duo Heritage a 192 kHz</strong>, controller passivo <strong>Palmer Monicon</strong>, doppio ascolto <strong>Kali Audio LP-6 2nd Wave</strong> & cubi <strong>Auratone C5A (o 5C Super Sound Cube)</strong>, cuffie professionali Sennheiser HD 600 / Audio-Technica ATH-M50x/M30x e filtraggio di rete <strong>Black Lion Audio PG-1 Type F</strong>. <strong>Non cambia nulla del setup: solo i microfoni vocali cambiano su richiesta</strong>, e potrai indicare il tuo microfono ideale direttamente nel modulo di prenotazione sessione.
           </p>
         </div>
 
@@ -265,6 +281,149 @@ export const GearLockerSection: React.FC<GearLockerSectionProps> = ({ onNavigate
             <span>Prenota la Tua Sessione</span>
             <ArrowRight className="w-4 h-4" />
           </button>
+        </div>
+      </div>
+
+      {/* INTERACTIVE SIGNAL CHAIN FLOWCHART (Metropolis & Abbey Road Benchmark) */}
+      <div className="p-5 sm:p-6 rounded-3xl bg-neutral-950/90 border border-amber-500/30 backdrop-blur-xl shadow-2xl space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-neutral-800 pb-3">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
+              <Activity className="w-4 h-4" />
+            </div>
+            <div>
+              <h3 className="text-sm sm:text-base font-heading font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                <span>Catena del Segnale Hardware & DSP 192 kHz</span>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+                  PERCORSO FISSO CALIBRATO
+                </span>
+              </h3>
+              <p className="text-[11px] font-mono text-neutral-400">
+                Clicca su qualsiasi blocco per filtrare ed esaminare la relativa scheda tecnica nel parco macchine:
+              </p>
+            </div>
+          </div>
+
+          <span className="text-[10px] font-mono text-amber-400 self-start sm:self-auto">
+            INTERACTIVE SIGNAL FLOW
+          </span>
+        </div>
+
+        {/* The 5 Connected Flow Nodes */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 relative">
+          
+          {/* Node 1: Microfoni */}
+          <div 
+            onClick={() => setActiveCategory('mics')}
+            className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between gap-2 ${
+              activeCategory === 'mics' 
+                ? 'bg-amber-500/15 border-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.25)]' 
+                : 'bg-neutral-900/70 border-neutral-800 hover:border-neutral-700'
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-[9px] font-mono text-amber-400 font-bold uppercase">1. SORGENTE VOCALE</span>
+              <Mic2 className="w-3.5 h-3.5 text-amber-400" />
+            </div>
+            <div>
+              <strong className="text-white text-xs block">Microfoni a Scelta</strong>
+              <span className="text-[10.5px] text-neutral-400 block mt-0.5">RØDE NT1-A (0€), Lewitt, Warm, Shure</span>
+            </div>
+            <span className="text-[9px] font-mono text-emerald-400 font-semibold">Unica variabile a richiesta</span>
+          </div>
+
+          {/* Node 2: Apollo Twin X */}
+          <div 
+            onClick={() => setActiveCategory('interface')}
+            className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between gap-2 ${
+              activeCategory === 'interface' 
+                ? 'bg-amber-500/15 border-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.25)]' 
+                : 'bg-neutral-900/70 border-neutral-800 hover:border-neutral-700'
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-[9px] font-mono text-amber-400 font-bold uppercase">2. CONVERSIONE D'ÉLITE</span>
+              <Cpu className="w-3.5 h-3.5 text-amber-400" />
+            </div>
+            <div>
+              <strong className="text-white text-xs block">Apollo Twin X Duo</strong>
+              <span className="text-[10.5px] text-neutral-400 block mt-0.5">Preamp Unison • 192 kHz / 24-bit AD</span>
+            </div>
+            <span className="text-[9px] font-mono text-amber-300 font-semibold">Dynamic Range 127.5 dB</span>
+          </div>
+
+          {/* Node 3: 171 DSP Core */}
+          <div 
+            onClick={() => onNavigate('plugin-innovation')}
+            className="p-3.5 rounded-2xl border border-neutral-800 hover:border-amber-400/60 bg-neutral-900/70 transition-all cursor-pointer flex flex-col justify-between gap-2 group"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-[9px] font-mono text-amber-400 font-bold uppercase">3. PROCESSING DSP</span>
+              <Sparkles className="w-3.5 h-3.5 text-amber-400 group-hover:rotate-12 transition-transform" />
+            </div>
+            <div>
+              <strong className="text-white text-xs block">171Plugin Innovation</strong>
+              <span className="text-[10.5px] text-neutral-400 block mt-0.5">RealTune v2.2.1, EasyVoice v3.2.1, VocalCraft v2.2.1</span>
+            </div>
+            <span className="text-[9px] font-mono text-amber-400 font-semibold">Zero Latenza di Tracking</span>
+          </div>
+
+          {/* Node 4: Palmer Monicon */}
+          <div 
+            onClick={() => setActiveCategory('interface')}
+            className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between gap-2 ${
+              activeCategory === 'interface' 
+                ? 'bg-amber-500/15 border-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.25)]' 
+                : 'bg-neutral-900/70 border-neutral-800 hover:border-neutral-700'
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-[9px] font-mono text-amber-400 font-bold uppercase">4. ATTENUAZIONE PURA</span>
+              <Sliders className="w-3.5 h-3.5 text-amber-400" />
+            </div>
+            <div>
+              <strong className="text-white text-xs block">Palmer Monicon</strong>
+              <span className="text-[10.5px] text-neutral-400 block mt-0.5">Percorso 100% Passivo Senza Colorazione</span>
+            </div>
+            <span className="text-[9px] font-mono text-blue-400 font-semibold">Zero Distorsione Armonica</span>
+          </div>
+
+          {/* Node 5: Doppio Ascolto & Cuffie */}
+          <div 
+            onClick={() => setActiveCategory('monitors')}
+            className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between gap-2 ${
+              activeCategory === 'monitors' || activeCategory === 'headphones'
+                ? 'bg-amber-500/15 border-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.25)]' 
+                : 'bg-neutral-900/70 border-neutral-800 hover:border-neutral-700'
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-[9px] font-mono text-amber-400 font-bold uppercase">5. ASCOLTO CRITICO</span>
+              <Volume2 className="w-3.5 h-3.5 text-amber-400" />
+            </div>
+            <div>
+              <strong className="text-white text-xs block">Kali LP-6 & Auratone 5C</strong>
+              <span className="text-[10.5px] text-neutral-400 block mt-0.5">Sennheiser HD600 & ATH-M50x/M30x</span>
+            </div>
+            <span className="text-[9px] font-mono text-purple-400 font-semibold">Nearfield 3D + Midrange Severo</span>
+          </div>
+
+        </div>
+
+        {/* Bottom Black Lion Audio PG-1 Power Ribbon */}
+        <div 
+          onClick={() => setActiveCategory('power')}
+          className="p-3 rounded-xl bg-black/70 border border-neutral-800 hover:border-amber-400/50 flex flex-col sm:flex-row sm:items-center justify-between gap-2 transition-all cursor-pointer"
+        >
+          <div className="flex items-center gap-2">
+            <Zap className="w-4 h-4 text-amber-400 shrink-0" />
+            <span className="text-xs text-neutral-300 font-sans">
+              <strong>Protezione & Corrente Purificata:</strong> Tutta la regia è alimentata dal condizionatore <strong className="text-white">Black Lion Audio PG-1 Type F</strong> con filtraggio PG-99 (-99.7% di rumore di rete).
+            </span>
+          </div>
+          <span className="text-[10px] font-mono text-amber-400 font-bold shrink-0">
+            ZERO GROUND LOOPS & ZERO HUM
+          </span>
         </div>
       </div>
 
@@ -452,7 +611,7 @@ export const GearLockerSection: React.FC<GearLockerSectionProps> = ({ onNavigate
             </h3>
           </div>
           <p className="text-xs sm:text-sm text-neutral-300 font-light leading-relaxed">
-            A 171 Studio il setup di acquisizione e ascolto è <strong>sempre identico per ogni artista</strong>: Apollo Twin X a 192 kHz, controller Palmer Monicon, casse Kali Audio LP-6, cubi Auratone C1A, cuffie Sennheiser/Audio-Technica e controllo elettrico Black Lion PG-1. <strong>Il setup non cambia: potrai selezionare il tipo di microfono vocale direttamente nel modulo di prenotazione sessione</strong> in base al tuo genere musicale.
+            A 171 Studio il setup di acquisizione e ascolto è <strong>sempre identico per ogni artista</strong>: Apollo Twin X Duo Heritage a 192 kHz, controller Palmer Monicon, casse Kali Audio LP-6 2nd Wave, cubi Auratone C5A (o 5C Super Sound Cube), cuffie Sennheiser HD 600 / Audio-Technica ATH-M50x/M30x e controllo elettrico Black Lion Audio PG-1 Type F. <strong>Il setup non cambia: potrai selezionare il tipo di microfono vocale direttamente nel modulo di prenotazione sessione</strong> in base al tuo genere musicale.
           </p>
         </div>
 

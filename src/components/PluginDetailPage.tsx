@@ -429,7 +429,7 @@ export const PluginDetailPage: React.FC<PluginDetailPageProps> = ({
                 {plugin.version || 'v2.0.0 (4 Nov 2026)'}
               </span>
               <span className="text-neutral-500 hidden sm:inline">•</span>
-              <span className="text-neutral-400">Release: {plugin.version?.includes("2.2.5") ? "8 Nov 2026 • Major Update 2.2.5" : "4 Nov 2026 • Major Update V2.0.0"}</span>
+              <span className="text-neutral-400">Release: {plugin.changelog?.[0]?.date ? `${plugin.changelog[0].date} • ${plugin.newReleaseTag || plugin.changelog[0].version}` : (plugin.version || 'Nov 2026')}</span>
               <span className="text-neutral-500 hidden sm:inline">•</span>
               <span className="text-emerald-400 font-semibold flex items-center gap-1">
                 <Check className="w-3.5 h-3.5" />
@@ -759,7 +759,7 @@ export const PluginDetailPage: React.FC<PluginDetailPageProps> = ({
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-neutral-800">
                 <div>
                   <span className="text-[10px] sm:text-xs font-mono text-amber-400 uppercase tracking-widest block font-bold">
-                    MAJOR UPDATE 2.2.5 • 8 NOVEMBRE 2026
+                    {plugin.newReleaseTag || 'OFFICIAL RELEASE'} • {plugin.changelog?.[0]?.date || 'NOVEMBRE 2026'}
                   </span>
                   <h3 className="font-heading font-black text-xl sm:text-2xl md:text-3xl text-white mt-1 break-words">
                     Changelog Dettagliato • {plugin.name} {plugin.version}

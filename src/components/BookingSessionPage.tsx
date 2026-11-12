@@ -2,7 +2,8 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { 
   ArrowLeft, Calendar as CalendarIcon, Clock, User, Mail, Phone, Mic2, 
   CheckCircle2, Sparkles, Info, ShieldCheck, DollarSign, Send, RotateCcw,
-  Lock, LogIn, ChevronRight, Check, CreditCard, ExternalLink, Copy, Sliders, Sun, Moon, Zap, Tag, Gift, Percent, X, Download
+  Lock, LogIn, ChevronRight, Check, CreditCard, ExternalLink, Copy, Sliders, Sun, Moon, Zap, Tag, Gift, Percent, X, Download,
+  Volume2, VolumeX
 } from 'lucide-react';
 import { PageId } from '../types';
 import { 
@@ -15,6 +16,8 @@ import { BookingCalendar } from './BookingCalendar';
 import { isRangeOverlapping, getBookingInterval } from '../utils/calendarSlots';
 import { HardwareTiltCard } from './HardwareTiltCard';
 import { StudioInput, StudioButton } from './ui';
+import { playMicrophoneAcousticPreview, stopCurrentMicPreview } from '../utils/micAudioMatcher';
+import { getPayPalPaymentUrl } from '../utils/emailService';
 
 interface BookingSessionPageProps {
   onNavigate: (page: PageId) => void;
@@ -57,6 +60,27 @@ export const BookingSessionPage: React.FC<BookingSessionPageProps> = ({ onNaviga
   const [oraPreferita, setOraPreferita] = useState('15:00');
   const [note, setNote] = useState('');
   const [selectedMic, setSelectedMic] = useState<string>('rode-nt1a');
+  const [playingMicId, setPlayingMicId] = useState<string | null>(null);
+
+  // Stop mic audition audio preview on page unmount
+  useEffect(() => {
+    return () => {
+      stopCurrentMicPreview();
+    };
+  }, []);
+
+  const handleToggleMicPreview = (e: React.MouseEvent, micId: string) => {
+    e.stopPropagation();
+    if (playingMicId === micId) {
+      stopCurrentMicPreview();
+      setPlayingMicId(null);
+    } else {
+      setPlayingMicId(micId);
+      playMicrophoneAcousticPreview(micId, () => {
+        setPlayingMicId((curr) => (curr === micId ? null : curr));
+      });
+    }
+  };
   
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [submittedBooking, setSubmittedBooking] = useState<BookingRecord | null>(null);
@@ -255,7 +279,30 @@ export const BookingSessionPage: React.FC<BookingSessionPageProps> = ({ onNaviga
   };
 
   const handleCopyPaymentLink = (url: string) => {
-    navigator.clipboard.writeText(url);
+    const effectiveUrl =
+      url ||
+      submittedBooking?.paypalPaymentUrl ||
+      getPayPalPaymentUrl(
+        submittedBooking?.estimatedPrice ?? finalPriceToPay,
+        submittedBooking?.orderCode || '171-ORD-PREVIEW',
+        siteContent.paypalEmail || STUDIO_PAYPAL_EMAIL
+      );
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(effectiveUrl).catch(() => {
+        try {
+          const ta = document.createElement('textarea');
+          ta.value = effectiveUrl;
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.focus();
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+        } catch {}
+      });
+    }
     setCopiedPayment(true);
     setTimeout(() => setCopiedPayment(false), 2500);
   };
@@ -515,7 +562,14 @@ export const BookingSessionPage: React.FC<BookingSessionPageProps> = ({ onNaviga
 
               <div className="flex flex-wrap items-center gap-3">
                 <a
-                  href={submittedBooking?.paypalPaymentUrl || `https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=${encodeURIComponent(siteContent.paypalEmail || STUDIO_PAYPAL_EMAIL)}&currency_code=EUR&amount=${submittedBooking?.estimatedPrice || estimate.total}&item_name=171%20Studio%20Sessione%20${submittedBooking?.orderCode}`}
+                  href={
+                    submittedBooking?.paypalPaymentUrl ||
+                    getPayPalPaymentUrl(
+                      submittedBooking?.estimatedPrice ?? finalPriceToPay,
+                      submittedBooking?.orderCode || '171-SESSION',
+                      siteContent.paypalEmail || STUDIO_PAYPAL_EMAIL
+                    )
+                  }
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-6 py-3 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black font-extrabold text-xs uppercase tracking-wider font-mono flex items-center gap-2 transition-all shadow-lg shadow-amber-500/20 hover:scale-[1.01]"
@@ -1030,7 +1084,7 @@ export const BookingSessionPage: React.FC<BookingSessionPageProps> = ({ onNaviga
                   
                   <div className="p-3 rounded-xl bg-black/60 border border-neutral-800/80 text-[11px] text-neutral-300 font-light space-y-1">
                     <p>
-                      <strong className="text-white">Il setup hardware dello studio è sempre identico:</strong> stessa conversione Apollo Twin X a 192 kHz, controller Palmer Monicon, casse Kali LP-6 & Auratone C1A, cuffie e corrente stabilizzata PG-1.
+                      <strong className="text-white">Il setup hardware dello studio è sempre identico:</strong> stessa conversione Universal Audio Apollo Twin X Duo Heritage a 192 kHz, controller Palmer Monicon, casse Kali Audio LP-6 2nd Wave & Auratone C5A (5C Super Sound Cube), cuffie Sennheiser HD 600 / Audio-Technica ATH-M50x/M30x e alimentazione Black Lion Audio PG-1 Type F.
                     </p>
                     <p className="text-neutral-400">
                       <strong>Solo il microfono vocale cambia</strong> sull'asta di ripresa. Il costo aggiuntivo a sessione è congruo al valore di mercato della capsula scelta, in linea con gli standard degli studi professionali online:
@@ -1072,9 +1126,34 @@ export const BookingSessionPage: React.FC<BookingSessionPageProps> = ({ onNaviga
                           <p className="text-[10.5px] text-neutral-400 font-light leading-snug">
                             {mic.desc}
                           </p>
-                          <div className="pt-1 border-t border-neutral-900 flex justify-between text-[9.5px] text-neutral-500">
-                            <span>Valore Hardware: <strong className="text-neutral-400">{mic.retailValue}</strong></span>
-                            <span>{mic.isStandard ? 'Incluso nella tariffa' : `+${mic.fee}€ fisso`}</span>
+                          <div className="pt-2 border-t border-neutral-900 flex items-center justify-between gap-2 text-[9.5px]">
+                            <div className="flex flex-col">
+                              <span className="text-neutral-500">Valore Hardware: <strong className="text-neutral-300">{mic.retailValue}</strong></span>
+                              <span className="text-[9px] text-amber-400/80">{mic.isStandard ? 'Incluso nella tariffa' : `+${mic.fee}€ a sessione`}</span>
+                            </div>
+
+                            <button
+                              type="button"
+                              onClick={(e) => handleToggleMicPreview(e, mic.id)}
+                              className={`px-2.5 py-1 rounded-lg text-[10px] font-mono flex items-center gap-1.5 transition-all cursor-pointer border ${
+                                playingMicId === mic.id
+                                  ? 'bg-amber-500 text-black font-extrabold border-amber-400 shadow-[0_0_12px_rgba(245,158,11,0.5)] animate-pulse'
+                                  : 'bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border-neutral-700/80 hover:border-amber-400/50'
+                              }`}
+                              title={`Ascolta timbro acustico simulato ${mic.name}`}
+                            >
+                              {playingMicId === mic.id ? (
+                                <>
+                                  <VolumeX className="w-3 h-3 text-black" />
+                                  <span>Stop (3s)</span>
+                                </>
+                              ) : (
+                                <>
+                                  <Volume2 className="w-3 h-3 text-amber-400" />
+                                  <span>Ascolta Timbro</span>
+                                </>
+                              )}
+                            </button>
                           </div>
                         </div>
                       );
@@ -1405,7 +1484,7 @@ export const BookingSessionPage: React.FC<BookingSessionPageProps> = ({ onNaviga
                       <strong className="text-amber-400">{siteContent.hourlyRecordingPrice ?? 25}€ / ora</strong>
                     </li>
                     <li className="flex justify-between border-b border-neutral-900 pb-1.5 text-neutral-400 text-[11px]">
-                      <span>Setup di Studio (Apollo Twin X, Palmer, Kali, Auratone, PG-1):</span>
+                      <span>Setup di Studio (Apollo Twin X Duo, Palmer, Kali LP-6 2nd Wave, Auratone 5C, PG-1):</span>
                       <strong className="text-white">Fisso & Permanente (Incluso)</strong>
                     </li>
                     <li className="flex justify-between border-b border-neutral-900 pb-1.5 text-emerald-400">

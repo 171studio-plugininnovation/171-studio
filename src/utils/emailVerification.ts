@@ -401,7 +401,7 @@ Sito Web: https://171studio.it
           <tr>
             <td style="padding:32px 36px 20px 36px;text-align:center;border-bottom:1px solid #262626;">
               <div style="font-size:11px;font-family:monospace;letter-spacing:3px;color:#f59e0b;font-weight:bold;text-transform:uppercase;margin-bottom:6px;">
-                171 STUDIO MESSINA • INNOVATIO
+                171 STUDIO MESSINA • INNOVATION
               </div>
               <h1 style="margin:0;font-size:26px;color:#ffffff;font-weight:900;letter-spacing:0.5px;">
                 Verifica Indirizzo Email

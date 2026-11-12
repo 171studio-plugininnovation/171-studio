@@ -339,7 +339,7 @@ export interface FrontpageSpecItem {
 export const DEFAULT_FRONTPAGE_SPECS: FrontpageSpecItem[] = [
   { id: 'spec-1', label: 'RECORDING ROOM', title: 'Vocal & Instruments' },
   { id: 'spec-2', label: 'MIX & MASTER', title: 'Analog & Digital' },
-  { id: 'spec-3', label: '171 PLUGINS', title: 'Innovatio DSP' },
+  { id: 'spec-3', label: '171 PLUGINS', title: 'Innovation DSP' },
   { id: 'spec-4', label: 'FEEDBACK DIRETTO', title: 'Ambiente Trattato' },
 ];
 
@@ -359,7 +359,7 @@ export const DEFAULT_PAGE_VALUES: PageValueItem[] = [
   {
     id: 'val-3',
     tag: 'AUDIO DSP PROPRIETARIO',
-    title: 'Innovazione con 171 Plugin Innovatio',
+    title: 'Innovazione con 171 Plugin Innovation',
     description: 'Non ci limitiamo a usare software standard: sviluppiamo internamente i nostri plugin audio proprietari per scolpire voci e mix con un carattere e un calore unici sul mercato.',
   },
   {
