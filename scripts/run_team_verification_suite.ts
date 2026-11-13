@@ -433,7 +433,7 @@ for (const p of requiredPlugins) {
   });
 }
 
-assertTest('Plugins v2.2.5', 'Verifica rimozione 171 DriveOptocom e MasterGlue release 1 Dicembre', () => {
+assertTest('Plugins v2.2.5', 'Verifica catalogo esclusivo 4 plugin cardine e dismissione DriveOptocom', () => {
   const pluginSectionSource = fs.readFileSync(path.resolve('src/components/PluginsPage.tsx'), 'utf-8');
   if (pluginSectionSource.includes("id: 'plugin-driveoptocom'")) {
     throw new Error('171 DriveOptocom ancora presente come scheda prodotto nel catalogo');
@@ -441,10 +441,11 @@ assertTest('Plugins v2.2.5', 'Verifica rimozione 171 DriveOptocom e MasterGlue r
   if (!pluginSectionSource.includes('DriveOptocom dismesso') && !pluginSectionSource.includes('rimozione di 171 DriveOptocom')) {
     throw new Error('Nota di dismissione 171 DriveOptocom non trovata');
   }
-  if (!pluginSectionSource.includes('1° Dicembre') || !pluginSectionSource.includes('171 MasterGlue')) {
-    throw new Error('Release programmata 1° Dicembre per MasterGlue non indicata');
+  const studioContextSource = fs.readFileSync(path.resolve('src/context/StudioContext.tsx'), 'utf-8');
+  if (studioContextSource.includes("id: 'plugin-masterglue'") || studioContextSource.includes("id: 'plugin-punchcraft'")) {
+    throw new Error('Plugin non autorizzati ancora presenti in DEFAULT_PLUGINS');
   }
-  return 'Catalogo aggiornato: DriveOptocom dismesso e rimosso dalle schede, MasterGlue pianificato 1° Dicembre';
+  return 'Catalogo aggiornato: esattamente 4 plugin cardine attivi, DriveOptocom dismesso';
 });
 
 assertTest('The God Cypher', 'Presenza e integrità delle 14 tracce audio MP3 originali', () => {

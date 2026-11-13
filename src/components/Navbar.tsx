@@ -449,190 +449,74 @@ export const Navbar: React.FC<NavbarProps> = ({
               </button>
             </div>
 
-            {/* 3 Categories Grid (Waves Style) */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* Column 1: Voci, Intonazione & Spazio */}
-              <div className="space-y-3">
-                <div className="flex items-center gap-2 text-xs font-mono font-bold text-amber-400 uppercase tracking-wider pb-2 border-b border-neutral-800">
-                  <span>🎤 Voci, Intonazione & Spazio</span>
+            {/* 4 Core Plugins Grid (Available for Download) */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* 171 RealTune */}
+              <div 
+                onClick={() => handleNavClick('plugin-innovation', 'plugin-realtune')}
+                className="p-4 rounded-2xl bg-neutral-900/90 hover:bg-neutral-800/90 border border-neutral-800 hover:border-amber-500/60 transition-all cursor-pointer group flex items-start justify-between gap-3 shadow-lg"
+              >
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-heading font-bold text-sm text-white group-hover:text-amber-400 transition-colors">171 RealTune</span>
+                    <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-gradient-to-r from-amber-500/30 to-red-500/30 text-amber-300 border border-amber-500/50">⭐ UPDATE v2.2.1</span>
+                    <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">DISPONIBILE</span>
+                  </div>
+                  <p className="text-[11px] text-neutral-400 font-light mt-1">Pitch Correction real-time a latenza zero, architettura WSOLA & Cue Mix CMF</p>
+                  <span className="text-[10px] font-mono text-emerald-400 font-semibold mt-1.5 inline-block">v2.2.1 • Win (.ZIP 19.20 MB) • macOS (.ZIP 8.67 MB)</span>
                 </div>
-                <div className="space-y-2">
-                  {/* 171 VocalCraft */}
-                  <div 
-                    onClick={() => handleNavClick('plugin-innovation', 'plugin-vocalcraft')}
-                    className="p-3.5 rounded-2xl bg-neutral-900/80 hover:bg-neutral-800/90 border border-neutral-800 hover:border-amber-500/60 transition-all cursor-pointer group flex items-start justify-between gap-3"
-                  >
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-heading font-bold text-sm text-white group-hover:text-amber-400 transition-colors">171 VocalCraft</span>
-                        <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-neutral-800 text-amber-300 border border-amber-500/40">⏳ SETT. 5 (27 NOV)</span>
-                      </div>
-                      <p className="text-[11px] text-neutral-400 font-light mt-0.5">Pre-Mix Intelligente -18 dBFS, Rilevatore Fonetico AI & Multi-Stile</p>
-                      <span className="text-[10px] font-mono text-amber-400 font-semibold mt-1 inline-block">Sblocco Ven 27 Nov • Win (8.48 MB) • Mac (1.31 MB)</span>
-                    </div>
-                    <span className="text-neutral-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all text-sm mt-1">→</span>
-                  </div>
-
-                  {/* 171 EasyVoice */}
-                  <div 
-                    onClick={() => handleNavClick('plugin-innovation', 'plugin-easyvoice')}
-                    className="p-3.5 rounded-2xl bg-neutral-900/80 hover:bg-neutral-800/90 border border-neutral-800 hover:border-amber-500/60 transition-all cursor-pointer group flex items-start justify-between gap-3"
-                  >
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-heading font-bold text-sm text-white group-hover:text-amber-400 transition-colors">171 EasyVoice</span>
-                        <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-gradient-to-r from-amber-500/30 to-red-500/30 text-amber-300 border border-amber-500/50">⭐ MAJOR UPDATE v3.2.1</span>
-                      </div>
-                      <p className="text-[11px] text-neutral-400 font-light mt-0.5">All-in-One Vocal Channel Strip Definitiva (1176+LA2A, 8 Preamp)</p>
-                      <span className="text-[10px] font-mono text-emerald-400 font-semibold mt-1 inline-block">v3.2.1 (Nov 2026) • Win (35.19 MB) • Mac (109.64 MB)</span>
-                    </div>
-                    <span className="text-neutral-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all text-sm mt-1">→</span>
-                  </div>
-
-                  {/* 171 RealTune */}
-                  <div 
-                    onClick={() => handleNavClick('plugin-innovation', 'plugin-realtune')}
-                    className="p-3.5 rounded-2xl bg-neutral-900/80 hover:bg-neutral-800/90 border border-neutral-800 hover:border-amber-500/60 transition-all cursor-pointer group flex items-start justify-between gap-3"
-                  >
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-heading font-bold text-sm text-white group-hover:text-amber-400 transition-colors">171 RealTune</span>
-                        <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-gradient-to-r from-amber-500/30 to-red-500/30 text-amber-300 border border-amber-500/50">⭐ UPDATE v2.2.1</span>
-                      </div>
-                      <p className="text-[11px] text-neutral-400 font-light mt-0.5">Pitch Correction real-time a latenza zero, WSOLA & Cue Mix CMF</p>
-                      <span className="text-[10px] font-mono text-emerald-400 font-semibold mt-1 inline-block">v2.2.1 (Nov 2026) • Win (19.20 MB) • Mac (8.67 MB)</span>
-                    </div>
-                    <span className="text-neutral-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all text-sm mt-1">→</span>
-                  </div>
-
-                  {/* 171 SpaceLuxe */}
-                  <div 
-                    onClick={() => handleNavClick('plugin-innovation', 'plugin-spaceluxe')}
-                    className="p-3.5 rounded-2xl bg-neutral-900/80 hover:bg-neutral-800/90 border border-neutral-800 hover:border-amber-500/60 transition-all cursor-pointer group flex items-start justify-between gap-3"
-                  >
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-heading font-bold text-sm text-white group-hover:text-amber-400 transition-colors">171 SpaceLuxe</span>
-                        <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-neutral-800 text-amber-300 border border-amber-500/40">⏳ IN ARRIVO • v2.4.0</span>
-                      </div>
-                      <p className="text-[11px] text-neutral-400 font-light mt-0.5">Riverbero Ibrido Boutique FDN-16 lossless, Shimmer & Smart Ducking</p>
-                      <span className="text-[10px] font-mono text-amber-400 font-semibold mt-1 inline-block">Sblocco Sett. 2 (16 Nov) • Win (8.56 MB) • Mac (1.10 MB)</span>
-                    </div>
-                    <span className="text-neutral-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all text-sm mt-1">→</span>
-                  </div>
-                </div>
+                <span className="text-neutral-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all text-sm mt-1">→</span>
               </div>
 
-              {/* Column 2: Dinamiche & Preamp Analogici */}
-              <div className="space-y-3">
-                <div className="flex items-center gap-2 text-xs font-mono font-bold text-amber-400 uppercase tracking-wider pb-2 border-b border-neutral-800">
-                  <span>🎛️ Dinamiche & Preamp Analogici</span>
+              {/* 171 EasyVoice */}
+              <div 
+                onClick={() => handleNavClick('plugin-innovation', 'plugin-easyvoice')}
+                className="p-4 rounded-2xl bg-neutral-900/90 hover:bg-neutral-800/90 border border-neutral-800 hover:border-amber-500/60 transition-all cursor-pointer group flex items-start justify-between gap-3 shadow-lg"
+              >
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-heading font-bold text-sm text-white group-hover:text-amber-400 transition-colors">171 EasyVoice</span>
+                    <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-gradient-to-r from-amber-500/30 to-red-500/30 text-amber-300 border border-amber-500/50">⭐ MAJOR UPDATE v3.2.1</span>
+                    <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">DISPONIBILE</span>
+                  </div>
+                  <p className="text-[11px] text-neutral-400 font-light mt-1">All-in-One Vocal Channel Strip (1176 FET + LA-2A Opto, 8 Preamp Analogici, SSL 4000 EQ)</p>
+                  <span className="text-[10px] font-mono text-emerald-400 font-semibold mt-1.5 inline-block">v3.2.1 • Win (.ZIP 35.19 MB) • macOS (.ZIP 506 KB)</span>
                 </div>
-                <div className="space-y-2">
-                  {/* 171 CleanDrive */}
-                  <div 
-                    onClick={() => handleNavClick('plugin-innovation', 'plugin-cleandrive')}
-                    className="p-3.5 rounded-2xl bg-neutral-900/80 hover:bg-neutral-800/90 border border-neutral-800 hover:border-amber-500/60 transition-all cursor-pointer group flex items-start justify-between gap-3"
-                  >
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-heading font-bold text-sm text-white group-hover:text-amber-400 transition-colors">171 CleanDrive</span>
-                        <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-neutral-800 text-amber-300 border border-amber-500/40">⏳ IN ARRIVO • v2.2.0</span>
-                      </div>
-                      <p className="text-[11px] text-neutral-400 font-light mt-0.5">Saturatore analogico a doppio canale con clipper ADAA-2 a 64-bit</p>
-                      <span className="text-[10px] font-mono text-amber-400 font-semibold mt-1 inline-block">Sblocco Nov 2026 • Win (6.65 MB) • Mac (91.65 MB)</span>
-                    </div>
-                    <span className="text-neutral-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all text-sm mt-1">→</span>
-                  </div>
-
-                  {/* 171 PerfectPre */}
-                  <div 
-                    onClick={() => handleNavClick('plugin-innovation', 'plugin-perfectpre')}
-                    className="p-3.5 rounded-2xl bg-neutral-900/80 hover:bg-neutral-800/90 border border-neutral-800 hover:border-amber-500/60 transition-all cursor-pointer group flex items-start justify-between gap-3"
-                  >
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-heading font-bold text-sm text-white group-hover:text-amber-400 transition-colors">171 PerfectPre</span>
-                        <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-gradient-to-r from-blue-500/30 to-amber-500/30 text-amber-300 border border-amber-500/50">⭐ GOLD MASTER v2.2.0</span>
-                      </div>
-                      <p className="text-[11px] text-neutral-400 font-light mt-0.5">4 Topologie preamp console, Neve 1073 LC ladder & nastro Studer</p>
-                      <span className="text-[10px] font-mono text-emerald-400 font-semibold mt-1 inline-block">v2.2.0 (Nov 2026) • Win (18.56 MB) • Mac (8.18 MB)</span>
-                    </div>
-                    <span className="text-neutral-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all text-sm mt-1">→</span>
-                  </div>
-
-                  {/* 171 MasterGlue */}
-                  <div 
-                    onClick={() => handleNavClick('plugin-innovation', 'plugin-masterglue')}
-                    className="p-3.5 rounded-2xl bg-neutral-900/80 hover:bg-neutral-800/90 border border-neutral-800 hover:border-amber-500/60 transition-all cursor-pointer group flex items-start justify-between gap-3"
-                  >
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-heading font-bold text-sm text-white group-hover:text-amber-400 transition-colors">171 MasterGlue</span>
-                        <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-neutral-800 text-amber-300 border border-amber-500/40">⏳ SETT. 2 (6 NOV)</span>
-                      </div>
-                      <p className="text-[11px] text-neutral-400 font-light mt-0.5">Compressore bus master VCA (SSL 4000) & Diode-Bridge (Neve 33609)</p>
-                      <span className="text-[10px] font-mono text-amber-400 font-semibold mt-1 inline-block">Sblocco Ven 6 Nov • Win (8.38 MB) • Mac (4.67 MB)</span>
-                    </div>
-                    <span className="text-neutral-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all text-sm mt-1">→</span>
-                  </div>
-                </div>
+                <span className="text-neutral-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all text-sm mt-1">→</span>
               </div>
 
-              {/* Column 3: Spettro, Transienti & Mastering */}
-              <div className="space-y-3">
-                <div className="flex items-center gap-2 text-xs font-mono font-bold text-amber-400 uppercase tracking-wider pb-2 border-b border-neutral-800">
-                  <span>💎 Spettro, Transienti & Mastering</span>
+              {/* 171 CleanReso */}
+              <div 
+                onClick={() => handleNavClick('plugin-innovation', 'plugin-cleanreso')}
+                className="p-4 rounded-2xl bg-neutral-900/90 hover:bg-neutral-800/90 border border-neutral-800 hover:border-amber-500/60 transition-all cursor-pointer group flex items-start justify-between gap-3 shadow-lg"
+              >
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-heading font-bold text-sm text-white group-hover:text-amber-400 transition-colors">171 CleanReso</span>
+                    <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-gradient-to-r from-amber-500/30 to-red-500/30 text-amber-300 border border-amber-500/50">⭐ GOLD MASTER v2.3.0</span>
+                    <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">DISPONIBILE</span>
+                  </div>
+                  <p className="text-[11px] text-neutral-400 font-light mt-1">32 Filtri SVF Zero-Delay Feedback dinamici, Anti-Hollowing & ascolto Delta</p>
+                  <span className="text-[10px] font-mono text-emerald-400 font-semibold mt-1.5 inline-block">v2.3.0 • Win (.ZIP 11.66 MB) • macOS (.ZIP 21.05 MB)</span>
                 </div>
-                <div className="space-y-2">
-                  {/* 171 CleanReso */}
-                  <div 
-                    onClick={() => handleNavClick('plugin-innovation', 'plugin-cleanreso')}
-                    className="p-3.5 rounded-2xl bg-neutral-900/80 hover:bg-neutral-800/90 border border-neutral-800 hover:border-amber-500/60 transition-all cursor-pointer group flex items-start justify-between gap-3"
-                  >
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-heading font-bold text-sm text-white group-hover:text-amber-400 transition-colors">171 CleanReso</span>
-                        <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-gradient-to-r from-amber-500/30 to-red-500/30 text-amber-300 border border-amber-500/50">⭐ GOLD MASTER v2.3.0</span>
-                      </div>
-                      <p className="text-[11px] text-neutral-400 font-light mt-0.5">32 Filtri SVF Zero-Delay Feedback dinamici con ascolto Delta</p>
-                      <span className="text-[10px] font-mono text-emerald-400 font-semibold mt-1 inline-block">v2.3.0 (Nov 2026) • Win (11.66 MB) • Mac (21.05 MB)</span>
-                    </div>
-                    <span className="text-neutral-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all text-sm mt-1">→</span>
-                  </div>
+                <span className="text-neutral-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all text-sm mt-1">→</span>
+              </div>
 
-                  {/* 171 PunchCraft */}
-                  <div 
-                    onClick={() => handleNavClick('plugin-innovation', 'plugin-punchcraft')}
-                    className="p-3.5 rounded-2xl bg-neutral-900/80 hover:bg-neutral-800/90 border border-neutral-800 hover:border-amber-500/60 transition-all cursor-pointer group flex items-start justify-between gap-3"
-                  >
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-heading font-bold text-sm text-white group-hover:text-amber-400 transition-colors">171 PunchCraft</span>
-                        <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-neutral-800 text-amber-300 border border-amber-500/40">⏳ SETT. 3 (13 NOV)</span>
-                      </div>
-                      <p className="text-[11px] text-neutral-400 font-light mt-0.5">Multi-Band Transient Shaper D.E.T. e sub-armonico sismico</p>
-                      <span className="text-[10px] font-mono text-amber-400 font-semibold mt-1 inline-block">Sblocco Ven 13 Nov • Win (8.43 MB) • Mac (4.75 MB)</span>
-                    </div>
-                    <span className="text-neutral-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all text-sm mt-1">→</span>
+              {/* 171 PerfectPre */}
+              <div 
+                onClick={() => handleNavClick('plugin-innovation', 'plugin-perfectpre')}
+                className="p-4 rounded-2xl bg-neutral-900/90 hover:bg-neutral-800/90 border border-neutral-800 hover:border-amber-500/60 transition-all cursor-pointer group flex items-start justify-between gap-3 shadow-lg"
+              >
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-heading font-bold text-sm text-white group-hover:text-amber-400 transition-colors">171 PerfectPre</span>
+                    <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-gradient-to-r from-blue-500/30 to-amber-500/30 text-amber-300 border border-amber-500/50">⭐ GOLD MASTER v2.2.0</span>
+                    <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">DISPONIBILE</span>
                   </div>
-
-                  {/* 171 PerfectClip */}
-                  <div 
-                    onClick={() => handleNavClick('plugin-innovation', 'plugin-perfectclip')}
-                    className="p-3.5 rounded-2xl bg-neutral-900/80 hover:bg-neutral-800/90 border border-neutral-800 hover:border-amber-500/60 transition-all cursor-pointer group flex items-start justify-between gap-3"
-                  >
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-heading font-bold text-sm text-white group-hover:text-amber-400 transition-colors">171 PerfectClip</span>
-                        <span className="text-[9px] font-mono font-black px-1.5 py-0.2 rounded bg-neutral-800 text-amber-300 border border-amber-500/40">⏳ SETT. 4 (20 NOV)</span>
-                      </div>
-                      <p className="text-[11px] text-neutral-400 font-light mt-0.5">Mastering ADAA-2 Clipper a 64-bit con matrice brevettata TransDetail™</p>
-                      <span className="text-[10px] font-mono text-amber-400 font-semibold mt-1 inline-block">Sblocco Ven 20 Nov • Win (8.45 MB) • Mac (0.74 MB)</span>
-                    </div>
-                    <span className="text-neutral-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all text-sm mt-1">→</span>
-                  </div>
+                  <p className="text-[11px] text-neutral-400 font-light mt-1">Preamplificatore valvolare/analogico console con Baxandall ed Air Band fino a 40 kHz</p>
+                  <span className="text-[10px] font-mono text-emerald-400 font-semibold mt-1.5 inline-block">v2.2.0 • Win (.ZIP 18.56 MB) • macOS (.ZIP 8.18 MB)</span>
                 </div>
+                <span className="text-neutral-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all text-sm mt-1">→</span>
               </div>
             </div>
 
@@ -725,15 +609,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                       { id: 'plugin-easyvoice', name: '171 EasyVoice', tag: 'DISPONIBILE v3.2.1' },
                       { id: 'plugin-cleanreso', name: '171 CleanReso', tag: 'DISPONIBILE v2.3.0' },
                       { id: 'plugin-perfectpre', name: '171 PerfectPre', tag: 'DISPONIBILE v2.2.0' },
-                      { id: 'plugin-spaceluxe', name: '171 SpaceLuxe', tag: 'IN ARRIVO (16 Nov)' },
-                      { id: 'plugin-cleandrive', name: '171 CleanDrive', tag: 'IN ARRIVO v2.2.0' },
-                      { id: 'plugin-vocalcraft', name: '171 VocalCraft', tag: 'IN ARRIVO (27 Nov)' },
-                      { id: 'plugin-onesilk', name: '171 OneSilk', tag: 'IN ARRIVO v1.1.0' },
-                      { id: 'plugin-snipertune', name: '171 SniperTune', tag: 'IN ARRIVO v1.0.0' },
-                      { id: 'plugin-sessionbuilder', name: '171 SessionBuilder', tag: 'IN ARRIVO v1.0.0' },
-                      { id: 'plugin-punchcraft', name: '171 PunchCraft', tag: '13 NOV' },
-                      { id: 'plugin-perfectclip', name: '171 PerfectClip', tag: '20 NOV' },
-                      { id: 'plugin-masterglue', name: '171 MasterGlue', tag: '1 DIC' },
                     ].map((subp) => (
                       <button
                         key={subp.id}

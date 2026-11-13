@@ -68,30 +68,8 @@ export const PluginDetailPage: React.FC<PluginDetailPageProps> = ({
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
   }, [pluginId]);
 
-  // Real-time timer for countdown
-  const [now, setNow] = useState<number>(Date.now());
-  useEffect(() => {
-    const timer = setInterval(() => setNow(Date.now()), 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  // Compute countdown remaining time
-  const getCountdown = (targetDateStr?: string) => {
-    if (!targetDateStr) return null;
-    const target = new Date(targetDateStr).getTime();
-    const diff = target - now;
-    if (diff <= 0) {
-      return { isUnlocked: true, days: 0, hours: 0, minutes: 0, seconds: 0, totalDiff: 0 };
-    }
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-    return { isUnlocked: false, days, hours, minutes, seconds, totalDiff: diff };
-  };
-
-  const countdown = plugin?.unlockDate ? getCountdown(plugin.unlockDate) : null;
-  const isLocked = countdown ? !countdown.isUnlocked : (plugin?.status === 'IN ARRIVO');
+  const countdown = null;
+  const isLocked = false;
 
   // Format date in Italian format
   const formatUnlockDate = (dateStr?: string) => {
@@ -214,12 +192,8 @@ export const PluginDetailPage: React.FC<PluginDetailPageProps> = ({
 
   const handleDownload = (os: 'win' | 'mac') => {
     if (!plugin) return;
-    if (isLocked) {
-      setIsLockedModalOpen(true);
-      return;
-    }
     if (!currentUser) {
-      openAuthModal(`Accedi o registrati gratuitamente per scaricare ${plugin.name} (${os === 'mac' ? 'macOS Universal' : 'Windows 64-bit'}).`);
+      openAuthModal(`Registrazione obbligatoria: crea un account gratuito in 10 secondi per scaricare ${plugin.name} (${os === 'mac' ? 'macOS Universal' : 'Windows 64-bit'}).`);
       return;
     }
     downloadPlugin(plugin.id, os);
@@ -511,77 +485,52 @@ export const PluginDetailPage: React.FC<PluginDetailPageProps> = ({
               </span>
             </div>
 
-            {isLocked ? (
-              /* Countdown lock banner */
-              <div className="p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-black/80 border border-amber-500/40 space-y-2.5 sm:space-y-3">
-                <div className="flex items-center justify-between text-xs font-mono text-amber-300">
-                  <span className="flex items-center gap-1.5 font-bold">
-                    <Clock className="w-4 h-4 animate-spin text-amber-400" />
-                    <span className="text-[11px] sm:text-xs">COUNTDOWN SBLOCCO</span>
-                  </span>
-                  <span className="text-[10.5px] sm:text-xs text-neutral-400 truncate max-w-[160px] sm:max-w-none text-right">
-                    {formatUnlockDate(plugin.unlockDate)}
-                  </span>
-                </div>
-                <div className="grid grid-cols-4 gap-1.5 sm:gap-2 text-center font-mono">
-                  <div className="p-2 sm:p-2.5 rounded-xl bg-neutral-950 border border-amber-500/30">
-                    <span className="block text-lg sm:text-xl font-black text-amber-400 tabular-nums">{String(countdown?.days ?? 0).padStart(2, '0')}</span>
-                    <span className="text-[8px] sm:text-[9px] text-neutral-400 uppercase tracking-wider">GIORNI</span>
-                  </div>
-                  <div className="p-2 sm:p-2.5 rounded-xl bg-neutral-950 border border-amber-500/30">
-                    <span className="block text-lg sm:text-xl font-black text-amber-400 tabular-nums">{String(countdown?.hours ?? 0).padStart(2, '0')}</span>
-                    <span className="text-[8px] sm:text-[9px] text-neutral-400 uppercase tracking-wider">ORE</span>
-                  </div>
-                  <div className="p-2 sm:p-2.5 rounded-xl bg-neutral-950 border border-amber-500/30">
-                    <span className="block text-lg sm:text-xl font-black text-amber-400 tabular-nums">{String(countdown?.minutes ?? 0).padStart(2, '0')}</span>
-                    <span className="text-[8px] sm:text-[9px] text-neutral-400 uppercase tracking-wider">MINUTI</span>
-                  </div>
-                  <div className="p-2 sm:p-2.5 rounded-xl bg-neutral-950 border border-amber-500/30">
-                    <span className="block text-lg sm:text-xl font-black text-amber-400 tabular-nums">{String(countdown?.seconds ?? 0).padStart(2, '0')}</span>
-                    <span className="text-[8px] sm:text-[9px] text-neutral-400 uppercase tracking-wider">SECONDI</span>
+            /* Action Buttons with Mandatory Free Registration */
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3.5">
+              {/* Windows 64-bit button */}
+              <button
+                type="button"
+                onClick={() => handleDownload('win')}
+                className="px-4 sm:px-5 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 hover:from-amber-400 hover:to-amber-300 text-black font-heading font-black text-xs sm:text-sm uppercase tracking-wider flex items-center justify-between gap-3 shadow-lg shadow-amber-500/25 transition-all duration-200 cursor-pointer hover:scale-[1.01] active:scale-[0.98]"
+              >
+                <div className="flex items-center gap-2.5">
+                  <span className="text-lg sm:text-xl">🪟</span>
+                  <div className="text-left leading-tight">
+                    <span className="block text-xs font-black">
+                      {currentUser ? 'SCARICA WINDOWS 64-BIT' : '🔒 REGISTRATI PER SCARICARE'}
+                    </span>
+                    <span className="block text-[9.5px] sm:text-[10px] font-mono opacity-80">
+                      {currentUser ? 'VST3 & STANDALONE' : 'WIN 64-BIT (ACCOUNT GRATUITO)'}
+                    </span>
                   </div>
                 </div>
-              </div>
-            ) : (
-              /* Action Buttons */
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3.5">
-                {/* Windows 64-bit button */}
-                <button
-                  type="button"
-                  onClick={() => handleDownload('win')}
-                  className="px-4 sm:px-5 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 hover:from-amber-400 hover:to-amber-300 text-black font-heading font-black text-xs sm:text-sm uppercase tracking-wider flex items-center justify-between gap-3 shadow-lg shadow-amber-500/25 transition-all duration-200 cursor-pointer hover:scale-[1.01] active:scale-[0.98]"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <span className="text-lg sm:text-xl">🪟</span>
-                    <div className="text-left leading-tight">
-                      <span className="block text-xs font-black">WINDOWS 64-BIT</span>
-                      <span className="block text-[9.5px] sm:text-[10px] font-mono opacity-80">VST3 & STANDALONE</span>
-                    </div>
-                  </div>
-                  <span className="px-2 py-1 rounded-md bg-black/15 text-[10.5px] sm:text-[11px] font-mono font-bold shrink-0">
-                    {plugin.zipFileSize || '35 MB'}
-                  </span>
-                </button>
+                <span className="px-2 py-1 rounded-md bg-black/15 text-[10.5px] sm:text-[11px] font-mono font-bold shrink-0">
+                  {plugin.zipFileSize || '35 MB'}
+                </span>
+              </button>
 
-                {/* macOS button */}
-                <button
-                  type="button"
-                  onClick={() => handleDownload('mac')}
-                  className="px-4 sm:px-5 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl bg-neutral-950 hover:bg-neutral-800 border border-neutral-700 hover:border-amber-500/50 text-white font-heading font-black text-xs sm:text-sm uppercase tracking-wider flex items-center justify-between gap-3 transition-all duration-200 cursor-pointer hover:scale-[1.01] active:scale-[0.98]"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <span className="text-lg sm:text-xl">🍏</span>
-                    <div className="text-left leading-tight">
-                      <span className="block text-xs font-black">MACOS UNIVERSAL</span>
-                      <span className="block text-[9.5px] sm:text-[10px] font-mono text-neutral-400">AU & VST3</span>
-                    </div>
+              {/* macOS button */}
+              <button
+                type="button"
+                onClick={() => handleDownload('mac')}
+                className="px-4 sm:px-5 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl bg-neutral-950 hover:bg-neutral-800 border border-neutral-700 hover:border-amber-500/50 text-white font-heading font-black text-xs sm:text-sm uppercase tracking-wider flex items-center justify-between gap-3 transition-all duration-200 cursor-pointer hover:scale-[1.01] active:scale-[0.98]"
+              >
+                <div className="flex items-center gap-2.5">
+                  <span className="text-lg sm:text-xl">🍏</span>
+                  <div className="text-left leading-tight">
+                    <span className="block text-xs font-black">
+                      {currentUser ? 'SCARICA MACOS UNIVERSAL' : '🔒 REGISTRATI PER SCARICARE'}
+                    </span>
+                    <span className="block text-[9.5px] sm:text-[10px] font-mono text-neutral-400">
+                      {currentUser ? 'AU & VST3' : 'MACOS UNIVERSAL (ACCOUNT GRATUITO)'}
+                    </span>
                   </div>
-                  <span className="px-2 py-1 rounded-md bg-neutral-900 text-cyan-400 text-[10.5px] sm:text-[11px] font-mono font-bold border border-neutral-800 shrink-0">
-                    {plugin.macZipFileSize || '21 MB'}
-                  </span>
-                </button>
-              </div>
-            )}
+                </div>
+                <span className="px-2 py-1 rounded-md bg-neutral-900 text-cyan-400 text-[10.5px] sm:text-[11px] font-mono font-bold border border-neutral-800 shrink-0">
+                  {plugin.macZipFileSize || '21 MB'}
+                </span>
+              </button>
+            </div>
 
             {/* Quick 1-Click Copy Installation Directory Paths */}
             <div className="p-3 sm:p-3.5 rounded-xl sm:rounded-2xl bg-black/90 border border-neutral-800 space-y-2">
@@ -1347,16 +1296,7 @@ export const PluginDetailPage: React.FC<PluginDetailPageProps> = ({
         </div>
       )}
 
-      {/* Hardware Locked Modal (Amber CRT Countdown - Zero browser alerts) */}
-      <HardwareLockedModal
-        plugin={plugin}
-        isOpen={isLockedModalOpen}
-        onClose={() => setIsLockedModalOpen(false)}
-        countdown={countdown}
-        onExploreAvailable={() => {
-          onBack();
-        }}
-      />
+      
 
     </div>
   );

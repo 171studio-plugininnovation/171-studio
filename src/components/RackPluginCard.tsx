@@ -4,6 +4,7 @@ import {
   ExternalLink, Shield, Layers, Radio, Star
 } from 'lucide-react';
 import { PluginItem } from '../types/cms';
+import { useStudio } from '../context/StudioContext';
 import { getAssetUrl } from '../utils/assetPath';
 
 export interface RackPluginCardProps {
@@ -95,6 +96,7 @@ const TOPOLOGY_MAP: Record<string, { topology: string; tube: string; oversamplin
 };
 
 export const RackPluginCard: React.FC<RackPluginCardProps> = ({
+
   plugin,
   countdown,
   isLocked,
@@ -106,6 +108,7 @@ export const RackPluginCard: React.FC<RackPluginCardProps> = ({
   reviewCount = 0,
   averageRating = null,
 }) => {
+  const { currentUser } = useStudio();
   const specs = TOPOLOGY_MAP[plugin.id] || {
     topology: 'ANALOG MODELED DSP PROCESSOR',
     tube: 'Discrete Studio Engineering',

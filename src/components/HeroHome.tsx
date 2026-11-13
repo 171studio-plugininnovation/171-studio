@@ -102,33 +102,12 @@ export const HeroHome: React.FC<HeroHomeProps> = ({ onNavigate }) => {
   const [activePlayerTab, setActivePlayerTab] = useState<'both' | 'spotify' | 'youtube'>('both');
   const [showConfig, setShowConfig] = useState(false);
 
-  // Live 1000ms ticker for accurate weekly unlock countdowns
-  const [now, setNow] = useState<number>(Date.now());
-  useEffect(() => {
-    const timer = setInterval(() => setNow(Date.now()), 1000);
-    return () => clearInterval(timer);
-  }, []);
-
   // Hardware Rack Carousel state
   const [activeRackIndex, setActiveRackIndex] = useState(0);
   const [lockedModalPlugin, setLockedModalPlugin] = useState<PluginItem | null>(null);
 
   const pluginsList = siteContent.plugins && siteContent.plugins.length > 0 ? siteContent.plugins : [];
   const currentRackPlugin = pluginsList[activeRackIndex] || pluginsList[0];
-
-  const getCountdown = (targetDateStr?: string) => {
-    if (!targetDateStr) return null;
-    const target = new Date(targetDateStr).getTime();
-    const diff = target - now;
-    if (diff <= 0) {
-      return { isUnlocked: true, days: 0, hours: 0, minutes: 0, seconds: 0, totalDiff: 0 };
-    }
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-    return { isUnlocked: false, days, hours, minutes, seconds, totalDiff: diff };
-  };
 
   const handleNextRack = () => {
     setActiveRackIndex((prev) => (prev + 1) % pluginsList.length);
@@ -139,16 +118,8 @@ export const HeroHome: React.FC<HeroHomeProps> = ({ onNavigate }) => {
   };
 
   const handleQuickDownload = (plugin: PluginItem, os: 'win' | 'mac') => {
-    const countdown = plugin.unlockDate ? getCountdown(plugin.unlockDate) : null;
-    const isLocked = countdown ? !countdown.isUnlocked : (plugin.status === 'IN ARRIVO');
-
-    if (isLocked) {
-      setLockedModalPlugin(plugin);
-      return;
-    }
-
     if (!currentUser) {
-      openAuthModal(`Accedi o registrati per scaricare ${plugin.name} (${os === 'mac' ? 'macOS AU/VST3' : 'Windows x64 VST3'}).`);
+      openAuthModal(`Registrazione obbligatoria: crea un account gratuito in 10 secondi per scaricare ${plugin.name} (${os === 'mac' ? 'macOS AU/VST3' : 'Windows x64 VST3'}).`);
       return;
     }
 
@@ -246,8 +217,6 @@ export const HeroHome: React.FC<HeroHomeProps> = ({ onNavigate }) => {
       ];
 
   // Active rack plugin countdown
-  const currentCountdown = currentRackPlugin?.unlockDate ? getCountdown(currentRackPlugin.unlockDate) : null;
-  const isCurrentRackLocked = currentCountdown ? !currentCountdown.isUnlocked : (currentRackPlugin?.status === 'IN ARRIVO');
   const currentTopology = currentRackPlugin ? TOPOLOGY_MAP[currentRackPlugin.id] : null;
 
   return (
@@ -471,8 +440,8 @@ export const HeroHome: React.FC<HeroHomeProps> = ({ onNavigate }) => {
         {/* Mini Rack Selector Strip (Scrollable Tabs) */}
         <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2">
           {pluginsList.map((p, idx) => {
-            const pCountdown = p.unlockDate ? getCountdown(p.unlockDate) : null;
-            const pLocked = pCountdown ? !pCountdown.isUnlocked : (p.status === 'IN ARRIVO');
+            const pCountdown = null;
+            const pLocked = false;
             const isSelected = idx === activeRackIndex;
 
             return (
@@ -536,19 +505,10 @@ export const HeroHome: React.FC<HeroHomeProps> = ({ onNavigate }) => {
 
               {/* Status Badge */}
               <div>
-                {isCurrentRackLocked ? (
-                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-amber-950/60 border border-amber-600/60 text-amber-300 text-xs font-mono font-bold">
-                    <Clock className="w-4 h-4 text-amber-400 animate-pulse" />
-                    <span>
-                      SBLOCCO TRA: {currentCountdown ? `${currentCountdown.days}g ${currentCountdown.hours}o ${currentCountdown.minutes}m ${currentCountdown.seconds}s` : 'IN ARRIVO'}
-                    </span>
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-950/60 border border-emerald-500/50 text-emerald-400 text-xs font-mono font-bold">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                    <span>DISPONIBILE ORA • DOWNLOAD GRATUITO</span>
-                  </div>
-                )}
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-950/60 border border-emerald-500/50 text-emerald-400 text-xs font-mono font-bold">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                  <span>DISPONIBILE ORA • DOWNLOAD GRATUITO</span>
+                </div>
               </div>
             </div>
 
@@ -594,35 +554,26 @@ export const HeroHome: React.FC<HeroHomeProps> = ({ onNavigate }) => {
                   Scheda DSP Completa
                 </button>
 
-                {isCurrentRackLocked ? (
-                  <button
-                    type="button"
-                    onClick={() => setLockedModalPlugin(currentRackPlugin)}
-                    className="py-2.5 px-4 rounded-xl bg-amber-500/20 hover:bg-amber-500 text-amber-300 hover:text-black font-mono text-xs uppercase tracking-wider border border-amber-500/50 transition-all cursor-pointer flex items-center gap-2"
-                  >
-                    <Clock className="w-4 h-4" />
-                    <span>Dettagli Sblocco</span>
-                  </button>
-                ) : (
-                  <>
+                <>
                     <button
                       type="button"
                       onClick={() => handleQuickDownload(currentRackPlugin, 'win')}
                       className="py-2.5 px-4 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-heading font-bold text-xs uppercase tracking-wider transition-all shadow-md shadow-amber-500/20 cursor-pointer flex items-center gap-1.5"
+                      title={currentUser ? 'Scarica Win VST3' : 'Registrazione obbligatoria'}
                     >
-                      <Download className="w-3.5 h-3.5" />
-                      <span>Win VST3</span>
+                      {currentUser ? <Download className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5" />}
+                      <span>{currentUser ? 'Win VST3' : '🔒 Registrati (Win)'}</span>
                     </button>
                     <button
                       type="button"
                       onClick={() => handleQuickDownload(currentRackPlugin, 'mac')}
                       className="py-2.5 px-4 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-amber-400 hover:text-white font-mono text-xs uppercase tracking-wider border border-amber-500/40 transition-colors cursor-pointer flex items-center gap-1.5"
+                      title={currentUser ? 'Scarica macOS AU' : 'Registrazione obbligatoria'}
                     >
-                      <Download className="w-3.5 h-3.5" />
-                      <span>macOS AU</span>
+                      {currentUser ? <Download className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5 text-cyan-400" />}
+                      <span>{currentUser ? 'macOS AU' : '🔒 Registrati (Mac)'}</span>
                     </button>
                   </>
-                )}
               </div>
             </div>
           </div>
@@ -995,18 +946,6 @@ export const HeroHome: React.FC<HeroHomeProps> = ({ onNavigate }) => {
           </button>
         </div>
       </div>
-
-      {/* 10. BOUTIQUE HARDWARE LOCKED MODAL (NO BROWSER ALERTS) */}
-      <HardwareLockedModal
-        plugin={lockedModalPlugin}
-        isOpen={lockedModalPlugin !== null}
-        onClose={() => setLockedModalPlugin(null)}
-        countdown={lockedModalPlugin?.unlockDate ? getCountdown(lockedModalPlugin.unlockDate) : null}
-        onExploreAvailable={() => {
-          setLockedModalPlugin(null);
-          onNavigate('plugin-innovation');
-        }}
-      />
 
     </div>
   );

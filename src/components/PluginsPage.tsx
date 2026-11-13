@@ -82,48 +82,6 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
     setExpandedChangelogIds(nextMap);
   };
 
-  // Live real-time clock ticking every 1000ms for weekly unlock countdowns
-  const [now, setNow] = useState<number>(Date.now());
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setNow(Date.now());
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  // Compute countdown remaining time
-  const getCountdown = (targetDateStr?: string) => {
-    if (!targetDateStr) return null;
-    const target = new Date(targetDateStr).getTime();
-    const diff = target - now;
-    if (diff <= 0) {
-      return { isUnlocked: true, days: 0, hours: 0, minutes: 0, seconds: 0, totalDiff: 0 };
-    }
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-    return { isUnlocked: false, days, hours, minutes, seconds, totalDiff: diff };
-  };
-
-  // Format date in Italian format
-  const formatUnlockDate = (dateStr?: string) => {
-    if (!dateStr) return '';
-    try {
-      const d = new Date(dateStr);
-      return d.toLocaleDateString('it-IT', {
-        weekday: 'short',
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-      });
-    } catch {
-      return dateStr;
-    }
-  };
-
   // Early Supporter Lifetime Pass & Verified PayPal Donation State
   const [activeDonation, setActiveDonation] = useState<PluginDonationRecord | null>(null);
   const [donationTxInput, setDonationTxInput] = useState('');
@@ -137,23 +95,16 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
   const [expandedTechPluginId, setExpandedTechPluginId] = useState<Record<string, boolean>>({
     'plugin-realtune': true,
     'plugin-easyvoice': true,
-    'plugin-cleandrive': true,
     'plugin-cleanreso': true,
     'plugin-perfectpre': true,
-    'plugin-masterglue': true,
-    'plugin-spaceluxe': true,
-    'plugin-punchcraft': true,
-    'plugin-perfectclip': true,
   });
 
   // Expanded changelog state for each plugin (EasyVoice, SpaceLuxe and RealTune open by default)
   const [expandedChangelogPluginId, setExpandedChangelogPluginId] = useState<Record<string, boolean>>({
-    'plugin-easyvoice': true,
-    'plugin-spaceluxe': true,
     'plugin-realtune': true,
-    'plugin-cleandrive': false,
-    'plugin-cleanreso': false,
-    'plugin-perfectpre': false,
+    'plugin-easyvoice': true,
+    'plugin-cleanreso': true,
+    'plugin-perfectpre': true,
   });
 
   // Modal for previewing hardware GUI snapshot
@@ -193,10 +144,9 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
         // Category match
         if (categoryFilter === 'all') return true;
         if (categoryFilter === 'favorites') return isPluginFavorite(plugin.id);
-        if (categoryFilter === 'vocal') return ['plugin-realtune', 'plugin-easyvoice', 'plugin-vocalcraft', 'plugin-onesilk', 'plugin-snipertune', 'plugin-sessionbuilder'].includes(plugin.id);
-        if (categoryFilter === 'dynamics') return ['plugin-masterglue', 'plugin-punchcraft', 'plugin-perfectclip'].includes(plugin.id);
-        if (categoryFilter === 'saturation') return ['plugin-cleandrive', 'plugin-perfectpre'].includes(plugin.id);
-        if (categoryFilter === 'spatial') return ['plugin-cleanreso', 'plugin-spaceluxe'].includes(plugin.id);
+        if (categoryFilter === 'vocal') return ['plugin-realtune', 'plugin-easyvoice'].includes(plugin.id);
+        if (categoryFilter === 'saturation') return ['plugin-perfectpre'].includes(plugin.id);
+        if (categoryFilter === 'dynamics') return ['plugin-cleanreso'].includes(plugin.id);
         return true;
       })
       .sort((a, b) => {
@@ -261,7 +211,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
 
   const handleDownload = (plugin: PluginItem, platform: 'win' | 'mac' = 'win') => {
     if (!currentUser) {
-      openAuthModal(`Accedi o registrati gratuitamente per scaricare il pacchetto .ZIP di "${plugin.name}" (${platform === 'mac' ? 'macOS Universal' : 'Windows 64-bit'}).`);
+      openAuthModal(`Registrazione obbligatoria: crea un account gratuito in 10 secondi per scaricare il pacchetto .ZIP di "${plugin.name}" (${platform === 'mac' ? 'macOS Universal' : 'Windows 64-bit'}).`);
       return;
     }
 
@@ -1011,7 +961,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
                 Scarica Gratis i Plugin di 171 Studio
               </h3>
               <p className="text-xs sm:text-sm text-neutral-400 font-light mt-1">
-                Tutti i 13 strumenti DSP boutique ufficiali 171Plugin Innovation aggiornati alle versioni stabili compilate C++20 (12 Novembre 2026). Al momento sono attivi per il download gratuito immediato (.ZIP) i 4 strumenti cardine della suite: <strong>171 RealTune</strong>, <strong>171 PerfectPre</strong>, <strong>171 CleanReso</strong> e <strong>171 EasyVoice</strong> per Windows e macOS.
+                Tutti i 4 strumenti DSP boutique del laboratorio 171 Studio Innovation sincronizzati alle ultime versioni compilate C++20: <strong>171 RealTune v2.2.1</strong>, <strong>171 EasyVoice v3.2.1</strong>, <strong>171 CleanReso v2.3.0</strong> e <strong>171 PerfectPre v2.2.0</strong> per Windows 64-bit e macOS Universal. Registrazione account gratuita obbligatoria per il download dei pacchetti .ZIP.
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-2 self-start md:self-auto">
@@ -1032,144 +982,6 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
                 <span className="text-neutral-600">•</span>
                 <span>{visitorCount.toLocaleString('it-IT')} Connessioni Totali</span>
               </span>
-            </div>
-          </div>
-
-          {/* Programma di Sblocco Settimanale Roadmap Banner */}
-          <div className="mb-6 sm:mb-8 p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-gradient-to-br from-neutral-950 via-neutral-900 to-amber-950/30 border border-amber-500/40 backdrop-blur-xl shadow-2xl relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
-
-            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
-              <div>
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-[10px] font-mono font-bold uppercase tracking-wider mb-2">
-                  <Clock className="w-3.5 h-3.5 text-amber-400 animate-spin" />
-                  <span>PROGRAMMA UFFICIALE DI SBLOCCO SETTIMANALE • 1 A SETTIMANA</span>
-                </div>
-                <h3 className="text-xl sm:text-2xl lg:text-3xl font-heading font-black text-white tracking-tight">
-                  Roadmap Sblocco Progressivo 171 Studio Innovation
-                </h3>
-                <p className="text-xs sm:text-sm text-neutral-300 font-light mt-1 max-w-3xl leading-relaxed">
-                  I nuovi processori boutique del laboratorio DSP vengono rilasciati e sbloccati progressivamente su <strong>base settimanale (1 a settimana)</strong> con timer live sincronizzato al secondo. Al termine di ciascun countdown, il relativo pacchetto di download singolo freeware si attiva automaticamente. Nessun archivio cumulativo: scarichi solo ciò che desideri!
-                </p>
-              </div>
-
-              <div className="flex items-center gap-2 self-start lg:self-auto shrink-0 text-xs font-mono px-3.5 py-2 rounded-2xl bg-black/80 border border-amber-500/40 text-amber-300 shadow-inner">
-                <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
-                <span>Timer Sincronizzato Live a 1s</span>
-              </div>
-            </div>
-
-            {/* 5 Weekly Steps Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 sm:gap-4">
-              {[
-                {
-                  id: 'plugin-punchcraft',
-                  week: 1,
-                  name: '171 PunchCraft',
-                  cat: 'Multi-Band Transient Shaper',
-                  dateStr: '2026-11-13T18:00:00+01:00',
-                  targetDateLabel: 'Ven 13 Nov 2026, 18:00',
-                  winSize: '8.43 MB',
-                  macSize: '4.83 MB',
-                },
-                {
-                  id: 'plugin-spaceluxe',
-                  week: 2,
-                  name: '171 SpaceLuxe',
-                  cat: 'Hybrid Reverb & Shimmer',
-                  dateStr: '2026-11-16T18:00:00+01:00',
-                  targetDateLabel: 'Lun 16 Nov 2026, 18:00',
-                  winSize: '8.56 MB',
-                  macSize: '1.10 MB',
-                },
-                {
-                  id: 'plugin-perfectclip',
-                  week: 3,
-                  name: '171 PerfectClip',
-                  cat: 'Mastering ADAA-2 Clipper',
-                  dateStr: '2026-11-20T18:00:00+01:00',
-                  targetDateLabel: 'Ven 20 Nov 2026, 18:00',
-                  winSize: '8.44 MB',
-                  macSize: '1.00 MB',
-                },
-                {
-                  id: 'plugin-vocalcraft',
-                  week: 4,
-                  name: '171 VocalCraft',
-                  cat: 'Pre-Mix & Multi-Style Vocal',
-                  dateStr: '2026-11-27T18:00:00+01:00',
-                  targetDateLabel: 'Ven 27 Nov 2026, 18:00',
-                  winSize: '8.29 MB',
-                  macSize: '22.66 MB',
-                },
-                {
-                  id: 'plugin-masterglue',
-                  week: 5,
-                  name: '171 MasterGlue',
-                  cat: 'Analog Bus VCA/Diode Console',
-                  dateStr: '2026-12-01T18:00:00+01:00',
-                  targetDateLabel: 'Mar 1 Dic 2026, 18:00',
-                  winSize: '8.38 MB',
-                  macSize: '4.74 MB',
-                },
-              ].map((step) => {
-                const cd = getCountdown(step.dateStr);
-                const isUnlocked = cd?.isUnlocked;
-                return (
-                  <div
-                    key={step.id}
-                    className={`p-4 rounded-2xl border transition-all duration-300 flex flex-col justify-between ${
-                      isUnlocked
-                        ? 'bg-emerald-950/30 border-emerald-500/50 text-emerald-200'
-                        : 'bg-black/70 border-amber-500/30 hover:border-amber-500/60 text-white'
-                    }`}
-                  >
-                    <div>
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 uppercase">
-                          SETTIMANA {step.week}
-                        </span>
-                        <span className="text-[10px] font-mono text-neutral-400">
-                          {isUnlocked ? '🟢 SBLOCCATO' : '⏳ COUNTDOWN'}
-                        </span>
-                      </div>
-
-                      <h4 className="font-heading font-black text-base text-white">
-                        {step.name}
-                      </h4>
-                      <p className="text-[11px] text-neutral-400 font-mono mt-0.5 truncate">
-                        {step.cat}
-                      </p>
-                      <p className="text-[10px] text-amber-300/80 font-mono mt-1">
-                        📅 {step.targetDateLabel}
-                      </p>
-                      <div className="flex items-center gap-2 mt-2 text-[10px] font-mono text-neutral-400">
-                        <span>🪟 {step.winSize}</span>
-                        <span>•</span>
-                        <span>🍏 {step.macSize}</span>
-                      </div>
-                    </div>
-
-                    <div className="mt-4 pt-3 border-t border-neutral-800">
-                      {isUnlocked ? (
-                        <div className="text-xs font-mono text-emerald-400 font-bold flex items-center gap-1.5">
-                          <Check className="w-3.5 h-3.5" />
-                          <span>Download Freeware Attivo</span>
-                        </div>
-                      ) : (
-                        <div className="text-center font-mono">
-                          <span className="text-[9.5px] uppercase tracking-wider text-neutral-400 block mb-1">
-                            Tempo al Rilascio:
-                          </span>
-                          <div className="px-2 py-1.5 rounded-lg bg-neutral-900 border border-amber-500/30 text-amber-400 font-black text-xs tabular-nums">
-                            {cd?.days}g {cd?.hours}h {cd?.minutes}m {cd?.seconds}s
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
             </div>
           </div>
 
@@ -1400,10 +1212,10 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
                               <button
                                 onClick={() => handleDownload(p, 'win')}
                                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-heading font-black text-xs shadow transition-all cursor-pointer active:scale-95"
-                                title={`Scarica pacchetto .ZIP per Windows 64-bit (${winSize})`}
+                                title={currentUser ? `Scarica pacchetto .ZIP per Windows 64-bit (${winSize})` : 'Registrazione gratuita obbligatoria per scaricare'}
                               >
-                                <Download className="w-3.5 h-3.5" />
-                                <span>Win64 (.ZIP {winSize})</span>
+                                {currentUser ? <Download className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5" />}
+                                <span>{currentUser ? `Win64 (.ZIP ${winSize})` : '🔒 Registrati (Win64)'}</span>
                               </button>
 
                               {/* Mac Download */}
@@ -1411,10 +1223,10 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
                                 <button
                                   onClick={() => handleDownload(p, 'mac')}
                                   className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-neutral-200 font-mono text-xs transition-all cursor-pointer active:scale-95"
-                                  title={`Scarica pacchetto .ZIP per macOS (${macSize})`}
+                                  title={currentUser ? `Scarica pacchetto .ZIP per macOS (${macSize})` : 'Registrazione gratuita obbligatoria per scaricare'}
                                 >
-                                  <Download className="w-3.5 h-3.5 text-cyan-400" />
-                                  <span>macOS (.ZIP {macSize})</span>
+                                  {currentUser ? <Download className="w-3.5 h-3.5 text-cyan-400" /> : <Lock className="w-3.5 h-3.5 text-cyan-400" />}
+                                  <span>{currentUser ? `macOS (.ZIP ${macSize})` : '🔒 Registrati (macOS)'}</span>
                                 </button>
                               )}
                             </div>
@@ -1437,13 +1249,10 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
                   <div className="flex flex-wrap items-center gap-3">
                     <span className="text-amber-400 font-semibold flex items-center gap-1.5">
                       <Sparkles className="w-3.5 h-3.5" />
-                      <span>Download 100% freeware: nessun account obbligatorio, file .ZIP diretti.</span>
+                      <span>Download 100% freeware: registrazione account gratuita obbligatoria per il download.</span>
                     </span>
                     <span className="text-neutral-600 hidden sm:inline">•</span>
-                    <span className="text-amber-300">
-                      🔒 171 MasterGlue: release 1° Dicembre 2026 (Countdown Attivo)
-                    </span>
-                    <span className="text-neutral-600 hidden sm:inline">•</span>
+                    
                     <span className="text-neutral-400">
                       📦 171 DriveOptocom dismesso (funzionalità integrate in EasyVoice e PerfectPre)
                     </span>
@@ -1534,12 +1343,11 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
             {/* Bottom row: Pro Category Tabs */}
             <div className="flex items-center gap-2 pt-2 border-t border-neutral-800/80 overflow-x-auto pb-1.5 no-scrollbar sm:flex-wrap">
               {[
-                { id: 'all', label: 'Tutti i Plugin', icon: Layers, count: siteContent.plugins.length },
+                { id: 'all', label: 'Tutti i 4 Plugin', icon: Layers, count: siteContent.plugins.length },
                 { id: 'favorites', label: 'Preferiti', icon: Heart, count: favoritePluginIds.length },
-                { id: 'vocal', label: 'Voci & Intonazione', icon: Radio, count: siteContent.plugins.filter(p => ['plugin-realtune', 'plugin-easyvoice', 'plugin-vocalcraft', 'plugin-onesilk', 'plugin-snipertune', 'plugin-sessionbuilder'].includes(p.id)).length },
-                { id: 'dynamics', label: 'Compressori & Dinamica', icon: Sliders, count: siteContent.plugins.filter(p => ['plugin-masterglue', 'plugin-punchcraft', 'plugin-perfectclip'].includes(p.id)).length },
-                { id: 'saturation', label: 'Preamp & Saturazione', icon: Flame, count: siteContent.plugins.filter(p => ['plugin-cleandrive', 'plugin-perfectpre'].includes(p.id)).length },
-                { id: 'spatial', label: 'Riverberi & Spazio', icon: Sparkles, count: siteContent.plugins.filter(p => ['plugin-cleanreso', 'plugin-spaceluxe'].includes(p.id)).length },
+                { id: 'vocal', label: 'Voci & Intonazione', icon: Radio, count: siteContent.plugins.filter(p => ['plugin-realtune', 'plugin-easyvoice'].includes(p.id)).length },
+                { id: 'saturation', label: 'Preamp & Saturazione', icon: Flame, count: siteContent.plugins.filter(p => ['plugin-perfectpre'].includes(p.id)).length },
+                { id: 'dynamics', label: 'Dinamica & Spettrale', icon: Sliders, count: siteContent.plugins.filter(p => ['plugin-cleanreso'].includes(p.id)).length },
               ].map((tab) => {
                 const isActive = categoryFilter === tab.id;
                 const IconComponent = tab.icon;
@@ -1588,8 +1396,8 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
               {filteredPlugins.map((plugin) => {
-                const countdown = plugin.unlockDate ? getCountdown(plugin.unlockDate) : null;
-                const isLocked = countdown ? !countdown.isUnlocked : (plugin.status === 'IN ARRIVO');
+                const countdown = null;
+                const isLocked = false;
 
                 // Real reviews calculation from actual feedback store
                 const feedbacksForPlugin = pluginFeedbacks.filter(
