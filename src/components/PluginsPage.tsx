@@ -62,6 +62,25 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
   const [downloadSuccessId, setDownloadSuccessId] = useState<string | null>(null);
   const [thankYouPlugin, setThankYouPlugin] = useState<PluginItem | null>(null);
   const [announcementPluginId, setAnnouncementPluginId] = useState<string>('all');
+  const [expandedChangelogIds, setExpandedChangelogIds] = useState<Record<string, boolean>>({});
+  const [isAnnouncementsCollapsed, setIsAnnouncementsCollapsed] = useState<boolean>(false);
+
+  // Solamente i 4 plugin cardine interessati dalle novità e attivi per il download
+  const UPDATED_CORE_PLUGIN_IDS = ['plugin-realtune', 'plugin-easyvoice', 'plugin-cleanreso', 'plugin-perfectpre'];
+
+  const toggleChangelog = (id: string) => {
+    setExpandedChangelogIds((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const toggleAllChangelogs = () => {
+    const allExpanded = UPDATED_CORE_PLUGIN_IDS.every((id) => !!expandedChangelogIds[id]);
+    const nextVal = !allExpanded;
+    const nextMap: Record<string, boolean> = {};
+    UPDATED_CORE_PLUGIN_IDS.forEach((id) => {
+      nextMap[id] = nextVal;
+    });
+    setExpandedChangelogIds(nextMap);
+  };
 
   // Live real-time clock ticking every 1000ms for weekly unlock countdowns
   const [now, setNow] = useState<number>(Date.now());
@@ -1154,230 +1173,228 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
             </div>
           </div>
 
-          {/* Official Announcements Hub: Per-Plugin Release Notes & Dedicated Packages (12 Novembre 2026) */}
-          <div className="mb-10 relative overflow-hidden rounded-3xl bg-gradient-to-br from-neutral-900/98 via-neutral-950/95 to-amber-950/45 border-2 border-amber-500/60 p-6 sm:p-8 shadow-[0_0_50px_rgba(245,158,11,0.22)] backdrop-blur-2xl">
-            <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/15 rounded-full blur-3xl pointer-events-none" />
-            <div className="absolute -bottom-10 -left-10 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
-
-            <div className="relative z-10 space-y-6">
-              {/* Header Badges & Title */}
-              <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
-                <div className="space-y-3 max-w-4xl">
-                  <div className="flex flex-wrap items-center gap-2.5">
-                    <span className="text-[10.5px] font-mono font-black px-3.5 py-1 rounded-full bg-gradient-to-r from-amber-500/30 to-red-500/30 text-amber-300 border border-amber-500/60 flex items-center gap-1.5 shadow-sm animate-pulse">
-                      <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                      <span>✨ ANNUNCI UFFICIALI & RELEASE NOTES • 171PLUGIN INNOVATION (12 NOVEMBRE 2026)</span>
-                    </span>
-                    <span className="text-[10px] font-mono px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/40 flex items-center gap-1.5">
-                      <Cpu className="w-3.5 h-3.5 text-blue-400" />
-                      <span>MOTORI DSP COMPILATI C++20 • AVX2 / NEON</span>
-                    </span>
-                    <span className="text-[10px] font-mono px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 flex items-center gap-1.5">
-                      <Shield className="w-3.5 h-3.5 text-emerald-400" />
-                      <span>ANTI-DENORMAL -144 dBFS • BS.1770 TRUE-PEAK • BIT-EXACT</span>
-                    </span>
-                  </div>
-
-                  <h3 className="font-heading font-black text-2xl sm:text-3xl md:text-4xl text-white tracking-tight">
-                    Ultime Versioni Stabili & Annunci Dedicati per Singolo Plugin
-                  </h3>
-
-                  <p className="text-sm sm:text-base text-neutral-200 font-light leading-relaxed">
-                    Tutti i plugin del laboratorio sono stati sincronizzati con le ultime versioni compilate dei motori DSP C++20. Al momento sono <strong>attivi per il download immediato gratuito i 4 strumenti cardine della suite: 171 RealTune v2.2.1, 171 PerfectPre v2.2.0, 171 CleanReso v2.3.0 e 171 EasyVoice v3.2.1</strong> per Windows 64-bit e macOS Universal. Gli altri processori boutique sono consultabili con i rispettivi annunci tecnici e verranno sbloccati progressivamente.
-                  </p>
-                </div>
-
-                {/* 4 Core Active Downloads Box */}
-                <div className="shrink-0 flex flex-col gap-2.5 p-4 sm:p-5 rounded-2xl bg-black/85 border border-amber-500/40 text-center w-full lg:w-80 shadow-xl">
-                  <div className="flex items-center justify-center gap-1.5 text-[10px] font-mono uppercase tracking-widest text-amber-400 font-bold">
-                    <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                    <span>4 PLUGIN ATTIVI AL DOWNLOAD</span>
-                  </div>
-                  <span className="text-sm font-heading font-black text-white">
-                    RealTune • EasyVoice • CleanReso • PerfectPre
-                  </span>
-                  <p className="text-[11px] text-neutral-400 font-light leading-snug">
-                    I 4 processori cardine certificati per Windows e macOS, 100% freeware senza paywall o account obbligatorio.
-                  </p>
-                  <div className="grid grid-cols-2 gap-1.5 pt-1">
-                    <button
-                      onClick={() => {
-                        const p = siteContent.plugins.find(x => x.id === 'plugin-realtune');
-                        if (p) handleDownload(p, 'win');
-                      }}
-                      className="px-2 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-heading font-black text-xs transition-all cursor-pointer shadow active:scale-95 flex items-center justify-center gap-1"
-                    >
-                      <Download className="w-3 h-3" />
-                      <span>RealTune</span>
-                    </button>
-                    <button
-                      onClick={() => {
-                        const p = siteContent.plugins.find(x => x.id === 'plugin-easyvoice');
-                        if (p) handleDownload(p, 'win');
-                      }}
-                      className="px-2 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-heading font-black text-xs transition-all cursor-pointer shadow active:scale-95 flex items-center justify-center gap-1"
-                    >
-                      <Download className="w-3 h-3" />
-                      <span>EasyVoice</span>
-                    </button>
-                    <button
-                      onClick={() => {
-                        const p = siteContent.plugins.find(x => x.id === 'plugin-cleanreso');
-                        if (p) handleDownload(p, 'win');
-                      }}
-                      className="px-2 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-heading font-black text-xs transition-all cursor-pointer shadow active:scale-95 flex items-center justify-center gap-1"
-                    >
-                      <Download className="w-3 h-3" />
-                      <span>CleanReso</span>
-                    </button>
-                    <button
-                      onClick={() => {
-                        const p = siteContent.plugins.find(x => x.id === 'plugin-perfectpre');
-                        if (p) handleDownload(p, 'win');
-                      }}
-                      className="px-2 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-heading font-black text-xs transition-all cursor-pointer shadow active:scale-95 flex items-center justify-center gap-1"
-                    >
-                      <Download className="w-3 h-3" />
-                      <span>PerfectPre</span>
-                    </button>
-                  </div>
-                </div>
+          {/* Official Announcements Hub: Expandable Novelties for the 4 Core Updated Plugins */}
+          {isAnnouncementsCollapsed ? (
+            <div className="mb-8 p-4 rounded-2xl bg-gradient-to-r from-neutral-900 via-black to-neutral-900 border border-amber-500/50 flex flex-wrap items-center justify-between gap-3 shadow-lg">
+              <div className="flex items-center gap-2.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
+                <Sparkles className="w-4 h-4 text-amber-400" />
+                <span className="font-heading font-black text-sm text-white">
+                  4 Nuove Versioni Rilasciate:
+                </span>
+                <span className="font-mono text-xs text-amber-300 hidden sm:inline">
+                  RealTune v2.2.1 • EasyVoice v3.2.1 • CleanReso v2.3.0 • PerfectPre v2.2.0
+                </span>
               </div>
+              <button
+                type="button"
+                onClick={() => setIsAnnouncementsCollapsed(false)}
+                className="px-3.5 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-mono font-bold flex items-center gap-1.5 transition-all cursor-pointer active:scale-95"
+              >
+                <span>Mostra Novità & Download</span>
+                <ChevronDown className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          ) : (
+            <div className="mb-10 relative overflow-hidden rounded-3xl bg-gradient-to-br from-neutral-900/98 via-neutral-950/95 to-amber-950/45 border-2 border-amber-500/60 p-6 sm:p-7 shadow-[0_0_50px_rgba(245,158,11,0.22)] backdrop-blur-2xl">
+              <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/15 rounded-full blur-3xl pointer-events-none" />
+              <div className="absolute -bottom-10 -left-10 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
 
-              {/* FILTER TABS: SELECT BY INDIVIDUAL PLUGIN */}
-              <div className="pt-2 border-t border-neutral-800/80">
-                <div className="flex items-center justify-between gap-3 mb-3">
-                  <div className="flex items-center gap-2 text-xs font-mono text-neutral-300">
-                    <Filter className="w-3.5 h-3.5 text-amber-400" />
-                    <span className="font-bold uppercase tracking-wider text-[11px]">Seleziona Annuncio Plugin:</span>
+              <div className="relative z-10 space-y-5">
+                {/* Header: Title + Actions */}
+                <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+                  <div className="space-y-2 max-w-3xl">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-[10.5px] font-mono font-black px-3 py-1 rounded-full bg-gradient-to-r from-amber-500/30 to-red-500/30 text-amber-300 border border-amber-500/60 flex items-center gap-1.5 shadow-sm">
+                        <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                        <span>✨ ULTIME VERSIONI RILASCIATE • 4 PLUGIN DISPONIBILI</span>
+                      </span>
+                      <span className="text-[10px] font-mono px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 flex items-center gap-1">
+                        <Shield className="w-3 h-3 text-emerald-400" />
+                        <span>100% FREEWARE • BIT-EXACT PDC</span>
+                      </span>
+                    </div>
+
+                    <h3 className="font-heading font-black text-2xl sm:text-3xl text-white tracking-tight">
+                      Novità & Aggiornamenti Recenti
+                    </h3>
+
+                    <p className="text-xs sm:text-sm text-neutral-300 font-light leading-relaxed">
+                      Sono attivi per il download immediato gratuito i <strong>4 plugin cardine aggiornati: RealTune v2.2.1, PerfectPre v2.2.0, CleanReso v2.3.0 e EasyVoice v3.2.1</strong> per Windows e macOS. Clicca su <em>"Scopri di più"</em> in ogni scheda per consultare i dettagli del rispettivo changelog DSP.
+                    </p>
                   </div>
-                  {announcementPluginId !== 'all' && (
+
+                  {/* Header Quick Controls */}
+                  <div className="flex flex-wrap items-center gap-2 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => toggleAllChangelogs()}
+                      className="px-3 py-1.5 rounded-xl bg-black/70 hover:bg-neutral-800 text-amber-300 border border-amber-500/40 text-xs font-mono font-semibold flex items-center gap-1.5 transition-all cursor-pointer"
+                    >
+                      <Sparkles className="w-3 h-3 text-amber-400" />
+                      <span>
+                        {UPDATED_CORE_PLUGIN_IDS.every((id) => !!expandedChangelogIds[id])
+                          ? 'Comprimi tutti i dettagli'
+                          : 'Espandi tutti i dettagli'}
+                      </span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setIsAnnouncementsCollapsed(true)}
+                      className="px-3 py-1.5 rounded-xl bg-black/70 hover:bg-neutral-800 text-neutral-400 hover:text-white border border-neutral-800 text-xs font-mono transition-all cursor-pointer flex items-center gap-1"
+                      title="Comprimi questo blocco per vedere subito il rack plugin"
+                    >
+                      <ChevronUp className="w-3.5 h-3.5" />
+                      <span>Riduci</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* FILTER TABS: ONLY THE 4 UPDATED PLUGINS */}
+                <div className="pt-2 border-t border-neutral-800/80">
+                  <div className="flex items-center justify-between gap-3 mb-2.5">
+                    <div className="flex items-center gap-2 text-xs font-mono text-neutral-300">
+                      <Filter className="w-3.5 h-3.5 text-amber-400" />
+                      <span className="font-bold uppercase tracking-wider text-[11px]">Seleziona Plugin con Novità:</span>
+                    </div>
+                    {announcementPluginId !== 'all' && (
+                      <button
+                        onClick={() => setAnnouncementPluginId('all')}
+                        className="text-[11px] font-mono text-amber-400 hover:text-amber-300 underline cursor-pointer"
+                      >
+                        Mostra tutti i 4 plugin
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-2">
                     <button
                       onClick={() => setAnnouncementPluginId('all')}
-                      className="text-[11px] font-mono text-amber-400 hover:text-amber-300 underline cursor-pointer"
+                      className={`px-3 py-1.5 rounded-xl font-mono text-xs font-bold transition-all cursor-pointer ${
+                        announcementPluginId === 'all'
+                          ? 'bg-amber-500 text-black shadow-[0_0_15px_rgba(245,158,11,0.4)]'
+                          : 'bg-black/60 hover:bg-neutral-800/80 text-neutral-300 border border-neutral-800'
+                      }`}
                     >
-                      Mostra Tutti ({siteContent.plugins.length})
+                      Tutte le Novità (4)
                     </button>
-                  )}
+
+                    {siteContent.plugins
+                      .filter((p) => UPDATED_CORE_PLUGIN_IDS.includes(p.id))
+                      .map((p) => {
+                        const isSelected = announcementPluginId === p.id;
+                        return (
+                          <button
+                            key={p.id}
+                            onClick={() => setAnnouncementPluginId(p.id)}
+                            className={`px-3 py-1.5 rounded-xl font-mono text-xs transition-all flex items-center gap-1.5 cursor-pointer ${
+                              isSelected
+                                ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-black font-bold shadow-[0_0_15px_rgba(245,158,11,0.4)]'
+                                : 'bg-black/60 hover:bg-neutral-800/80 text-neutral-300 border border-neutral-800 hover:border-neutral-700'
+                            }`}
+                          >
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                            <span>{p.name.replace('171 ', '')}</span>
+                            <span className={`text-[10px] font-black px-1.5 py-0.2 rounded ${isSelected ? 'bg-black/20 text-black' : 'bg-neutral-800 text-neutral-400'}`}>
+                              {p.version}
+                            </span>
+                          </button>
+                        );
+                      })}
+                  </div>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-1.5">
-                  <button
-                    onClick={() => setAnnouncementPluginId('all')}
-                    className={`px-3 py-1.5 rounded-xl font-mono text-xs font-bold transition-all cursor-pointer ${
-                      announcementPluginId === 'all'
-                        ? 'bg-amber-500 text-black shadow-[0_0_15px_rgba(245,158,11,0.4)]'
-                        : 'bg-black/60 hover:bg-neutral-800/80 text-neutral-300 border border-neutral-800'
-                    }`}
-                  >
-                    Tutti gli Annunci ({siteContent.plugins.length})
-                  </button>
+                {/* INDIVIDUAL EXPANDABLE NOVELTY CARDS */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+                  {siteContent.plugins
+                    .filter((p) => UPDATED_CORE_PLUGIN_IDS.includes(p.id))
+                    .filter((p) => announcementPluginId === 'all' || p.id === announcementPluginId)
+                    .map((p) => {
+                      const isExpanded = !!expandedChangelogIds[p.id];
+                      const latestChangelog = p.changelog?.[0];
+                      const changes: string[] = [
+                        ...(latestChangelog?.features || []),
+                        ...(latestChangelog?.fixes || []),
+                      ];
+                      const winSize = p.zipFileSize || '19 MB';
+                      const macSize = p.macZipFileSize || '10 MB';
+                      const releaseDateText = latestChangelog?.date || 'Novembre 2026';
 
-                  {siteContent.plugins.map((p) => {
-                    const isSelected = announcementPluginId === p.id;
-                    const isAvailable = p.status === 'DISPONIBILE';
-                    return (
-                      <button
-                        key={p.id}
-                        onClick={() => setAnnouncementPluginId(p.id)}
-                        className={`px-3 py-1.5 rounded-xl font-mono text-xs transition-all flex items-center gap-1.5 cursor-pointer ${
-                          isSelected
-                            ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-black font-bold shadow-[0_0_15px_rgba(245,158,11,0.4)]'
-                            : 'bg-black/60 hover:bg-neutral-800/80 text-neutral-300 border border-neutral-800 hover:border-neutral-700'
-                        }`}
-                      >
-                        <span className={`w-1.5 h-1.5 rounded-full ${isSelected ? 'bg-black' : (isAvailable ? 'bg-emerald-400' : 'bg-amber-400')}`} />
-                        <span>{p.name.replace('171 ', '')}</span>
-                        <span className={`text-[10px] font-black px-1.5 py-0.2 rounded ${isSelected ? 'bg-black/20 text-black' : 'bg-neutral-800 text-neutral-400'}`}>
-                          {p.version}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* INDIVIDUAL PLUGIN ANNOUNCEMENT CARDS */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-                {siteContent.plugins
-                  .filter((p) => announcementPluginId === 'all' || p.id === announcementPluginId)
-                  .map((p) => {
-                    const isAvailable = ['plugin-realtune', 'plugin-easyvoice', 'plugin-cleanreso', 'plugin-perfectpre'].includes(p.id);
-                    const latestChangelog = p.changelog?.[0];
-                    const changes: string[] = [
-                      ...(latestChangelog?.features || []),
-                      ...(latestChangelog?.fixes || [])
-                    ];
-                    const winSize = p.zipFileSize || '15 MB';
-                    const macSize = p.macZipFileSize || (p.macDownloadUrl ? '15 MB' : null);
-                    const releaseDateText = latestChangelog?.date || p.unlockDate || '12 Novembre 2026';
-
-                    return (
-                      <div
-                        key={p.id}
-                        className={`p-5 rounded-2xl bg-black/70 border transition-all space-y-4 flex flex-col justify-between ${
-                          announcementPluginId === p.id
-                            ? 'border-amber-500/80 shadow-[0_0_25px_rgba(245,158,11,0.25)] ring-1 ring-amber-500/50'
-                            : 'border-neutral-800 hover:border-amber-500/40 hover:bg-neutral-950/80'
-                        }`}
-                      >
-                        <div className="space-y-3">
-                          {/* Card Top: Name + Version + Status + Release Date */}
-                          <div className="flex flex-wrap items-center justify-between gap-2 pb-2.5 border-b border-neutral-800/80">
-                            <div className="flex items-center gap-2">
-                              <span className={`w-2.5 h-2.5 rounded-full ${isAvailable ? 'bg-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.8)]' : 'bg-amber-400 shadow-[0_0_8px_rgba(245,158,11,0.8)]'}`} />
-                              <span className="font-heading font-black text-white text-lg tracking-tight">{p.name}</span>
-                              <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40">
-                                {p.version}
-                              </span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              {p.newReleaseTag && (
-                                <span className="text-[9.5px] font-mono font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-gradient-to-r from-red-500/30 to-amber-500/30 text-amber-300 border border-amber-500/50">
-                                  {p.newReleaseTag}
+                      return (
+                        <div
+                          key={p.id}
+                          className={`p-4 sm:p-5 rounded-2xl bg-black/75 border transition-all space-y-3.5 flex flex-col justify-between ${
+                            announcementPluginId === p.id
+                              ? 'border-amber-500/80 shadow-[0_0_25px_rgba(245,158,11,0.25)] ring-1 ring-amber-500/50'
+                              : 'border-neutral-800 hover:border-amber-500/40 hover:bg-neutral-950/80'
+                          }`}
+                        >
+                          <div className="space-y-3">
+                            {/* Card Top: Name + Version + Status */}
+                            <div className="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-neutral-800/80">
+                              <div className="flex items-center gap-2">
+                                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
+                                <span className="font-heading font-black text-white text-base sm:text-lg tracking-tight">
+                                  {p.name}
                                 </span>
-                              )}
-                              <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-full border ${
-                                isAvailable
-                                  ? 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30'
-                                  : 'bg-amber-500/10 text-amber-300 border-amber-500/30'
-                              }`}>
-                                {isAvailable ? 'DISPONIBILE' : 'IN ARRIVO'}
+                                <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                                  {p.version}
+                                </span>
+                              </div>
+                              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">
+                                DISPONIBILE
                               </span>
                             </div>
-                          </div>
 
-                          {/* Release Date & Subtitle */}
-                          <div className="flex items-center justify-between text-xs font-mono text-neutral-400">
-                            <span className="text-neutral-300 font-semibold">{p.badge}</span>
-                            <span>Rilascio: {releaseDateText}</span>
-                          </div>
-
-                          <p className="text-xs text-neutral-300 font-light leading-relaxed">
-                            {p.description}
-                          </p>
-
-                          {/* Specific DSP Innovations / Changelog Checklist */}
-                          {changes.length > 0 && (
-                            <div className="space-y-1.5 pt-1">
-                              <span className="text-[10px] font-mono uppercase tracking-wider text-amber-400 font-bold block">
-                                Innovazioni Tecniche & Ottimizzazioni {p.version}:
+                            {/* Subtitle & Date */}
+                            <div className="flex items-center justify-between text-xs font-mono text-neutral-400">
+                              <span className="text-neutral-300 font-medium truncate max-w-[240px] sm:max-w-none">
+                                {p.badge}
                               </span>
-                              <ul className="text-xs font-mono text-neutral-300 space-y-1.5 pl-0.5">
-                                {changes.map((change: string, idx: number) => (
-                                  <li key={idx} className="flex items-start gap-2">
-                                    <span className="text-amber-400 font-bold shrink-0">✔</span>
-                                    <span className="leading-snug">{change}</span>
-                                  </li>
-                                ))}
-                              </ul>
+                              <span className="shrink-0 text-[11px] text-neutral-400">Rilascio: {releaseDateText}</span>
                             </div>
-                          )}
-                        </div>
 
-                        {/* Action Footer: Direct Downloads for 4 Core Plugins, or In Arrivo badge */}
-                        <div className="pt-3 border-t border-neutral-800/80 flex flex-wrap items-center justify-between gap-2.5">
-                          {isAvailable ? (
+                            {/* Description preview */}
+                            <p className="text-xs text-neutral-300 font-light leading-relaxed line-clamp-2">
+                              {p.description}
+                            </p>
+
+                            {/* EXPANDABLE "SCOPRI DI PIÙ" TOGGLE BUTTON */}
+                            <button
+                              type="button"
+                              onClick={() => toggleChangelog(p.id)}
+                              className="w-full flex items-center justify-between px-3.5 py-2 rounded-xl bg-neutral-900/90 hover:bg-neutral-800/90 border border-amber-500/30 hover:border-amber-500/60 text-amber-300 font-mono text-xs transition-all cursor-pointer group"
+                            >
+                              <span className="flex items-center gap-2 font-bold">
+                                <Sparkles className="w-3.5 h-3.5 text-amber-400 group-hover:scale-110 transition-transform" />
+                                <span>{isExpanded ? 'Riduci Dettagli Changelog' : `Scopri di più sulle novità di ${p.name.replace('171 ', '')}`}</span>
+                              </span>
+                              <span className="flex items-center gap-1.5 text-[11px] text-amber-400 font-semibold">
+                                <span>{isExpanded ? 'Chiudi' : `${changes.length} note tecniche`}</span>
+                                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`} />
+                              </span>
+                            </button>
+
+                            {/* DETAILED CHANGELOG CHECKLIST (EXPANDABLE) */}
+                            {isExpanded && changes.length > 0 && (
+                              <div className="space-y-2 pt-2 border-t border-neutral-800/80 animate-in fade-in duration-200">
+                                <span className="text-[10.5px] font-mono uppercase tracking-wider text-amber-400 font-bold block">
+                                  Innovazioni Tecniche & Ottimizzazioni {p.version}:
+                                </span>
+                                <ul className="text-xs font-mono text-neutral-300 space-y-1.5 pl-0.5 max-h-60 overflow-y-auto pr-1">
+                                  {changes.map((change: string, idx: number) => (
+                                    <li key={idx} className="flex items-start gap-2">
+                                      <span className="text-amber-400 font-bold shrink-0">✔</span>
+                                      <span className="leading-snug">{change}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Action Footer: Direct Downloads */}
+                          <div className="pt-3 border-t border-neutral-800/80 flex flex-wrap items-center justify-between gap-2">
                             <div className="flex flex-wrap items-center gap-2">
                               {/* Windows Download */}
                               <button
@@ -1390,7 +1407,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
                               </button>
 
                               {/* Mac Download */}
-                              {p.macDownloadUrl ? (
+                              {p.macDownloadUrl && (
                                 <button
                                   onClick={() => handleDownload(p, 'mac')}
                                   className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-neutral-200 font-mono text-xs transition-all cursor-pointer active:scale-95"
@@ -1399,57 +1416,46 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
                                   <Download className="w-3.5 h-3.5 text-cyan-400" />
                                   <span>macOS (.ZIP {macSize})</span>
                                 </button>
-                              ) : (
-                                <span className="text-[10.5px] font-mono text-neutral-500 px-2 py-1 rounded bg-neutral-900/50 border border-neutral-800">
-                                  Mac in arrivo
-                                </span>
                               )}
                             </div>
-                          ) : (
-                            <div className="flex items-center gap-2">
-                              <span className="text-[11px] font-mono font-bold text-amber-400 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center gap-1.5">
-                                <Clock className="w-3.5 h-3.5" />
-                                <span>Download in arrivo (In calibrazione DSP)</span>
-                              </span>
-                            </div>
-                          )}
 
-                          <button
-                            onClick={() => handleSelectPlugin(p.id)}
-                            className="inline-flex items-center gap-1 text-xs font-mono text-amber-400 hover:text-amber-300 transition-colors cursor-pointer ml-auto"
-                          >
-                            <span>Scheda & Controlli</span>
-                            <ArrowRight className="w-3.5 h-3.5" />
-                          </button>
+                            <button
+                              onClick={() => handleSelectPlugin(p.id)}
+                              className="inline-flex items-center gap-1 text-xs font-mono text-amber-400 hover:text-amber-300 transition-colors cursor-pointer ml-auto"
+                            >
+                              <span>Scheda & Controlli</span>
+                              <ArrowRight className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
-              </div>
-
-              {/* Complementary Status Footer */}
-              <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-neutral-800 text-xs font-mono text-neutral-400">
-                <div className="flex flex-wrap items-center gap-3">
-                  <span className="text-amber-400 font-semibold flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5" />
-                    <span>Tutti i download sono 100% freeware: nessun codice di attivazione o account obbligatorio.</span>
-                  </span>
-                  <span className="text-neutral-600 hidden sm:inline">•</span>
-                  <span className="text-amber-300">
-                    🔒 171 MasterGlue: Rilascio Ufficiale 1° Dicembre 2026 (Countdown Attivo)
-                  </span>
-                  <span className="text-neutral-600 hidden sm:inline">•</span>
-                  <span className="text-neutral-400">
-                    📦 171 DriveOptocom dismesso (funzionalità integrate in EasyVoice e PerfectPre)
-                  </span>
+                      );
+                    })}
                 </div>
-                <div className="text-emerald-400 font-bold flex items-center gap-1.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                  <span>Bit-Exact Master Bypass & Zero Latency Certificati</span>
+
+                {/* Footer Notes */}
+                <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-neutral-800 text-xs font-mono text-neutral-400">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <span className="text-amber-400 font-semibold flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5" />
+                      <span>Download 100% freeware: nessun account obbligatorio, file .ZIP diretti.</span>
+                    </span>
+                    <span className="text-neutral-600 hidden sm:inline">•</span>
+                    <span className="text-amber-300">
+                      🔒 171 MasterGlue: release 1° Dicembre 2026 (Countdown Attivo)
+                    </span>
+                    <span className="text-neutral-600 hidden sm:inline">•</span>
+                    <span className="text-neutral-400">
+                      📦 171 DriveOptocom dismesso (funzionalità integrate in EasyVoice e PerfectPre)
+                    </span>
+                  </div>
+                  <div className="text-emerald-400 font-bold flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>Tolleranza Metrologica Zero • True-Peak ITU-R BS.1770</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          )}
 
           {/* Pro Audio Search, Filter & Rack Telemetry Console (UAD & Waves Store Style) */}
           <div className="mb-8 p-5 sm:p-6 rounded-3xl bg-neutral-900/90 border border-neutral-800/90 shadow-2xl backdrop-blur-2xl space-y-5">

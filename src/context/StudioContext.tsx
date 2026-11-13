@@ -2285,14 +2285,37 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     return connectGmailAndCalendar();
   };
 
+// SHA-256 digests of valid master passwords (protects credentials from plaintext exposure)
+const VALID_MASTER_PASSWORD_HASHES = [
+  '7fa129104eda8b9489a4bff03d1ce6680d015fd2176d0886279689688f29cc15',
+  'd19d476d494aa02666a02e06ab81bd0c139791d0783ed839d098459fb76926fd',
+  'd7780d168021415abf6d0cd2a674c7c3173d167ffe3e49563d36aeaedc274eb8',
+  '9e9a58036b728c0d49629bfeeb75468e0388d960afa0f8b097702442897524a6',
+  'fcb4381e128e857d2551dc345270560351e2fd0fed63d275f2f481ddc6cd8645',
+  'a00b03a40cda64d4a4b925c9eda6ffffc78a728ee710bda3fdece30a42843b3a',
+];
+
+async function verifyMasterPassword(pass?: string): Promise<boolean> {
+  const cleanPass = (pass || '').trim();
+  if (!cleanPass) return false;
+  try {
+    const enc = new TextEncoder();
+    const data = enc.encode(cleanPass);
+    const buf = await crypto.subtle.digest('SHA-256', data);
+    const hex = Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, '0')).join('');
+    return VALID_MASTER_PASSWORD_HASHES.includes(hex);
+  } catch {
+    return false;
+  }
+}
+
   const login = async (email: string, name?: string, password?: string): Promise<boolean> => {
     const cleanEmail = email.trim().toLowerCase();
     const isMasterEmail = isOfficialMasterEmail(cleanEmail);
 
     if (isMasterEmail) {
-      const cleanPass = (password || '').trim();
-      const validMasterPasswords = ['Loredana.656511', '171studio', '171Studio2026!', 'master171', '171master', 'vkrealhakiesake'];
-      if (!cleanPass || !validMasterPasswords.includes(cleanPass)) {
+      const isValid = await verifyMasterPassword(password);
+      if (!isValid) {
         throw new Error(
           `L'accesso come Amministratore Master (${cleanEmail}) richiede la password Master corretta.`
         );
@@ -2374,9 +2397,8 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const isMasterEmail = isOfficialMasterEmail(cleanEmail);
 
     if (isMasterEmail) {
-      const cleanPass = (password || '').trim();
-      const validMasterPasswords = ['Loredana.656511', '171studio', '171Studio2026!', 'master171', '171master', 'vkrealhakiesake'];
-      if (!cleanPass || !validMasterPasswords.includes(cleanPass)) {
+      const isValid = await verifyMasterPassword(password);
+      if (!isValid) {
         throw new Error(
           `L'indirizzo email ${cleanEmail} appartiene all'Amministratore Master di 171 Studio. Inserisci la password Master corretta per entrare.`
         );

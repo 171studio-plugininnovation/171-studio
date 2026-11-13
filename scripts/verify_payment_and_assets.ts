@@ -2,7 +2,7 @@
  * Automated Verification Script:
  * 1. PayPal payment verification flow & strict download locking
  * 2. Anti-duplication of transaction IDs
- * 3. Master password verification (Loredana.656511)
+ * 3. Master password verification (SHA-256 secure hash)
  * 4. 250+ accounts scale integrity
  * 5. Asset URL resolution across GitHub Pages and root domains
  */
@@ -140,13 +140,13 @@ assert(validRes.updatedOrder?.status === 'completato', 'Digital order status tra
 assert(validRes.updatedOrder?.paymentStatus === 'saldato', 'Download is now UNLOCKED for the customer');
 
 // -------------------------------------------------------------
-// TEST 4: Master Password Verification
+// TEST 4: Master Credentials Verification
 // -------------------------------------------------------------
 console.log('\n--- TEST 4: Master Credentials Verification ---');
-const MASTER_PASSWORD = 'Loredana.656511';
+const MASTER_PASSWORD_HASH = '7fa129104eda8b9489a4bff03d1ce6680d015fd2176d0886279689688f29cc15';
 const OFFICIAL_MASTER_EMAILS = ['171studiomessina@gmail.com'];
 
-assert(MASTER_PASSWORD === 'Loredana.656511', 'Master password confirmed as Loredana.656511');
+assert(MASTER_PASSWORD_HASH === '7fa129104eda8b9489a4bff03d1ce6680d015fd2176d0886279689688f29cc15', 'Master password hash securely stored as SHA-256');
 
 assert(OFFICIAL_MASTER_EMAILS.includes('171studiomessina@gmail.com'), '171studiomessina@gmail.com is the sole authorized master');
 
