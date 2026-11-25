@@ -1,22 +1,23 @@
 import React from 'react';
 import { 
-  Download, Eye, Heart, Flame, Sparkles, Cpu, Clock, Check, 
-  ExternalLink, Shield, Layers, Radio, Star
+  Download, Eye, Heart, Sparkles, Cpu, Check, 
+  ExternalLink, Shield, Layers, Radio, Star, Lock
 } from 'lucide-react';
 import { PluginItem } from '../types/cms';
 import { useStudio } from '../context/StudioContext';
 import { getAssetUrl } from '../utils/assetPath';
+import { PLUGIN_TOPOLOGY_MAP, DEFAULT_TOPOLOGY_META } from '../data/pluginMetadata';
 
 export interface RackPluginCardProps {
   plugin: PluginItem;
-  countdown: {
+  countdown?: {
     isUnlocked: boolean;
     days: number;
     hours: number;
     minutes: number;
     seconds: number;
   } | null;
-  isLocked: boolean;
+  isLocked?: boolean;
   isFavorite: boolean;
   onToggleFavorite: (id: string) => void;
   onSelectPlugin: (id: string) => void;
@@ -26,80 +27,8 @@ export interface RackPluginCardProps {
   averageRating?: number | null;
 }
 
-// Map analog topologies for pro-audio authenticity
-const TOPOLOGY_MAP: Record<string, { topology: string; tube: string; oversampling: string }> = {
-  'plugin-realtune': {
-    topology: 'PITCH ENGINE & PHASE COHERENT VOCAL SYNTH',
-    tube: 'Zero Phase Disruption',
-    oversampling: '8x Internal Processing',
-  },
-  'plugin-easyvoice': {
-    topology: 'SERIAL TUBE + OPTICAL DUAL STAGE STRIP',
-    tube: '12AX7 & 6BA6 Analog Valves',
-    oversampling: '4x ADAA-2 Oversampling',
-  },
-  'plugin-cleandrive': {
-    topology: 'TRANSIENT-SPLIT ASYMMETRIC SATURATOR',
-    tube: 'Triode + Pentode Bias',
-    oversampling: '4x ADAA-2 Alias Free',
-  },
-  'plugin-cleanreso': {
-    topology: 'ADAPTIVE MULTI-BAND SPECTRAL NOTCH',
-    tube: 'Zero Delay Biquad Matrix',
-    oversampling: 'Ultra-Narrow Q Tracking',
-  },
-  'plugin-perfectpre': {
-    topology: 'CLASS-A BRITISH CONSOLE & VINTAGE PREAMP',
-    tube: 'Carnhill Transformer Saturation',
-    oversampling: 'Analog Transformer Harmonic 3rd',
-  },
-  'plugin-spaceluxe': {
-    topology: 'CONVOLUTION IMPULSE + RECIRCULATING PLATE',
-    tube: 'Diffusion Modulation Core',
-    oversampling: 'True Stereo Width Engine',
-  },
-  'plugin-masterglue': {
-    topology: 'VCA BUS COMPRESSOR & ANALOG CONSOLE DRIVE',
-    tube: 'Quad-VCA Stereo Matrix',
-    oversampling: 'True Peak Sidechain Guard',
-  },
-  'plugin-punchcraft': {
-    topology: 'FREQUENCY-DEPENDENT TRANSIENT SCULPTOR',
-    tube: 'Dynamic Envelope Follower',
-    oversampling: 'Sub-Harmonic Wave Engine',
-  },
-  'plugin-perfectclip': {
-    topology: 'ANALOG-SQUARED SOFT & HARD DUAL CLIPPER',
-    tube: 'Bipolar Diode Clamping',
-    oversampling: '4x ADAA-2 Zero-Aliasing',
-  },
-  'plugin-vocalcraft': {
-    topology: 'COMPLETE DUAL-TUBE RACK & CRT HARMONIC SUITE',
-    tube: 'Twin 12AX7 & EF86 Pentode',
-    oversampling: '8x Pristine Oversampling',
-  },
-  'plugin-onesilk': {
-    topology: 'ONE-KNOB DYNAMIC VOCAL SILK & LOUDNESS NORMALIZER',
-    tube: 'Neve Silk Red Class-A Harmonics',
-    oversampling: 'Cytomic ZDF 64-Bit Trapezoidal',
-  },
-  'plugin-snipertune': {
-    topology: 'MANUAL GRAPHICAL PITCH & FORMANT 60 FPS CANVAS',
-    tube: '4D Consonant Shield Pure Bypass',
-    oversampling: 'GCD-PSOLA Lanczos-16 Sinc',
-  },
-  'plugin-sessionbuilder': {
-    topology: 'MODULAR CONSOLE RECALL & AUTO-GAIN STAGING',
-    tube: '6-Slot Hot-Swappable Analog DSP',
-    oversampling: '-18 dBFS Nominal Sweet Spot',
-  },
-};
-
 export const RackPluginCard: React.FC<RackPluginCardProps> = ({
-
   plugin,
-  countdown,
-  isLocked,
   isFavorite,
   onToggleFavorite,
   onSelectPlugin,
@@ -108,11 +37,22 @@ export const RackPluginCard: React.FC<RackPluginCardProps> = ({
   reviewCount = 0,
   averageRating = null,
 }) => {
-  const { currentUser } = useStudio();
-  const specs = TOPOLOGY_MAP[plugin.id] || {
-    topology: 'ANALOG MODELED DSP PROCESSOR',
-    tube: 'Discrete Studio Engineering',
-    oversampling: '64-Bit Float Precision',
+  const { currentUser, openAuthModal, downloadPlugin } = useStudio();
+  const specs = PLUGIN_TOPOLOGY_MAP[plugin.id] || DEFAULT_TOPOLOGY_META;
+
+  const handleDownloadClick = (os: 'win' | 'mac') => {
+    if (onQuickDownload) {
+      onQuickDownload(plugin, os);
+      return;
+    }
+    if (!currentUser) {
+      openAuthModal(`Registrazione obbligatoria: crea un account gratuito per scaricare "${plugin.name}" (${os === 'mac' ? 'macOS Universal' : 'Windows 64-bit'}).`, {
+        initialMode: 'register',
+        pendingDownload: { pluginId: plugin.id, platform: os },
+      });
+      return;
+    }
+    downloadPlugin(plugin.id, os);
   };
 
   return (
@@ -137,21 +77,6 @@ export const RackPluginCard: React.FC<RackPluginCardProps> = ({
       {/* Top Edge Specular Metallic Glare */}
       <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-amber-400/30 to-transparent pointer-events-none" />
 
-      {/* Corner Status Ribbon */}
-      {plugin.isNewRelease ? (
-        <div className="absolute top-0 right-0 overflow-hidden w-28 h-28 pointer-events-none z-10">
-          <div className="bg-gradient-to-r from-amber-500 to-red-600 text-white text-[9px] font-mono font-black text-center py-1 w-36 absolute top-4 -right-10 rotate-45 shadow-md uppercase tracking-wider">
-            Major V2.0
-          </div>
-        </div>
-      ) : isLocked ? (
-        <div className="absolute top-0 right-0 overflow-hidden w-28 h-28 pointer-events-none z-10">
-          <div className="bg-neutral-800 text-amber-300 border border-amber-500/30 text-[8.5px] font-mono font-bold text-center py-1 w-36 absolute top-4 -right-10 rotate-45 shadow-md uppercase tracking-wider">
-            Settimana {plugin.unlockWeek || 1}
-          </div>
-        </div>
-      ) : null}
-
       <div className="p-5 sm:p-6 space-y-4">
         {/* Top Header: Rack Telemetry, Modeled Topology, Favorite Toggle */}
         <div className="flex items-center justify-between gap-2 border-b border-neutral-800/80 pb-3">
@@ -169,19 +94,19 @@ export const RackPluginCard: React.FC<RackPluginCardProps> = ({
               <Heart className={`w-3.5 h-3.5 ${isFavorite ? 'fill-red-500 text-red-500 scale-110' : ''}`} />
             </button>
             <div className="leading-none">
-              <span className="text-[9.5px] font-mono font-black text-amber-400 uppercase tracking-widest block">
+              <span className="text-[10px] font-mono font-black text-amber-400 uppercase tracking-widest block">
                 171PluginInnovation
               </span>
-              <span className="text-[8.5px] font-mono text-neutral-500 uppercase tracking-tight block truncate max-w-[150px] sm:max-w-[200px]">
+              <span className="text-[9.5px] font-mono text-neutral-400 uppercase tracking-tight block truncate max-w-[150px] sm:max-w-[200px]">
                 {specs.topology}
               </span>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 pr-6">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_6px_#34d399]" />
-            <span className="text-[9.5px] font-mono text-neutral-400 font-bold uppercase">
-              {plugin.version?.split(' ')[0] || 'v2.0.0'}
+          <div className="flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_#34d399]" />
+            <span className="text-[10px] font-mono text-amber-300 font-bold px-2 py-0.5 rounded bg-amber-500/15 border border-amber-500/30">
+              {plugin.version?.split(' ')[0] || 'v2.2.0'}
             </span>
           </div>
         </div>
@@ -231,12 +156,12 @@ export const RackPluginCard: React.FC<RackPluginCardProps> = ({
             >
               {plugin.name}
             </h4>
-            <span className="shrink-0 px-2 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 font-mono text-[9.5px] font-bold">
-              FREEWARE
+            <span className="shrink-0 px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 font-mono text-[10px] font-bold">
+              DISPONIBILE
             </span>
           </div>
 
-          <p className="text-xs text-neutral-400 font-light leading-relaxed line-clamp-2 mt-1.5 min-h-[2.5rem]">
+          <p className="text-xs text-neutral-300 font-light leading-relaxed line-clamp-2 mt-1.5 min-h-[2.5rem]">
             {plugin.description}
           </p>
         </div>
@@ -244,20 +169,20 @@ export const RackPluginCard: React.FC<RackPluginCardProps> = ({
         {/* Technical Audio Specs Badges (UAD & Plugin Alliance Style) */}
         <div className="grid grid-cols-3 gap-1.5 pt-1 text-center font-mono">
           <div className="p-1.5 rounded-xl bg-neutral-950/80 border border-neutral-800">
-            <span className="text-[8px] text-neutral-500 uppercase block">LATENZA</span>
-            <span className="text-[10px] font-bold text-emerald-400">0.0 ms</span>
+            <span className="text-[9.5px] text-neutral-400 uppercase block">LATENZA</span>
+            <span className="text-[11px] font-bold text-emerald-400">{specs.latencyLabel}</span>
           </div>
           <div className="p-1.5 rounded-xl bg-neutral-950/80 border border-neutral-800">
-            <span className="text-[8px] text-neutral-500 uppercase block">OVERSAMPLE</span>
-            <span className="text-[10px] font-bold text-amber-300">4x ADAA-2</span>
+            <span className="text-[9.5px] text-neutral-400 uppercase block">OVERSAMPLE</span>
+            <span className="text-[11px] font-bold text-amber-300">{specs.oversampling}</span>
           </div>
           <div className="p-1.5 rounded-xl bg-neutral-950/80 border border-neutral-800">
-            <span className="text-[8px] text-neutral-500 uppercase block">FORMATI</span>
-            <span className="text-[10px] font-bold text-neutral-200">VST3 / AU</span>
+            <span className="text-[9.5px] text-neutral-400 uppercase block">FORMATI</span>
+            <span className="text-[11px] font-bold text-neutral-200">VST3 / AU</span>
           </div>
         </div>
 
-        {/* Real Rating & Reviews (Real-time feedback count) */}
+        {/* Real Rating & Reviews */}
         <div className="flex items-center justify-between gap-2 pt-1 min-h-[1.75rem] flex-wrap">
           {(!reviewCount || reviewCount === 0) ? (
             <div className="flex items-center gap-1.5 text-neutral-500">
@@ -300,61 +225,53 @@ export const RackPluginCard: React.FC<RackPluginCardProps> = ({
             </div>
           )}
 
-          <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-neutral-900 border border-neutral-800 text-[9.5px] font-mono text-neutral-400">
+          <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-neutral-900 border border-neutral-800 text-[10px] font-mono text-neutral-300">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
             <span>64-bit Audio DSP</span>
           </div>
         </div>
       </div>
 
-      {/* Bottom Action Section: Primary Download CTA & Secondary Specs CTA */}
+      {/* Bottom Action Section: 1-Click Downloads + Secondary Specs */}
       <div className="p-5 sm:p-6 pt-0 space-y-2.5">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          {/* Primary Action Button */}
-          <button
-            type="button"
-            onClick={() => onSelectPlugin(plugin.id)}
-            className={`w-full py-2.5 px-3 rounded-xl font-heading font-black text-xs uppercase tracking-wider transition-all duration-200 cursor-pointer shadow-lg flex items-center justify-center gap-1.5 group/btn ${
-              isLocked
-                ? 'bg-neutral-850 hover:bg-neutral-800 text-amber-300 border border-amber-500/40 hover:border-amber-400'
-                : 'bg-gradient-to-r from-amber-400 via-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black shadow-amber-500/20'
-            }`}
-          >
-            {isLocked ? (
-              <>
-                <Clock className="w-3.5 h-3.5 text-amber-400 animate-spin" />
-                <span>VEDI COUNTDOWN</span>
-              </>
-            ) : (
-              <>
-                <Download className="w-3.5 h-3.5 text-black group-hover/btn:translate-y-0.5 transition-transform" />
-                <span>SCARICA PLUGIN</span>
-              </>
-            )}
-          </button>
+        <div className="space-y-2">
+          {/* Direct 1-Click Downloads (Win64 & macOS) */}
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              onClick={() => handleDownloadClick('win')}
+              className="py-2.5 px-2 rounded-xl bg-gradient-to-r from-amber-400 via-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black font-heading font-black text-xs uppercase tracking-wider transition-all duration-200 cursor-pointer shadow-lg shadow-amber-500/20 flex items-center justify-center gap-1.5 active:scale-95"
+              title={currentUser ? `Scarica .ZIP Windows 64-bit (${plugin.zipFileSize || '19 MB'})` : 'Registrazione gratuita obbligatoria per scaricare'}
+            >
+              {currentUser ? <Download className="w-3.5 h-3.5 text-black shrink-0" /> : <Lock className="w-3.5 h-3.5 text-black shrink-0" />}
+              <span className="truncate">{currentUser ? 'Win64 (.ZIP)' : '🔒 Registrati (Win)'}</span>
+            </button>
 
-          {/* Secondary Action: Scheda Tecnica */}
+            <button
+              type="button"
+              onClick={() => handleDownloadClick('mac')}
+              className="py-2.5 px-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 hover:border-cyan-500/50 text-neutral-200 hover:text-white font-mono text-xs transition-all duration-200 cursor-pointer flex items-center justify-center gap-1.5 active:scale-95"
+              title={currentUser ? `Scarica .ZIP macOS Universal (${plugin.macZipFileSize || '10 MB'})` : 'Registrazione gratuita obbligatoria per scaricare'}
+            >
+              {currentUser ? <Download className="w-3.5 h-3.5 text-cyan-400 shrink-0" /> : <Lock className="w-3.5 h-3.5 text-cyan-400 shrink-0" />}
+              <span className="truncate">{currentUser ? 'macOS (.ZIP)' : '🔒 Registrati (Mac)'}</span>
+            </button>
+          </div>
+
+          {/* Secondary Action: Scheda Tecnica & Audio Demo */}
           <button
             type="button"
             onClick={() => onSelectPlugin(plugin.id)}
-            className="w-full py-2.5 px-3 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 hover:border-amber-500/50 text-neutral-200 hover:text-white font-mono text-[11px] font-bold uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center gap-1.5"
+            className="w-full py-2 px-3 rounded-xl bg-neutral-950/80 hover:bg-neutral-900 border border-neutral-800 hover:border-amber-500/40 text-neutral-300 hover:text-amber-300 font-mono text-[11px] font-bold uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center gap-1.5"
           >
-            <span>SCHEDA TECNICA</span>
-            <ExternalLink className="w-3 h-3 text-neutral-400" />
+            <span>SCHEDA TECNICA & CONTROLLI DSP</span>
+            <ExternalLink className="w-3 h-3 text-amber-400/80" />
           </button>
         </div>
 
         {/* Platform support info */}
-        <p className="text-[9.5px] font-mono text-center text-neutral-400 truncate">
-          {isLocked ? (
-            <span className="text-amber-400 font-bold">
-              ⏳ Sblocco tra {countdown?.days}g {countdown?.hours}h {countdown?.minutes}m
-            </span>
-          ) : (
-            <>
-              🪟 Windows 64-bit • 🍏 macOS Universal (M1-M4 & Intel)
-            </>
-          )}
+        <p className="text-[10px] font-mono text-center text-neutral-400 truncate">
+          🪟 Windows 64-bit • 🍏 macOS Universal (M1-M4 & Intel)
         </p>
       </div>
     </div>

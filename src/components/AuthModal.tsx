@@ -13,6 +13,7 @@ export const AuthModal: React.FC = () => {
     isAuthModalOpen, 
     closeAuthModal, 
     authPromptReason, 
+    authInitialMode,
     login, 
     loginWithGoogle, 
     sendRegistrationVerificationOtp,
@@ -22,6 +23,14 @@ export const AuthModal: React.FC = () => {
   } = useStudio();
 
   const [mode, setMode] = useState<'login' | 'register' | 'verify'>('login');
+
+  useEffect(() => {
+    if (isAuthModalOpen) {
+      setMode(authInitialMode || 'login');
+      setError('');
+      setInfoMessage('');
+    }
+  }, [isAuthModalOpen, authInitialMode]);
   
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');

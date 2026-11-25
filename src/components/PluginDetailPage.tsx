@@ -12,6 +12,8 @@ import { getPayPalDonationUrl, getPayPalMeUrl, triggerPluginZipFileDownload } fr
 import { getAssetUrl } from '../utils/assetPath';
 import { HardwareTiltCard } from './HardwareTiltCard';
 import { HardwareLockedModal } from './HardwareLockedModal';
+import { ProAudioDemoPlayer } from './ProAudioDemoPlayer';
+import { PLUGIN_TOPOLOGY_MAP, DEFAULT_TOPOLOGY_META } from '../data/pluginMetadata';
 
 interface PluginDetailPageProps {
   pluginId: string;
@@ -198,7 +200,6 @@ export const PluginDetailPage: React.FC<PluginDetailPageProps> = ({
     }
     downloadPlugin(plugin.id, os);
     setDownloadSuccess(true);
-    triggerPluginZipFileDownload(plugin);
     setTimeout(() => setDownloadSuccess(false), 5000);
   };
 
@@ -333,11 +334,11 @@ export const PluginDetailPage: React.FC<PluginDetailPageProps> = ({
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 sm:gap-2 pt-2.5 sm:pt-3">
               <div className="p-2 sm:p-2.5 rounded-xl bg-neutral-950/80 border border-neutral-800 text-center">
                 <span className="text-[8.5px] sm:text-[9px] font-mono text-neutral-500 uppercase block">FORMATI</span>
-                <span className="text-[10.5px] sm:text-[11px] font-mono font-bold text-neutral-200 truncate block">VST3 & EXE</span>
+                <span className="text-[10.5px] sm:text-[11px] font-mono font-bold text-neutral-200 truncate block">VST3 & AU</span>
               </div>
               <div className="p-2 sm:p-2.5 rounded-xl bg-neutral-950/80 border border-neutral-800 text-center">
                 <span className="text-[8.5px] sm:text-[9px] font-mono text-neutral-500 uppercase block">LATENZA</span>
-                <span className="text-[10.5px] sm:text-[11px] font-mono font-bold text-emerald-400 truncate block">0 ms Safe</span>
+                <span className="text-[10.5px] sm:text-[11px] font-mono font-bold text-emerald-400 truncate block">0.0 ms Safe</span>
               </div>
               <div className="p-2 sm:p-2.5 rounded-xl bg-neutral-950/80 border border-neutral-800 text-center">
                 <span className="text-[8.5px] sm:text-[9px] font-mono text-neutral-500 uppercase block">CPU GUARD</span>
@@ -361,6 +362,11 @@ export const PluginDetailPage: React.FC<PluginDetailPageProps> = ({
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                 <span>64-bit • 0 ms</span>
               </span>
+            </div>
+
+            {/* Live Web Audio A/B Demo Player */}
+            <div className="mt-3">
+              <ProAudioDemoPlayer pluginId={plugin.id} pluginName={plugin.name} />
             </div>
           </div>
         </div>
@@ -485,7 +491,7 @@ export const PluginDetailPage: React.FC<PluginDetailPageProps> = ({
               </span>
             </div>
 
-            /* Action Buttons with Mandatory Free Registration */
+            {/* Action Buttons with Mandatory Free Registration */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3.5">
               {/* Windows 64-bit button */}
               <button
@@ -626,7 +632,7 @@ export const PluginDetailPage: React.FC<PluginDetailPageProps> = ({
             }`}
           >
             <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400" />
-            <span>Changelog V2.0.0</span>
+            <span>Changelog {plugin.version || 'v2.2.0'}</span>
           </button>
 
           <button

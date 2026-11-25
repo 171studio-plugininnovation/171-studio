@@ -3,22 +3,32 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { PageId } from './types';
 import { isValidPageId } from './utils/navigation';
 import { BackgroundLayer } from './components/BackgroundLayer';
 import { Navbar } from './components/Navbar';
 import { HeroHome } from './components/HeroHome';
-import { BookingSessionPage } from './components/BookingSessionPage';
-import { AboutPage } from './components/AboutPage';
-import { PluginsPage } from './components/PluginsPage';
-import { AudioToolsPage } from './components/AudioToolsPage';
-import { ClientAccountPage } from './components/ClientAccountPage';
-import { TheGodCypherPage } from './components/TheGodCypherPage';
 import { Footer } from './components/Footer';
 import { StudioProvider, useStudio } from './context/StudioContext';
 import { AuthModal } from './components/AuthModal';
-import { MasterDashboard } from './components/MasterDashboard';
+
+const BookingSessionPage = lazy(() => import('./components/BookingSessionPage').then(m => ({ default: m.BookingSessionPage })));
+const AboutPage = lazy(() => import('./components/AboutPage').then(m => ({ default: m.AboutPage })));
+const PluginsPage = lazy(() => import('./components/PluginsPage').then(m => ({ default: m.PluginsPage })));
+const AudioToolsPage = lazy(() => import('./components/AudioToolsPage').then(m => ({ default: m.AudioToolsPage })));
+const ClientAccountPage = lazy(() => import('./components/ClientAccountPage').then(m => ({ default: m.ClientAccountPage })));
+const TheGodCypherPage = lazy(() => import('./components/TheGodCypherPage').then(m => ({ default: m.TheGodCypherPage })));
+const MasterDashboard = lazy(() => import('./components/MasterDashboard').then(m => ({ default: m.MasterDashboard })));
+
+const RouteFallback = () => (
+  <div className="flex-1 flex items-center justify-center min-h-[50vh] p-8">
+    <div className="flex flex-col items-center gap-3 px-6 py-4 rounded-2xl bg-neutral-950/90 border border-amber-500/30 shadow-2xl backdrop-blur-md">
+      <span className="w-6 h-6 rounded-full border-2 border-amber-400 border-t-transparent animate-spin" />
+      <span className="text-[11px] font-mono uppercase tracking-widest text-amber-300">Caricamento modulo 171 Studio...</span>
+    </div>
+  </div>
+);
 
 function MainApp() {
   const [currentPage, setCurrentPage] = useState<PageId>('home');
@@ -135,9 +145,11 @@ function MainApp() {
         selectedPluginId={selectedPluginId}
       />
 
-      {/* Dynamic Page Views or Master Dashboard */}
+      {/* Dynamic Page Views or Master Dashboard with On-Demand Lazy Loading */}
       <main className="flex-1 flex flex-col pb-12">
-        {renderActivePage()}
+        <Suspense fallback={<RouteFallback />}>
+          {renderActivePage()}
+        </Suspense>
       </main>
 
       {/* Footer */}

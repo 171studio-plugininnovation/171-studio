@@ -160,7 +160,7 @@ export const BookingSessionPage: React.FC<BookingSessionPageProps> = ({ onNaviga
     const res = validateAndCalculateDiscount(
       targetCode,
       selectedService,
-      estimate.total,
+      subtotalWithMic,
       email || currentUser?.email
     );
     if (res.valid) {
@@ -542,12 +542,12 @@ export const BookingSessionPage: React.FC<BookingSessionPageProps> = ({ onNaviga
                 </div>
 
                 <span className="text-xs font-mono font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
-                  {submittedBooking?.estimatedPrice || estimate.total} €
+                  {submittedBooking?.estimatedPrice ?? finalPriceToPay} €
                 </span>
               </div>
 
               <p className="text-xs text-neutral-300 leading-relaxed font-light mb-4">
-                Come da indicazioni di 171 Studio, puoi procedere comodamente al saldo della cifra stabilita (<strong className="text-emerald-400 font-semibold">{submittedBooking?.estimatedPrice || estimate.total} €</strong>) direttamente online tramite PayPal sul conto dello studio:
+                Come da indicazioni di 171 Studio, puoi procedere comodamente al saldo della cifra stabilita (<strong className="text-emerald-400 font-semibold">{submittedBooking?.estimatedPrice ?? finalPriceToPay} €</strong>) direttamente online tramite PayPal sul conto dello studio:
               </p>
 
               <div className="p-3.5 rounded-xl bg-neutral-950 border border-neutral-800 mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs font-mono">
@@ -575,7 +575,7 @@ export const BookingSessionPage: React.FC<BookingSessionPageProps> = ({ onNaviga
                   className="px-6 py-3 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black font-extrabold text-xs uppercase tracking-wider font-mono flex items-center gap-2 transition-all shadow-lg shadow-amber-500/20 hover:scale-[1.01]"
                 >
                   <CreditCard className="w-4 h-4" />
-                  <span>Paga {submittedBooking?.estimatedPrice || estimate.total} € con PayPal</span>
+                  <span>Paga {submittedBooking?.estimatedPrice ?? finalPriceToPay} € con PayPal</span>
                   <ExternalLink className="w-3.5 h-3.5" />
                 </a>
 
@@ -1097,16 +1097,7 @@ export const BookingSessionPage: React.FC<BookingSessionPageProps> = ({ onNaviga
                       return (
                         <div
                           key={mic.id}
-                          onClick={() => {
-                            setSelectedMic(mic.id);
-                            const feeNote = mic.fee > 0 ? ` (+${mic.fee}€ a sessione)` : ' (Incluso a 0€)';
-                            const micTag = `[Microfono scelto: ${mic.name}${feeNote}]`;
-                            if (!note.includes('[Microfono scelto:')) {
-                              setNote(note ? `${note}\n${micTag}` : micTag);
-                            } else {
-                              setNote(note.replace(/\[Microfono scelto:[^\]]+\]/, micTag));
-                            }
-                          }}
+                          onClick={() => setSelectedMic(mic.id)}
                           className={`p-3.5 rounded-xl border transition-all cursor-pointer flex flex-col justify-between gap-2 ${
                             isSelected 
                               ? `${mic.color} ring-1 ring-amber-400 shadow-md scale-[1.01]` 
@@ -1176,6 +1167,23 @@ export const BookingSessionPage: React.FC<BookingSessionPageProps> = ({ onNaviga
                   />
                 </div>
 
+                {/* Mobile Preview Summary (Visible only on < lg screens) */}
+                <div className="lg:hidden p-4 rounded-2xl bg-neutral-900/90 border border-amber-500/30 flex items-center justify-between gap-3 text-xs font-mono">
+                  <div>
+                    <span className="text-[10px] text-neutral-400 block uppercase">Totale Stimato Sessione</span>
+                    <span className="text-base font-heading font-black text-amber-400">
+                      {finalPriceToPay.toFixed(2)} €
+                    </span>
+                    {discountCalculation.valid && (
+                      <span className="text-[10px] text-emerald-400 block">Sconto applicato!</span>
+                    )}
+                  </div>
+                  <div className="text-right text-[11px] text-neutral-300">
+                    <span className="block font-semibold text-white">{currentServiceObj.title}</span>
+                    <span className="text-neutral-400">{oraPreferita} ({formatDurationLabel(effectiveHours)})</span>
+                  </div>
+                </div>
+
                 {/* Submit Button */}
                 <StudioButton
                   type="submit"
@@ -1191,7 +1199,7 @@ export const BookingSessionPage: React.FC<BookingSessionPageProps> = ({ onNaviga
               </div>
 
               {/* Right: Live Summary Card & Official Rates */}
-              <div className="lg:col-span-5 flex flex-col gap-6">
+              <div className="lg:col-span-5 flex flex-col gap-6 lg:sticky lg:top-28 self-start">
                 
                 {/* Dynamic Selection Summary Card */}
                 <div className="p-6 rounded-3xl bg-neutral-950/85 border border-amber-500/40 backdrop-blur-xl shadow-2xl relative overflow-hidden">

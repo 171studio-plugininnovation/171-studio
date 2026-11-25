@@ -61,9 +61,10 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
 
   const [downloadSuccessId, setDownloadSuccessId] = useState<string | null>(null);
   const [thankYouPlugin, setThankYouPlugin] = useState<PluginItem | null>(null);
+  const [thankYouPlatform, setThankYouPlatform] = useState<'win' | 'mac'>('win');
   const [announcementPluginId, setAnnouncementPluginId] = useState<string>('all');
   const [expandedChangelogIds, setExpandedChangelogIds] = useState<Record<string, boolean>>({});
-  const [isAnnouncementsCollapsed, setIsAnnouncementsCollapsed] = useState<boolean>(false);
+  const [isAnnouncementsCollapsed, setIsAnnouncementsCollapsed] = useState<boolean>(true);
 
   // Solamente i 4 plugin cardine interessati dalle novità e attivi per il download
   const UPDATED_CORE_PLUGIN_IDS = ['plugin-realtune', 'plugin-easyvoice', 'plugin-cleanreso', 'plugin-perfectpre'];
@@ -221,6 +222,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
       setFeedbackSubmitted(false);
       setFeedbackComment('');
       setRating(5);
+      setThankYouPlatform(platform);
       // Open the dedicated post-download Thank You, Feedback & Free Donation page
       const isMac = platform === 'mac';
       setThankYouPlugin({
@@ -378,7 +380,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
             <div className="flex flex-wrap items-center justify-center gap-3 pt-1">
               <button
                 type="button"
-                onClick={() => triggerPluginZipFileDownload(thankYouPlugin)}
+                onClick={() => triggerPluginZipFileDownload(thankYouPlugin, thankYouPlatform)}
                 className="px-4 py-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-neutral-200 border border-neutral-700 text-xs font-mono flex items-center gap-2 transition-colors cursor-pointer"
               >
                 <FileArchive className="w-4 h-4 text-amber-400" />
@@ -1003,7 +1005,7 @@ export const PluginsPage: React.FC<PluginsPageProps> = ({
                 onClick={() => setIsAnnouncementsCollapsed(false)}
                 className="px-3.5 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-mono font-bold flex items-center gap-1.5 transition-all cursor-pointer active:scale-95"
               >
-                <span>Mostra Novità & Download</span>
+                <span>Scopri Note di Rilascio DSP (Changelog)</span>
                 <ChevronDown className="w-3.5 h-3.5" />
               </button>
             </div>

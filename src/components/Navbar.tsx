@@ -54,23 +54,12 @@ export const Navbar: React.FC<NavbarProps> = ({
   }
 
   const navItems: NavItemDef[] = [
-    { id: 'home', label: 'Frontpage' },
+    { id: 'home', label: 'Home' },
+    { id: 'plugin-innovation', label: 'Plugin DSP', badge: '4 FREE' },
+    { id: 'strumenti-online', label: 'Strumenti Audio' },
     { id: 'the-god-cypher', label: 'The God Cypher', badge: 'ALBUM' },
     { id: 'chi-siamo', label: 'Chi Siamo' },
-    { id: 'prenota-sessione', label: 'Prenota Sessione' },
-    { id: 'plugin-innovation', label: '171PluginInnovation', badge: 'DSP' },
-    {
-      id: 'strumenti-online',
-      label: 'Strumenti Online',
-      badge: 'BPM & KEY',
-      lines: ['Strumenti', 'Online', 'Key & BPM Finder'],
-    },
-    {
-      id: 'il-mio-account',
-      label: 'Il Mio Account',
-      badge: 'AREA CLIENTI',
-      lines: ['Il Mio', 'Account', 'Area Personale'],
-    },
+    { id: 'il-mio-account', label: 'Il Mio Account' },
   ];
 
   const activeNavItem = navItems.find((item) => item.id === currentPage);
@@ -239,125 +228,48 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
           </button>
 
-          {/* Central iPhone Style Dynamic Island Navigation */}
+          {/* Central Direct Navigation Dock (Pro Studio Style) */}
           <div 
             ref={islandContainerRef}
-            onMouseEnter={handleIslandMouseEnter}
-            onMouseLeave={handleIslandMouseLeave}
-            className="hidden lg:flex items-center justify-center relative z-30"
+            className="hidden lg:flex items-center gap-1 bg-neutral-950/90 border border-neutral-800 hover:border-amber-500/40 p-1.5 rounded-full shadow-[0_8px_30px_rgba(0,0,0,0.85)] backdrop-blur-2xl transition-all"
+            role="menubar"
           >
-            {!isIslandOpen ? (
-              /* Collapsed Capsule: "Scopri di più" with downward chevrons */
-              <button
-                type="button"
-                onClick={() => setIsIslandOpen(true)}
-                className="group relative flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-neutral-950/90 hover:bg-neutral-900/90 border border-neutral-800/90 hover:border-amber-500/50 backdrop-blur-2xl transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.8),inset_0_1px_1px_rgba(255,255,255,0.08)] cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
-                aria-label="Apri menu di navigazione Scopri di più"
-                aria-expanded={false}
-                aria-haspopup="true"
-              >
-                {/* Dynamic island ambient pulsing indicator */}
-                <span className="relative flex h-1.5 w-1.5">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
-                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-amber-500" />
-                </span>
-
-                <span className="font-heading font-black text-[11px] uppercase tracking-wider text-neutral-200 group-hover:text-amber-400 transition-colors">
-                  Scopri di più
-                </span>
-
-                {/* Downward chevrons ("frecce verso il basso") */}
-                <div className="flex items-center text-amber-400 group-hover:text-amber-300 transition-transform group-hover:translate-y-0.5 duration-200">
-                  <ChevronsDown className="w-3.5 h-3.5 animate-bounce" />
-                </div>
-
-                {/* Active page pill badge */}
-                {activeNavItem && (
-                  <span className="ml-1 px-2 py-0.2 rounded-full bg-neutral-900 border border-neutral-800/80 text-[9px] font-mono text-neutral-400 group-hover:text-neutral-300 hidden xl:inline-block">
-                    {activeNavItem.label}
-                  </span>
-                )}
-              </button>
-            ) : (
-              /* Expanded Capsule: Full Navigation Dock */
-              <div 
-                className="flex items-center gap-1.5 bg-neutral-950/95 border border-amber-500/40 p-1.5 rounded-3xl shadow-[0_10px_35px_rgba(0,0,0,0.9),0_0_20px_rgba(245,158,11,0.2),inset_0_1px_1px_rgba(255,255,255,0.1)] backdrop-blur-2xl animate-in zoom-in-95 duration-200"
-                role="menu"
-              >
-                {/* Quick collapse button */}
+            {navItems.map((item) => {
+              const isActive = currentPage === item.id;
+              return (
                 <button
+                  key={item.id}
                   type="button"
-                  onClick={() => setIsIslandOpen(false)}
-                  className="flex items-center gap-1 pl-2.5 pr-2 py-1 text-[10px] font-mono text-neutral-400 hover:text-amber-400 transition-colors border-r border-neutral-800/80 mr-0.5 cursor-pointer self-center"
-                  title="Riduci a capsula"
+                  onMouseEnter={item.id === 'plugin-innovation' ? handlePluginsMenuEnter : undefined}
+                  onClick={() => {
+                    if (item.id === 'plugin-innovation') {
+                      handleNavClick('plugin-innovation', null);
+                      setIsPluginsMegaMenuOpen(false);
+                    } else {
+                      handleNavClick(item.id);
+                      setIsPluginsMegaMenuOpen(false);
+                    }
+                  }}
+                  className={`relative px-3.5 py-1.5 rounded-full text-xs font-heading font-bold tracking-wide transition-all duration-200 cursor-pointer flex items-center gap-1.5 ${
+                    isActive
+                      ? 'text-black bg-gradient-to-r from-amber-400 via-amber-400 to-amber-500 shadow-md shadow-amber-500/35'
+                      : 'text-neutral-300 hover:text-white hover:bg-neutral-900/90'
+                  }`}
+                  aria-current={isActive ? 'page' : undefined}
+                  role="menuitem"
                 >
-                  <span className="font-semibold text-neutral-300 uppercase">Riduci</span>
-                  <ChevronUp className="w-3 h-3 text-amber-400" />
+                  <span>{item.label}</span>
+                  {item.id === 'plugin-innovation' && (
+                    <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${isPluginsMegaMenuOpen ? 'rotate-180 text-amber-300' : 'text-neutral-400'}`} />
+                  )}
+                  {item.badge && !isActive && (
+                    <span className="px-1.5 py-0.5 text-[8.5px] rounded-full font-mono font-bold bg-amber-500/15 text-amber-300 border border-amber-500/40">
+                      {item.badge}
+                    </span>
+                  )}
                 </button>
-
-                {/* Navigation Links */}
-                {navItems.map((item) => {
-                  const isActive = currentPage === item.id;
-                  const hasLines = item.lines && item.lines.length > 0;
-
-                  return (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onMouseEnter={item.id === 'plugin-innovation' ? handlePluginsMenuEnter : undefined}
-                      onClick={() => {
-                        if (item.id === 'plugin-innovation') {
-                          handleNavClick('plugin-innovation', null);
-                          setIsIslandOpen(false);
-                          setIsPluginsMegaMenuOpen(false);
-                        } else {
-                          handleNavClick(item.id);
-                          setIsIslandOpen(false);
-                          setIsPluginsMegaMenuOpen(false);
-                        }
-                      }}
-                      className={`relative px-3 py-1.5 rounded-2xl text-[11px] font-medium tracking-wide transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 cursor-pointer flex items-center justify-center ${
-                        isActive
-                          ? 'text-black font-bold bg-gradient-to-r from-amber-400 via-amber-400 to-amber-500 shadow-md shadow-amber-500/35'
-                          : 'text-neutral-300 hover:text-white hover:bg-neutral-900/90'
-                      }`}
-                      aria-current={isActive ? 'page' : undefined}
-                      role="menuitem"
-                    >
-                      {hasLines ? (
-                        <div className="flex flex-col items-center justify-center leading-tight py-0.5 text-center min-w-[95px]">
-                          <span className="text-[11px] font-heading font-black leading-none">{item.lines![0]}</span>
-                          <span className="text-[10px] font-medium leading-none mt-0.5">{item.lines![1]}</span>
-                          <span className={`text-[8.5px] font-mono tracking-tight font-bold mt-1 px-1.5 py-0.5 rounded-full whitespace-nowrap ${
-                            isActive 
-                              ? 'bg-black/20 text-black border border-black/20' 
-                              : 'bg-amber-500/15 text-amber-400 border border-amber-500/30'
-                          }`}>
-                            {item.lines![2]}
-                          </span>
-                        </div>
-                      ) : (
-                        <div className="flex items-center gap-1">
-                          <span>{item.label}</span>
-                          {item.id === 'plugin-innovation' && (
-                            <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${isPluginsMegaMenuOpen ? 'rotate-180 text-amber-300' : 'text-neutral-400'}`} />
-                          )}
-                          {item.badge && (
-                            <span className={`ml-1 px-1.5 py-0.2 text-[8px] rounded-full font-mono font-bold ${
-                              isActive 
-                                ? 'bg-black/20 text-black border border-black/20' 
-                                : 'bg-amber-950 text-amber-300 border border-amber-500/40'
-                            }`}>
-                              {item.badge}
-                            </span>
-                          )}
-                        </div>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-            )}
+              );
+            })}
           </div>
 
           {/* Right actions: Master Dashboard button + Audio visualizer + Booking CTA */}
@@ -524,7 +436,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <div className="mt-6 pt-4 border-t border-neutral-800/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] font-mono text-neutral-400">
               <span className="flex items-center gap-2">
                 <Shield className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Tutti i plugin implementano ScopedDenormalDisabler FTZ/DAZ x86_64 e zero allocazioni heap in thread audio.</span>
+                <span>Zero latenza (0.0 ms), elaborazione interna 64-bit float e massima stabilità su FL Studio, Ableton Live, Logic Pro, Pro Tools e Cubase.</span>
               </span>
               <button
                 type="button"
@@ -549,49 +461,41 @@ export const Navbar: React.FC<NavbarProps> = ({
 
               return (
                 <React.Fragment key={item.id}>
-                <button
-                  type="button"
-                  onClick={() => handleNavClick(item.id)}
-                  className={`flex items-center justify-between px-4 py-3 rounded-xl text-left text-sm font-medium transition-all ${
+                <div
+                  className={`flex items-center justify-between px-4 py-2.5 rounded-xl text-left text-sm font-medium transition-all ${
                     isActive
                       ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40 font-semibold'
                       : 'text-neutral-300 hover:text-white hover:bg-neutral-900/80 border border-transparent'
                   }`}
                   role="menuitem"
                 >
-                  <div className="flex items-center gap-2">
-                    {hasLines ? (
-                      <div className="flex flex-col text-left leading-tight py-0.5">
-                        <span className="text-sm font-heading font-black tracking-wide text-white">{item.lines![0]}</span>
-                        <span className="text-xs text-neutral-300 font-medium mt-0.5">{item.lines![1]}</span>
-                        <span className="text-[10px] font-mono text-amber-400 font-bold uppercase tracking-wider mt-1 px-2 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/30 w-fit">
-                          {item.lines![2]}
-                        </span>
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-2">
-                        <span>{item.label}</span>
-                        {item.id === 'plugin-innovation' && (
-                          <span 
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setMobilePluginsExpanded(!mobilePluginsExpanded);
-                            }}
-                            className="p-1 text-amber-400"
-                          >
-                            <ChevronDown className={`w-3.5 h-3.5 transition-transform ${mobilePluginsExpanded ? 'rotate-180' : ''}`} />
-                          </span>
-                        )}
-                        {item.badge && (
-                          <span className="px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[9px] font-mono">
-                            {item.badge}
-                          </span>
-                        )}
-                      </div>
+                  <button
+                    type="button"
+                    onClick={() => handleNavClick(item.id)}
+                    className="flex-1 flex items-center gap-2 text-left cursor-pointer"
+                  >
+                    <span>{item.label}</span>
+                    {item.badge && (
+                      <span className="px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[9px] font-mono">
+                        {item.badge}
+                      </span>
                     )}
+                  </button>
+
+                  <div className="flex items-center gap-2">
+                    {item.id === 'plugin-innovation' && (
+                      <button 
+                        type="button"
+                        onClick={() => setMobilePluginsExpanded(!mobilePluginsExpanded)}
+                        className="p-1.5 text-amber-400 hover:text-amber-300 rounded-lg bg-neutral-900/80 border border-neutral-800 cursor-pointer"
+                        aria-label="Espandi o comprimi lista plugin"
+                      >
+                        <ChevronDown className={`w-3.5 h-3.5 transition-transform ${mobilePluginsExpanded ? 'rotate-180' : ''}`} />
+                      </button>
+                    )}
+                    {isActive && <span className="text-xs text-amber-400 font-mono">ATTIVO</span>}
                   </div>
-                  {isActive && <span className="text-xs text-amber-400 font-mono">ATTIVO</span>}
-                </button>
+                </div>
 
                 {/* Mobile sub-items for 171PluginInnovation */}
                 {item.id === 'plugin-innovation' && mobilePluginsExpanded && (

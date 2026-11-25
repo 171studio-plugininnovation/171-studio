@@ -84,3 +84,39 @@
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
+
+/* Studio UI Animations & Utility transitions (UAD / FabFilter Smooth Micro-interactions) */
+@keyframes studioFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes studioZoomIn {
+  from { opacity: 0; transform: scale(0.96) translateY(4px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes studioSlideTop {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-in {
+  animation-duration: 220ms;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  animation-fill-mode: both;
+}
+
+.fade-in {
+  animation-name: studioFadeIn;
+}
+
+.zoom-in-95 {
+  animation-name: studioZoomIn;
+}
+
+.slide-in-from-top-2 {
+  animation-name: studioSlideTop;
+}
+
+.bg-neutral-850 {
+  background-color: #1a1a1a;
+}

@@ -18,74 +18,7 @@ interface HeroHomeProps {
   onNavigate: (page: PageId, pluginId?: string | null) => void;
 }
 
-// Map analog topologies for authentic pro-audio rack telemetry (UAD / Waves style)
-const TOPOLOGY_MAP: Record<string, { topology: string; tube: string; oversampling: string }> = {
-  'plugin-realtune': {
-    topology: 'PITCH ENGINE & PHASE COHERENT VOCAL SYNTH',
-    tube: 'Zero Phase Disruption Core',
-    oversampling: '8x Internal Processing',
-  },
-  'plugin-easyvoice': {
-    topology: 'SERIAL TUBE + OPTICAL DUAL STAGE STRIP',
-    tube: '12AX7 & 6BA6 Analog Valves',
-    oversampling: '4x ADAA-2 Oversampling',
-  },
-  'plugin-cleandrive': {
-    topology: 'TRANSIENT-SPLIT ASYMMETRIC SATURATOR',
-    tube: 'Triode + Pentode Bias',
-    oversampling: '4x ADAA-2 Alias Free',
-  },
-  'plugin-cleanreso': {
-    topology: 'ADAPTIVE MULTI-BAND SPECTRAL NOTCH',
-    tube: 'Zero Delay Biquad Matrix',
-    oversampling: 'Ultra-Narrow Q Tracking',
-  },
-  'plugin-perfectpre': {
-    topology: 'CLASS-A BRITISH CONSOLE & VINTAGE PREAMP',
-    tube: 'Carnhill Transformer Saturation',
-    oversampling: 'Analog Transformer Harmonic 3rd',
-  },
-  'plugin-spaceluxe': {
-    topology: 'CONVOLUTION IMPULSE + RECIRCULATING PLATE',
-    tube: 'Diffusion Modulation Core',
-    oversampling: 'True Stereo Width Engine',
-  },
-  'plugin-masterglue': {
-    topology: 'VCA BUS COMPRESSOR & ANALOG CONSOLE DRIVE',
-    tube: 'Quad-VCA Stereo Matrix',
-    oversampling: 'True Peak Sidechain Guard',
-  },
-  'plugin-punchcraft': {
-    topology: 'FREQUENCY-DEPENDENT TRANSIENT SCULPTOR',
-    tube: 'Dynamic Envelope Follower',
-    oversampling: 'Sub-Harmonic Wave Engine',
-  },
-  'plugin-perfectclip': {
-    topology: 'ANALOG-SQUARED SOFT & HARD DUAL CLIPPER',
-    tube: 'Bipolar Diode Clamping',
-    oversampling: '4x ADAA-2 Zero-Aliasing',
-  },
-  'plugin-vocalcraft': {
-    topology: 'COMPLETE DUAL-TUBE RACK & CRT HARMONIC SUITE',
-    tube: 'Twin 12AX7 & EF86 Pentode',
-    oversampling: '8x Pristine Oversampling',
-  },
-  'plugin-onesilk': {
-    topology: 'ONE-KNOB DYNAMIC VOCAL SILK & LOUDNESS NORMALIZER',
-    tube: 'Neve Silk Red Class-A Harmonics',
-    oversampling: 'Cytomic ZDF 64-Bit Trapezoidal',
-  },
-  'plugin-snipertune': {
-    topology: 'MANUAL GRAPHICAL PITCH & FORMANT 60 FPS CANVAS',
-    tube: '4D Consonant Shield Pure Bypass',
-    oversampling: 'GCD-PSOLA Lanczos-16 Sinc',
-  },
-  'plugin-sessionbuilder': {
-    topology: 'MODULAR CONSOLE RECALL & AUTO-GAIN STAGING',
-    tube: '6-Slot Hot-Swappable Analog DSP',
-    oversampling: '-18 dBFS Nominal Sweet Spot',
-  },
-};
+import { PLUGIN_TOPOLOGY_MAP, DEFAULT_TOPOLOGY_META } from '../data/pluginMetadata';
 
 export const HeroHome: React.FC<HeroHomeProps> = ({ onNavigate }) => {
   const { 
@@ -124,7 +57,6 @@ export const HeroHome: React.FC<HeroHomeProps> = ({ onNavigate }) => {
     }
 
     downloadPlugin(plugin.id, os);
-    triggerPluginZipFileDownload(plugin);
   };
 
   const cleanSpotifyId = (raw?: string) => {
@@ -150,11 +82,11 @@ export const HeroHome: React.FC<HeroHomeProps> = ({ onNavigate }) => {
   const foregroundCards = [
     {
       id: 'plugin-innovation' as PageId,
-      badge: 'DSP SUITE V2.0.0',
-      tag: '11 HARDWARE RACK',
+      badge: '4 PLUGIN DISPONIBILI',
+      tag: '4 HARDWARE RACK',
       title: '171PluginInnovation',
       subtitle: 'Suite DSP Proprietaria & Freeware',
-      description: '11 plugin analog-modeled per voce, batteria e mastering. Architettura v2.0.0 ricostruita con ADAA-2, True-Peak e sblocco settimanale.',
+      description: 'I 4 plugin analog-modeled cardine (RealTune, EasyVoice, CleanReso, PerfectPre) per Windows 64-bit e macOS Universal. Architettura C++20 con ADAA-2 e True-Peak.',
       icon: Cpu,
       isPrimary: true,
       highlightColor: 'from-amber-500/25 to-yellow-600/10',
@@ -216,8 +148,8 @@ export const HeroHome: React.FC<HeroHomeProps> = ({ onNavigate }) => {
         { id: 'spec-4', label: 'FEEDBACK DIRETTO', title: 'Ambiente Trattato' },
       ];
 
-  // Active rack plugin countdown
-  const currentTopology = currentRackPlugin ? TOPOLOGY_MAP[currentRackPlugin.id] : null;
+  // Active rack plugin topology
+  const currentTopology = currentRackPlugin ? (PLUGIN_TOPOLOGY_MAP[currentRackPlugin.id] || DEFAULT_TOPOLOGY_META) : null;
 
   return (
     <div className="relative z-10 w-full min-h-[calc(100vh-5rem)] flex flex-col justify-between pt-20 sm:pt-24 pb-16 px-3.5 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-12">
@@ -495,7 +427,7 @@ export const HeroHome: React.FC<HeroHomeProps> = ({ onNavigate }) => {
                     {currentRackPlugin.badge}
                   </span>
                   <span className="text-[10px] font-mono text-neutral-400">
-                    VERSIONE V2.0.0
+                    VERSIONE {currentRackPlugin.version || 'v2.2.0'}
                   </span>
                 </div>
                 <h3 className="text-2xl sm:text-3xl font-heading font-black text-white">
@@ -518,7 +450,7 @@ export const HeroHome: React.FC<HeroHomeProps> = ({ onNavigate }) => {
               className="relative w-full aspect-[16/10] sm:aspect-[1024/571] bg-neutral-950 rounded-2xl overflow-hidden border border-neutral-800/90 shadow-2xl p-1.5 sm:p-3 flex items-center justify-center cursor-pointer group/image"
             >
               <img
-                src={getAssetUrl(currentRackPlugin.imageUrl || '/assets/gui/spaceluxe.png')}
+                src={getAssetUrl(currentRackPlugin.imageUrl || '/assets/plugins/171RealTune_GUI.png')}
                 alt={currentRackPlugin.name}
                 className="w-full h-full object-contain filter drop-shadow-[0_10px_35px_rgba(0,0,0,0.9)] group-hover/image:scale-[1.01] transition-transform duration-300"
               />

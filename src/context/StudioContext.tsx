@@ -44,9 +44,17 @@ interface StudioContextType {
   currentUser: UserAccount | null;
   isMaster: boolean;
   isAuthModalOpen: boolean;
-  openAuthModal: (promptReason?: string) => void;
+  openAuthModal: (
+    promptReason?: string,
+    options?: {
+      initialMode?: 'login' | 'register';
+      pendingDownload?: { pluginId: string; platform: 'win' | 'mac' };
+    }
+  ) => void;
   closeAuthModal: () => void;
   authPromptReason: string;
+  authInitialMode: 'login' | 'register';
+  pendingPluginDownload: { pluginId: string; platform: 'win' | 'mac' } | null;
   login: (email: string, name?: string, password?: string) => Promise<boolean>;
   loginWithGoogle: () => Promise<boolean>;
   logout: () => void;
@@ -778,6 +786,11 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   // Auth modal state
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authPromptReason, setAuthPromptReason] = useState('');
+  const [authInitialMode, setAuthInitialMode] = useState<'login' | 'register'>('login');
+  const [pendingPluginDownload, setPendingPluginDownload] = useState<{
+    pluginId: string;
+    platform: 'win' | 'mac';
+  } | null>(null);
 
   // Persistent registry map for customer accounts and their welcome discounts
   const getSavedRegisteredUsers = (): Record<string, UserAccount> => {
@@ -1530,15 +1543,36 @@ export const StudioProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     } catch {}
   };
 
-  const openAuthModal = (reason: string = '') => {
+  const openAuthModal = (
+    reason: string = '',
+    options?: {
+      initialMode?: 'login' | 'register';
+      pendingDownload?: { pluginId: string; platform: 'win' | 'mac' };
+    }
+  ) => {
     setAuthPromptReason(reason);
+    setAuthInitialMode(options?.initialMode || 'login');
+    if (options?.pendingDownload) {
+      setPendingPluginDownload(options.pendingDownload);
+    }
     setIsAuthModalOpen(true);
   };
 
   const closeAuthModal = () => {
     setIsAuthModalOpen(false);
     setAuthPromptReason('');
+    setAuthInitialMode('login');
   };
+
+  // Seamless auto-resume pending download upon registration/login
+  useEffect(() => {
+    if (currentUser && pendingPluginDownload) {
+      const { pluginId, platform } = pendingPluginDownload;
+      setPendingPluginDownload(null);
+      // Automatically resume download now that user is authenticated
+      downloadPlugin(pluginId, platform);
+    }
+  }, [currentUser, pendingPluginDownload]);
 
   const loginWithGoogle = async (): Promise<boolean> => {
     try {
@@ -2582,7 +2616,10 @@ async function verifyMasterPassword(pass?: string): Promise<boolean> {
 
   const downloadPlugin = (pluginId: string, platform: 'win' | 'mac' = 'win'): boolean => {
     if (!currentUser) {
-      openAuthModal('Effettua l\'accesso per scaricare gratuitamente i file .ZIP dei plugin di 171 Studio.');
+      openAuthModal('Registrazione obbligatoria: crea un account gratuito per scaricare i pacchetti .ZIP dei plugin di 171 Studio.', {
+        initialMode: 'register',
+        pendingDownload: { pluginId, platform },
+      });
       return false;
     }
 
@@ -4345,6 +4382,8 @@ async function verifyMasterPassword(pass?: string): Promise<boolean> {
         openAuthModal,
         closeAuthModal,
         authPromptReason,
+        authInitialMode,
+        pendingPluginDownload,
         login,
         loginWithGoogle,
         logout,
