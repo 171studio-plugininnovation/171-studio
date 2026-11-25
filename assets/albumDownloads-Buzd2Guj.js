@@ -1,0 +1,1 @@
+var e=`https://github.com/171studio-plugininnovation/171-studio/releases/download/v1.0.0-media/THE_GOD_CYPHER_MP3_EDITION.zip`,t=`https://github.com/171studio-plugininnovation/171-studio/releases/download/v1.0.0-media/THE_GOD_CYPHER_MASTER_PACK.zip`;export{e as n,t};
